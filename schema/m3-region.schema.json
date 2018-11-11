@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "title": "The Root Schema",
+  "items": {
+    "$id": "#/items",
+    "type": "object",
+    "title": "Room Object",
+    "description": "Room Object",
+    "required": [
+      "id",
+      "name",
+      "area",
+      "subarea",
+      "nodes",
+      "links"
+    ],
+    "properties": {
+      "id": {
+        "$id": "#/items/properties/id",
+        "type": "integer",
+        "title": "Room ID",
+        "description": "Identifier for this room, unique across the entire game",
+        "default": 0,
+        "examples": [
+          7
+        ]
+      },
+      "name": {
+        "$id": "#/items/properties/name",
+        "type": "string",
+        "title": "Room Name",
+        "description": "As it appears in the SuperMetroid.run wiki",
+        "default": "",
+        "examples": [
+          "Morphing Ball Room"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "area": {
+        "$id": "#/items/properties/area",
+        "type": "string",
+        "title": "Area Name",
+        "default": "",
+        "examples": [
+          "Brinstar"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "subarea": {
+        "$id": "#/items/properties/subarea",
+        "type": "string",
+        "title": "Area Subname",
+        "default": "",
+        "examples": [
+          "Blue"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "note": {
+        "$id": "#/items/properties/note",
+        "type": "string",
+        "title": "Note field",
+        "default": "",
+        "examples": [],
+        "pattern": "^(.*)$"
+      },
+      "nodes": {
+        "$id": "#/items/properties/nodes",
+        "type": "array",
+        "title": "Nodes; Doors, Elevators, Item Locations, etc",
+        "items": {
+          "$id": "#/items/properties/nodes/items",
+          "type": "object",
+          "title": "Node Object",
+          "required": [
+            "id",
+            "name",
+            "nodeType"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/items/properties/nodes/items/properties/id",
+              "type": "integer",
+              "title": "Node ID within Room",
+              "default": 0,
+              "examples": [
+                1
+              ]
+            },
+            "name": {
+              "$id": "#/items/properties/nodes/items/properties/name",
+              "type": "string",
+              "title": "Node Name",
+              "default": "",
+              "examples": [
+                "Left Door"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "nodeType": {
+              "$id": "#/items/properties/nodes/items/properties/nodeType",
+              "type": "string",
+              "title": "Node Type",
+              "description": "Examples: door, elevator, event, eye, gray, green, item, vertical",
+              "default": "",
+              "examples": [
+                "door",
+                "elevator",
+                "event",
+                "eye",
+                "gray",
+                "green",
+                "grey",
+                "item",
+                "red",
+                "vertical",
+                "yellow"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "nodeSubType": {
+              "$id": "#/items/properties/nodes/items/properties/nodeSubType",
+              "type": "string",
+              "title": "Node SubType",
+              "default": "",
+              "examples": [
+                "boss",
+                "chozo",
+                "hidden",
+                "visible"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "note": {
+              "$id": "#/items/properties/nodes/items/properties/note",
+              "type": "string",
+              "title": "Node Note field",
+              "default": "",
+              "examples": [
+                "Door Object"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      },
+      "links": {
+        "$id": "#/items/properties/links",
+        "type": "array",
+        "title": "Links; pathways within the Room",
+        "items": {
+          "$id": "#/items/properties/links/items",
+          "type": "object",
+          "title": "Link",
+          "required": [
+            "from",
+            "to"
+          ],
+          "properties": {
+            "from": {
+              "$id": "#/items/properties/links/items/properties/from",
+              "type": "integer",
+              "title": "This Link originates at this Node ID within the Room",
+              "default": 0,
+              "examples": [
+                1
+              ]
+            },
+            "to": {
+              "$id": "#/items/properties/links/items/properties/to",
+              "type": [ "array", "null" ],
+              "title": "This Link terminates at this Node ID within the Room",
+              "items": {
+                "$id": "#/items/properties/links/items/properties/to/items",
+                "type": "object",
+                "title": "The Items Schema",
+                "required": [
+                  "id",
+                  "requires",
+                  "unlock"
+                ],
+                "properties": {
+                  "id": {
+                    "$id": "#/items/properties/links/items/properties/to/items/properties/id",
+                    "type": "integer",
+                    "title": "Target Node ID within the Room",
+                    "default": 0,
+                    "examples": [
+                      2
+                    ]
+                  },
+                  "requires": {
+                    "$id": "#/items/properties/links/items/properties/to/items/properties/requires",
+                    "type": [ "array", "null" ],
+                    "title": "Equipment requirements to traverse this Link",
+                    "items": {
+                      "$id": "#/items/properties/links/items/properties/to/items/properties/requires/items",
+                      "type": [
+                        "object",
+                        "string"
+                      ],
+                      "title": "Elements are assumed to be ANDed together, unless this array has a key of 'or'"
+                    }
+                  },
+                  "unlock": {
+                    "$id": "#/items/properties/links/items/properties/to/items/properties/unlock",
+                    "type": [ "array", "null" ],
+                    "title": "Equipment requirements to unlock this Link",
+                    "default": [],
+                    "examples": []
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
