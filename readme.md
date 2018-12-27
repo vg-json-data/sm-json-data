@@ -4,7 +4,7 @@ This project intends to represent Super Metroid's layout and navigation in a for
 
 However, the intent is for the data model to also be usable for other projects related to Super Metroid.
 ## Project Structure
-This project's representation of Super Metroid is defined in json files of various types. Here's a breakdown
+This project's representation of Super Metroid is defined in json files of various types. Here's a breakdown:
 ### File type: Region files
 Region files follow the schema defined at /schema/m3-region.schema.json. They are grouped by area, then broken down into somewhat arbitrary sub-areas.
 
@@ -13,12 +13,14 @@ Each region file is an array of Super Metroid rooms. Rooms contain the following
 Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. Some of their properties are self-explanatory, while others require additional definition:
 ##### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
-* _length:_ The number of tiles in the runway  
+* _length:_ The number of tiles in the runway
+
 __Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. When calculating this, the longest available runway in the origin room can be used, but _only a runway with no requirements in the destination room_ should be used (No time to open up a runway while charging a spark). Additionnally, because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
 ##### sparking/canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. Has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.  
+* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
+
 __Additional considerations:__ Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible (with 180 framesRemaining if there's a runway with a positive length on the other side, and with roughly 175 frames remaining otherwise). As such, that is never explicitly defined in a `canLeaveCharged` object.
 #### Room element: Links
 Links define how Samus can navigate within a room. Each link is a unidirectional path that can take Samus from one node to another. Links often have logical requirements.
@@ -33,7 +35,7 @@ Each enemy file is an array of Enemies, and includes data about its weaknesses, 
 ## Project Definitions
 This section defines concepts that are constant across the project. This includes properties that many different objects can have.
 ### Logical Requirements
-Logical requirements are a representation of what combination of items and techniques allows Samus to perform various actions. They are found all over the project and are represented as an array whose elements are implicitly linked by a logical AND, and can be a number of things:
+Logical requirements are a representation of what combination of items and techniques allows Samus to perform various actions. They are found all over the project (often as a `requires` or `unlock` property). They are represented as an array whose elements are implicitly linked by a logical AND; those logical elements can be a number of things:
 * _The name of a helper._ Helpers are defined in helpers.json and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable.
 * _The name of a tech._ Techs are defined in tech.json.  Those represent a technique that players can perform, which may also imply logical requirements of their own.
 * _The name of an item._ Those are defined in items.json.
@@ -43,19 +45,20 @@ Logical requirements are a representation of what combination of items and techn
   * _and:_ An `and` object contains an array of logical elements, and is fulfilled only if all of those are met.
   * _not:_ A `not`object contains an array of logical elements, and is fulfilled only if none of those are met.
 * More complex objects which will be defined in their own sub-sections
-#### canComeInCharged object
+#### Logical element: canComeInCharged object
  A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
  * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
- * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.  
- __Additional considerations:__ A `canComeInCharged` object implicitly requires the Speed Booster. It is also implicitly fulfilled (with 180 frames remaining) if the runways on the two sides of the door combine into a large enough runway to charge a spark.
- #### adjacentRunway object
+ * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
+
+ __Additional considerations:__ A `canComeInCharged` object implicitly requires the Speed Booster. It is also implicitly fulfilled (with 180 frames remaining, or roughly 175 frames if 100% of the combined runway is in the adjacent room) if the runways on the two sides of the door combine into a large enough runway to charge a spark.
+ #### Logical element: adjacentRunway object
 An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties: 
  * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
  * _framesRemaining:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
- #### canShineCharge object
+ #### Logical element: canShineCharge object
  A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
  * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
  ### Requires properties
  A `requires` property is present on many objects, and is always a logical requirement of its associated object.
  ### Unlock properties
- An `unlock` property, usually tied to a node or a link, represents a logical requirement that must be fulfilled to interact with the node or to traverse the link. It differs from a `requires` property in that it only needs to be fulfilled once per game, and then the associated node or link is considered unlock indefinitely.
+ An `unlock` property, usually tied to a node or a link, represents a logical requirement that must be fulfilled to interact with the node or to traverse the link. It differs from a `requires` property in that it only needs to be fulfilled once per game, and then the associated node or link is considered unlocked indefinitely.
