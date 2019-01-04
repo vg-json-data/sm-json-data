@@ -10,7 +10,15 @@ Region files follow the schema defined at /schema/m3-region.schema.json. They ar
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 #### Room element: Nodes
-Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. Some of their properties are self-explanatory, while others require additional definition:
+Nodes represent points of interest in a room. They can have the following types: Those are usually doors, items, bosses, or places where a game flag can be triggered.
+* _door:_ A node that is connected to another node in another room, typically via a two-way connection
+* _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it
+* _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
+* _event:_ A node where an event that triggers game flags can happen
+* _item:_ A node that represents an item that can be picked up
+* _junction:_ A node that has no special in-game meaning. Its purpose is to join together several nodes that aren't separated by any obstacles. This reduces logic duplication bt preventing obstacles from having to be repeated in several similar links.
+
+Some node properties are self-explanatory, while others require additional definition:
 ##### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
 * _length:_ The number of tiles in the runway
