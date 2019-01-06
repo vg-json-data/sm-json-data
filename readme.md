@@ -54,7 +54,7 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
  #### Logical element: adjacentRunway object
  An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties: 
  * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
- * _framesRemaining:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
+ * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
  #### Logical element: canShineCharge object
  A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
  * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
