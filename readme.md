@@ -46,13 +46,13 @@ Logical requirements are a representation of what combination of items and techn
   * _not:_ A `not`object contains an array of logical elements, and is fulfilled only if none of those are met.
 * More complex objects which will be defined in their own sub-sections
 #### Logical element: canComeInCharged object
- A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
+A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
  * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
  * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
 
  __Additional considerations:__ A `canComeInCharged` object implicitly requires the Speed Booster. It is also implicitly fulfilled (with 180 frames remaining, or roughly 175 frames if 100% of the combined runway is in the adjacent room) if the runways on the two sides of the door combine into a large enough runway to charge a spark.
  #### Logical element: adjacentRunway object
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties: 
+ An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties: 
  * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
  * _framesRemaining:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
  #### Logical element: canShineCharge object
@@ -64,6 +64,10 @@ An `adjacentRunway`object represents the need for Samus to be able to run (or po
  * _persistence:_ Indicates what can cause Samus' visit to the node to no longer fulfill the `canVisitNode` requirements. Can have the following values:
    * _global:_ Access by Samus at any time will fulfill the requirements
    * _room:_ Samus must be able to access the node during the current visit to the room. This usually involves clearing obstacles that will respawn on re-entry.
+ #### Logical element: canTraverseLink object
+ A `canTraverseLink` object represents the possibility for Samus to have arrived somewhere by following the link described in the object. It is fulfilled if Samus is able to reach the startNode, and also to fulfill the link's `requires`and `unlock` requirements. It is meant to represents situations where an obstacle has already been destroyed by Samus on the way in. It has the following special properties:
+ * _fromNode_: A node that is the starting point of the described link, and which must be accessible in order for the `canTraverseLink` object to be fulfilled
+ * _toNode_: A node that is the end point of the described link
  ### Requires properties
  A `requires` property is present on many objects, and is always a logical requirement of its associated object.
  ### Unlock properties
