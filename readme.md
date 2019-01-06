@@ -58,6 +58,10 @@ An `adjacentRunway`object represents the need for Samus to be able to run (or po
  #### Logical element: canShineCharge object
  A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
  * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
+ #### Logical element: canTraverseLink object
+ A `canTraverseLink` object represents the possibility for Samus to have arrived somewhere by following the link described in the object. It is fulfilled if Samus is able to reach the startNode, and also to fulfill the link's `requires`and `unlock` requirements. It is meant to represents situations where an obstacle has already been destroyed by Samus on the way in. It has the following special properties:
+ * _fromNode_: A node that is the starting point of the described link, and which must be accessible in order for the `canTraverseLink` object to be fulfilled
+ * _toNode_: A node that is the end point of the described link
  ### Requires properties
  A `requires` property is present on many objects, and is always a logical requirement of its associated object.
  ### Unlock properties
