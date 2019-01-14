@@ -72,6 +72,8 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
  * _persistence:_ Indicates what can cause Samus' visit to the node to no longer fulfill the `canVisitNode` requirements. Can have the following values:
    * _global:_ Access by Samus at any time will fulfill the requirements
    * _room:_ Samus must be able to access the node during the current visit to the room. This usually involves clearing obstacles that will respawn on re-entry.
+
+ __Additional considerations:__ If `canVisitNode` for node `n` is part of the conditions on a link that goes to node `n`, that is not a tautology. It is fulfilled only if there is another way to visit the node that respects the `persistence`.
  #### Logical element: canTraverseLink object
  A `canTraverseLink` object represents the possibility for Samus to have arrived somewhere by following the link described in the object. It is fulfilled if Samus is able to reach the startNode, and also to fulfill the link's `requires`and `unlock` requirements. It is meant to represents situations where an obstacle has already been destroyed by Samus on the way in. It has the following special properties:
  * _fromNode_: A node that is the starting point of the described link, and which must be accessible in order for the `canTraverseLink` object to be fulfilled
