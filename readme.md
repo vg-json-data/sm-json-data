@@ -68,7 +68,7 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
  * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
  #### Logical element: canVisitNode object
  A `canVisitNode` object represents the need for Samus to be able to go to another node, in order to do something unspecified that is required to fulfill requirements. It has the following special properties:
- * _number:_ The number of the node, inside the same room
+ * _nodeid:_ The ID of the node, inside the same room
  * _persistence:_ Indicates what can cause Samus' visit to the node to no longer fulfill the `canVisitNode` requirements. Can have the following values:
    * _global:_ Access by Samus at any time will fulfill the requirements
    * _room:_ Samus must be able to access the node during the current visit to the room. This usually involves clearing obstacles that will respawn on re-entry.
