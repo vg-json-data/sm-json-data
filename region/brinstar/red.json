@@ -226,17 +226,16 @@
             {
               "id": 6,
               "requires": [
-                {"cost": [
-                  {"shinesparkFrames": 45}
-                ]},
                 {"or":[
                   {"canComeInCharged": {
                     "fromNode": 4,
-                    "framesRemaining": 30
+                    "framesRemaining": 30,
+                    "shinesparkFrames": 45
                   }},
                   {"canComeInCharged": {
                     "fromNode": 3,
-                    "framesRemaining": 40
+                    "framesRemaining": 40,
+                    "shinesparkFrames": 45
                   }}
                 ]}
               ],
@@ -310,12 +309,6 @@
               }
             ]
           }
-        },
-        {
-          "id": 3,
-          "name": "Middle Junction",
-          "nodeType": "junction",
-          "nodeSubType": "junction"
         }
       ],
       "links": [
@@ -325,18 +318,35 @@
             {
               "id": 2,
               "requires": [
-                {"canComeInCharged": {
-                  "fromNode": 1,
-                  "framesRemaining": 0
-                }}
+                {"or": [
+                  "Grapple",
+                  "SpaceJump",
+                  {"and": [
+                    "canDash",
+                    "canIframeSpikeJump",
+                    {"cost": [
+                      {"spikeHits": 2},
+                      [
+                        {"enemyDamage": {
+                          "enemy": 21,
+                          "hits": 1
+                        }}
+                      ]
+                    ]}
+                  ]},
+                  {"canComeInCharged": {
+                    "fromNode": 1,
+                    "framesRemaining": 0,
+                    "shinesparkFrames": 150
+                  }},                    
+                  {"and": [
+                    "canIframeSpikeJump",
+                    {"cost": [
+                      {"spikeHits": 6}
+                    ]}
+                  ]}
+                ]}
               ],
-              "unlock": null,
-              "note": "This direct link is only for sparking"
-            },
-            {
-              "id": 3,
-              "requires": null,
-              "note": "FIXME There will be health reqs here. Items WILL affect the health requirements.",
               "unlock": null
             }
           ]
@@ -347,68 +357,59 @@
             {
               "id": 1,
               "requires": [
-                {"canComeInCharged": {
-                  "fromNode": 2,
-                  "framesRemaining": 0
-                }}
-              ],
-              "note": "This direct link is only for sparking",
-              "unlock": null
-            },
-            {
-              "id": 3,
-              "requires": [
                 {"or": [
-                  "canDamageBoostXRayScopeAccess",
-                  "SpaceJump",
-                  "canIBJ",
-                  "Grapple",
-                  "canSpringBallJumpMidAir",
-                  "canUseFrozenEnemies",
                   {"and": [
-                    "HiJump",
-                    "canDash"
-                  ]}
-                ]}
-              ],
-              "note": "FIXME There will be varying health reqs here. SpaceJump and IBJ are used separately rather than canFly because of that. The midair springball jump is off a wall, and would also require hjb otherwise.",
-              "unlock": null
-            }
-          ]
-        },
-        {
-          "from": 3,
-          "to": [
-            {
-              "id": 1,
-              "requires": [
-                {"or": [
-                  "canDamageBoostXRayScopeAccess",
-                  "SpaceJump",
-                  "Grapple",
-                  "canSpringBallJumpMidAir",
-                  {"and": [
-                    "HiJump",
-                    "canDash",
-                    "canIframeSpikeJump"
+                    "canDamageBoostXRayScopeAccess",
+                    {"cost": [
+                      [
+                        {"enemyDamage": {
+                          "enemy": 21,
+                          "hits": 6
+                        }},
+                        {"enemyDamage": {
+                          "enemy": 29,
+                          "hits": 1
+                        }}
+                      ]
+                    ]}
                   ]},
+                  "SpaceJump",
+                  "Grapple",
+                  {"canComeInCharged": {
+                    "fromNode": 2,
+                    "framesRemaining": 0,
+                    "shinesparkFrames": 150
+                  }},                    
                   {"and": [
-                    "canIBJ",
-                    "canIframeSpikeJump"
+                    "canIframeSpikeJump",
+                    {"or": [
+                      {"and": [
+                        "canIBJ",
+                        {"cost": [
+                          {"spikeHits": 6}
+                        ]}
+                      ]},
+                      {"and": [                        
+                        "HiJump",
+                        {"cost": [
+                          {"spikeHits": 4}
+                        ]},
+                        {"or": [
+                          "canDash",
+                          "canSpringBallJump"
+                        ]}
+                      ]}
+                    ]}
                   ]},
                   {"and": [
                     "canIframeSpikeJump",
-                    "canUseFrozenEnemies"
+                    "canUseFrozenEnemies",
+                    {"cost": [
+                      {"spikeHits": 3}
+                    ]}
                   ]}
                 ]}
               ],
-              "note": "FIXME There will be health reqs here. Items WILL affect the health requirements. The midair springball jump is off a wall, and would also require hjb and canIFrameSpikeJump otherwise.",
-              "unlock": null
-            },
-            {
-              "id": 2,
-              "requires": null,
-              "note": "FIXME There will be health reqs here. Items WILL affect the health requirements.",
               "unlock": null
             }
           ]
@@ -460,7 +461,16 @@
           "to": [
             {
               "id": 1,
-              "requires": [ "canPassBombPassages" ],
+              "requires": [ 
+                {"or": [
+                  "canPassBombPassages",
+                  {"and": [
+                    "Morph",
+                    "ScrewAttack",
+                    "SpringBall"
+                  ]}
+                ]}
+               ],
               "unlock": null
             }
           ]
