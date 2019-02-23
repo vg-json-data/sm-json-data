@@ -14,7 +14,7 @@ Region files follow the schema defined at [/schema/m3-region.schema.json](../sch
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
 ### Nodes
-Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types: 
+A room has an array of nodes. Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types: 
 * _door:_ A node that is connected to another node in another room, typically via a two-way connection
 * _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it. Please note that this is not intended to represent grey doors, even those that can never be unlocked. Rather, this is for an entrance node with no exit trigger, such a sand chute at the top of a room.
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
@@ -23,6 +23,13 @@ Nodes represent points of interest in a room. Those are usually doors, items, bo
 * _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same strat from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
 
 Some node properties are self-explanatory, while others require additional definition:
+#### unlock
+The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Node that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
+* Using a door node to go to another room
+* Picking up the item at an item node
+* Completing an event node's event
+#### yields
+The `yields` property is an array of game flags that are activated when interacting with a node. If the node has `unlock` requirements, those must be fulfilled to activate the flags.
 #### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
 * _length:_ The number of tiles in the runway
@@ -42,4 +49,7 @@ __Additional considerations:__ Generating a shinespark charge using the door's r
 * Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
 
 ### Links
-Links define how Samus can navigate within a room. Each link is a unidirectional path that can take Samus from one node to another. Links often have logical requirements.
+A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
+* _id:_ The ID of the node to which the link leads
+* _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to go to that destination
+* _unlock:_ Some [logical requirements](../logicalRequirements.md) that must be fulfilled the first time Samus uses the link to go to that destination
