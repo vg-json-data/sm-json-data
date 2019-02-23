@@ -9,7 +9,7 @@ Region sub-folders also contain an image for most individual rooms with more tha
 The root section of this folder also contains cleanup.json, which has miscellaneous rooms which were missing from the wiki. These may be moved into the proper region at some point.
 
 ## Contents of a Region File
-Region files follow the schema defined at /schema/m3-region.schema.json.
+Region files follow the schema defined at [/schema/m3-region.schema.json](../schema/m3-region.schema.json).
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
