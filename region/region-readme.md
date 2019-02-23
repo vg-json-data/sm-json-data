@@ -14,25 +14,32 @@ Region files follow the schema defined at /schema/m3-region.schema.json.
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
 ### Nodes
-Nodes represent points of interest in a room. They can have the following types: Those are usually doors, items, bosses, or places where a game flag can be triggered.
+Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types: 
 * _door:_ A node that is connected to another node in another room, typically via a two-way connection
-* _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it
+* _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it. Please note that this is not intended to represent grey doors, even those that can never be unlocked. Rather, this is for an entrance node with no exit trigger, such a sand chute at the top of a room.
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
 * _event:_ A node where an event that triggers game flags can happen
 * _item:_ A node that represents an item that can be picked up
-* _junction:_ A node that has no special in-game meaning. Its purpose is to join together several nodes that aren't separated by any obstacles. They are often used to reduce logic duplication by preventing obstacles from having to be repeated in several similar links.
+* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same strat from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
 
 Some node properties are self-explanatory, while others require additional definition:
 #### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
 * _length:_ The number of tiles in the runway
 
-__Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. When calculating this, the longest available runway in the origin room can be used, but _only a runway with no requirements in the destination room_ should be used (No time to open up a runway while charging a spark). Additionnally, because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
+__Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. However, some rules are intended to be applied when doing that calculation:
+* In the origin room, the longest runway whose requirements are met can be used.
+* In the destination room, the longest runway whose requirements are met _and whose `usableComingIn` property is `true`_ can be used. This property is used to represent the fact that some runways need Samus to do something to open them up, which can't be done while running in.
+* Because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
+* Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
 #### sparking/canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. Has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
 * _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
 
-__Additional considerations:__ Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible (with 180 framesRemaining if there's a runway with a positive length on the other side, and with roughly 175 frames remaining otherwise). As such, that is never explicitly defined in a `canLeaveCharged` object.
+__Additional considerations:__ Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible. As such, that is never explicitly defined in a `canLeaveCharged` object. The number of frames remaining in that charge will be:
+* 180 frames if there's a usable runway on the other side
+* Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
+
 ### Links
 Links define how Samus can navigate within a room. Each link is a unidirectional path that can take Samus from one node to another. Links often have logical requirements.
