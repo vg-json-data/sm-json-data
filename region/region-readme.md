@@ -2,19 +2,19 @@
 This section contains data about individual rooms in Super Metroid, as well as navigation logic within the rooms.
 
 ## Folder Structure
-This folder is split up into sub-folders, one for each main region in Super Metroid. Each region is then split into several json files, one for each (somewhat arbitrarily-defined) sub-area. Please note that there is one exception to this rule: Inner Maridia is considered as one large sub-area, but was still further split-up into three region files to keep their size manageable.
+This folder is split up into sub-folders, one for each main region in Super Metroid. Each region is then split into several `json` files, one for each (somewhat arbitrarily-defined) sub-area. Please note that there is one exception to this rule: Inner Maridia is considered as one large sub-area, but was still further split-up into three region files to keep their size manageable.
 
 Region sub-folders also contain an image for most individual rooms with more than a few nodes, to show how the nodes are placed and connected within that room.
 
-The root section of this folder also contains cleanup.json, which has miscellaneous rooms which were missing from the wiki. These may be moved into the proper region at some point.
+The root section of this folder also contains `cleanup.json`, which has miscellaneous rooms which were missing from the wiki. These may be moved into the proper region at some point.
 
 ## Contents of a Region File
-Region files follow the schema defined at [/schema/m3-region.schema.json](../schema/m3-region.schema.json).
+Region files follow the schema defined at `[/schema/m3-region.schema.json](../schema/m3-region.schema.json)`.
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
 ### Nodes
-A room has an array of nodes. Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types: 
+A room has an array of nodes. Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types:
 * _door:_ A node that is connected to another node in another room, typically via a two-way connection
 * _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it. Please note that this is not intended to represent grey doors, even those that can never be unlocked. Rather, this is for an entrance node with no exit trigger, such a sand chute at the top of a room.
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
@@ -24,7 +24,7 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 
 Some node properties are self-explanatory, while others require additional definition:
 #### unlock
-The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Node that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
+The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Note that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
 * Using a door node to go to another room
 * Picking up the item at an item node
 * Completing an event node's event

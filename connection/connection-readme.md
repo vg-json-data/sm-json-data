@@ -2,12 +2,12 @@
 This section contains data about connections between individual rooms in Super Metroid.
 
 ## Folder Structure
-This folder is split-up into sub-folders, one for each main region in Super Metroid. Each region is then split into several json files; one file for room connections within each (somewhat arbitrarily-defined) sub-area, and and one more file named intra.json for connections that transition between sub-areas while still being within the parent region.
+This folder is split-up into sub-folders, one for each main region in Super Metroid. Each region is then split into several json files; one file for room connections within each (somewhat arbitrarily-defined) sub-area, and and one more file named `intra.json` for connections that transition between sub-areas while still being within the parent region.
 
-The root section of this folder also contains inter.json, which contains connections that transition between regions.
+The root section of this folder also contains `inter.json`, which contains connections that transition between regions.
 
 ## Contents of a Connection File
-Connection files follow the schema defined at [/schema/m3-connection.schema.json](../schema/m3-connection.schema.json).
+Connection files follow the schema defined at `[/schema/m3-connection.schema.json](../schema/m3-connection.schema.json)`.
 
 Each Connection file is an array of connections comprised of two nodes (each found in a Super Metroid room). Those nodes are expected to be of type `door`, `entrance` or `exit`.
 

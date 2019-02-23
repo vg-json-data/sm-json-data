@@ -2,11 +2,11 @@
 Logical requirements are an important part of this project. They are used to represent any and all conditions Samus needs to fulfill to be able to perform actions. This can include having items, performing techs, and consuming ammo or health.
 
 ## Structure
-A logical requirement is an array of logical elements, which are implicitly linked by a logical AND. Those logical elements can be a number of things: 
-* _The name of a helper._ Helpers are defined in [helpers.json](helpers.json) and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable.
-* _The name of a tech._ Techs are defined in [tech.json](tech.json).  Those represent a technique that players can perform, which may also imply logical requirements of their own.
-* _The name of an item._ Those are defined in [items.json](items.json).
-* _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
+A logical requirement is an array of logical elements, which are implicitly linked by a logical AND. Those logical elements can be a number of things:
+* _The name of a helper._ Helpers are defined in `[helpers.json](helpers.json)` and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable.
+* _The name of a tech._ Techs are defined in `[tech.json](tech.json)`.  Those represent a technique that players can perform, which may also imply logical requirements of their own.
+* _The name of an item._ Those are defined in `[items.json](items.json)`.
+* _The name of a game flag._ Those are defined in `[items.json](items.json)`, and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
 * _Structural objects._ Those exist to make it possible to group together logical elements. Those include:
   * _or:_ An `or` object contains an array of logical elements, but is fulfilled as soon as at least one of those is met.
   * _and:_ An `and` object contains an array of logical elements, and is fulfilled only if all of those are met.
@@ -14,7 +14,7 @@ A logical requirement is an array of logical elements, which are implicitly link
 * More complex objects which will be defined in their own sub-sections
 
 ### adjacentRunway object
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties: 
+An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
 
@@ -26,7 +26,7 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
  * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
 
-__Additional considerations:__ 
+__Additional considerations:__
 * A `canComeInCharged` object implicitly requires the Speed Booster.
 * A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
 * A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark.
@@ -41,8 +41,8 @@ A `canShineCharge` object represents the need for Samus to be able to charge a s
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
 
-__Additional considerations:__ 
-* A `canShineCharge` object implicitly requires the Speed Booster. 
+__Additional considerations:__
+* A `canShineCharge` object implicitly requires the Speed Booster.
 * A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
 
 ### canVisitNode object
