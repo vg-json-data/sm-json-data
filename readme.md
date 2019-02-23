@@ -4,40 +4,15 @@ This project intends to represent Super Metroid's layout and navigation in a for
 
 However, the intent is for the data model to also be usable for other projects related to Super Metroid.
 ## Project Structure
-This project's representation of Super Metroid is defined in json files of various types. Here's a breakdown:
-### File type: Region files
-Region files follow the schema defined at /schema/m3-region.schema.json. They are grouped by area, then broken down into somewhat arbitrary sub-areas.
+This project's representation of Super Metroid is split-up between different folders, each with their own data. Here's a breakdown:
+### Regions
+[A folder that details the game's rooms](region/region-readme.md)
 
-Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
-#### Room element: Nodes
-Nodes represent points of interest in a room. They can have the following types: Those are usually doors, items, bosses, or places where a game flag can be triggered.
-* _door:_ A node that is connected to another node in another room, typically via a two-way connection
-* _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it
-* _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
-* _event:_ A node where an event that triggers game flags can happen
-* _item:_ A node that represents an item that can be picked up
-* _junction:_ A node that has no special in-game meaning. Its purpose is to join together several nodes that aren't separated by any obstacles. This reduces logic duplication bt preventing obstacles from having to be repeated in several similar links.
+### Connections
+[A folder that details connections between the game's rooms](connection/connection-readme.md)
 
-Some node properties are self-explanatory, while others require additional definition:
-##### sparking/runways
-Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
-* _length:_ The number of tiles in the runway
-
-__Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. When calculating this, the longest available runway in the origin room can be used, but _only a runway with no requirements in the destination room_ should be used (No time to open up a runway while charging a spark). Additionnally, because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
-##### sparking/canLeaveCharged
-Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. Has the following special properties:
-* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
-
-__Additional considerations:__ Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible (with 180 framesRemaining if there's a runway with a positive length on the other side, and with roughly 175 frames remaining otherwise). As such, that is never explicitly defined in a `canLeaveCharged` object.
-#### Room element: Links
-Links define how Samus can navigate within a room. Each link is a unidirectional path that can take Samus from one node to another. Links often have logical requirements.
-### File type: Connection files
-Connection files follow the schema defined at /schema/m3-connection.schema.json. They are grouped and broken down much like the region files. Additionnally, each area has an `intra.json` for connections between its sub-areas, and the project has an `intra.json` file for connections between areas.
-
-Each connection file is an array of Connections. Each connection connects two room nodes together, which also serves to connect rooms together.
-### File type: Enemy files
-Enemy files follow the schema defined at /schema/m3-enemies.schema.json. They are spread into files by region but their definition does not strictly tie them to a region.
+### Enemies
+[A folder that details game's enemies](enemies/enemies-readme.md)
 
 Each enemy file is an array of Enemies, and includes data about its weaknesses, immunities, damage and health, drop table, and more.
 ## Project Definitions
