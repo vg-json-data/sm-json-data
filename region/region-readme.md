@@ -4,7 +4,7 @@ This section contains data about individual rooms in Super Metroid, as well as n
 ## Folder Structure
 This folder is split up into sub-folders, one for each main region in Super Metroid. Each region is then split into several `json` files, one for each (somewhat arbitrarily-defined) sub-area. Please note that there is one exception to this rule: Inner Maridia is considered as one large sub-area, but was still further split-up into three region files to keep their size manageable.
 
-Region sub-folders also contain an image for most individual rooms with more than a few nodes, to show how the nodes are placed and connected within that room.
+Region sub-folders also contain a folder called `roomDiagrams` which contains an image for most individual rooms with more than a few nodes, to show how the nodes are placed and connected within that room.
 
 The root section of this folder also contains `cleanup.json`, which has miscellaneous rooms which were missing from the wiki. These may be moved into the proper region at some point.
 
