@@ -23,6 +23,8 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 * _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same strat from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
 
 Some node properties are self-explanatory, while others require additional definition:
+#### spawnAt
+The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
 #### unlock
 The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Note that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
 * Using a door node to go to another room
