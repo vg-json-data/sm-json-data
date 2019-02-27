@@ -11,7 +11,6 @@ This project's representation of Super Metroid is split-up between different fol
 [A folder that details connections between the game's rooms](connection/connection-readme.md)
 ### Enemies
 [A folder that details game's enemies](enemies/enemies-readme.md)
-Each enemy file is an array of Enemies, and includes data about its weaknesses, immunities, damage and health, drop table, and more.
 ## Important concepts
 This section lists key concepts and links to deeper explanations of them.
 ### Logical Requirements
