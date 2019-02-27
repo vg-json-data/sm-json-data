@@ -7,7 +7,7 @@ This folder simply contains the `main.js` file, which contains data about all no
 ## Contents of an Enemies File
 Enemies files follow the schema defined at `[/schema/m3-enemies.schema.json](../schema/m3-enemies.schema.json)`.
 
-Each Enemies file is an array of enemies
+Each enemy file is an array of Enemies, and includes data about its weaknesses, immunities, damage and health, drop table, and more.
 
 ### dmgToSamus
 This is an array that contains values for contact damage caused to Samus by this enemy. This contains three values which refer, in order, to damage while wearing Power Suit, Varia Suit, and Gravity Suit.
