@@ -25,6 +25,16 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 Some node properties are self-explanatory, while others require additional definition:
 #### spawnAt
 The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
+#### utility
+The `utility` property is an array of utility functions available to Samus at a node. Those include saving, map stations, as well as resource refills. Possible utilities are:
+* _save_
+* _missile_
+* _super_
+* _powerbomb_
+* _energy:_ Note that this excludes reserve tanks
+* _reserve_: Note that this excludes regular energy. If a node can refill reserves as well as energy, it will have both `energy` and `reserve`
+* _map_
+* _farming_: Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
 #### unlock
 The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Note that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
 * Using a door node to go to another room
