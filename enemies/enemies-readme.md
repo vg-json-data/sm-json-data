@@ -9,8 +9,8 @@ Enemies files follow the schema defined at `[/schema/m3-enemies.schema.json](../
 
 Each enemy file is an array of Enemies, and includes data about its weaknesses, immunities, damage and health, drop table, and more.
 
-### dmgToSamus
-This is an array that contains values for contact damage caused to Samus by this enemy. This contains three values which refer, in order, to damage while wearing Power Suit, Varia Suit, and Gravity Suit.
+### attacks
+This is an object containing attacks that the enemy is able to perform. Each property in the `attacks` object is named for the attack, and is an array with the damage caused to Samus by the attack. The array contains three values which refer, in order, to damage while wearing Power Suit, Varia Suit, and Gravity Suit.
 
 ### drops
 This is the enemy's drop table. [See the wiki for an exmplanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
