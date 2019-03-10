@@ -699,6 +699,18 @@
           "note": "This node represents the small platforms above the acid. In some situations, it may be accessible without access to node 4, if the Speed blocks can't be broken."
         }
       ],
+      "obstacles":[
+        {
+          "id": "A",
+          "name": "Power bomb blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Speed blocks",
+          "obstacleType": "inanimate"
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -721,12 +733,17 @@
             {
               "id": 4,
               "requires": [
-                {"canComeInCharged": {
-                  "fromNode": 1,
-                  "framesRemaining": 180,
-                  "shinesparkFrames": 0
-                }},
-                "canBlueSpaceJump"
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0
+                    }},
+                    "canBlueSpaceJump"
+                  ]
+                }}
               ],
               "unlock": null,
               "note": "The blocks can be broken if you can generate a blue suit using the previous room's runway, and carry it to the blocks by slowing floating down with Space Jump"
@@ -744,26 +761,34 @@
             {
               "id": 4,
               "requires": [
-                {"or": [
-                  {"canComeInCharged": {
-                    "fromNode": 2,
-                    "framesRemaining": 100,
-                    "shinesparkFrames": 120
-                  }},
-                  {"canShineCharge": {
-                    "usedTiles": 17,
-                    "shinesparkFrames": 0,
-                    "openEnd": 0
-                  }},
-                  {"and": [
-                    "canUsePowerBombs",
-                    {"canShineCharge": {
-                      "usedTiles": 31,
-                      "shinesparkFrames": 0,
-                      "openEnd": 2
-                    }}
-                  ]}
-                ]}
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"or": [
+                      {"canComeInCharged": {
+                        "fromNode": 2,
+                        "framesRemaining": 100,
+                        "shinesparkFrames": 120
+                      }},
+                      {"canShineCharge": {
+                        "usedTiles": 17,
+                        "shinesparkFrames": 0,
+                        "openEnd": 0
+                      }},
+                      {"and": [
+                        {"obstacle":{
+                          "id": "A",
+                          "requires": [ "canUsePowerBombs" ]
+                        }},
+                        {"canShineCharge": {
+                          "usedTiles": 31,
+                          "shinesparkFrames": 0,
+                          "openEnd": 2
+                        }}
+                      ]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -812,7 +837,10 @@
                   ]},
                   {"and":[
                     "SpeedBooster",
-                    "canUsePowerBombs"
+                    {"obstacle":{
+                      "id": "A",
+                      "requires": [ "canUsePowerBombs" ]
+                    }}
                   ]}
                 ]}
               ],
@@ -887,12 +915,9 @@
             {
               "id": 4,
               "requires": [
-                {"or":[
-                  {"canVisitNode": {
-                    "nodeid": 4,
-                    "scope": "room"
-                  }},
-                  {"and":[
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
                     "canSwim",
                     {"canShineCharge": {
                       "usedTiles": 31,
@@ -902,11 +927,11 @@
                     {"cost": [
                       {"acidFrames": 140}
                     ]}
-                  ]}
-                ]}
+                  ]
+                }}
               ],
               "unlock": null,
-              "note": "Node 4 is accessible if it was accessed (i.e. Speed blocks were previously broken from node 2) since the last room reset. Alternately, Gravity makes it possible to charge a spark in the acid."
+              "note": "Gravity makes it possible to charge a spark in the acid and get to node 4."
             }
           ]
         }
