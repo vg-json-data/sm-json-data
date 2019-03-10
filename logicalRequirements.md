@@ -39,6 +39,7 @@ Please refer to the section about runways in [the Region documentation](region/r
 ### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
+* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
 
 __Additional considerations:__
@@ -61,6 +62,7 @@ A `cost` object represents the need for Samus to spend resources (ammo or health
   * _count:_ The amount of that ammo type which is being spent
 * _enemyDamage:_ Represents the need for Samus to intentionally take damage from an enemy. This is meant to be converted to a flat health value based on item loadout. The value for an `enemyDamage` object is another object with the following properties:
   * _enemy:_ The ID of the enemy that will damage Samus
+  * _type:_ The name of the attack that Samus will take damage from
   * _hits:_ The number of hits Samus will take from that enemy
 * _heatFrames:_ Represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
 * _lavaFrames:_ Represents the need for Samus to spend time (measured in frames) in a pool of lava. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for lava is 2 damage every 4 frames, halved by Varia, and negated by Gravity Suit.
