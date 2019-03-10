@@ -44,7 +44,7 @@ __Additional considerations:__ None of the locks must be active for Samus to be 
 * Using a door node to go to another room
 * Picking up the item at an item node
 * Completing an event node's event
-* Using any `utility` that is present at a note
+* Using any `utility` that is present at a node
 
 #### yields
 The `yields` property is an array of game flags that are activated when interacting with a node. If the node has `unlock` requirements, those must be fulfilled to activate the flags.
