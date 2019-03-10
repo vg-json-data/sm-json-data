@@ -32,19 +32,26 @@ The `utility` property is an array of utility functions available to Samus at a 
 * _super_
 * _powerbomb_
 * _energy:_ Note that this excludes reserve tanks
-* _reserve_: Note that this excludes regular energy. If a node can refill reserves as well as energy, it will have both `energy` and `reserve`
+* _reserve:_ Note that this excludes regular energy. If a node can refill reserves as well as energy, it will have both `energy` and `reserve`
 * _map_
-* _farming_: Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
-#### unlock
-The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled to properly interact with a node. Note that unlike traversing links, `unlocking` a node is an action that needs to be done only once. The interaction locked behind `unlock` requirements can take several forms such as:
+* _farming:_ Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
+#### locks
+The `locks` property is an array that contains different ways a node can be locked, and the corresponding way it can be unlocked. Each object in the `locks` property has two properties of its own:
+* _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. Ig this is missing, the node is considered initially locked at game start.
+* _unlock:_ The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order to undo this specific lock.
+
+__Additional considerations:__ None of the locks must be active for Samus to be able to properly interact with a node. Note that unlike traversing links, `unlocking` a lock is an action that needs to be done only once. Interacting with a node, which requires no locks to be active, can take several forms such as:
 * Using a door node to go to another room
 * Picking up the item at an item node
 * Completing an event node's event
+* Using any `utility` that is present at a note
+
 #### yields
 The `yields` property is an array of game flags that are activated when interacting with a node. If the node has `unlock` requirements, those must be fulfilled to activate the flags.
 #### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
 * _length:_ The number of tiles in the runway
+* _openEnd:_ Any runway that is used to gain momentum has two ends (although in the case of actual `runway`s one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging ( 0 or 1).
 
 __Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. However, some rules are intended to be applied when doing that calculation:
 * In the origin room, the longest runway whose requirements are met can be used.
@@ -54,6 +61,7 @@ __Additional considerations:__ Runways on both sides of a door are meant to be c
 #### sparking/canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. Has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
+* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
 * _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
 
 __Additional considerations:__ Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible. As such, that is never explicitly defined in a `canLeaveCharged` object. The number of frames remaining in that charge will be:
