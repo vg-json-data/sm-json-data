@@ -68,6 +68,16 @@ __Additional considerations:__ Generating a shinespark charge using the door's r
 * 180 frames if there's a usable runway on the other side
 * Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
 
+### Obstacles
+A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. Destroying an obstacle is done while traversing a link between two nodes.
+
+The main uses of obstacle are:
+* To allow proper ammo requirements when passing somewhere multiple times but only needing to break the obstacle once
+* To represent things that can be opened only from one direction, but then can be freely passed once opened (e.g. crumble blocks, green and blue gates)
+
+__Additional considerations:__ 
+Obstacles are not systematically represented in the model. They are put in as needed, in rooms where there could be a reason to pass by an obstacle twice.
+
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
 * _id:_ The ID of the node to which the link leads

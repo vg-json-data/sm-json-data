@@ -68,6 +68,12 @@ A `cost` object represents the need for Samus to spend resources (ammo or health
 * _lavaFrames:_ Represents the need for Samus to spend time (measured in frames) in a pool of lava. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for lava is 2 damage every 4 frames, halved by Varia, and negated by Gravity Suit.
 * _spikeHits:_ Represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
 * _thornHits:_ Represents the need for Samus to intentionally take a number of hits from the game's weaker spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
+
+### obstacle object
+An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. An `obstacle` object has its own requirements, and fulfilling those destroys the obstacle and also fulfills the `obstacle` object. Alternately, if Samus has previously destroyed that obstacle and has not left the room since, the obstacle's requirements are ignored and the `obstacle` object is instantly fulfilled.
+
+For further explanation of what obstacles can represent, please refer to [the Region documentation](region/region-readme.md).
+
 ### resetRoomAtNode object
 A `resetRoomAtNode` object represents the need for Samus to be able to exit and re-enter the room at one of the specified nodes to perform a strat. This is to guarantee that the room has been reset. It should be expected that entering the room at one of the specified nodes and making a beeline to the node where the `resetRoomAtNode` is present will fulfill the object's requirement.
 
