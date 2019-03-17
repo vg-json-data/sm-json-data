@@ -1475,6 +1475,18 @@
           "locks": null
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Bomb Blocks of Shame",
+          "obstacleType": "inanimate"
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -1488,16 +1500,28 @@
                 ]}, 
                 {"or": [
                   {"and": [
-                    "canUsePowerBombs",
+                    { "cost": [{ "heatFrames": 680 }]},
                     { "or": [
                       "canWalljump",
-                      {"cost": [
-                        { "heatFrames": 200 }
-                      ]}
+                      {"cost": [{ "heatFrames": 200 }]}
                     ]},
-                    { "cost": [
-                        { "heatFrames": 800 }
-                    ]}
+                    {"obstacle":{
+                      "id": "A",
+                      "requires": [
+                        "canUsePowerBombs",
+                        { "cost": [
+                          { "heatFrames": 120 },
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]},
+                        {"obstacle":{
+                          "id": "B",
+                          "requires": null
+                        }}
+                      ]
+                    }}
                   ]},
                   { "and": [
                     "canXRayClimb",
@@ -1626,14 +1650,23 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
-                {"cost": [
-                  {"heatFrames": 600},
-                  {"ammo": [{
-                    "type": "PowerBomb",
-                    "count": 1
-                  }]}
-                ]}
+                {"cost": [{"heatFrames": 600}]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires":[
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]},
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": null
+                    }}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -1699,30 +1732,34 @@
                   "canHeatRun"
                 ]},
                 "Morph",
-                {"or": [
-                  {"and": [
-                    "ScrewAttack",
-                    {"cost": [
-                      {"heatFrames": 200}
+                {"cost": [{"heatFrames": 200}]},
+                {"obstacle":{
+                  "id": "B",
+                  "requires":[
+                    {"or": [
+                      "ScrewAttack",
+                      {"and": [
+                        "Bombs",
+                        {"cost": [
+                          {"heatFrames": 100}
+                        ]}
+                      ]},
+                      {"and": [
+                        "PowerBomb",
+                        {"cost": [
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]},
+                        {"obstacle":{
+                          "id": "A",
+                          "requires": null
+                        }}
+                      ]}
                     ]}
-                  ]},
-                  {"and": [
-                    "Bombs",
-                    {"cost": [
-                      {"heatFrames": 300}
-                    ]}
-                  ]},
-                  {"and": [
-                    "PowerBomb",
-                    {"cost": [
-                      {"heatFrames": 200},
-                      {"ammo": [{
-                        "type": "PowerBomb",
-                        "count": 1
-                      }]}
-                    ]}
-                  ]}
-                ]}
+                  ]
+                }}
               ],
               "unlock": null
             }
