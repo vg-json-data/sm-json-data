@@ -2408,6 +2408,19 @@
           "note": "Represents being below the bomb blocks with some bomb blocks broken, but not all"
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "All Bomb Blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Some Bomb Blocks",
+          "obstacleType": "inanimate",
+          "note": "Represents one set of bomb blocks from obstacle A, with the rest intact. So this obstacle is mutually exclusive with obstacle A."
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -2423,10 +2436,21 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
                 {"cost": [
                   {"heatFrames": 200}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -2437,13 +2461,21 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                {"or":[
-                  "canBombThings",
-                  "ScrewAttack"
-                ]},
                 {"cost": [
                   {"heatFrames": 200}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"or":[
+                      "ScrewAttack",
+                      {"and":[
+                        "canUseMorphBombs",
+                        {"heatFrames": 50}
+                      ]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             }
@@ -2530,7 +2562,6 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
                 {"or": [
                   "SpaceJump",
                   "HiJump",
@@ -2538,7 +2569,20 @@
                 ]},
                 {"cost": [
                   {"heatFrames": 250}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"heatFrames": 150},
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -2559,15 +2603,29 @@
             {
               "id": 5,
               "requires": [
-                {"or": [
-                  "canBombThings",
-                  {"canVisitNode": {
-                    "nodeid": 5,
-                    "scope": "room"
-                  }}
-                ]}
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"resetRoomAtNode": [ 1 ]},
+                    {"cost": [{"heatFrames": 100}]},
+                    {"or":[
+                      "canUseMorphBombs",
+                      {"and":[
+                        "canUsePowerBombs",
+                        {"cost":[
+                          {"heatFrames": 200},
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }}
               ],
-              "unlock": null
+              "unlock": null,
+              "note": "The resetRoomAtNode is there in case an ice clip allows you to get the item from 1, and it means you can't be expected to come in from the top, use a PB then apply the partial block break strat. FIXME If we rework resetAtNode, this one will need to indicate that only node 2 is forbidden"
             }
           ]
         },
