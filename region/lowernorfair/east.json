@@ -1475,6 +1475,18 @@
           "locks": null
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Bomb Blocks of Shame",
+          "obstacleType": "inanimate"
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -1483,50 +1495,61 @@
               "id": 4,
               "requires": [
                 {"or": [
-                   "heatProof",
-                   "canHeatRun"
+                  "heatProof",
+                  "canHeatRun"
                 ]}, 
                 {"or": [
-                    {"and": [
-                        "canUsePowerBombs",
-                        { "or": [
-                            { "and": [
-                                "canWalljump",
-                                {"cost": [
-                                    { "heatFrames": 200 }
-                                ]}
-                            ]},
-                            { "cost": [
-                                { "heatFrames": 800 }
-                            ]}
-                        ]}
+                  {"and": [
+                    { "cost": [{ "heatFrames": 680 }]},
+                    { "or": [
+                      "canWalljump",
+                      {"cost": [{ "heatFrames": 200 }]}
                     ]},
-                    { "and": [
-                        { "canXRayClimb": [ 1 ] },
+                    {"obstacle":{
+                      "id": "A",
+                      "requires": [
+                        "canUsePowerBombs",
                         { "cost": [
-                            { "heatFrames": 700 }
-                        ]}
+                          { "heatFrames": 120 },
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]},
+                        {"obstacle":{
+                          "id": "B",
+                          "requires": null
+                        }}
+                      ]
+                    }}
+                  ]},
+                  { "and": [
+                    "canXRayClimb",
+                    { "resetRoomAtNode": [ 1 ] },
+                    { "cost": [
+                      { "heatFrames": 700 }
                     ]}
+                  ]}
                 ]},
                 { "or": [
-                    { "cost": [
-                      {"enemyDamage": [
-                          {
-                            "enemy": 79,
-                            "type": "contact",
-                            "hits": 1
-                          }
-                      ]}
-                    ]},
-                    "ScrewAttack",
-                    "Super",
-                    { "and": [
-                        "Plasma",
-                        { "or": [
-                            "Ice",
-                            "Wave"
-                        ]}
+                  { "cost": [
+                    {"enemyDamage": [
+                      {
+                        "enemy": 79,
+                        "type": "contact",
+                        "hits": 1
+                      }
                     ]}
+                  ]},
+                  "ScrewAttack",
+                  "Super",
+                  { "and": [
+                    "Plasma",
+                    { "or": [
+                      "Ice",
+                      "Wave"
+                    ]}
+                  ]}
                 ]}
               ],
               "unlock": null
@@ -1627,14 +1650,23 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
-                {"cost": [
-                  {"heatFrames": 600},
-                  {"ammo": [{
-                    "type": "PowerBomb",
-                    "count": 1
-                  }]}
-                ]}
+                {"cost": [{"heatFrames": 600}]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires":[
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]},
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": null
+                    }}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -1700,30 +1732,34 @@
                   "canHeatRun"
                 ]},
                 "Morph",
-                {"or": [
-                  {"and": [
-                    "ScrewAttack",
-                    {"cost": [
-                      {"heatFrames": 200}
+                {"cost": [{"heatFrames": 200}]},
+                {"obstacle":{
+                  "id": "B",
+                  "requires":[
+                    {"or": [
+                      "ScrewAttack",
+                      {"and": [
+                        "Bombs",
+                        {"cost": [
+                          {"heatFrames": 100}
+                        ]}
+                      ]},
+                      {"and": [
+                        "PowerBomb",
+                        {"cost": [
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]},
+                        {"obstacle":{
+                          "id": "A",
+                          "requires": null
+                        }}
+                      ]}
                     ]}
-                  ]},
-                  {"and": [
-                    "Bombs",
-                    {"cost": [
-                      {"heatFrames": 300}
-                    ]}
-                  ]},
-                  {"and": [
-                    "PowerBomb",
-                    {"cost": [
-                      {"heatFrames": 200},
-                      {"ammo": [{
-                        "type": "PowerBomb",
-                        "count": 1
-                      }]}
-                    ]}
-                  ]}
-                ]}
+                  ]
+                }}
               ],
               "unlock": null
             }
@@ -1759,19 +1795,15 @@
                     "heatProof",
                     "canHeatRun"
                   ]},
+                  {"cost": [{"heatFrames": 400}]},
                   {"or": [
-                    {"and": [
-                      "canHitbox",
-                      {"cost": [
-                        {"heatFrames": 400}
-                      ]}
-                    ]},
-                    {"and": [
-                      "Super",
-                      {"cost": [
-                        {"heatFrames": 900}
-                      ]}
-                    ]}
+                    "canHitbox",
+                    {"obstacle": {
+                      "id": "A",
+                      "requires": [
+                        {"cost": [{"heatFrames": 50}]}
+                      ]
+                    }}
                   ]}
                 ],
                 "openEnd": 2
@@ -1780,7 +1812,14 @@
           },
           "locks": [
             {
-              "unlock": [ "Kill All Enemies" ]
+              "unlock": [
+                "Kill All Enemies",
+                {"obstacle": {
+                  "id": "A",
+                  "requires": null
+                }}
+              ],
+              "note": "FIXME Obstacle A is meant as an override to inferring what it takes to kill the enemies. This will need adjustements for issue #68."
             }
           ]
         },
@@ -1806,19 +1845,15 @@
                     "heatProof",
                     "canHeatRun"
                   ]},
+                  {"cost": [{"heatFrames": 400}]},
                   {"or": [
-                    {"and": [
-                      "canHitbox",
-                      {"cost": [
-                        {"heatFrames": 400}
-                      ]}
-                    ]},
-                    {"and": [
-                      "Super",
-                      {"cost": [
-                        {"heatFrames": 900}
-                      ]}
-                    ]}
+                    "canHitbox",
+                    {"obstacle": {
+                      "id": "A",
+                      "requires": [
+                        {"cost": [{"heatFrames": 50}]}
+                      ]
+                    }}
                   ]}
                 ],
                 "openEnd": 2
@@ -1826,6 +1861,59 @@
             ]
           },
           "locks": null
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Metal Pirates",
+          "obstacleType": "enemies",
+          "requires": [
+            {"or": [
+              "heatProof",
+              "canHeatRun"
+            ]},
+            {"or": [
+              {"and": [
+                "Charge",
+                "Plasma",
+                {"or": [
+                  {"cost": [
+                    {"heatFrames": 950}
+                  ]},
+                  {"and": [
+                    "Ice",
+                    {"or": [
+                      {"cost": [
+                        {"heatFrames": 700}
+                      ]},
+                      {"and": [
+                        "Wave",
+                        {"cost": [
+                          {"heatFrames": 450}
+                        ]}
+                      ]}
+                    ]}
+                  ]}
+                ]}
+              ]},
+              {"and": [
+                "Charge",
+                "Spazer",
+                "Ice",
+                "Wave",
+                {"cost": [
+                  {"heatFrames": 1750}
+                ]}
+              ]},
+              {"and": [
+                "Super",
+                {"cost": [
+                  {"heatFrames": 450}
+                ]}
+              ]}
+            ]}
+          ]
         }
       ],
       "links": [
@@ -1861,52 +1949,7 @@
                   {"heatFrames": 250}
                 ]}
               ],
-              "unlock": [
-                {"or": [
-                  "heatProof",
-                  "canHeatRun"
-                ]},
-                {"or": [
-                  {"and": [
-                    "Charge",
-                    "Plasma",
-                    {"or": [
-                      {"cost": [
-                        {"heatFrames": 950}
-                      ]},
-                      {"and": [
-                        "Ice",
-                        {"or": [
-                          {"cost": [
-                            {"heatFrames": 700}
-                          ]},
-                          {"and": [
-                            "Wave",
-                            {"cost": [
-                              {"heatFrames": 450}
-                            ]}
-                          ]}
-                        ]}
-                      ]}
-                    ]}
-                  ]},
-                  {"and": [
-                    "Charge",
-                    "Spazer",
-                    "Ice",
-                    "Wave",
-                    {"cost": [
-                      {"heatFrames": 1750}
-                    ]}
-                  ]},
-                  {"and": [
-                    "Super",
-                    {"cost": [
-                      {"heatFrames": 450}
-                    ]}
-                  ]}
-                ]}
-              ]
+              "unlock": null
             }
           ]
         }
@@ -2361,6 +2404,19 @@
           "note": "Represents being below the bomb blocks with some bomb blocks broken, but not all"
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "All Bomb Blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Some Bomb Blocks",
+          "obstacleType": "inanimate",
+          "note": "Represents one set of bomb blocks from obstacle A, with the rest intact. So this obstacle is mutually exclusive with obstacle A."
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -2376,10 +2432,21 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
                 {"cost": [
                   {"heatFrames": 200}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -2390,13 +2457,21 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                {"or":[
-                  "canBombThings",
-                  "ScrewAttack"
-                ]},
                 {"cost": [
                   {"heatFrames": 200}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"or":[
+                      "ScrewAttack",
+                      {"and":[
+                        "canUseMorphBombs",
+                        {"heatFrames": 50}
+                      ]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             }
@@ -2483,7 +2558,6 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                "canUsePowerBombs",
                 {"or": [
                   "SpaceJump",
                   "HiJump",
@@ -2491,7 +2565,20 @@
                 ]},
                 {"cost": [
                   {"heatFrames": 250}
-                ]}
+                ]},
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    "canUsePowerBombs",
+                    {"cost": [
+                      {"heatFrames": 150},
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             },
@@ -2512,15 +2599,29 @@
             {
               "id": 5,
               "requires": [
-                {"or": [
-                  "canBombThings",
-                  {"canVisitNode": {
-                    "nodeid": 5,
-                    "scope": "room"
-                  }}
-                ]}
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"resetRoomAtNode": [ 1 ]},
+                    {"cost": [{"heatFrames": 100}]},
+                    {"or":[
+                      "canUseMorphBombs",
+                      {"and":[
+                        "canUsePowerBombs",
+                        {"cost":[
+                          {"heatFrames": 200},
+                          {"ammo": [{
+                            "type": "PowerBomb",
+                            "count": 1
+                          }]}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }}
               ],
-              "unlock": null
+              "unlock": null,
+              "note": "The resetRoomAtNode is there in case an ice clip allows you to get the item from 1, and it means you can't be expected to come in from the top, use a PB then apply the partial block break strat. FIXME If we rework resetAtNode, this one will need to indicate that only node 2 is forbidden"
             }
           ]
         },
@@ -3085,7 +3186,7 @@
     },
     {
       "id": 148,
-      "name": "Three Muskateers' Room",
+      "name": "Three Musketeers' Room",
       "area": "Lower Norfair",
       "subarea": "East",
       "nodes": [
@@ -3155,6 +3256,13 @@
           "locks": null
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Three Musketeers",
+          "obstacleType": "enemies"
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -3166,42 +3274,49 @@
                   {"and": [
                     "heatProof",
                     {"or": [
-                      "canKillRedKiHunters",
                       {"cost": [
-                        {"enemyDamage": [{
-                          "enemy": 89,
-                          "type": "contact",
-                          "hits": 2
-                        }]}
-                      ]}
-                    ]}
-                  ]},
-                  {"and": [
-                    "canHeatRun",
-                    {"or": [
-                      {"cost": [
-                        {"heatFrames": 450},
                         {"enemyDamage": [{
                           "enemy": 89,
                           "type": "contact",
                           "hits": 2
                         }]}
                       ]},
-                      {"and": [
-                        {"cost": [
-                          {"heatFrames": 500}
-                        ]},
-                        {"or": [
-                          "ScrewAttack",
-                          "canPlasmaHitbox",
-                          {"and": [
-                            "Charge",
-                            "Plasma",
-                            "Ice",
-                            "Wave"
+                      {"obstacle":{
+                        "id": "A",
+                        "requires": [ "canKillRedKiHunters" ]
+                      }}
+                    ]}
+                  ]},
+                  {"and": [
+                    "canHeatRun",
+                    {"cost": [{"heatFrames": 400}]},
+                    {"or": [
+                      {"cost": [
+                        {"heatFrames": 50},
+                        {"enemyDamage": [{
+                          "enemy": 89,
+                          "type": "contact",
+                          "hits": 2
+                        }]}
+                      ]},
+                      {"obstacle":{
+                        "id": "A",
+                        "requires": [
+                          {"cost": [
+                            {"heatFrames": 100}
+                          ]},
+                          {"or": [
+                            "ScrewAttack",
+                            "canPlasmaHitbox",
+                            {"and": [
+                              "Charge",
+                              "Plasma",
+                              "Ice",
+                              "Wave"
+                            ]}
                           ]}
-                        ]}
-                      ]}
+                        ]
+                      }}
                     ]}
                   ]}
                 ]}
@@ -3259,72 +3374,83 @@
                   {"and": [
                     "heatProof",
                     {"or": [
-                      "canKillRedKiHunters",
                       {"cost": [
                         {"enemyDamage": [{
                           "enemy": 89,
                           "type": "contact",
                           "hits": 3
                         }]}
-                      ]}
+                      ]},
+                      {"obstacle":{
+                        "id": "A",
+                        "requires": [ "canKillRedKiHunters" ]
+                      }}
                     ]}
                   ]},
                   {"and": [
                     "canHeatRun",
+                    {"cost": [{"heatFrames": 400}]},
                     {"or": [
                       {"cost": [
-                        {"heatFrames": 550},
+                        {"heatFrames": 150},
                         {"enemyDamage": [{
                           "enemy": 89,
                           "type": "contact",
                           "hits": 3
                         }]}
                       ]},
-                      {"and": [
-                        "Ice",
-                        "Wave",
-                        "Spazer",
-                        {"cost": [
-                          {"heatFrames": 1690}
-                        ]}
-                      ]},
-                      {"and": [
-                        {"or": [
-                          "ScrewAttack",
-                          "canPlasmaHitbox"
-                        ]},
-                        {"cost": [
-                          {"heatFrames": 500}
-                        ]}
-                      ]},
-                      {"and": [
-                        "Super",
-                        {"cost": [
-                          {"heatFrames": 1400}
-                        ]}
-                      ]},
-                      {"and": [
-                        "Plasma",
-                        {"or": [
-                          {"cost": [
-                            {"heatFrames": 1600}
-                          ]},
-                          {"and": [
-                            "Wave",
-                            {"or": [
+                      {"obstacle":{
+                        "id": "A",
+                        "requires": [
+                          {"or":[
+                            {"and": [
+                              "Ice",
+                              "Wave",
+                              "Spazer",
                               {"cost": [
-                                {"heatFrames": 1030}
+                                {"heatFrames": 1290}
+                              ]}
+                            ]},
+                            {"and": [
+                              {"or": [
+                                "ScrewAttack",
+                                "canPlasmaHitbox"
                               ]},
-                              {"and": [
-                                "Ice",
+                              {"cost": [
+                                {"heatFrames": 100}
+                              ]}
+                            ]},
+                            {"and": [
+                              "Super",
+                              {"cost": [
+                                {"heatFrames": 1000}
+                              ]}
+                            ]},
+                            {"and": [
+                              "Plasma",
+                              {"or": [
                                 {"cost": [
-                                  {"heatFrames": 850}
+                                  {"heatFrames": 1200}
+                                ]},
+                                {"and": [
+                                  "Wave",
+                                  {"or": [
+                                    {"cost": [
+                                      {"heatFrames": 630}
+                                    ]},
+                                    {"and": [
+                                      "Ice",
+                                      {"cost": [
+                                        {"heatFrames": 450}
+                                      ]}
+                                    ]}
+                                  ]}
                                 ]}
                               ]}
                             ]}
                           ]}
-                        ]}
-                      ]}
+                        ]
+                      }}
                     ]}
                   ]}
                 ]}
