@@ -75,8 +75,12 @@ The main uses of obstacle are:
 * To allow proper ammo requirements when passing somewhere multiple times but only needing to break the obstacle once
 * To represent things that can be opened only from one direction, but then can be freely passed once opened (e.g. crumble blocks, green and blue gates)
 
+The requirements to destroy an obstacle are found in two places. If a situation encounters requirements in both places, they are considered cumulative:
+* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be destroyed. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
+* Most requirements will be placed on an `obstacle` [logical requirements](../logicalRequirements.md).
+
 __Additional considerations:__ 
-Obstacles are not systematically represented in the model. They are put in as needed, in rooms where there could be a reason to pass by an obstacle twice.
+Obstacles are not systematically represented in the model. They are put in as needed, in rooms where there could be a reason to pass by an obstacle twice without exiting.
 
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:

@@ -70,7 +70,11 @@ A `cost` object represents the need for Samus to spend resources (ammo or health
 * _thornHits:_ Represents the need for Samus to intentionally take a number of hits from the game's weaker spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
 
 ### obstacle object
-An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. An `obstacle` object has its own requirements, and fulfilling those destroys the obstacle and also fulfills the `obstacle` object. Alternately, if Samus has previously destroyed that obstacle and has not left the room since, the obstacle's requirements are ignored and the `obstacle` object is instantly fulfilled.
+An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. Fulfilling an `obstacle` requires one of the following:
+* Destroying the obstacle. This requires fulfilling the following:
+  * The requirements in the obstacle definition (see obstacles in [the Region documentation](region/region-readme.md))
+  * The requirements placed directly on the `obstacle` object
+* Alternately, if Samus has previously destroyed that obstacle and has not left the room since, all requirements are ignored and the `obstacle` object is instantly fulfilled
 
 For further explanation of what obstacles can represent, please refer to [the Region documentation](region/region-readme.md).
 
