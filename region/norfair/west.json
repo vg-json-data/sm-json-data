@@ -554,7 +554,7 @@
               {
                 "usedTiles": 31,
                 "framesRemaining": 100,
-                "requires": [ "canPassBombPassages" ],
+                "requires": [ "canPassBombPassages", {"resetRoomAtNode": [4]} ],
                 "openEnd": 2
               }
             ]
@@ -607,6 +607,23 @@
           "locks": null
         }
       ],
+      "obstacles":[
+        {
+          "id": "A",
+          "name": "Ceiling bomb blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "Morph path bomb blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "C",
+          "name": "PowerBomb blocks",
+          "obstacleType": "inanimate"
+        }
+      ],
       "enemies": [
         {
           "name": "Sova",
@@ -650,7 +667,22 @@
             },
             {
               "id": 3,
-              "requires": [ "canUsePowerBombs" ],
+              "requires": [
+                {"obstacle":{
+                  "id": "C",
+                  "requires": [ 
+                    "canUsePowerBombs",
+                    {"obstacle":{
+                      "id": "A",
+                      "requires": null
+                    }},
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": null
+                    }}
+                   ]
+                }}
+              ],
               "unlock": null
             },
             {
@@ -667,7 +699,28 @@
             },
             {
               "id": 5,
-              "requires": [ "canDestroyBombWalls" ],
+              "requires": [ 
+                  {"obstacle":{
+                    "id": "A",
+                    "requires": [ 
+                      {"or": [
+                        "canUseMorphBombs",
+                        "ScrewAttack",
+                        {"and": [
+                          "canUsePowerBombs",
+                          {"obstacle":{
+                            "id": "B",
+                            "requires": null
+                          }},
+                          {"obstacle":{
+                            "id": "C",
+                            "requires": null
+                          }}
+                        ]}
+                      ]}
+                    ]
+                  }}
+                ],
               "unlock": null
             }
           ]
@@ -677,7 +730,22 @@
           "to": [
             {
               "id": 2,
-              "requires": [ "canUsePowerBombs" ],
+              "requires": [
+                {"obstacle":{
+                  "id": "C",
+                  "requires": [ 
+                    "canUsePowerBombs",
+                    {"obstacle":{
+                      "id": "A",
+                      "requires": null
+                    }},
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": null
+                    }}
+                   ]
+                }}
+              ],
               "unlock": null
             }
           ]
@@ -704,12 +772,53 @@
           "to": [
             {
               "id": 2,
-              "requires": [ "canDestroyBombWalls" ],
+              "requires": [ 
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [ 
+                    {"or": [
+                      "canUseMorphBombs",
+                      "ScrewAttack",
+                      {"and": [
+                        "canUsePowerBombs",
+                        {"obstacle":{
+                          "id": "B",
+                          "requires": null
+                        }},
+                        {"obstacle":{
+                          "id": "C",
+                          "requires": null
+                        }}
+                      ]}
+                    ]}
+                  ]
+                }}
+              ],
               "unlock": null
             },
             {
               "id": 4,
-              "requires": [ "canPassBombPassages" ],
+              "requires": [ 
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [ 
+                    {"or": [
+                      "canUseMorphBombs",
+                      {"and": [
+                        "canUsePowerBombs",
+                        {"obstacle":{
+                          "id": "A",
+                          "requires": null
+                        }},
+                        {"obstacle":{
+                          "id": "C",
+                          "requires": null
+                        }}
+                      ]}
+                    ]}
+                  ]
+                }}
+              ],
               "unlock": null
             }
           ]
@@ -897,16 +1006,18 @@
                     {"and": [
                       "Super",
                       {"cost": [
-                        {"heatFrames": 150}
+                        {"heatFrames": 150},
+                        {"ammo": [
+                          {
+                            "type": "Super",
+                            "count": 1
+                          }
+                        ]}
                       ]},
                     {"and": [
                       "canUserPowerBombs",
                       {"cost": [
-                        {"heatFrames": 300},
-                        {"ammo": [{
-                          "type": "PowerBomb",
-                          "count": 1
-                        }]}
+                        {"heatFrames": 300}
                       ]}
                     ]}
                   ]}
@@ -1049,12 +1160,15 @@
                       "hits": 1
                     }]}
                   ]},
-                  {"cost": [
-                    {"heatFrames": 300},
-                    {"ammo": [{
-                      "type": "PowerBomb",
-                      "count": 1
-                    }]}
+                  {"and": [
+                    "PowerBomb",
+                    {"cost": [
+                      {"heatFrames": 300},
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
                   ]}
                 ]}
               ],
@@ -1122,12 +1236,15 @@
                       "hits": 1
                     }]}
                   ]},
-                  {"cost": [
-                    {"heatFrames": 200},
-                    {"ammo": [{
-                      "type": "PowerBomb",
-                      "count": 1
-                    }]}
+                  {"and": [
+                    "PowerBomb",
+                    {"cost": [
+                      {"heatFrames": 200},
+                      {"ammo": [{
+                        "type": "PowerBomb",
+                        "count": 1
+                      }]}
+                    ]}
                   ]}
                 ]}
               ],
