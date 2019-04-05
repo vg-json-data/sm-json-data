@@ -46,14 +46,6 @@ __Additional considerations:__
 * A `canShineCharge` object implicitly requires the Speed Booster.
 * A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
 
-### canVisitNode object
-A `canVisitNode` object represents the need for Samus to be able to go to another node, in order to do something unspecified that is required to fulfill requirements. It has the following special properties:
-* _nodeid:_ The ID of the node, inside the same room
-* _persistence:_ Indicates what can cause Samus' visit to the node to no longer fulfill the `canVisitNode` requirements. Can have the following values:
-  * _global:_ Access by Samus at any time will fulfill the requirements
-  * _room:_ Samus must be able to access the node during the current visit to the room. This usually involves clearing obstacles that will respawn on re-entry.
-
-__Additional considerations:__ If `canVisitNode` for node `n` is part of the conditions on a link that goes to node `n`, that is not a tautology. It is fulfilled only if there is another way to visit the node that respects the `persistence`.
 ### cost object
 A `cost` object represents the need for Samus to spend resources (ammo or health). It is structured as an array of objects. Each object in a `cost` array has one property, with a name and a value. Possible property names are:
 * _acidFrames:_ Represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
