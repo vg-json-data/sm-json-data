@@ -83,7 +83,7 @@ __Additional considerations:__
 Obstacles are not systematically represented in the model. They are put in as needed, in rooms where there could be a reason to pass by an obstacle twice without exiting.
 
 ### Enemies
-A room can have an array of enemies. This is the list of enemies that may be present in the room. They may be relevant for farming purposes. Each `enemy` object can have the following properties:
+A room can have an array of enemies. This is the list of enemies that may be present in the room. They may be relevant for farming purposes, or to get an assessment of the danger posed by the enemies in the room. Each `enemy` object can have the following properties:
 * _name:_ The name of the enemy. This must be the name of an enemy in the [enemies folder](../enemies/enemies-readme.md).
 * _quantity:_ How many enemies correspond to the description made by this `enemies` object.
 * _homeNodes:_ An array of nodes through which the enemy can naturally roam. A player can expect to encounter that enemy in any of those nodes. Mutually exclusive with `betweenNodes`.
