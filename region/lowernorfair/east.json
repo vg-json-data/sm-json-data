@@ -2486,7 +2486,6 @@
           "name": "Left Door",
           "nodeType": "door",
           "nodeSubType": "grey",
-          "note": "FIXME Only actually requires killing 5 enemiesto unlock, not all",
           "sparking": {
             "runways": [
               {
@@ -2605,6 +2604,12 @@
           "name": "Runway enemies",
           "obstacleType": "enemies",
           "note": "The 5 enemies closest to the left door."
+        },
+        {
+          "id": "D",
+          "name": "Box enemies",
+          "obstacleType": "enemies",
+          "note": "The 7 enemies in the multiviola boxes and below it."
         }
       ],
       "enemies": [
@@ -2632,7 +2637,40 @@
       "links": [
         {
           "from": 1,
-          "to": []
+          "to": [
+            {
+              "id": 4,
+              "requires": [
+                "heatProof",
+                "CanTrickyUseFrozenEnemies",
+                "canCeilingClip",
+                {"obstacle":{
+                  "id": "C",
+                  "requires": [
+                    {"or": [
+                      "Plasma",
+                      "Missile",
+                      "Super",
+                      "ScrewAttack"
+                    ]}
+                  ]
+                }},
+                {"obstacle":{
+                  "id": "D",
+                  "requires": [
+                    {"or": [
+                      "Plasma",
+                      "Missile",
+                      "Super",
+                      "ScrewAttack"
+                    ]}
+                  ]
+                }}
+              ],
+              "unlock": null,
+              "note": "FIXME Placeholder clip"
+            }
+          ]
         },
         {
           "from": 2,
@@ -2712,15 +2750,68 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                {"obstacle":{
-                  "id": "C",
-                  "requires": [
-                    null
-                  ]
-                }},
+                {"cost": [
+                  {"heatFrames": 650}
+                ]},
                 {"or": [
+                  {"and": [
+                    {"obstacle":{
+                      "id": "C",
+                      "requires": [
+                        null
+                      ]
+                    }},
+                    {"obstacle":{
+                      "id": "D",
+                      "requires": [
+                        {"or": [
+                          {"and": [
+                            "ScrewAttack",
+                            "Morph",
+                            "PowerBomb",
+                            {"cost": [
+                              {"heatFrames": 200},
+                              {"ammo": [{
+                                "type": "PowerBomb",
+                                "count": 2
+                              }]}
+                            ]}
+                          ]},
+                          {"and": [
+                            "Morph",
+                            "PowerBomb",
+                            {"or": [
+                              "Plasma",
+                              "Missile",
+                              "Super",
+                              "SpeedBooster"
+                            ]},
+                            {"or": [
+                              {"cost": [
+                                {"heatFrames": 750},
+                                {"ammo": [{
+                                  "type": "PowerBomb",
+                                  "count": 4
+                                }]}
+                              ]},
+                              {"and": [
+                                "SpeedBooster",
+                                {"cost": [
+                                  {"heatFrames": 250},
+                                  {"ammo": [{
+                                    "type": "PowerBomb",
+                                    "count": 4
+                                  }]}
+                                ]}
+                              ]}
+                            ]}
+                          ]}
+                        ]}
+                      ]
+                    }}
+                  ]},
                   {"cost": [
-                    {"heatFrames": 700},
+                    {"heatFrames": 100},
                     {"enemyDamage": [{
                       "enemy": "Dessgeega",
                       "type": "contact",
@@ -2733,49 +2824,24 @@
                     }]}
                   ]},
                   {"and": [
-                    "Morph",
-                    "PowerBomb",
-                    {"or": [
-                      "Plasma",
-                      "Missile",
-                      "Super",
-                      "SpeedBooster"
-                    ]},
-                    {"or": [
-                      {"cost": [
-                        {"heatFrames": 1400},
-                        {"ammo": [{
-                          "type": "PowerBomb",
-                          "count": 4
-                        }]}
-                      ]},
-                      {"and": [
-                        "SpeedBooster",
-                        {"cost": [
-                          {"heatFrames": 900},
-                          {"ammo": [{
-                            "type": "PowerBomb",
-                            "count": 4
-                          }]}
-                        ]}
-                      ]}
-                    ]}
-                  ]},
-                  {"and": [
-                    "ScrewAttack",
-                    "Morph",
-                    "PowerBomb",
+                    "SpeedBooster",
                     {"cost": [
-                      {"heatFrames": 850},
-                      {"ammo": [{
-                        "type": "PowerBomb",
-                        "count": 2
+                      {"enemyDamage": [{
+                        "enemy": "Dessgeega",
+                        "type": "contact",
+                        "hits": 1
+                      },
+                      {
+                        "enemy": "Multiviola",
+                        "type": "contact",
+                        "hits": 3
                       }]}
-                    ]}
+                    ]}                                    
                   ]}
                 ]}
               ],
-              "unlock": null
+              "unlock": null,
+              "note": "Obstacle C is left null to not duplicate reqs for no reason."
             },
             {
               "id": 2,
