@@ -1247,7 +1247,12 @@
             "runways": [
               {
                 "length": 5,
-                "requires": [ {"resetRoomAtNode": [1, 2, 3, 6, 7]} ],
+                "requires": [
+                  {"resetRoom":{
+                    "nodes": [1, 2, 3, 4, 5, 6, 7],
+                    "obstaclesToAvoid": "A"
+                  }}
+                ],
                 "openEnd": 0
               }
             ]
@@ -1334,9 +1339,15 @@
       "obstacles": [
         {
           "id": "A",
-          "name": "PB Blocks/Morph Maze",
+          "name": "Power Bomb Blocks",
           "obstacleType": "inanimate",
-          "note": "A combination of two alternative paths: the PB blocks and the Morph Maze (containing bomb blocks), both above the bottom doors"
+          "note": "The Power Bomb blocks above the bottom doors"
+        },
+        {
+          "id": "B",
+          "name": "Morph Maze",
+          "obstacleType": "inanimate",
+          "note": "The bomb blocks in the Morph maze above the bottom doors"
         }
       ],
       "enemies": [
@@ -1432,7 +1443,10 @@
               "requires": [
                 {"and": [
                    "canXRayClimb",
-                   {"resetRoomAtNode": [4]}
+                   {"resetRoom": {
+                     "nodes": [4],
+                     "mustStayPut": true
+                   }}
                 ]}
               ],
               "unlock": null
@@ -1448,8 +1462,32 @@
                 {"or": [
                   {"obstacle":{
                     "id": "A",
-                    "requires": [ "canPassBombPassages" ]
+                    "requires": [
+                      "canUsePowerBombs",
+                      {"obstacle":{
+                        "id": "B",
+                        "requires": null
+                      }}
+                    ]
                   }},
+                  {"and":[
+                    "Morph",
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": [
+                        {"or":[
+                          "Bombs",
+                          {"and":[
+                            "canUsePowerBombs",
+                            {"obstacle":{
+                              "id": "A",
+                              "requires": null
+                            }}
+                          ]}
+                        ]}
+                      ]
+                    }}
+                  ]},
                   "canWallCrawlerClip"
                 ]}
               ],
@@ -1536,9 +1574,19 @@
                   "canFly",
                   "canUseFrozenEnemies",
                   {"and": [
-                     "canXRayClimb",
-                     {"resetRoomAtNode": [2, 3]}
-                   ]}
+                    "canXRayClimb",
+                    {"resetRoom": {
+                      "nodes": [2],
+                      "mustStayPut": true
+                    }}
+                  ]},
+                  {"and": [
+                    "canXRayClimb",
+                    {"resetRoom": {
+                      "nodes": [3],
+                      "mustStayPut": true
+                    }}
+                  ]}
                 ]}
               ],
               "unlock": null
@@ -1556,10 +1604,36 @@
             {
               "id": 5,
               "requires": [
-                {"obstacle":{
-                  "id": "A",
-                  "requires": [ "canPassBombPassages" ]
-                }}
+                {"or": [
+                  {"obstacle":{
+                    "id": "A",
+                    "requires": [
+                      "canUsePowerBombs",
+                      {"obstacle":{
+                        "id": "B",
+                        "requires": null
+                      }}
+                    ]
+                  }},
+                  {"and":[
+                    "Morph",
+                    {"obstacle":{
+                      "id": "B",
+                      "requires": [
+                        {"or":[
+                          "Bombs",
+                          {"and":[
+                            "canUsePowerBombs",
+                            {"obstacle":{
+                              "id": "A",
+                              "requires": null
+                            }}
+                          ]}
+                        ]}
+                      ]
+                    }}
+                  ]}
+                ]}
               ],
               "unlock": null
             },
@@ -2057,7 +2131,7 @@
                     "heatProof",
                     "canHeatRun"
                   ]},
-                  {"resetRoomAtNode": [2]},
+                  {"resetRoom":{"nodes": [2] }},
                   {"cost": [
                     {"heatFrames": 300}
                   ]}
@@ -2095,7 +2169,7 @@
                     "heatProof",
                     "canHeatRun"
                   ]},
-                  {"resetRoomAtNode": [1]},
+                  {"resetRoom":{"nodes": [1] }},
                   {"cost": [
                     {"heatFrames": 300}
                   ]}
@@ -2143,7 +2217,7 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                {"resetRoomAtNode": [1]},
+                {"resetRoom":{"nodes": [1] }},
                 {"or":[
                   {"and":[
                     "SpeedBooster",
@@ -2170,7 +2244,7 @@
                   "heatProof",
                   "canHeatRun"
                 ]},
-                {"resetRoomAtNode": [2]},
+                {"resetRoom":{"nodes": [2] }},
                 {"or":[
                   {"and":[
                     "SpeedBooster",
