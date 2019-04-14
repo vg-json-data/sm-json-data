@@ -6,10 +6,8 @@ This folder is split up into sub-folders, one for each main region in Super Metr
 
 Region sub-folders also contain a folder called `roomDiagrams` which contains an image for most individual rooms with more than a few nodes, to show how the nodes are placed and connected within that room.
 
-The root section of this folder also contains `cleanup.json`, which has miscellaneous rooms which were missing from the wiki. These may be moved into the proper region at some point.
-
 ## Contents of a Region File
-Region files follow the schema defined at `[/schema/m3-region.schema.json](../schema/m3-region.schema.json)`.
+Region files follow the schema defined at [/schema/m3-region.schema.json](../schema/m3-region.schema.json).
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 

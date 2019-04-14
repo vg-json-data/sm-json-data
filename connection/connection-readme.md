@@ -7,7 +7,7 @@ This folder is split-up into sub-folders, one for each main region in Super Metr
 The root section of this folder also contains `inter.json`, which contains connections that transition between regions.
 
 ## Contents of a Connection File
-Connection files follow the schema defined at `[/schema/m3-connection.schema.json](../schema/m3-connection.schema.json)`.
+Connection files follow the schema defined at [/schema/m3-connection.schema.json](../schema/m3-connection.schema.json).
 
 Each Connection file is an array of connections comprised of two nodes (each found in a Super Metroid room). Those nodes are expected to be of type `door`, `entrance` or `exit`.
 

@@ -3,10 +3,10 @@ Logical requirements are an important part of this project. They are used to rep
 
 ## Structure
 A logical requirement is an array of logical elements, which are implicitly linked by a logical AND. Those logical elements can be a number of things:
-* _The name of a helper._ Helpers are defined in `[helpers.json](helpers.json)` and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable.
-* _The name of a tech._ Techs are defined in `[tech.json](tech.json)`.  Those represent a technique that players can perform, which may also imply logical requirements of their own.
-* _The name of an item._ Those are defined in `[items.json](items.json)`.
-* _The name of a game flag._ Those are defined in `[items.json](items.json)`, and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
+* _The name of a helper._ Helpers are defined in [helpers.json](helpers.json) and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable.
+* _The name of a tech._ Techs are defined in [tech.json](tech.json).  Those represent a technique that players can perform, which may also imply logical requirements of their own.
+* _The name of an item._ Those are defined in [items.json](items.json).
+* _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
 * _Structural objects._ Those exist to make it possible to group together logical elements. Those include:
   * _or:_ An `or` object contains an array of logical elements, but is fulfilled as soon as at least one of those is met.
   * _and:_ An `and` object contains an array of logical elements, and is fulfilled only if all of those are met.

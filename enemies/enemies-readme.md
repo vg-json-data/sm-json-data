@@ -2,10 +2,10 @@
 This section contains data about the enemies in Super Metroid.
 
 ## Folder Structure
-This folder simply contains the `main.js` file, which contains data about all normal enemies, and `bosses/main.json`, which contains data about bosses.
+This folder simply contains the [main.json](main.json) file, which contains data about all normal enemies, and [bosses/main.json](bosses/main.json), which contains data about bosses.
 
 ## Contents of an Enemies File
-Enemies files follow the schema defined at `[/schema/m3-enemies.schema.json](../schema/m3-enemies.schema.json)`.
+Enemies files follow the schema defined at [/schema/m3-enemies.schema.json](../schema/m3-enemies.schema.json).
 
 Each enemy file is an array of Enemies, and includes data about its weaknesses, immunities, damage and health, drop table, and more.
 
