@@ -25,10 +25,7 @@ This is the width and height of the enemy in pixels.
 Indicates whether this enemy respawns, making it farmable without having to reset the room.
 
 ### grapplable
-Defines how the enemy reacts to the grapple beam. Can have the following values:
-* _yes:_ Grapple latches on to the enemy and allows Samus to swing from it as if it were a grapple block
-* _no:_ Grapple has no effect
-* _kill:_ Grapple kills the enemy outright
+Indicates whether Samus can use this enemy like a grapple block.
 
 ### mult
 This object contains numerical properties whose name is either a weapon or a weapon category, and whose value is the damage multiplier that should be applied to that weapon's base damage when calculating the damage it does to this enemy.
