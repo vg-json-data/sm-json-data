@@ -16,7 +16,7 @@ This property is intended to just be informative. It indicates what regions of t
 This is an object containing attacks that the enemy is able to perform. Each property in the `attacks` object is named for the attack, and is an array with the damage caused to Samus by the attack. The array contains three values which refer, in order, to damage while wearing Power Suit, Varia Suit, and Gravity Suit.
 
 ### drops
-This is the enemy's drop table. [See the wiki for an exmplanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
+This is the enemy's drop table. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
 
 ### dims
 This is the width and height of the enemy in pixels.
@@ -31,7 +31,9 @@ Defines how the enemy reacts to the grapple beam. Can have the following values:
 * _kill:_ Grapple kills the enemy outright
 
 ### mult
-This object contains numerical properties whose name is a weapon, and whose value is the damage multiplier that should be applied to that weapon's base damage when calculating the damage it does to this enemy.
+This object contains numerical properties whose name is either a weapon or a weapon category, and whose value is the damage multiplier that should be applied to that weapon's base damage when calculating the damage it does to this enemy.
+Look up [weapons files](../weapons/weapons-readme.json) for more information about weapons and weapon categories.
 
 ### invul
-This array contains any weapon this enemy is invulnerable to.
+This array contains weapons and weapon categories this enemy is invulnerable to.
+Look up [weapons files](../weapons/weapons-readme.json) for more information about weapons and weapon categories.
