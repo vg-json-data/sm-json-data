@@ -29,8 +29,8 @@ Indicates whether Samus can use this enemy like a grapple block.
 
 ### mult
 This object contains numerical properties whose name is either a weapon or a weapon category, and whose value is the damage multiplier that should be applied to that weapon's base damage when calculating the damage it does to this enemy.
-Look up [weapons files](../weapons/weapons-readme.json) for more information about weapons and weapon categories.
+Look up [weapons files](../weapons/weapons-readme.md) for more information about weapons and weapon categories.
 
 ### invul
 This array contains weapons and weapon categories this enemy is invulnerable to.
-Look up [weapons files](../weapons/weapons-readme.json) for more information about weapons and weapon categories.
+Look up [weapons files](../weapons/weapons-readme.md) for more information about weapons and weapon categories.

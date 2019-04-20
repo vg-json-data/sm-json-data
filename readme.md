@@ -12,7 +12,7 @@ This project's representation of Super Metroid is split-up between different fol
 ### Enemies
 [A folder that details game's enemies](enemies/enemies-readme.md)
 ### Weapons
-[A folder that details possible types of attacks](weapon/enemies-readme.md)
+[A folder that details possible types of attacks](weapons/weapons-readme.md)
 ## Important concepts
 This section lists key concepts and links to deeper explanations of them.
 ### Logical Requirements
