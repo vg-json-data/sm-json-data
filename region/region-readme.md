@@ -93,6 +93,7 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 * _spawn:_ The `spawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to spawn in the room. If this is missing, the enemy can spawn in the room from game start.
 * _stopSpawn:_ The `stopSpawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to no longer spawn in the room. If this is missing, the enemy will never stop spawning in the room after its spawn conditions have been met.
 * _note:_ Just a comment field.
+* _dropRequires:_ This property defines additional [logical requirements](../logicalRequirements.md) that must be fulfilled to actually reach the enemies' drops without taking damage, after the enemies have been reached and killed.
 
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
