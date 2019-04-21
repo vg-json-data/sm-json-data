@@ -898,7 +898,13 @@
           },
           "locks": [
             {
-              "unlock": [ "Kill All Enemies" ]
+              "unlock": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"]
+                }}
+              ],
+              "note": "To avoid redundant requirements, obstacle must be destroying by going to 3 (possibly via 2) and back."
             }
           ]
         },
@@ -918,9 +924,27 @@
           },
           "locks": [
             {
-              "unlock": [ "Kill All Enemies" ]
+              "unlock": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"]
+                }}
+              ],
+              "note": "To avoid redundant requirements, obstacle must be destroying by going to 3 and back."
             }
           ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Hoppers",
+          "obstacleType": "enemies"
+        },
+        {
+          "id": "B",
+          "name": "Blue Gate",
+          "obstacleType": "inanimate"
         }
       ],
       "enemies": [
@@ -942,13 +966,63 @@
             {
               "id": 2,
               "requires": [
-                {"or": [
-                  {"and":[
-                    "canGateGlitch",
-                    "canSuperReachAround"
-                  ]},
-                  "Wave"
-                ]}
+                {"obstacle":{
+                  "id": "B",
+                  "requires": ["Wave"]
+                }}
+              ],
+              "unlock": null,
+              "note": "The reverse GGG pretty much requires you to clear the enemies, so it's done from node 3."
+            },
+            {
+              "id": 3,
+              "requires": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    {"cost": [
+                      {"enemyDamage": {
+                        "enemy": "Sm. Sidehopper",
+                        "type": "contact",
+                        "hits": 1
+                      }}
+                    ]},
+                    {"or":[
+                      {"cost": [
+                        {"enemyDamage": {
+                          "enemy": "Sidehopper",
+                          "type": "contact",
+                          "hits": 3
+                        }}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": {
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 1
+                          }}
+                        ]},
+                        {"or":[
+                          "Spazer",
+                          "Wave"
+                        ]}
+                      ]},
+                      {"enemyKill":{
+                        "enemies": [
+                          [ "Sidehopper", "Sm. Sidehopper", "Sm. Sidehopper"]
+                        ],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Plasma"
+                        ]
+                      }}
+                    ]}
+                  ]
+                }}
               ],
               "unlock": null
             }
@@ -959,8 +1033,108 @@
           "to": [
             {
               "id": 1,
+              "requires": [
+                {"obstacle":{
+                  "id": "B",
+                  "requires": null
+                }}
+              ],
+              "unlock": null
+            },
+            {
+              "id": 3,
+              "requires": [
+                {"obstacle":{
+                  "id": "B",
+                  "requires": null
+                }},
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    {"or":[
+                      {"enemyKill":{
+                        "enemies": [
+                          [ "Sidehopper", "Sm. Sidehopper", "Sm. Sidehopper"]
+                        ],
+                        "explicitWeapons": [
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Wave"
+                        ]
+                      }},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": {
+                            "enemy": "Sm. Sidehopper",
+                            "type": "contact",
+                            "hits": 1
+                          }}
+                        ]},
+                        {"or":[
+                          {"cost": [
+                            {"enemyDamage": {
+                              "enemy": "Sidehopper",
+                              "type": "contact",
+                              "hits": 3
+                            }}
+                          ]},
+                          {"and":[
+                            {"cost": [
+                              {"enemyDamage": {
+                                "enemy": "Sidehopper",
+                                "type": "contact",
+                                "hits": 1
+                              }}
+                            ]},
+                            "Spazer"
+                          ]},
+                          {"enemyKill":{
+                            "enemies": [
+                              [ "Sidehopper", "Sm. Sidehopper", "Sm. Sidehopper"]
+                            ],
+                            "explicitWeapons": [
+                              "Missile",
+                              "Super",
+                              "Plasma"
+                            ]
+                          }}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }}
+              ],
+              "unlock": null,
+              "note": "With access to the right side of the room, it's possible to kill the enemies safely with Wave or a PB"
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
+              "id": 1,
               "requires": null,
               "unlock": null
+            },
+            {
+              "id": 2,
+              "requires": [
+                {"obstacle":{
+                  "id": "B",
+                  "requires": [
+                    {"or":[
+                      "Wave",
+                      {"and":[
+                        "canGateGlitch",
+                        "canSuperReachAround"
+                      ]}
+                    ]}
+                  ]
+                }}
+              ],
+              "unlock": null,
+              "note": "The reverse GGG pretty much requires killing the enemies first, so it's done here rather than at node 1."
             }
           ]
         }
