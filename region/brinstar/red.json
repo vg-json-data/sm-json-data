@@ -1257,7 +1257,13 @@
           },
           "locks": [
             {
-              "unlock": [ "Kill All Enemies" ]
+              "unlock": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"],
+                  "note": "To avoid redundant requirements, obstacle must be destroying by going to 3 and back."
+                }}
+              ]
             }
           ]
         },
@@ -1269,13 +1275,32 @@
           "nodeItem": "PowerBomb",
           "nodeAddress": "0xF788CA",
           "locks": null
+        },
+        {
+          "id": 3,
+          "name": "Top Left Junction",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "locks": null
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Sidehoppers",
+          "obstacleType": "enemies"
+        },
+        {
+          "id": "B",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
         {
           "name": "Sidehopper",
           "quantity": 3,
-          "homeNodes": [ 1 ]
+          "homeNodes": [ 1, 3 ]
         },
         {
           "name": "Yapping Maw",
@@ -1289,8 +1314,78 @@
           "from": 1,
           "to": [
             {
-              "id": 2,
-              "requires": [ "canUsePowerBombs" ],
+              "id": 3,
+              "requires": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": [
+                    {"or":[
+                      {"cost": [
+                        {"enemyDamage": {
+                          "enemy": "Sidehopper",
+                          "type": "contact",
+                          "hits": 4
+                        }}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": {
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 2
+                          }}
+                        ]},
+                        {"or":[
+                          "Spazer",
+                          "Wave"
+                        ]}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": {
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 1
+                          }}
+                        ]},
+                        {"enemyKill":{
+                          "enemies": [
+                            [ "Sidehopper", "Sidehopper", "Sidehopper"]
+                          ],
+                          "explicitWeapons": [
+                            "Missile"
+                          ]
+                        }}
+                      ]},
+                      "Morph",
+                      {"and":[
+                        {"enemyKill":{
+                          "enemies": [
+                            [ "Sidehopper", "Sidehopper", "Sidehopper"]
+                          ],
+                          "explicitWeapons": [
+                            "PowerBomb"
+                          ]
+                        }},
+                        {"obstacle":{
+                          "id": "B",
+                          "requires": null
+                        }}
+                      ]},
+                      {"enemyKill":{
+                        "enemies": [
+                          [ "Sidehopper", "Sidehopper", "Sidehopper"]
+                        ],
+                        "explicitWeapons": [
+                          "Super",
+                          "ScrewAttack",
+                          "Plasma"
+                        ]
+                      }}
+                    ]}
+                  ]
+                }}
+              ],
               "unlock": null
             }
           ]
@@ -1299,8 +1394,42 @@
           "from": 2,
           "to": [
             {
+              "id": 3,
+              "requires": [
+                {"obstacle":{
+                  "id": "B",
+                  "requires": ["canUsePowerBombs"]
+                }}
+              ],
+              "unlock": null,
+              "note": "It's a bit pointless to put the obstacle requirement in since you can't get there without breaking the obstacle, but might as well since we need the obstacle anyway?"
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
               "id": 1,
-              "requires": null,
+              "requires": [
+                {"or":[
+                  {"obstacle":{
+                    "id": "A",
+                    "requires": ["never"]
+                  }}
+                ]}
+              ],
+              "unlock": null,
+              "note": "To avoid redundant requirements, obstacle must be destroyed on the way in."
+            },
+            {
+              "id": 2,
+              "requires": [
+                {"obstacle":{
+                  "id": "B",
+                  "requires": ["canUsePowerBombs"]
+                }}
+              ],
               "unlock": null
             }
           ]
