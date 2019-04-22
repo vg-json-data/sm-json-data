@@ -61,6 +61,41 @@ A `cost` object represents the need for Samus to spend resources (ammo or health
 * _spikeHits:_ Represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
 * _thornHits:_ Represents the need for Samus to intentionally take a number of hits from the game's weaker spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
 
+### enemyKill object
+An `enemyKill` object communicates the need to kill a given set of enemies, and is satisfied by having the necessary items to use one of the valid [weapons](weapons/weapons-readme.md) that will kill each of the enemies (as well as enough ammo, if applicable).
+
+Determining what items can fulfill an `enemyKill` object should be done by doing the following:
+* Identify the weapons that are valid for this `enemyKill`.
+  * By default, all weapons that are not `situational` are valid
+  * If the `enemyKill` object has an `explicitWeapons` property, its contents entirely overrides those default weapons
+  * Weapons that are found in the `enemyKill` object's `excludedWeapons` property are rendered invalid
+* For each enemy (or group of enemies), identify which valid weapons, and how many shots of them, will work. This can be determined by using the weapon's base damage and the enemy's health, damage multipliers, and invulnerabilities.
+* Use the identified weapons' `useRequires` and `shotRequires` requirements to build an effective logical requirement for killing the enemies.
+
+An `enemyKill` object can have the following properties:
+* _enemies:_ An array of groups of enemies. Those groups are themselves represented as an array. Putting enemies together in a group communicates that they can all be hit by the same shot of a weapon that `hitsGroup` (most notably a Power Bomb).
+* _explicitWeapons:_ An array of weapons. If this is present, defines the only weapons that may be used to fulfill this object (assuming they are actually effective to kill the enemies). If this is not present, all non-`situational` weapons may be used.
+* _excludedWeapons:_ An array of weapons. If this property is present, all weapons found in it may not be used to fulfill the object, regardless of whether the enemies are vulnerable to them.
+
+__Example:__
+```json
+"requires":[
+  {"enemyKill":{
+    "enemies": [
+      [
+        "Yellow Space Pirate (wall)",
+        "Yellow Space Pirate (standing)"
+      ],
+      [
+        "Yellow Space Pirate (wall)"
+      ]
+    ],
+    "excludedWeapons": ["Bombs"],
+  }}
+]
+```
+Since Yellow Space pirates have 900 health and are immune to uncharged beam shots, this object would be fulfilled by either Charge, Screw Attack, 27 Missiles, 9 Supers, or Morph + 6 Power Bombs (3 per group, expecting that they will double-hit for 400 damage each).
+
 ### obstacle object
 An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. Fulfilling an `obstacle` requires one of the following:
 * Destroying the obstacle. This requires fulfilling the following:
