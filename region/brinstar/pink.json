@@ -797,7 +797,13 @@
           },
           "locks": [
             {
-              "unlock": [ "Kill All Enemies" ]
+              "unlock": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"]
+                }}
+              ],
+              "note": "To avoid redundant requirements, obstacle must be destroyed by going to 4 and back."
             }
           ]
         },
@@ -825,19 +831,158 @@
           "nodeItem": "PowerBomb",
           "nodeAddress": "0xF7865C",
           "locks": null
+        },
+        {
+          "id": 4,
+          "name": "Top Left Junction",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "note": "The top left section of the room, where the Super block is"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Sidehoppers",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
         {
           "name": "Sidehopper",
           "quantity": 2,
-          "homeNodes": [ 1 ]
+          "homeNodes": [ 1, 4 ]
         }
       ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 4,
+              "requires": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires":[
+                    {"or":[
+                      {"cost": [
+                        {"enemyDamage": [{
+                          "enemy": "Sidehopper",
+                          "type": "contact",
+                          "hits": 6
+                        }]}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": [{
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 3
+                          }]},
+                          "Morph"
+                        ]}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": [{
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 2
+                          }]},
+                          {"or":[
+                            "Spazer",
+                            "Charge",
+                            "Wave"
+                          ]}
+                        ]}
+                      ]},
+                      {"and":[
+                        {"cost": [
+                          {"enemyDamage": [{
+                            "enemy": "Sidehopper",
+                            "type": "contact",
+                            "hits": 1
+                          }]},
+                          {"or":[
+                            {"enemyKill":{
+                              "enemies": [
+                                ["Sidehopper"],
+                                ["Sidehopper"]
+                              ],
+                              "explicitWeapons": ["Missile"]
+                            }},
+                            {"and":[
+                              "Morph",
+                              {"or":[
+                                "Spazer",
+                                "Wave"
+                              ]}
+                            ]}
+                          ]}
+                        ]}
+                      ]},
+                      {"enemyKill":{
+                        "enemies": [
+                          ["Sidehopper"],
+                          ["Sidehopper"]
+                        ],
+                        "explicitWeapons": [
+                          "Super",
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Plasma"
+                        ]
+                      }}
+                    ]}
+                  ]
+                }}
+              ],
+              "unlock": null,
+              "note": "The Charge strat is to use Pseudo Screw. Morph reduces damage because the ceiling Sidehopper can't reach a morphed Samus."
+            }
+          ]
+        },
+        {
+          "from": 2,
+          "to": []
+        },
+        {
+          "from": 3,
+          "to": [
+            {
+              "id": 2,
+              "requires": [ "canPassBombPassages" ],
+              "unlock": null
+            },
+            {
+              "id": 4,
+              "requires": [
+                 "canQuickCrumbleEscape",
+                 "HiJump",
+                 {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"]
+                }}
+              ],
+              "unlock": null,
+              "note": "Mission Impossible expects that the Sidehoppers are dead. To avoid redundant requirements, they must be killed coming in."
+            }
+          ]
+        },
+        {
+          "from": 4,
+          "to": [
+            {
+              "id": 1,
+              "requires": [
+                {"obstacle":{
+                  "id": "A",
+                  "requires": ["never"]
+                }}
+              ],
+              "unlock": null,
+              "note": "To avoid redundant requirements, obstacle must be destroyed coming in."
+            },
             {
               "id": 3,
               "requires": [
@@ -851,25 +996,6 @@
                   ]}
                 ]}
                ],
-              "unlock": null
-            }
-          ]
-        },
-        {
-          "from": 2,
-          "to": []
-        },
-        {
-          "from": 3,
-          "to": [
-            {
-              "id": 1,
-              "requires": [ "canQuickCrumbleEscape", "HiJump" ],
-              "unlock": null
-            },
-            {
-              "id": 2,
-              "requires": [ "canPassBombPassages" ],
               "unlock": null
             }
           ]
