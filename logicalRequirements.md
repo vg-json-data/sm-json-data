@@ -72,18 +72,18 @@ An `enemyKill` object can have the following properties:
 
 __Example:__
 ```json
-{"enemyKill":{
-  "enemies": [
-    [
-      "Yellow Space Pirate (wall)",
-      "Yellow Space Pirate (standing)"
+  {"enemyKill":{
+    "enemies": [
+      [
+        "Yellow Space Pirate (wall)",
+        "Yellow Space Pirate (standing)"
+      ],
+      [
+        "Yellow Space Pirate (wall)"
+      ]
     ],
-    [
-      "Yellow Space Pirate (wall)"
-    ]
-  ],
   "excludedWeapons": ["Bombs"]
-}}
+  }}
 ```
 Since Yellow Space pirates have 900 health and are immune to uncharged beam shots, this object would be fulfilled by either Charge, Screw Attack, 27 Missiles, 9 Supers, or Morph + 6 Power Bombs (3 per group, expecting that they will double-hit for 400 damage each).
 
@@ -230,18 +230,26 @@ The number of framesRemaining in that case is:
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
 
 #### canShineCharge object
-A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following properties:
+A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
+* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 31 tiles where it's not relevant, that information will also be ommitted.
+  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
+  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
+  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
+  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
+  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
 * _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
 
 __Example:__
 ```json
 {"canShineCharge": {
-  "usedTiles": 31,
-  "shinesparkFrames": 75,
-  "openEnd": 2
-}}
+  "usedTiles": 25,
+  "steepUpTiles": 3,
+  "steepDownTiles": 3,
+  "shinesparkFrames": 0,
+  "openEnd": 1
+}},
 ```
 
 __Additional considerations:__
