@@ -7,61 +7,54 @@ A logical requirement is an array of logical elements, which are implicitly link
 * _The name of a tech._ Techs are defined in [tech.json](tech.json).  Those represent a technique that players can perform, which may also imply logical requirements of their own.
 * _The name of an item._ Those are defined in [items.json](items.json).
 * _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
-* _Structural objects._ Those exist to make it possible to group together logical elements. Those include:
-  * _or:_ An `or` object contains an array of logical elements, but is fulfilled as soon as at least one of those is met.
-  * _and:_ An `and` object contains an array of logical elements, and is fulfilled only if all of those are met.
-  * _not:_ A `not`object contains an array of logical elements, and is fulfilled only if none of those are met.
-* More complex objects which will be defined in their own sub-sections
+* _"never"._ This indicates a logical element that cannot be fulfilled under any conditions.
+* More complex elements which will be defined in their own sub-sections
 
-### adjacentRunway object
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
+### Structural Logical Elements
+Structural logical elements are arrays of other logical elements, and are fulfilled by fulfilling a given amount of those
 
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
+#### and object
+An `and` object is fulfilled only if all of the logical elements it contains are fulfilled
 
-### canComeInCharged object
-A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
- * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
- * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
+__Example:__
+```json
+{"and": [
+  "canTunnelCrawl",
+  "ScrewAttack"
+]}
+```
 
-__Additional considerations:__
-* A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
-* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark.
-The number of framesRemaining in that case is:
-  * 180 if there is a usable runway in the destination room
-  * Roughly 175 if there is no usable runway in the destination room
+#### or object
+An `or` object is fulfilled if at least one of the logical elements it contains is fulfilled
 
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
+__Example:__
+```json
+{"or": [
+  "canSwim",
+  "canSuitlessMaridia"
+]}
+```
 
-### canShineCharge object
-A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
-* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
+### Ammo Management Objects
+This section contains logical elements that are fulfilled by spending ammo. Encountering many of those successively without having a chance to refill can impact how many power bomb/missile/super tanks can be required to get through.
 
-__Additional considerations:__
-* A `canShineCharge` object implicitly requires the Speed Booster.
-* A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
+#### ammo object
+An `ammo` object represents the need for Samus to spend a set amount of a specific ammo. It can have the following properties:
+* _type:_ The type of ammo to spend. Can have the following values:
+  * PowerBomb
+  * Missile
+  * Super
+* _count:_ The amount of ammo to spend
 
-### cost object
-A `cost` object represents the need for Samus to spend resources (ammo or health). It is structured as an array of objects. Each object in a `cost` array has one property, with a name and a value. Possible property names are:
-* _acidFrames:_ Represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
-* _ammo:_ Represents the need for samus to spend a fixed amount of ammo. The value for an `ammo` object is another object with the following properties:
-  * _type:_ The type of ammo that is being spent, such as "PowerBomb" or "Super"
-  * _count:_ The amount of that ammo type which is being spent
-* _enemyDamage:_ Represents the need for Samus to intentionally take damage from an enemy. This is meant to be converted to a flat health value based on item loadout. The value for an `enemyDamage` object is another object with the following properties:
-  * _enemy:_ The ID of the enemy that will damage Samus
-  * _type:_ The name of the attack that Samus will take damage from
-  * _hits:_ The number of hits Samus will take from that enemy
-* _heatFrames:_ Represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
-* _lavaFrames:_ Represents the need for Samus to spend time (measured in frames) in a pool of lava. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for lava is 2 damage every 4 frames, halved by Varia, and negated by Gravity Suit.
-* _spikeHits:_ Represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
-* _thornHits:_ Represents the need for Samus to intentionally take a number of hits from the game's weaker spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
+__Example:__
+```json
+{"ammo": {
+  "type": "PowerBomb",
+  "count": 1
+}}
+```
 
-### enemyKill object
+#### enemyKill object
 An `enemyKill` object communicates the need to kill a given set of enemies, and is satisfied by having the necessary items to use one of the valid [weapons](weapons/weapons-readme.md) that will kill each of the enemies (as well as enough ammo, if applicable).
 
 Determining what items can fulfill an `enemyKill` object should be done by doing the following:
@@ -79,43 +72,206 @@ An `enemyKill` object can have the following properties:
 
 __Example:__
 ```json
-"requires":[
-  {"enemyKill":{
-    "enemies": [
-      [
-        "Yellow Space Pirate (wall)",
-        "Yellow Space Pirate (standing)"
-      ],
-      [
-        "Yellow Space Pirate (wall)"
-      ]
+{"enemyKill":{
+  "enemies": [
+    [
+      "Yellow Space Pirate (wall)",
+      "Yellow Space Pirate (standing)"
     ],
-    "excludedWeapons": ["Bombs"],
-  }}
-]
+    [
+      "Yellow Space Pirate (wall)"
+    ]
+  ],
+  "excludedWeapons": ["Bombs"]
+}}
 ```
 Since Yellow Space pirates have 900 health and are immune to uncharged beam shots, this object would be fulfilled by either Charge, Screw Attack, 27 Missiles, 9 Supers, or Morph + 6 Power Bombs (3 per group, expecting that they will double-hit for 400 damage each).
 
-### obstacle object
+__Additional considerations:__
+
+When trying to determine the ammo needed to fulfill an `enemyKill` object, it could be a good idea to factor in a player accuracy variable, to represent different levels of leniency.
+
+### Health Management Objects
+This section contains logical elements that are fulfilled by spending health. Encountering enough of those successively without having a chance to refill can impact the number of e-tanks that are needed to get through.
+
+#### acidFrames object
+An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
+
+__Example:__
+```json
+{"acidFrames": 35}
+```
+
+#### enemyDamage object
+An `enemyDamage` object represents the need for Samus to intentionally take damage from an enemy. This is meant to be converted to a flat health value based on item loadout. It has the following properties:
+* _enemy:_ The name of the enemy that will damage Samus
+* _type:_ The name of the attack that Samus will take damage from
+* _hits:_ The number of hits Samus will take from that attack
+
+__Example:__
+```json
+{"enemyDamage": {
+  "enemy": "Sidehopper",
+  "type": "contact",
+  "hits": 3
+}}
+```
+
+#### heatFrames object
+A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
+
+__Example:__
+```json
+{"heatFrames": 100}
+```
+
+#### hibashiHits object
+A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
+
+__Example:__
+```json
+{"hibashiHits": 1}
+```
+
+#### lavaFrames object
+A `lavaFrames` object represents the need for Samus to spend time (measured in frames) in a pool of lava. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for lava is 2 damage every 4 frames, halved by Varia, and negated by Gravity Suit.
+
+__Example:__
+```json
+{"lavaFrames": 70}
+```
+
+#### spikeHits object
+A `spikeHits` object represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
+
+__Example:__
+```json
+{"spikeHits": 6}
+```
+
+#### thornHits object
+A `thornHits` object represents the need for Samus to intentionally take a number of hits from the game's weaker spikes, found mainly in Brinstar. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
+
+__Example:__
+```json
+{"thornHits": 1}
+```
+
+### Momentum-Based Objects
+This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
+
+#### adjacentRunway object
+An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
+* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
+* _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
+
+Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
+
+__Example:__
+```json
+{"adjacentRunway": {
+  "fromNode": 3,
+  "usedTiles": 1
+}}
+```
+
+#### canComeInCharged object
+A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
+* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
+* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
+* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
+
+__Example:__
+```json
+{"canComeInCharged": {
+  "fromNode": 4,
+  "framesRemaining": 180,
+  "shinesparkFrames": 75
+}}
+```
+
+__Additional considerations:__
+
+* A `canComeInCharged` object implicitly requires the Speed Booster.
+* A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
+* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark.
+The number of framesRemaining in that case is:
+  * 180 if there is a usable runway in the destination room
+  * Roughly 175 if there is no usable runway in the destination room
+
+Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
+
+#### canShineCharge object
+A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following properties:
+* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
+* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
+* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
+
+__Example:__
+```json
+{"canShineCharge": {
+  "usedTiles": 31,
+  "shinesparkFrames": 75,
+  "openEnd": 2
+}}
+```
+
+__Additional considerations:__
+
+* A `canShineCharge` object implicitly requires the Speed Booster.
+* A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
+
+### Room Pathing Objects
+This section contains logical elements that are affected by Samus' pathing within a room.
+
+#### obstacle object
 An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. Fulfilling an `obstacle` requires one of the following:
-* Destroying the obstacle. This requires fulfilling the following:
+* Destroying the obstacle. This requires fulfilling all of the following:
   * The requirements in the obstacle definition (see obstacles in [the Region documentation](region/region-readme.md))
   * The requirements placed directly on the `obstacle` object
 * Alternately, if Samus has previously destroyed that obstacle and has not left the room since, all requirements are ignored and the `obstacle` object is instantly fulfilled
 
+__Example:__
+```json
+{"obstacle":{
+  "id": "B",
+  "requires": [
+    {"or": [
+      "ScrewAttack",
+      "canUseMorphBombs",
+      "canUsePowerBombs"
+    ]}
+  ]
+}}
+```
+
 For further explanation of what obstacles can represent, please refer to [the Region documentation](region/region-readme.md).
 
-### resetRoom object
-A `resetRoom` object represents the need for Samus to be able to exit and re-enter the room at one of the specified nodes to perform a strat. This is to guarantee that the room has been reset. A `resetRoom` object can have the following properties:
-* _nodes:_ An array containing the ID of nodes at which resetting the room works.
-* _nodesToAvoid:_ An array containing the ID of nodes that Samus must not visit after resetting the room. If any of those nodes have to be visited, the `resetRoom` object cannot be fulfilled.
-* _obstaclesToAvoid:_ An array containing the ID of obstacles that Samus must not destroy after resetting the room. If any of those obstacles have to be broken, the `resetRoom` object cannot be fulfilled.
+__Additional considerations:__
+
+Some obstacles can only be destroyed from one direction. This is why it's not uncommon for an obstacle's requirements to be "never", if approachef from the other direction.
+
+Obstacles can only be destroyed by legally fulfilling a link's logical requirements in a way that includes the `obstacle` object. Notably, if the `obstacle` object is found within an `and` array, everything in that `and` must be fulfilled in order to destroy the obstacle.
+
+#### resetRoom object
+A `resetRoom` object represents the need for the room to be in an initial state in order to perform a strat. A `resetRoom` object can have the following properties:
+* _nodes:_ An array containing the ID of nodes at which entering the room can work.
+* _nodesToAvoid:_ An array containing the ID of nodes that Samus must not visit after resetting the room. If any of those nodes have to be visited, the `resetRoom` object cannot be fulfilled, regardless of where Samus entered the room.
+* _obstaclesToAvoid:_ An array containing the ID of obstacles that Samus must not destroy after resetting the room. If any of those obstacles have to be broken, the `resetRoom` object cannot be fulfilled, regardless of where Samus entered the room.
 * _mustStayPut:_ This property is mutually exclusive with `nodesToAvoid` and is only meaningful for `resetRoom` objects whose only `nodes` is the one they are at. If it is present and `true`, it is equivalent to having a `nodesToAvoid` property containing all other nodes in the room.
 
-In order to fulfill the `resetRoom` object, Samus must be able to do the following:
+In order to fulfill a `resetRoom` object, Samus must be able to do all of the following:
 * Enter the room at one of the listed `nodes`
 * Reach the node where the logic contains the `resetRoom` object
   * If `mustStayPut` is true, Samus should be entering the room at the correct node and staying there
 * Do this while visiting none of the listed `nodesToAvoid`
 * Do this while destroying none of the listed `obstaclesToAvoid`
 * If Samus is already in the room and has done one of the actions to avoid, she must be able to exit at one of the listed `nodes` and re-enter, following all other rules
+
+__Example:__
+```json
+{"resetRoom":{
+  "nodes": [1, 2],
+  "obstaclesToAvoid": ["A"]
+}}
+```
