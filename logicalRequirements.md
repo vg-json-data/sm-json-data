@@ -121,6 +121,18 @@ __Example:__
 }}
 ```
 
+#### draygonElectricityFrames object
+A `draygonElectricityFrames` object represents the need for Samus to spend time (measured in frames) grappled to a broken turret in Draygon's room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for electricity is 1 damage per frame, halved by Varia (1 damage every 2 frames), and halved again by Gravity Suit (1 damage every 4 frames).
+
+__Example:__
+```json
+{"draygonElectricityFrames": 240}
+```
+
+__Additional considerations:__
+
+While the demands on the player are very flat for the Draygon kill, execution plays a huge factor in the Draygon grapple jump. Like with other types of environmental frame damage, it might be a good idea to apply a leniency factor (possibly as an option that can vary by difficulty), although that could make the Grapple kill excessively lenient as a side effect.
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
 
