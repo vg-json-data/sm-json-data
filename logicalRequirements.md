@@ -102,6 +102,10 @@ __Example:__
 {"acidFrames": 35}
 ```
 
+__Additional considerations:__
+
+Much like the other logical elements that represent environmental frame damage, the acid frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different acid runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+
 #### enemyDamage object
 An `enemyDamage` object represents the need for Samus to intentionally take damage from an enemy. This is meant to be converted to a flat health value based on item loadout. It has the following properties:
 * _enemy:_ The name of the enemy that will damage Samus
@@ -125,6 +129,10 @@ __Example:__
 {"heatFrames": 100}
 ```
 
+__Additional considerations:__
+
+Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
 
@@ -141,6 +149,10 @@ __Example:__
 {"lavaFrames": 70}
 ```
 
+__Additional considerations:__
+
+Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+
 #### spikeHits object
 A `spikeHits` object represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
 
@@ -148,6 +160,10 @@ __Example:__
 ```json
 {"spikeHits": 6}
 ```
+
+__Additional considerations:__
+
+While this is true to some extent for every strat that requires taking intentional punctual damage, spike hits especially are featured quite prominently in some unforgiving strats. It might be a good idea to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
 #### thornHits object
 A `thornHits` object represents the need for Samus to intentionally take a number of hits from the game's weaker spikes, found mainly in Brinstar. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 16 with Power Suit, 8 with Varia, and 4 with Gravity Suit.
