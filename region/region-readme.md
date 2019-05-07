@@ -49,13 +49,23 @@ The `yields` property is an array of game flags that are activated when interact
 #### sparking/runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Runways have the following special properties:
 * _length:_ The number of tiles in the runway
+* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 31 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
+  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
+  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
+  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
+  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
+  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
+  * _endingUpTiles:_  Indicates how many tiles slope upwards getting into the door. A stutter can't be executed on those tiles when starting a run within the room, starting from the door.
 * _openEnd:_ Any runway that is used to gain momentum has two ends (although in the case of actual `runway`s one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging ( 0 or 1).
 
 __Additional considerations:__ Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. However, some rules are intended to be applied when doing that calculation:
 * In the origin room, the longest runway whose requirements are met can be used.
 * In the destination room, the longest runway whose requirements are met _and whose `usableComingIn` property is `true`_ can be used. This property is used to represent the fact that some runways need Samus to do something to open them up, which can't be done while running in.
+  * However, runways in the destination room that are not `usableComingIn` can still be used. They just cannot be added to the runway on the other side (and must be used alone). There may be situations where that option provides the longest available running space.
+* If slope tiles are part of the calculations, up and down tiles but be reversed in the destination room, since runway slope tiles are always defined how they are encountered when running towards the door.
 * Because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
 * Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
+
 #### sparking/canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
