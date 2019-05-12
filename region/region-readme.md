@@ -35,6 +35,15 @@ The `utility` property is an array of utility functions available to Samus at a 
 * _farming:_ Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
 #### locks
 The `locks` property is an array that contains different ways a node can be locked, and the corresponding way it can be unlocked. Each object in the `locks` property has two properties of its own:
+* _type:_ An enum indicating the type of lock. It gives a basic idea of what kind of thing has to be done to open this lock. Possible lock types are:
+  * _bossFight:_ Meant for locks on actual boss nodes, indicates that the node is unlocked by performing the boss fight.
+  * _coloredDoor:_ A door lock that is opened by spending ammo on a door. Includes eye doors.
+  * _cutscene:_ A lock that is essentially opened by just waiting in the room.
+  * _escapeFunnel:_ Like permanent locks, those are locks that cannot be undone. Escape funnel locks, specifically, are activated by the escape sequence and used to force the player to go to the ship.
+  * _gameFlag:_ Indicates a lock that is opened when a game flag has been activated. Most locks that are unlocked by killing a boss are this type, rather than `bossFight`.
+  * _killEnemies:_ A lock that is unlocked by killing enemies in a room. This excludes doors in boss rooms, which are `gameFlag` locks.
+  * _permanent:_ A lock that can never be unlocked.
+  * _triggeredEvent:_ A type for miscellaneous events triggered by an action performed nearby by Samus.
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
 * _unlock:_ The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order to undo this specific lock.
 
