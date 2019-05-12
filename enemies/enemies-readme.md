@@ -27,6 +27,9 @@ This is the width and height of the enemy in pixels.
 ### farmable
 Indicates whether this enemy respawns, making it farmable without having to reset the room.
 
+### farmableDrops
+This is the drop table of farmable particles spawned by the enemy. It will not be present if the enemy doesn't spawn farmable particles. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
+
 ### grapplable
 Indicates whether Samus can use this enemy like a grapple block.
 
