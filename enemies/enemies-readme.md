@@ -2,7 +2,9 @@
 This section contains data about the enemies in Super Metroid.
 
 ## Folder Structure
-This folder simply contains the [main.json](main.json) file, which contains data about all normal enemies, and [bosses/main.json](bosses/main.json), which contains data about bosses.
+This folder contains the [main.json](main.json) file, which contains data about all normal enemies, and [bosses/main.json](bosses/main.json), which contains data about bosses.
+
+Another file, [bosses/scenarios.json](bosses/scenarios.json), contains detailed data about boss fight scenarios. Those are intended to be used to create boss energy requirements based on item loadout. They are described in detail at [the boss scenarios page](bossScenarios-readme.md).
 
 ## Contents of an Enemies File
 Enemies files follow the schema defined at [/schema/m3-enemies.schema.json](../schema/m3-enemies.schema.json).
