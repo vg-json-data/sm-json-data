@@ -35,7 +35,7 @@ The `utility` property is an array of utility functions available to Samus at a 
 * _farming:_ Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
 #### locks
 The `locks` property is an array that contains different ways a node can be locked, and the corresponding way it can be unlocked. Each object in the `locks` property has two properties of its own:
-* _type:_ An enum indicating the type of lock. It gives a basic idea of what kind of thing has to be done to open this lock. Possible lock types are:
+* _lockType:_ An enum indicating the type of lock. It gives a basic idea of what kind of thing has to be done to open this lock. Possible lock types are:
   * _bossFight:_ Meant for locks on actual boss nodes, indicates that the node is unlocked by performing the boss fight.
   * _coloredDoor:_ A door lock that is opened by spending ammo on a door. Includes eye doors.
   * _cutscene:_ A lock that is essentially opened by just waiting in the room.
@@ -46,6 +46,7 @@ The `locks` property is an array that contains different ways a node can be lock
   * _triggeredEvent:_ A type for miscellaneous events triggered by an action performed nearby by Samus.
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
 * _unlock:_ The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order to undo this specific lock.
+* _bypass:_ The `bypass` property lists [logical requirements](../logicalRequirements.md) that (if fulfilled) allow bypassing this specific lock while it is active.
 
 __Additional considerations:__ None of the locks must be active for Samus to be able to properly interact with a node. Note that unlike traversing links, `unlocking` a lock is an action that needs to be done only once. Interacting with a node, which requires no locks to be active, can take several forms such as:
 * Using a door node to go to another room
