@@ -4,7 +4,7 @@ This page explains the contents of the [boss scenarios file](bosses/scenarios.js
 ## What a boss scenario is
 In essence, a boss scenario contains tools to determine how often Samus will hit the boss, how often she will take damage from the boss, and how often she will pick up energy. Many of these will depend on item loadout.
 
-The intent is for a program to be able to figure out the fight duration. From that, incoming damage and and incoming energy (via energy pickups) can be calculated, and a flat energy requirement can be determined for a specific item loadout.
+The intent is for a program to be able to figure out the fight duration. From that, incoming damage and incoming energy (via energy pickups) can be calculated, and a flat energy requirement can be determined for a specific item loadout.
 
 A lot of the values are intended to loosely model an actual fight, but the only truly relevant data to extract from a scenario are the energy and ammo costs.
 
@@ -14,7 +14,7 @@ Damage delivered is represented by a combination of a damage window and attack o
 ### Damage Window
 The damage window is a value (in percentage of time) for the window during which Samus can hit the boss. The point of the damage window is to model a fight duration relative to weapon damage and cooldown. A damage window of 25% means Samus will spend 25% of her time in the fight attacking the boss or waiting for her weapon cooldown, and 75% of the fight doing other things.
 
-The damage window percentage is obtained by adding up the `windowPercent` of all using the `damageWindows` whose requirements are met. This gives the percentage of time Samus can be attacking.
+The damage window percentage is obtained by adding up the `windowPercent` of all `damageWindows` whose requirements are met. This gives the percentage of time Samus can be attacking.
 
 __Example__
 
@@ -25,7 +25,7 @@ Samus is fighting using missiles, which can hit every 10 frames for 100 damage. 
 If Samus were using Supers instead, she would need 340 frames of damage window. Without Screw Attack, that would be 850 frames total. Screw Attack would reduce that to 680 franes.
 
 ### Attack Opportunities
-The above damage window examples all assume a scenario where attack opportunities aren't represented. Attack opportunities, represent by the `attackOpportunityDuration`, are needed for boss fights where Samus spends a lot of time waiting for an opportunity to attack. For example, imagine a fight where you can only hit once during 20 frames of vulnerability, every 15 seconds. A charged shot has 60 frames of cooldown, but that doesn't mean it can only hit once every 45 seconds in that fight.
+The above damage window examples all assume a scenario where attack opportunities aren't represented. Attack opportunities, represented by the `attackOpportunityDuration`, are needed for boss fights where Samus spends a lot of time waiting for an opportunity to attack. For example, imagine a fight where you can only hit once during 20 frames of vulnerability, every 15 seconds. A charged shot has 60 frames of cooldown, but that doesn't mean it can only hit once every 45 seconds in that fight.
 
 Attack opportunities are meant to represent this. They effectively place an upper cap on weapon cooldown. During each opportunity, Samus is expected to hit on the first frame and keep hitting, respecting weapon cooldown, until the opportunity has ended.
 
@@ -49,13 +49,46 @@ Some bosses are farmable for energy, but that doesn't mean recovering faster tha
 
 This is why scenarios indicate how frequently (in frames) a farmable particle will be destroyed, via the `particleFrequencyFrames`. The expected energy drop rate can then be applied.
 
+## Formulas
+This section contains formulas that explain how to obtain various values to calculate energy requirements.
+
+These calculations assume the use of one specific weapon at a time, for one given item loadout. Each weapon's `requiredDamageWindowFrames` is independent of the item loadout and can be calculated ahead of time. This would allow the calculation for any given item loadout to be done only once, using the most effective weapon available.
+
+Formulas that depend on the weapon, but not the item loadout (can be calculated once, ahead of time):
+
+* _requiredAttacks:_ `bossHealth/weaponDamage * (100 / (100 - bossDodgeRate))`
+  * Note: If the implementation has a variable for player accuracy, it would also be applied here.
+* _attacksPerOpportunity:_ `CEILING(weaponCooldown / damageOpportunityDuration)`
+  * Note: If the boss has no `damageOpportunityDuration`, do not calculate this value.
+* _requiredOpportunities:_ `CEILING(requiredAttacks / attacksPerOpportunity)`
+  * Note: If the boss has no `damageOpportunityDuration`, do not calculate this value.
+* _requiredDamageWindowFrames:_ `requiredOpportunities * damageOpportunityDuration`
+  * Note: If the boss has no `damageOpportunityDuration`, use `requiredAttacks * weaponCooldown` instead
+
+Formulas that depend on both the weapon and the item loadout
+
+* _totalDamageWindowPercent:_ Sum of `damageWindows.WindowPercent` for all damageWindows whose requirements are met
+* _requiredTotalFrames:_ `100 * requiredDamageWindowFrames / totalDamageWindowPercent`
+* For each `incomingDamage` whose `avoidingRequires` is NOT met:
+  * _attacksReceived:_ `requiredTotalFrames / incomingDamage.frequencyFrames`
+  * _damageReceived:_ `incomingDamage.attack.damage[suitIndex] * attacksReceived`
+* _totalIncomingDamage:_ Sum of `damageReceived` of all `incomingDamage` whose `avoidingRequires` is NOT met
+* _farmablesKilled:_ `requiredTotalFrames / particleFrequencyFrames`
+* _energyFarmed:_ `farmablesKilled * smallEnergyDropPercent * 5 + farmablesKilled * largeEnergyDropPercent * 20`
+* _scenarioEnergyRequirement:_ `MAX(0, totalIncomingDamage - energyFarmed)`
+
+__Additional considerations__
+
+Mixed weapon scenarios (e.g. for when the player runs out of ammo for a superior weapon) could also be calculated. The `requiredDamageWindowFrames` calculation would have to be split accordingly for the portion of boss health taken out by each weapon.
+
 ## The actual boss scenario json format
 Each boss scenario can have the following properties:
 
-### additionalDamageWindowPercent
+### damageWindows
 An array that describes independent requirements that can each increase the damage window by a flat amount of percentage points if met. They each have the following properties:
-* _requires:_ The requirements that must be met to widen the damage window
-* _windowPercent:_ The amount of percentage points that are added to the `baseDamageWindowPercent`
+* _name:_ A name that identifies the damage window
+* _requires:_ The requirements that must be met to apply the damage window
+* _windowPercent:_ The amount of percentage points that are added by this window to the total damage window
 
 ### attackOpportunityDuration
 An optional property which indicates that the damage window is broken up into a multitude of short time periods that last a number of frames. Samus is modeled to attack as fast as possible during those opportunities, and any unfinished cooldown from the last attack performed is considered to happen outside the global damage window. This helps model charged shots more accurately in fights where the damage window is a small percentage.
@@ -65,9 +98,6 @@ An array containing attacks that are expected to hit Samus (unless she meets avo
 * _attack:_ The name of the attack. This should match the name of an attack for that boss in the [bosses file](bosses/main.json).
 * _avoidingRequires:_ A list of [logical requirements](../logicalRequirements.md) that will allow Samus to avoid the attack if met.
 * _frequencyFrames:_ Indicates how often (in frames) the attack will hit Samus.
-
-### baseDamageWindowPercent
-Indicates a base value (in percentage of time) for the damage window. This is the base value regardless of item loadout, and can be increased by `additionalDamageWindowPercent`.
 
 ### boss
 The name of the boss. This should match an entry in the [bosses file](bosses/main.json).
