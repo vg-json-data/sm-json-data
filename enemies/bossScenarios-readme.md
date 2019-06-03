@@ -56,7 +56,7 @@ These calculations assume the use of one specific weapon at a time, for one give
 
 Formulas that depend on the weapon, but not the item loadout (can be calculated once, ahead of time):
 
-* _requiredAttacks:_ `bossHealth/weaponDamage * (100 / (100 - bossDodgeRate))`
+* _requiredAttacks:_ `CEILING(bossHealth/weaponDamage * (100 / (100 - bossDodgeRate)))`
   * Note: If the implementation has a variable for player accuracy, it would also be applied here.
 * _attacksPerOpportunity:_ `CEILING(weaponCooldown / damageOpportunityDuration)`
   * Note: If the boss has no `damageOpportunityDuration`, do not calculate this value.
@@ -96,7 +96,7 @@ An optional property which indicates that the damage window is broken up into a 
 ### incomingDamage
 An array containing attacks that are expected to hit Samus (unless she meets avoidance requirements), and their hit frequency. Each object in the array has the following properties:
 * _attack:_ The name of the attack. This should match the name of an attack for that boss in the [bosses file](bosses/main.json).
-* _avoidingRequires:_ A list of [logical requirements](../logicalRequirements.md) that will allow Samus to avoid the attack if met.
+* _avoidingRequires:_ A list of [logical requirements](../logicalRequirements.md) that will allow Samus to avoid the attack if met. Must be met only once to avoid all of this incoming damage.
 * _frequencyFrames:_ Indicates how often (in frames) the attack will hit Samus.
 
 ### boss
@@ -112,6 +112,9 @@ An array of weapons that do not apply to the scenario, regardless of the content
 An array of weapons that apply to the scenario. Those should match an entry in the [weapons file](../weapons/main.json).
 
 If this property is `null`, all weapons the boss is susceptible to that are not situational will apply to the scenario. However, if this property is present, only the weapons listed here will apply to the scenario.
+
+### requires
+A list of [logical requirements](../logicalRequirements.md) that must be met for this scenario to even be possible.
 
 ### name
 A unique name that identifies the scenario
