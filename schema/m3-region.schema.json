@@ -496,8 +496,15 @@
                     "type": "object",
                     "title": "The Items Schema",
                     "required": [
-                      "id",
-                      "requires"
+                      "id"
+                    ],
+                    "oneOf": [
+                      {
+                        "required": ["requires"]
+                      },
+                      {
+                        "required": ["strats"]
+                      }
                     ],
                     "properties": {
                       "id": {
@@ -524,6 +531,108 @@
                             "string"
                           ],
                           "title": "Elements are assumed to be ANDed together, unless this array has a key of 'or'"
+                        }
+                      },
+                      "strats": {
+                        "$id": "#/items/properties/links/items/properties/to/items/properties/strats",
+                        "type": "array",
+                        "title": "Link Strats",
+                        "description": "An array of strats that can be used to cross the link.",
+                        "items": {
+                          "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items",
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "notable",
+                            "requires"
+                          ],
+                          "properties": {
+                            "name": {
+                              "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/name",
+                              "type": "string",
+                              "title": "Strat Name",
+                              "description": "A name for the strat",
+                              "default": "",
+                              "examples": [
+                                "Base",
+                                "Brinstar Reserve Hole-in-one"
+                              ],
+                              "pattern": "^(.*)$"
+                            },
+                            "notable": {
+                              "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/notable",
+                              "type": "boolean"
+                            },
+                            "requires": {
+                              "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/requires",
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "title": "Strat Requirements",
+                              "description": "Equipment, tech, and flag requirements to execute this strat.",
+                              "items": {
+                                "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/requires/items",
+                                "type": [
+                                  "object",
+                                  "string"
+                                ],
+                                "title": "Elements are assumed to be ANDed together, unless this array has a key of 'or'"
+                              }
+                            },
+                            "obstacles": {
+                              "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles",
+                              "type": "array",
+                              "title": "Strat obstacles",
+                              "description": "An array of obstacles that must be destroyed (during the strat or previously) for the strat to be successfully executed.",
+                              "items": {
+                                "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles/items",
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "requires"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles/items/properties/id",
+                                    "type": "string",
+                                    "title": "Obstacle ID",
+                                    "description": "The ID of the obstacle that must be destroyed.",
+                                    "default": "",
+                                    "examples": ["A", "B"],
+                                    "pattern": "^(.*)$"
+                                  },
+                                  "requires": {
+                                    "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles/items/properties/requires",
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "title": "Obstacle Requirements",
+                                    "description": "Equipment, tech, and flag requirements to destroy this obstacle, on top of requirements defined on the obstacle itself (does not apply if obstacle already destroyed since entering the room).",
+                                    "items": {
+                                      "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles/items/properties/requires/items",
+                                      "type": [
+                                        "object",
+                                        "string"
+                                      ],
+                                      "title": "Elements are assumed to be ANDed together, unless this array has a key of 'or'"
+                                    }
+                                  },
+                                  "additionalObstacles": {
+                                    "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items/properties/obstacles/items/properties/additionalObstacles",
+                                    "type": "array",
+                                    "title": "Additional obstacles",
+                                    "description": "The IDs of obstacles that are simultaneously destroyed if the containing obstacle is destroyed via this strat.",
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^(.*)$"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
                         }
                       },
                       "yields": {
@@ -563,9 +672,7 @@
                   "type": "string",
                   "title": "Obstacle ID within Room. To reduce confusion with nodes, this should be a one-letter String",
                   "default": "",
-                  "examples": [
-                    "A"
-                  ]
+                  "examples": ["A", "B"]
                 },
                 "name": {
                   "$id": "#/items/properties/obstacles/items/properties/name",
