@@ -10,7 +10,7 @@ This project's representation of Super Metroid is split-up between different fol
 ### Connections
 [A folder that details connections between the game's rooms](connection/connection-readme.md)
 ### Enemies
-[A folder that details game's enemies](enemies/enemies-readme.md)
+[A folder that details the game's enemies](enemies/enemies-readme.md)
 ### Weapons
 [A folder that details possible types of attacks](weapons/weapons-readme.md)
 ## Important concepts
