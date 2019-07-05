@@ -1,7 +1,7 @@
 # Weapons Data
 This section contains data about weapons Samus can use in Super Metroid.
-Weapons here not necessarily items, but can be any number of different ways enemies can be attacked.
-Currently, beam combos and special beam attacks are not represented as weapons because they are not believed to have any logical relevance.
+Weapons are not necessarily items, but can be any number of different ways enemies can be attacked.
+Currently, special beam attacks are not represented as weapons because they are not believed to have any logical relevance.
 
 ## Folder Structure
 This folder simply contains the [main.json](main.json) file, which contains data about all weapons.
