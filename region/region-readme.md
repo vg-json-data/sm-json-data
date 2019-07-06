@@ -123,7 +123,8 @@ A room has an array of links. Links define how Samus can navigate within a room.
   * _name:_ The name of the strat. A `strat` that is `notable` should have a unique name.
   * _notable:_ Indicates whether the strat is notable (either due to difficulty or uniqueness). This property should be `false` for mundane strats.
   * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to execute that strat.
-  * _obstacles_ An array of objects, each representing an `obstacle` that must be destroyed to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). Each such object has the following properties:
+  * _obstacles_ An array of objects, each representing an `obstacle` that must be destroyed (or bypassed) to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). Each such object has the following properties:
     * _id:_ The id of the obstacle
     * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to destroy the obstacle, if it isn't already destroyed. These requirements are in addition to any requirements already tied to the `obstacle`'s definition within the room.
+    * _bypass:_ Some [logical requirements](../logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
     * _additionalObstacles:_ An array containing the ID of additional obstacles that may not need to be destroyed to execute the strat, but that will be destroyed by destroying the containing `obstacle` via this `strat`.
