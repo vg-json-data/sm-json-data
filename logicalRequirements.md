@@ -106,6 +106,18 @@ __Additional considerations:__
 
 Much like the other logical elements that represent environmental frame damage, the acid frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different acid runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
+#### draygonElectricityFrames object
+A `draygonElectricityFrames` object represents the need for Samus to spend time (measured in frames) grappled to a broken turret in Draygon's room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for electricity is 1 damage per frame, halved by Varia (1 damage every 2 frames), and halved again by Gravity Suit (1 damage every 4 frames).
+
+__Example:__
+```json
+{"draygonElectricityFrames": 240}
+```
+
+__Additional considerations:__
+
+While the demands on the player are very flat for the Draygon kill, execution plays a huge factor in the Draygon grapple jump. Like with other types of environmental frame damage, it might be a good idea to apply a leniency factor (possibly as an option that can vary by difficulty), although that could make the Grapple kill excessively lenient as a side effect.
+
 #### enemyDamage object
 An `enemyDamage` object represents the need for Samus to intentionally take damage from an enemy. This is meant to be converted to a flat health value based on item loadout. It has the following properties:
 * _enemy:_ The name of the enemy that will damage Samus
@@ -120,18 +132,6 @@ __Example:__
   "hits": 3
 }}
 ```
-
-#### draygonElectricityFrames object
-A `draygonElectricityFrames` object represents the need for Samus to spend time (measured in frames) grappled to a broken turret in Draygon's room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for electricity is 1 damage per frame, halved by Varia (1 damage every 2 frames), and halved again by Gravity Suit (1 damage every 4 frames).
-
-__Example:__
-```json
-{"draygonElectricityFrames": 240}
-```
-
-__Additional considerations:__
-
-While the demands on the player are very flat for the Draygon kill, execution plays a huge factor in the Draygon grapple jump. Like with other types of environmental frame damage, it might be a good idea to apply a leniency factor (possibly as an option that can vary by difficulty), although that could make the Grapple kill excessively lenient as a side effect.
 
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
@@ -203,6 +203,10 @@ __Example:__
 }}
 ```
 
+__Additional considerations:__
+
+Please note that fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
+
 #### canComeInCharged object
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
@@ -226,6 +230,7 @@ __Additional considerations:__
 The number of framesRemaining in that case is:
   * 180 if there is a usable runway in the destination room
   * Roughly 175 if there is no usable runway in the destination room
+* Please note that fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
 
@@ -261,6 +266,8 @@ __Additional considerations:__
 This section contains logical elements that are affected by Samus' pathing within a room.
 
 #### obstacle object
+**Deprecated:** This object will hopefully disappear once strats (and their way of defining the destruction of obstacles) are used everywhere in the `region` files.
+
 An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. Fulfilling an `obstacle` requires one of the following:
 * Destroying the obstacle. This requires fulfilling all of the following:
   * The requirements in the obstacle definition (see obstacles in [the Region documentation](region/region-readme.md))
@@ -300,9 +307,10 @@ In order to fulfill a `resetRoom` object, Samus must be able to do all of the fo
 * Enter the room at one of the listed `nodes`
 * Reach the node where the logic contains the `resetRoom` object
   * If `mustStayPut` is true, Samus should be entering the room at the correct node and staying there
-* Do this while visiting none of the listed `nodesToAvoid`
+* Do this while visiting none of the listed `nodesToAvoid`. However, it's ok if a node to avoid ends up being visited directly afterwards, as a result of fulfilling the `resetRoom` object.
 * Do this while destroying none of the listed `obstaclesToAvoid`
-* If Samus is already in the room and has done one of the actions to avoid, she must be able to exit at one of the listed `nodes` and re-enter, following all other rules
+* If Samus is already in the room and has done one of the actions to avoid, she must be able to exit at one of the listed `nodes` and re-enter, following all other rules.
+  * Please note that if fulfilling a `resetRoom` object involves exiting and re-entering, it will indeed reset the room and cause all obstacles to respawn.
 
 __Example:__
 ```json
