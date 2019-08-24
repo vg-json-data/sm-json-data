@@ -117,14 +117,15 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
-* _id:_ The ID of the node to which the link leads
-* _requires:_ **Deprecated: To be moved into `strats`** The [logical requirements](../logicalRequirements.md) that must be fulfilled to go to that destination
+* _id:_ The in-room ID of the node to which the link leads
 * _strats:_ An array of named strats, each of which represents a way Samus can go to that destination. A `strat` can have the following properties:
   * _name:_ The name of the strat. A `strat` that is `notable` should have a unique name.
-  * _notable:_ Indicates whether the strat is notable (either due to difficulty or uniqueness). This property should be `false` for mundane strats.
+  * _notable:_ Indicates whether the strat is notable (either due to difficulty or uniqueness).
+    * Strats should be deemed notable if performing them requires learning a unique setup, or performing a harder-than-usual version of a tech requirement.
+    * Strats should not be deemed notable if the technical ability to perform their tech requirement is enough to perform the strat without further practice.
   * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to execute that strat.
   * _obstacles_ An array of objects, each representing an `obstacle` that must be destroyed (or bypassed) to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). Each such object has the following properties:
-    * _id:_ The id of the obstacle
+    * _id:_ The in-room id of the obstacle
     * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to destroy the obstacle, if it isn't already destroyed. These requirements are in addition to any requirements already tied to the `obstacle`'s definition within the room.
     * _bypass:_ Some [logical requirements](../logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
     * _additionalObstacles:_ An array containing the ID of additional obstacles that may not need to be destroyed to execute the strat, but that will be destroyed by destroying the containing `obstacle` via this `strat`.
