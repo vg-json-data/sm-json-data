@@ -34,6 +34,7 @@ A `strat` can have the following properties:
     * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to destroy the obstacle, if it isn't already destroyed. These requirements are in addition to any requirements already tied to the `obstacle`'s definition within the room.
     * _bypass:_ Some [logical requirements](logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
     * _additionalObstacles:_ An array containing the ID of additional obstacles that may not need to be destroyed to execute the strat, but that will be destroyed by destroying the containing `obstacle` via this `strat`. Additional obstacles are _not_ destroyed when bypassing the main obstacle.
+  * _stratProperties:_ An array of keywords, which can be used as a requirement for strats in the destination node. These properties can be used to describe miscellaneous details (such as being in a spinjump) that will impact whether it's possible to follow-up with another specific strat.
 
 ### Example
 
