@@ -300,6 +300,17 @@ Some obstacles can only be destroyed from one direction. This is why it's not un
 
 Obstacles can only be destroyed by legally fulfilling a link's logical requirements in a way that includes the `obstacle` object. Notably, if the `obstacle` object is found within an `and` array, everything in that `and` must be fulfilled in order to destroy the obstacle.
 
+#### previousStratProperty object
+A `previousStratProperty` object represents the need for Samus to have arrived to the node via a strat that has a given stratProperty. This usually has to do with quick-respawn blocks not being back yet, or spinjump conservation. In those cases, arriving via other strats doesn't allow reproducing those conditions.
+
+__Example:__
+```json
+{"previousStratProperty": "spinjump"}
+```
+
+__Additional considerations:__
+Entering a room does not count as executing a strat, so this logical element cannot be fulfilled instantly upon entering a room.
+
 #### resetRoom object
 A `resetRoom` object represents the need for the room to be in an initial state in order to perform a strat. A `resetRoom` object can have the following properties:
 * _nodes:_ An array containing the in-room ID of nodes at which entering the room can work.
