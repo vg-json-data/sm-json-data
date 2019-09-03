@@ -119,6 +119,18 @@
                   "title": "Weapon Name",
                   "description": "The name of a weapon, as found in the weapons file."
                 }
+              },
+              "farmableAmmo": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/farmableAmmo",
+                "type": "array",
+                "title": "Farmable Ammo",
+                "description": "A list of ammo types that are considered farmable during this enemy kill. It voids all ammo costs for that type, unless superseded by a boss scenario.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/farmableAmmo/items",
+                  "type": "string",
+                  "title": "Ammo Type",
+                  "description": "The name of an ammo type, which won't get spent (unless superseded by a boss scenario)."
+                }
               }
             }
           },
@@ -423,7 +435,7 @@
           "type": "string",
           "title": "Strat Name",
           "description": "A name for the strat",
-          "default": "",
+          "default": "Base",
           "examples": [
             "Base",
             "Brinstar Reserve Hole-in-one"
@@ -892,15 +904,7 @@
                     "type": "object",
                     "title": "Lock Object",
                     "description": "Contains corresponding lock and unlock conditions for a node. If lock condition is missing, the lock is initially active.",
-                    "required": [ "lockType" ],
-                    "oneOf": [
-                      {
-                        "required": ["unlock"]
-                      },
-                      {
-                        "required": ["unlockStrats"]
-                      }
-                    ],
+                    "required": [ "lockType", "unlockStrats" ],
                     "additionalProperties": false,
                     "properties": {
                       "lockType": {
@@ -936,11 +940,6 @@
                           "$id": "#/items/properties/nodes/items/properties/locks/items/properties/unlockStrats/items"
                         }
                       },
-                      "unlock": {
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/unlock",
-                        "title": "Unlock Requirements",
-                        "description": "Equipment, tech, and flag requirements to deactivate the associated lock"
-                      },
                       "bypassStrats": {
                         "$id": "#/items/properties/nodes/items/properties/locks/items/properties/bypassStrats",
                         "type": "array",
@@ -950,11 +949,6 @@
                           "$ref" : "#/definitions/strat",
                           "$id": "#/items/properties/nodes/items/properties/locks/items/properties/bypassStrats/items"
                         }
-                      },
-                      "bypass": {
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/bypass",
-                        "title": "Bypass Requirements",
-                        "description": "Equipment, tech, and flag requirements to bypass the associated lock without deactivating it. Must be done each time the node is interacted with while the lock is enabled."
                       },
                       "note": {
                         "$ref" : "#definitions/note"

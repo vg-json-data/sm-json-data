@@ -8,6 +8,15 @@ The intent is for a program to be able to figure out the fight duration. From th
 
 A lot of the values are intended to loosely model an actual fight, but the only truly relevant data to extract from a scenario are the energy and ammo costs.
 
+## When should a boss scenario come into play
+The energy and ammo costs that result from a boss scenario should be calculated and applied when evaluating an `enemyKill` object that contains an enemy which has an applicable boss scenario.
+
+A scenario is applicable if the following conditions are met:
+* Its `boss` property is an enemy in the `enemyKill` object
+* Its `requires` property is fulfilled.
+
+Note that a strat where the boss gets defeated without the use of an `enemyKill` object means the scenario does not come into play.
+
 ## Damage Delivered
 Damage delivered is represented by a combination of a damage window and attack opportunities.
 

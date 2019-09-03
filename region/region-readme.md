@@ -18,7 +18,7 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
 * _event:_ A node where an event that triggers game flags can happen
 * _item:_ A node that represents an item that can be picked up
-* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same strat from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
+* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
 
 Some node properties are self-explanatory, while others require additional definition:
 #### spawnAt
@@ -45,8 +45,8 @@ The `locks` property is an array that contains different ways a node can be lock
   * _permanent:_ A lock that can never be unlocked.
   * _triggeredEvent:_ A type for miscellaneous events triggered by an action performed nearby by Samus.
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
-* _unlock:_ The `unlock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order to undo this specific lock.
-* _bypass:_ The `bypass` property lists [logical requirements](../logicalRequirements.md) that (if fulfilled) allow bypassing this specific lock while it is active.
+* _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
+* _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again.
 
 __Additional considerations:__ None of the locks must be active for Samus to be able to properly interact with a node. Note that unlike traversing links, `unlocking` a lock is an action that needs to be done only once. Interacting with a node, which requires no locks to be active, can take several forms such as:
 * Using a door node to go to another room
@@ -118,14 +118,4 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
 * _id:_ The in-room ID of the node to which the link leads
-* _strats:_ An array of named strats, each of which represents a way Samus can go to that destination. A `strat` can have the following properties:
-  * _name:_ The name of the strat. A `strat` that is `notable` should have a unique name.
-  * _notable:_ Indicates whether the strat is notable (either due to difficulty or uniqueness).
-    * Strats should be deemed notable if performing them requires learning a unique setup, or performing a harder-than-usual version of a tech requirement.
-    * Strats should not be deemed notable if the technical ability to perform their tech requirement is enough to perform the strat without further practice.
-  * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to execute that strat.
-  * _obstacles_ An array of objects, each representing an `obstacle` that must be destroyed (or bypassed) to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). Each such object has the following properties:
-    * _id:_ The in-room id of the obstacle
-    * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled to destroy the obstacle, if it isn't already destroyed. These requirements are in addition to any requirements already tied to the `obstacle`'s definition within the room.
-    * _bypass:_ Some [logical requirements](../logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
-    * _additionalObstacles:_ An array containing the ID of additional obstacles that may not need to be destroyed to execute the strat, but that will be destroyed by destroying the containing `obstacle` via this `strat`.
+* _strats:_ An array of [strats](../strats.md), each of which represents a way Samus can go to that destination.
