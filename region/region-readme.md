@@ -34,7 +34,6 @@ The `utility` property is an array of utility functions available to Samus at a 
 * _energy:_ Note that this excludes reserve tanks
 * _reserve:_ Note that this excludes regular energy. If a node can refill reserves as well as energy, it will have both `energy` and `reserve`
 * _map_
-* _farming:_ Represents the presence monster spawners. This may be removed later and replaced by actual monster spawners.
 
 #### interactionRequires
 [Logical requirements](../logicalRequirements.md) that must be fulfilled each time Samus interacts with the node.
