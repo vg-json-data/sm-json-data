@@ -336,8 +336,8 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 2,
-                "title": "Open Ends",
-                "description": "The number of open ends in the runway. Each open end adds a bit of extra room."
+                "title": "Number of Open Ends",
+                "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
               },
               "shinesparkFrames": {
                 "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/shinesparkFrames",
@@ -741,41 +741,60 @@
                         "type": "object",
                         "title": "Runway Object",
                         "additionalProperties": false,
+                        "required": [
+                          "length",
+                          "openEnd"
+                        ],
+                        "oneOf": [
+                          {
+                            "required": ["requires"]
+                          },
+                          {
+                            "required": ["strats"]
+                          }
+                        ],
                         "properties": {
                           "length": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/length",
                             "type": "integer",
-                            "title": "Length of this Runway"
+                            "title": "Length",
+                            "description": "Length of this Runway"
                           },
                           "gentleUpTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleUpTiles",
                             "type": "integer",
-                            "title": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running towards the door)"
+                            "title": "Gentle Up Tiles",
+                            "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running towards the door)"
                           },
                           "gentleDownTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleDownTiles",
                             "type": "integer",
-                            "title": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running towards the door)"
+                            "title": "Gentle Down Tiles",
+                            "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running towards the door)"
                           },
                           "steepUpTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepUpTiles",
                             "type": "integer",
-                            "title": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running towards the door)"
+                            "title": "Steep Up Tiles",
+                            "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running towards the door)"
                           },
                           "steepDownTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepDownTiles",
                             "type": "integer",
-                            "title": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running towards the door)"
+                            "title": "Steep Down Tiles",
+                            "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running towards the door)"
                           },
                           "startingDownTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/startingDownTiles",
                             "type": "integer",
-                            "title": "Number of tiles at the start of the runway (away from the door) that slope down, preventing a stutter"
+                            "title": "Starting Down Tiles",
+                            "description": "Number of tiles at the start of the runway (away from the door) that slope down, preventing a stutter"
                           },
                           "endingUpTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/endingUpTiles",
                             "type": "integer",
-                            "title": "Number of tiles at the end of the runway (at the door) that slope up, preventing a stutter when starting a run in the other direction"
+                            "title": "Ending Up Tiles",
+                            "description": "Number of tiles at the end of the runway (at the door) that slope up, preventing a stutter when starting a run in the other direction"
                           },
                           "requires": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/requires",
@@ -784,16 +803,30 @@
                               "null"
                             ]
                           },
+                          "strats": {
+                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/unlockStrats",
+                            "type": "array",
+                            "title": "Runway Strats",
+                            "description": "An array of strats that can be executed to use this runway.",
+                            "items": {
+                              "$ref" : "#/definitions/strat",
+                              "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/unlockStrats/items"
+                            }
+                          },
                           "usableComingIn": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/usableComingIn",
                             "type": "boolean",
-                            "title": "Is it usable coming in?",
+                            "title": "Usable Coming In",
+                            "description": "Indicates whether this runway is usable when coming in from the connected door.",
                             "default": true
                           },
                           "openEnd": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/openEnd",
                             "type": "integer",
-                            "title": "Does the runway have an open end beside it (as opposed to a wall)?",
+                            "minimum": 0,
+                            "maximum": 1,
+                            "title": "Number of Open Ends",
+                            "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
                             "default": 1
                           },
                           "note": {
@@ -805,7 +838,8 @@
                     "canLeaveCharged": {
                       "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged",
                       "type": "array",
-                      "title": "canLeaveCharged",
+                      "title": "Can Leave Charged",
+                      "description": "An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark).",
                       "items": {
                         "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/items",
                         "type": "object",
@@ -853,8 +887,10 @@
                           "openEnd": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/openEnd",
                             "type": "integer",
+                            "minimum": 0,
+                            "maximum": 2,
                             "title": "Number of Open Ends",
-                            "description": "The number of open ends (between 0 and 2) that are present at the edges of the used tiles. Those add a little additional room."
+                            "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
                           },
                           "gentleUpTiles": {
                             "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/gentleUpTiles",
