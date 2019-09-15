@@ -86,12 +86,12 @@ __Example:__
         "Yellow Space Pirate (wall)"
       ]
     ],
-  "excludedWeapons": ["Bombs"]
+    "excludedWeapons": ["Bombs"]
   }}
 ```
 Since Yellow Space pirates have 900 health and are immune to uncharged beam shots, this object would be fulfilled by either Charge, Screw Attack, 27 Missiles, 9 Supers, or Morph + 6 Power Bombs (3 per group, expecting that they will double-hit for 400 damage each).
 
-__Additional considerations:__
+__Additional considerations__
 
 When trying to determine the ammo needed to fulfill an `enemyKill` object, it could be a good idea to factor in a player accuracy variable, to represent different levels of leniency.
 
@@ -106,7 +106,7 @@ __Example:__
 {"acidFrames": 35}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the acid frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different acid runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
@@ -118,7 +118,7 @@ __Example:__
 {"draygonElectricityFrames": 240}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 While the demands on the player are very flat for the Draygon kill, execution plays a huge factor in the Draygon grapple jump. Like with other types of environmental frame damage, it might be a good idea to apply a leniency factor (possibly as an option that can vary by difficulty), although that could make the Grapple kill excessively lenient as a side effect.
 
@@ -145,7 +145,7 @@ __Example:__
 {"heatFrames": 100}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
@@ -165,7 +165,7 @@ __Example:__
 {"lavaFrames": 70}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
@@ -177,7 +177,7 @@ __Example:__
 {"spikeHits": 6}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 While this is true to some extent for every strat that requires taking intentional punctual damage, spike hits especially are featured quite prominently in some unforgiving strats. It might be a good idea to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
@@ -207,9 +207,9 @@ __Example:__
 }}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
-Please note that fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
+Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
 #### canComeInCharged object
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
@@ -226,15 +226,15 @@ __Example:__
 }}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 * A `canComeInCharged` object implicitly requires the Speed Booster.
 * A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
-* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark.
+* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
 The number of framesRemaining in that case is:
   * 180 if there is a usable runway in the destination room
   * Roughly 175 if there is no usable runway in the destination room
-* Please note that fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
+* Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
 
@@ -261,7 +261,7 @@ __Example:__
 }},
 ```
 
-__Additional considerations:__
+__Additional considerations__
 
 * A `canShineCharge` object implicitly requires the Speed Booster.
 * A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
@@ -294,7 +294,7 @@ __Example:__
 
 For further explanation of what obstacles can represent, please refer to [the Region documentation](region/region-readme.md).
 
-__Additional considerations:__
+__Additional considerations__
 
 Some obstacles can only be destroyed from one direction. This is why it's not uncommon for an obstacle's requirements to be "never", if approachef from the other direction.
 
@@ -308,7 +308,7 @@ __Example:__
 {"previousStratProperty": "spinjump"}
 ```
 
-__Additional considerations:__
+__Additional considerations__
 Entering a room does not count as executing a strat, so this logical element cannot be fulfilled instantly upon entering a room.
 
 #### resetRoom object
