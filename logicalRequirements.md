@@ -269,37 +269,6 @@ __Additional considerations__
 ### Room Pathing Objects
 This section contains logical elements that are affected by Samus' pathing within a room.
 
-#### obstacle object
-**Deprecated:** This object will hopefully disappear once strats (and their way of defining the destruction of obstacles) are used everywhere in the `region` files.
-
-An `obstacle` object represents the need for an obstacle to be destroyed in order for Samus to pass. Fulfilling an `obstacle` requires one of the following:
-* Destroying the obstacle. This requires fulfilling all of the following:
-  * The requirements in the obstacle definition (see obstacles in [the Region documentation](region/region-readme.md))
-  * The requirements placed directly on the `obstacle` object
-* Alternately, if Samus has previously destroyed that obstacle and has not left the room since, all requirements are ignored and the `obstacle` object is instantly fulfilled
-
-__Example:__
-```json
-{"obstacle":{
-  "id": "B",
-  "requires": [
-    {"or": [
-      "ScrewAttack",
-      "canUseMorphBombs",
-      "canUsePowerBombs"
-    ]}
-  ]
-}}
-```
-
-For further explanation of what obstacles can represent, please refer to [the Region documentation](region/region-readme.md).
-
-__Additional considerations__
-
-Some obstacles can only be destroyed from one direction. This is why it's not uncommon for an obstacle's requirements to be "never", if approachef from the other direction.
-
-Obstacles can only be destroyed by legally fulfilling a link's logical requirements in a way that includes the `obstacle` object. Notably, if the `obstacle` object is found within an `and` array, everything in that `and` must be fulfilled in order to destroy the obstacle.
-
 #### previousStratProperty object
 A `previousStratProperty` object represents the need for Samus to have arrived to the node via a strat that has a given stratProperty. This usually has to do with quick-respawn blocks not being back yet, or spinjump conservation. In those cases, arriving via other strats doesn't allow reproducing those conditions.
 
