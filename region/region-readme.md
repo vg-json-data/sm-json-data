@@ -61,6 +61,11 @@ None of the locks must be active for Samus to be able to properly interact with 
 * Completing an event node's event (hence activating the flags in its `yields` property)
 * Using any `utility` that is present at a node
 
+#### viewableNodes
+The `viewableNodes` property is an array of objects, each of which describing how an item node within the room can be viewed from the current node without having to reach the item. It has two properties:
+* _id:_ The in-room ID of the item node that can be viewed
+* _strats:_ An array of [strats](../strats.md), each of which may be executed in order to view the item node. If none of the strats can be executed, the item cannot be viewed.
+
 #### yields
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
 
