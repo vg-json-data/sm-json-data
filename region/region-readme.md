@@ -99,7 +99,7 @@ Represents the possibility for Samus to charge a shinespark without using the do
   * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
 * _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
 * _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
-* _requires:_ A list of [logical requirements](../logicalRequirements.md) that must be fulfilled to be able to leave charged, on top of the implicit charging and shinesparking ones.
+* _strats:_ An array of [strats](../strats.md), each of which may be executed in order to leave charged. Those all have implicit charging and shinesparking requirements.
 * _initiateAt:_ The node at which the charging operation must start. Samus must have access to this node to be able to leave the room charged. Additional considerations for this property:
   * If this property is missing, it is assumed to be the node by which Samus will leave the room
   * If this property specifies a different node, the `canLeaveCharged` object's `requires` property must also account for all requirements for reaching the door from that node. Regular navigation is not intended to be used for that purpose.
