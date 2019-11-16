@@ -17,8 +17,10 @@ Each connection has a `type`, which will be one of the following:
 * _Vertical Door:_ Just a vertical door.
 * _Horizontal Morph Tunnel:_ A transition between two rooms that is a Morph passage. The vanilla game has only one of those, between Main Street and Mt. Everest in Maridia.
 * _Vertical Sandpit:_ Found only in Maridia, these are room transitions that are navigated by falling into quicksand. Notably, these connections can only be navigated by Samus in one direction.
+* _Elevator:_ A transition between two rooms by an elevator.
+* _Story Marker:_ A transition between two rooms that is handled by story progression rather than in-room mechanics.
 
 ### node/position
 Both nodes in a connection have a position. This can be one of `left`, `right`, `top`, or `bottom`. Please note that this is the position of the node as compared to the other node in the connection, _not_ their position within their perspective room.
 
-For example: Suppose that door 1 is the top-right room in Parlor, and door 2 is the bottom-left door in Landing Site. Those doors form a connection. Door 1 is on the right side of its room, but it is on the left side of the connection because it is on the left of door 2.
+For example: Suppose that door 1 is the top-right door in Parlor, and door 2 is the bottom-left door in Landing Site. Those doors form a connection. Door 1 is on the right side of its room, but it is on the left side of the connection because it is on the left of door 2. So in this example, door 1 is on the left side of the connection and door 2 is on the right side.
