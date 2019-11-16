@@ -54,6 +54,21 @@ __Example:__
 }}
 ```
 
+#### ammoDrain object
+An `ammoDrain` object works very much like `ammo`, except that spending the ammo isn't mandatory. The ammo is just always spent if it's there. This has the same properties as an `ammo` object.
+
+__Example:__
+```json
+{"ammoDrain": {
+  "type": "Missile",
+  "count": 75
+}}
+```
+
+__Additional considerations__
+
+Whenever an `ammoDrain` object is part of a strat, it should be applied after all other ammo costs.
+
 #### enemyKill object
 An `enemyKill` object communicates the need to kill a given set of enemies, and is satisfied by having the necessary items to use one of the valid [weapons](weapons/weapons-readme.md) that will kill each of the enemies (as well as enough ammo, if applicable).
 
