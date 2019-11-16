@@ -137,6 +137,15 @@ __Example:__
 }}
 ```
 
+#### energyAtMost object
+
+There are situations where progress causes Samus' energy to be set to a specific value, regardless of how much she had coming in. An `energyAtMost` object communicates a logical requirement that Samus' energy is reduced to a maximum of the accompanying value. Fulfilling this object does not require draining reserve tanks.
+
+__Example:__
+```json
+{"energyAtMost": 1}
+```
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
 
