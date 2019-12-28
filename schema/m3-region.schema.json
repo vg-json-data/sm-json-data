@@ -30,12 +30,14 @@
         "additionalProperties": false,
         "properties": {
           "and": {
-            "$ref" : "#definitions/logicalRequirements",
+            "$ref" : "#/definitions/logicalRequirements",
+            "$id": "#/definitions/logicalRequirements/items/properties/and",
             "title": "AND Logical Element",
             "description": "Fulfilled if all logical elements inside are fulfilled."
           },
           "or": {
-            "$ref" : "#definitions/logicalRequirements",
+            "$ref" : "#/definitions/logicalRequirements",
+            "$id": "#/definitions/logicalRequirements/items/properties/or",
             "title": "OR Logical Element",
             "description": "Fulfilled if at least one logical element inside is fulfilled."
           },
@@ -481,7 +483,7 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "$id": "#/definitions/strat/items/properties/name",
+          "$id": "#/definitions/strat/properties/name",
           "type": "string",
           "title": "Strat Name",
           "description": "A name for the strat",
@@ -498,11 +500,12 @@
         },
         "requires": {
           "$ref" : "#/definitions/logicalRequirements",
+          "$id": "#/definitions/strat/properties/requires",
           "title": "Strat Requirements",
           "description": "Equipment, tech, and flag requirements to execute this strat."
         },
         "obstacles": {
-          "$id": "#/definitions/strat/items/properties/obstacles",
+          "$id": "#/definitions/strat/properties/obstacles",
           "type": "array",
           "title": "Strat obstacles",
           "description": "An array of obstacles that must be destroyed (during the strat or previously) for the strat to be successfully executed.",
@@ -547,7 +550,61 @@
                 }
               },
               "note": {
-                "$ref" : "#definitions/note"
+                "$ref" : "#/definitions/note",
+                "$id": "#/definitions/strat/properties/obstacles/items/properties/note"
+              }
+            }
+          }
+        },
+        "failures": {
+          "$id": "#/definitions/strat/properties/failures",
+          "type": "array",
+          "title": "Strat Failures",
+          "description": "A list of ways the strat can be failed, with the consequences of that failure.",
+          "items": {
+            "$id": "#/definitions/strat/properties/failures/items",
+            "type": "object",
+            "required": [ "name" ],
+            "not": {
+              "required": ["leadsToNode", "softlock"]
+            },
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "$id": "#/definitions/strat/properties/failures/items/properties/name",
+                "type": "string",
+                "title": "Failure Name",
+                "description": "A name that identifies this strat failure.",
+                "default": "",
+                "pattern": "^(.*)$"
+              },
+              "leadsToNode": {
+                "$id": "#/definitions/strat/properties/failures/items/properties/leadsToNode",
+                "type": "integer",
+                "title": "Leads to Node",
+                "description": "Indicates a node at which Samus ends up when this failure happens."
+              },
+              "cost": {
+                "$ref" : "#/definitions/logicalRequirements",
+                "$id": "#/definitions/strat/properties/failures/items/properties/cost",
+                "title": "Failure Cost",
+                "description": "Cost of having this failure happen. This is represented as logical requirements, but only resource requirements make sense - not items or techs."
+              },
+              "softlock": {
+                "$id": "#/definitions/strat/properties/failures/items/properties/softlock",
+                "type": "boolean",
+                "title": "Softlock",
+                "description": "Indicates whether this failure causes a softlock. If missing, this should be viewed as false."
+              },
+              "clearsPreviousNode": {
+                "$id": "#/definitions/strat/properties/failures/items/properties/clearsPreviousNode",
+                "type": "boolean",
+                "title": "Clears Previous Node",
+                "description": "Indicates whether this failure causes the previous node to be overwritten (and set to current node). If the failure leads to a node, Samus lands at that node and that node is also set to the previous node If missing, this should be viewed as false."
+              },
+              "note": {
+                "$ref" : "#/definitions/note",
+                "$id": "#/definitions/strat/properties/failures/items/properties/note"
               }
             }
           }
@@ -566,7 +623,8 @@
           }
         },
         "note": {
-          "$ref" : "#definitions/note"
+          "$ref" : "#/definitions/note",
+          "$id": "#/definitions/strat/properties/note"
         }
       }
     }
@@ -585,7 +643,7 @@
     "rooms": {
       "type": "array",
       "items": {
-        "$id": "#/items",
+        "$id": "#/properties/rooms/items",
         "type": "object",
         "title": "Room Object",
         "description": "An object that describes one room in Super Metroid",
@@ -600,7 +658,7 @@
         "additionalProperties": false,
         "properties": {
           "id": {
-            "$id": "#/items/properties/id",
+            "$id": "#/properties/rooms/items/properties/id",
             "type": "integer",
             "title": "Room ID",
             "description": "Identifier for this room, unique across the entire game",
@@ -610,7 +668,7 @@
             ]
           },
           "name": {
-            "$id": "#/items/properties/name",
+            "$id": "#/properties/rooms/items/properties/name",
             "type": "string",
             "title": "Room Name",
             "description": "As it appears in the SuperMetroid.run wiki",
@@ -621,7 +679,7 @@
             "pattern": "^(.*)$"
           },
           "area": {
-            "$id": "#/items/properties/area",
+            "$id": "#/properties/rooms/items/properties/area",
             "type": "string",
             "title": "Area Name",
             "default": "",
@@ -631,7 +689,7 @@
             "pattern": "^(.*)$"
           },
           "subarea": {
-            "$id": "#/items/properties/subarea",
+            "$id": "#/properties/rooms/items/properties/subarea",
             "type": "string",
             "title": "Area Subname",
             "default": "",
@@ -641,10 +699,11 @@
             "pattern": "^(.*)$"
           },
           "note": {
-            "$ref" : "#definitions/note"
+            "$ref" : "#/definitions/note",
+            "$id": "#/properties/rooms/items/properties/note"
           },
           "roomAddress": {
-            "$id": "#/items/properties/roomAddress",
+            "$id": "#/properties/rooms/items/properties/roomAddress",
             "type": "string",
             "title": "Room Address",
             "description": "Memory address of this room.",
@@ -652,11 +711,11 @@
             "pattern": "^(.*)$"
           },
           "nodes": {
-            "$id": "#/items/properties/nodes",
+            "$id": "#/properties/rooms/items/properties/nodes",
             "type": "array",
             "title": "Nodes; Doors, Elevators, Item Locations, etc",
             "items": {
-              "$id": "#/items/properties/nodes/items",
+              "$id": "#/properties/rooms/items/properties/nodes/items",
               "type": "object",
               "title": "Node Object",
               "required": [
@@ -669,7 +728,7 @@
               "additionalProperties": false,
               "properties": {
                 "id": {
-                  "$id": "#/items/properties/nodes/items/properties/id",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/id",
                   "type": "integer",
                   "title": "Node ID within Room",
                   "default": 0,
@@ -678,7 +737,7 @@
                   ]
                 },
                 "name": {
-                  "$id": "#/items/properties/nodes/items/properties/name",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/name",
                   "type": "string",
                   "title": "Node Name",
                   "default": "",
@@ -688,7 +747,7 @@
                   "pattern": "^(.*)$"
                 },
                 "nodeType": {
-                  "$id": "#/items/properties/nodes/items/properties/nodeType",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/nodeType",
                   "type": "string",
                   "title": "Node Type",
                   "description": "Examples: door, elevator, event, eye, gray, green, item, vertical",
@@ -711,7 +770,7 @@
                   "pattern": "^(.*)$"
                 },
                 "nodeSubType": {
-                  "$id": "#/items/properties/nodes/items/properties/nodeSubType",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/nodeSubType",
                   "type": "string",
                   "title": "Node SubType",
                   "default": "",
@@ -753,35 +812,36 @@
                   "pattern": "^(.*)$"
                 },
                 "nodeItem": {
-                  "$id": "#/items/properties/nodes/items/properties/nodeItem",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/nodeItem",
                   "type": "string",
                   "title": "Vanilla Item",
                   "description": "Item that normally resides at this node in Vanilla"
                 },
                 "nodeAddress": {
-                  "$id": "#/items/properties/nodes/items/properties/nodeAddress",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/nodeAddress",
                   "type": "string",
                   "title": "Memory Address",
                   "description": "Memory address of this location",
                   "examples": ["0x0019852", "0x001985e"]
                 },
                 "interactionRequires": {
-                  "$ref" : "#definitions/logicalRequirements",
+                  "$ref" : "#/definitions/logicalRequirements",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/interactionRequires",
                   "title": "Interaction Requirements",
                   "description": "Equipment, tech, and flag requirements to interact with this node once it has been reached. This is separate from one-time unlock requirements."
                 },
                 "sparking": {
-                  "$id": "#/items/properties/nodes/items/properties/sparking",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking",
                   "type": "object",
                   "title": "Shinespark capabilities of this Room",
                   "additionalProperties": false,
                   "properties": {
                     "runways": {
-                      "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways",
+                      "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways",
                       "type": "array",
                       "title": "Runways",
                       "items": {
-                        "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items",
                         "type": "object",
                         "title": "Runway Object",
                         "additionalProperties": false,
@@ -792,66 +852,66 @@
                         ],
                         "properties": {
                           "length": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/length",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/length",
                             "type": "integer",
                             "title": "Length",
                             "description": "Length of this Runway"
                           },
                           "gentleUpTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleUpTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleUpTiles",
                             "type": "integer",
                             "title": "Gentle Up Tiles",
                             "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running towards the door)"
                           },
                           "gentleDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/gentleDownTiles",
                             "type": "integer",
                             "title": "Gentle Down Tiles",
                             "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running towards the door)"
                           },
                           "steepUpTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepUpTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepUpTiles",
                             "type": "integer",
                             "title": "Steep Up Tiles",
                             "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running towards the door)"
                           },
                           "steepDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/steepDownTiles",
                             "type": "integer",
                             "title": "Steep Down Tiles",
                             "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running towards the door)"
                           },
                           "startingDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/startingDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/startingDownTiles",
                             "type": "integer",
                             "title": "Starting Down Tiles",
                             "description": "Number of tiles at the start of the runway (away from the door) that slope down, preventing a stutter"
                           },
                           "endingUpTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/endingUpTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/endingUpTiles",
                             "type": "integer",
                             "title": "Ending Up Tiles",
                             "description": "Number of tiles at the end of the runway (at the door) that slope up, preventing a stutter when starting a run in the other direction"
                           },
                           "strats": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/strats",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/strats",
                             "type": "array",
                             "title": "Runway Strats",
                             "description": "An array of strats that can be executed to use this runway.",
                             "items": {
                               "$ref" : "#/definitions/strat",
-                              "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/strats/items"
+                              "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/strats/items"
                             }
                           },
                           "usableComingIn": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/usableComingIn",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/usableComingIn",
                             "type": "boolean",
                             "title": "Usable Coming In",
                             "description": "Indicates whether this runway is usable when coming in from the connected door.",
                             "default": true
                           },
                           "openEnd": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/openEnd",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/openEnd",
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 1,
@@ -860,18 +920,19 @@
                             "default": 1
                           },
                           "note": {
-                            "$ref" : "#definitions/note"
+                            "$ref" : "#/definitions/note",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/runways/items/properties/note"
                           }
                         }
                       }
                     },
                     "canLeaveCharged": {
-                      "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged",
+                      "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged",
                       "type": "array",
                       "title": "Can Leave Charged",
                       "description": "An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark).",
                       "items": {
-                        "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/items",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/items",
                         "type": "object",
                         "title": "canLeaveCharged Object",
                         "required": [
@@ -883,41 +944,41 @@
                         "additionalProperties": false,
                         "properties": {
                           "usedTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/usedTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/usedTiles",
                             "type": "integer",
                             "title": "Used Tiles",
                             "description": "The number of tiles that are available to charge a shinespark"
                           },
                           "framesRemaining": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/framesRemaining",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/framesRemaining",
                             "type": "integer",
                             "title": "Frames Remaining",
                             "description": "The number of frames remaining in the shinespark charge when leaving the room. If this is 0, Samus leaves the room shinesparking."
                           },
                           "shinesparkFrames": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/shinesparkFrames",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/shinesparkFrames",
                             "type": "integer",
                             "title": "Shinespark Frames",
                             "description": "If this requires shinespark out of the room, indicates how many frames that shinespark on the way out will last"
                           },
                           "initiateAt": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/initiateAt",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/initiateAt",
                             "type": "integer",
                             "title": "Node to initiate at",
                             "description": "The ID of the node where Samus must be to begin the execution of this canLeaveCharged"
                           },
                           "strats": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/strats",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/strats",
                             "type": "array",
                             "title": "Leave Charged Strats",
                             "description": "An array of strats that can be executed to leave the room charged.",
                             "items": {
                               "$ref" : "#/definitions/strat",
-                              "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/strats/items"
+                              "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/strats/items"
                             }
                           },
                           "openEnd": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/openEnd",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/openEnd",
                             "type": "integer",
                             "minimum": 0,
                             "maximum": 2,
@@ -925,60 +986,62 @@
                             "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
                           },
                           "gentleUpTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/gentleUpTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/gentleUpTiles",
                             "type": "integer",
                             "minimum": 0,
                             "title": "Gentle Up Tiles",
                             "description": "The number of tiles (among the used tiles) that slope gently upward (going up by half a tile)."
                           },
                           "gentleDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/gentleDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/gentleDownTiles",
                             "type": "integer",
                             "minimum": 0,
                             "title": "Gentle Down Tiles",
                             "description": "The number of tiles (among the used tiles) that slope gently downward (going down by half a tile)."
                           },
                           "steepUpTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/steepUpTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/steepUpTiles",
                             "type": "integer",
                             "minimum": 0,
                             "title": "Steep Up Tiles",
                             "description": "The number of tiles (among the used tiles) that slope steeply upward (going up by a tile)."
                           },
                           "steepDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/steepDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/steepDownTiles",
                             "type": "integer",
                             "minimum": 0,
                             "title": "Steep Down Tiles",
                             "description": "The number of tiles (among the used tiles) that slope steeply downward (going down by a tile)."
                           },
                           "startingDownTiles": {
-                            "$id": "#/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/startingDownTiles",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/startingDownTiles",
                             "type": "integer",
                             "minimum": 0,
                             "title": "Starting Down Tiles",
                             "description": "The number of tiles (among the used tiles) that slope downwards at the start of a run, preventing the execution of a stutter."
                           },
                           "note": {
-                            "$ref" : "#definitions/note"
+                            "$ref" : "#/definitions/note",
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/canLeaveCharged/properties/note"
                           }
                         }
                       }
                     },
                     "note": {
-                      "$ref" : "#definitions/note"
+                      "$ref" : "#/definitions/note",
+                      "$id": "#/properties/rooms/items/properties/nodes/items/properties/sparking/properties/note"
                     }
                   }
                 },
                 "spawnAt": {
-                  "$id": "#/items/properties/nodes/items/properties/spawnAt",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/spawnAt",
                   "type": "integer",
                   "title": "Node to spawn at",
                   "description": "ID of the node at which Samus spawns when entering a room through this node. If this is null, Samus just spawns at the node she entered through",
                   "default": null
                 },
                 "locks": {
-                  "$id": "#/items/properties/nodes/items/properties/locks",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks",
                   "type": [
                     "array",
                     "null"
@@ -987,7 +1050,7 @@
                   "description": "An array of corresponding lock and unlock conditions for this node",
                   "default": null,
                   "items": {
-                    "$id": "#/items/properties/nodes/items/properties/locks/items",
+                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items",
                     "type": "object",
                     "title": "Lock Object",
                     "description": "Contains corresponding lock and unlock conditions for a node. If lock condition is missing, the lock is initially active.",
@@ -995,7 +1058,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "lockType": {
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/lockType",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/lockType",
                         "type": "string",
                         "title": "Lock Type",
                         "default": "",
@@ -1012,39 +1075,40 @@
                         "pattern": "^(.*)$"
                       },
                       "lock": {
-                        "$ref" : "#definitions/logicalRequirements",
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/lock",
+                        "$ref" : "#/definitions/logicalRequirements",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/lock",
                         "title": "Lock Requirements",
                         "description": "Equipment, tech, and flag requirements for this node to be locked"
                       },
                       "unlockStrats": {
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/unlockStrats",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/unlockStrats",
                         "type": "array",
                         "title": "Unlock Strats",
                         "description": "An array of strats that can be used to unlock the lock.",
                         "items": {
                           "$ref" : "#/definitions/strat",
-                          "$id": "#/items/properties/nodes/items/properties/locks/items/properties/unlockStrats/items"
+                          "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/unlockStrats/items"
                         }
                       },
                       "bypassStrats": {
-                        "$id": "#/items/properties/nodes/items/properties/locks/items/properties/bypassStrats",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/bypassStrats",
                         "type": "array",
                         "title": "Bypass Strats",
                         "description": "An array of strats that can be used to bypass the lock, going through it without unlocking it.",
                         "items": {
                           "$ref" : "#/definitions/strat",
-                          "$id": "#/items/properties/nodes/items/properties/locks/items/properties/bypassStrats/items"
+                          "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/bypassStrats/items"
                         }
                       },
                       "note": {
-                        "$ref" : "#definitions/note"
+                        "$ref" : "#/definitions/note",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/note"
                       }
                     }
                   }
                 },
                 "utility": {
-                  "$id": "#/items/properties/nodes/items/properties/utility",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/utility",
                   "type": [
                     "array",
                     "null"
@@ -1052,7 +1116,7 @@
                   "title": "Utilities",
                   "description": "Helping stations at this Node (such as save, refills, or map station)",
                   "items": {
-                    "$id": "#/items/properties/nodes/items/properties/utility/items",
+                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/utility/items",
                     "type": "string",
                     "enum": [
                       "save",
@@ -1066,12 +1130,12 @@
                   }
                 },
                 "viewableNodes": {
-                  "$id": "#/items/properties/nodes/items/properties/viewableNodes",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/viewableNodes",
                   "type": "array",
                   "title": "Viewable Item Nodes",
                   "description": "An array of objects describing what item nodes can be viewed from this node, and how.",
                   "items": {
-                    "$id": "#/items/properties/nodes/items/properties/viewableNodes/items",
+                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/viewableNodes/items",
                     "type": "object",
                     "title": "Viewable Node Object",
                     "description": "Describes what item nodes can be viewed from this node, and how.",
@@ -1079,7 +1143,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "id": {
-                        "$id": "#/items/properties/nodes/items/properties/viewableNodes/items/properties/id",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/viewableNodes/items/properties/id",
                         "type": "integer",
                         "title": "The ID of the item node that is viewable, within the room.",
                         "default": 0,
@@ -1088,35 +1152,36 @@
                         ]
                       },
                       "strats" : {
-                        "$id": "#/items/properties/nodes/items/properties/viewableNodes/items/properties/strats",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/viewableNodes/items/properties/strats",
                         "type": "array",
                         "title": "Viewable Node Strats",
                         "description": "An array of strats that can be executed to view the item.",
                         "items": {
                           "$ref" : "#/definitions/strat",
-                          "$id": "#/items/properties/nodes/items/properties/viewableNodes/items/properties/strats/items"
+                          "$id": "#/properties/rooms/items/properties/nodes/items/properties/viewableNodes/items/properties/strats/items"
                         }
                       }
                     }
                   }
                 },
                 "yields": {
-                  "$id": "#/items/properties/nodes/items/properties/yields",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/yields",
                   "type": "array",
                   "title": "This Node grants an ability/flag"
                 },
                 "note": {
-                  "$ref" : "#definitions/note"
+                  "$ref" : "#/definitions/note",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/note"
                 }
               }
             }
           },
           "links": {
-            "$id": "#/items/properties/links",
+            "$id": "#/properties/rooms/items/properties/links",
             "type": "array",
             "title": "Links; pathways within the Room",
             "items": {
-              "$id": "#/items/properties/links/items",
+              "$id": "#/properties/rooms/items/properties/links/items",
               "type": "object",
               "title": "Link",
               "required": [
@@ -1126,7 +1191,7 @@
               "additionalProperties": false,
               "properties": {
                 "from": {
-                  "$id": "#/items/properties/links/items/properties/from",
+                  "$id": "#/properties/rooms/items/properties/links/items/properties/from",
                   "type": "integer",
                   "title": "This Link originates at this Node ID within the Room",
                   "default": 0,
@@ -1135,14 +1200,14 @@
                   ]
                 },
                 "to": {
-                  "$id": "#/items/properties/links/items/properties/to",
+                  "$id": "#/properties/rooms/items/properties/links/items/properties/to",
                   "type": [
                     "array",
                     "null"
                   ],
                   "title": "This Link terminates at this Node ID within the Room",
                   "items": {
-                    "$id": "#/items/properties/links/items/properties/to/items",
+                    "$id": "#/properties/rooms/items/properties/links/items/properties/to/items",
                     "type": "object",
                     "title": "The Items Schema",
                     "required": [
@@ -1152,7 +1217,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "id": {
-                        "$id": "#/items/properties/links/items/properties/to/items/properties/id",
+                        "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/id",
                         "type": "integer",
                         "title": "Target Node ID within the Room",
                         "default": 0,
@@ -1161,22 +1226,23 @@
                         ]
                       },
                       "strats": {
-                        "$id": "#/items/properties/links/items/properties/to/items/properties/strats",
+                        "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/strats",
                         "type": "array",
                         "title": "Link Strats",
                         "description": "An array of strats that can be used to cross the link.",
                         "items": {
                           "$ref" : "#/definitions/strat",
-                          "$id": "#/items/properties/links/items/properties/to/items/properties/strats/items"
+                          "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/strats/items"
                         }
                       },
                       "yields": {
-                        "$id": "#/items/properties/links/items/properties/to/items/properties/yields",
+                        "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/yields",
                         "type": "array",
                         "title": "This Link grants an ability/flag"
                       },
                       "note": {
-                        "$ref" : "#definitions/note"
+                        "$ref" : "#/definitions/note",
+                        "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/note"
                       }
                     }
                   }
@@ -1185,11 +1251,11 @@
             }
           },
           "obstacles": {
-            "$id": "#/items/properties/obstacles",
+            "$id": "#/properties/rooms/items/properties/obstacles",
             "type": "array",
             "title": "Obstacles; Things that block your way and can be destroyed, not respawning until the room is reset",
             "items": {
-              "$id": "#/items/properties/obstacles/items",
+              "$id": "#/properties/rooms/items/properties/obstacles/items",
               "type": "object",
               "title": "Obstacle",
               "required": [
@@ -1200,14 +1266,14 @@
               "additionalProperties": false,
               "properties": {
                 "id": {
-                  "$id": "#/items/properties/obstacles/items/properties/id",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/id",
                   "type": "string",
                   "title": "Obstacle ID within Room. To reduce confusion with nodes, this should be a one-letter String",
                   "default": "",
                   "examples": ["A", "B"]
                 },
                 "name": {
-                  "$id": "#/items/properties/obstacles/items/properties/name",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/name",
                   "type": "string",
                   "title": "Obstacle Name",
                   "default": "",
@@ -1217,7 +1283,7 @@
                   "pattern": "^(.*)$"
                 },
                 "obstacleType": {
-                  "$id": "#/items/properties/obstacles/items/properties/obstacleType",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/obstacleType",
                   "type": "string",
                   "title": "Obstacle Type",
                   "description": "The main type of obstacle. Examples include 'inanimate' and 'enemies'",
@@ -1233,10 +1299,12 @@
                   "pattern": "^(.*)$"
                 },
                 "note": {
-                  "$ref" : "#definitions/note"
+                  "$ref" : "#/definitions/note",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/note"
                 },
                 "requires": {
-                  "$ref" : "#definitions/logicalRequirements",
+                  "$ref" : "#/definitions/logicalRequirements",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/requires",
                   "title": "Absolute Obstacle Requirements",
                   "description": "Equipment, tech, and flag requirements that are always needed to break this obstacle. Those are applied on top of any requirements specified on an `obstacle` logical element that references this obstacle."
                 }
@@ -1244,11 +1312,11 @@
             }
           },
           "enemies": {
-            "$id": "#/items/properties/enemies",
+            "$id": "#/properties/rooms/items/properties/enemies",
             "type": "array",
             "title": "Enemies; Things that try to kill you.",
             "items": {
-              "$id": "#/items/properties/enemies/items",
+              "$id": "#/properties/rooms/items/properties/enemies/items",
               "type": "object",
               "title": "Enemies",
               "required": [
@@ -1266,7 +1334,7 @@
               "additionalProperties": false,
               "properties": {
                 "name": {
-                  "$id": "#/items/properties/enemies/items/properties/name",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/name",
                   "type": "string",
                   "title": "Enemy name",
                   "default": "",
@@ -1275,7 +1343,7 @@
                   ]
                 },
                 "quantity": {
-                  "$id": "#/items/properties/enemies/items/properties/quantity",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/quantity",
                   "type": "integer",
                   "title": "Quantity",
                   "default": "",
@@ -1284,7 +1352,7 @@
                   ]
                 },
                 "homeNodes": {
-                  "$id": "#/items/properties/enemies/items/properties/homeNodes",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/homeNodes",
                   "type": "array",
                   "items": {
                     "type": "integer"
@@ -1297,7 +1365,7 @@
                   ]
                 },
                 "betweenNodes": {
-                  "$id": "#/items/properties/enemies/items/properties/betweenNodes",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/betweenNodes",
                   "type": "array",
                   "items": {
                     "type": "integer"
@@ -1312,22 +1380,26 @@
                   ]
                 },
                 "spawn": {
-                  "$ref" : "#definitions/logicalRequirements",
+                  "$ref" : "#/definitions/logicalRequirements",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/spawn",
                   "title": "Spawn Requirements",
                   "description": "Equipment, tech, and flag requirements for this enemy to spawn. If null, enemy can spawn from game start."
                 },
                 "stopSpawn": {
-                  "$ref" : "#definitions/logicalRequirements",
+                  "$ref" : "#/definitions/logicalRequirements",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/stopSpawn",
                   "title": "Stop Spawning Requirements",
                   "description": "Equipment, tech, and flag requirements for this enemy to stop spawning. If null, enemy can always spawn once its spawn requirements have been met."
                 },
                 "dropRequires": {
-                  "$ref" : "#definitions/logicalRequirements",
+                  "$ref" : "#/definitions/logicalRequirements",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/dropRequires",
                   "title": "Drop Requires",
                   "description": "Equipment, tech, and flag requirements that are needed to obtain the drop from this enemy without taking any damage. These go on top of what's needed to reach and kill the enemy."
                 },
                 "note": {
-                  "$ref" : "#definitions/note"
+                  "$ref" : "#/definitions/note",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/note"
                 }
               }
             }
