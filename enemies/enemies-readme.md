@@ -27,7 +27,7 @@ This is an array of attack objects, each of which describes an attack of the ene
 ### drops
 This is the enemy's drop table. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work).
 
-In an enemies file, this takes the form of an object with the following properties:
+In an enemies file, this takes the form of an object with the following properties (with the value being a drop rate out of 102):
 * _noDrop_
 * _smallEnergy_
 * _bigEnergy_
@@ -36,7 +36,9 @@ In an enemies file, this takes the form of an object with the following properti
 * _powerBomb_
 
 ### dims
-This is the width and height of the enemy in pixels.
+An object describing the dimensions of the enemy. Contains the following properties:
+* _h_: "The height of the enemy in pixels.
+* _w_: "The width of the enemy in pixels.
 
 ### farmable
 Indicates whether this enemy respawns, making it farmable without having to reset the room.
@@ -49,8 +51,11 @@ In an enemies file, this takes the same form as `drops`.
 ### grapplable
 Indicates whether Samus can use this enemy like a grapple block.
 
-### mult
-This object contains numerical properties whose name is either a weapon or a weapon category, and whose value is the damage multiplier that should be applied to that weapon's base damage when calculating the damage it does to this enemy.
+### damageMultipliers
+An array of objects, each of which describes a resistance or vulnerability of the enemy. This takes the form of a damage multiplier. Has the following properties:
+* _weapon_: The name of a weapon or weapon category
+* _value_: The damage multiplier that applies to the weapon or category. This is a vulnerability if more than 1, and a resistance if less than 1.
+
 Look up [weapons files](../weapons/weapons-readme.md) for more information about weapons and weapon categories.
 
 ### invul
