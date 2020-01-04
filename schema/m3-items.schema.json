@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://raw.githubusercontent.com/miketrethewey/sm-json-data/master/schema/m3-items.schema.json",
+
+  "definitions": {
+    "consumableResource": {
+      "type": "string",
+      "enum": [
+        "energy",
+        "reserveEnergy",
+        "missile",
+        "super",
+        "powerBomb"
+      ],
+      "pattern": "^(.*)$"
+    }
+  },
+
+  "type": "object",
+  "title": "Super Metroid Items and Flags Schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "title": "JSON Schema Path",
+      "description": "A path to the definition of this file's JSON schema."
+    },
+    "baseItems": {
+      "$id": "#/properties/baseItems",
+      "type": "array",
+      "title": "Base Items",
+      "description": "A list of items that are available from game start",
+      "items": {
+        "$id": "#/properties/baseItems/items",
+        "type": "string",
+        "title": "Base Item",
+        "description": "An item that is available at game start",
+        "pattern": "^(.*)$"
+      }
+    },
+    "baseResources": {
+      "$id": "#/properties/baseResources",
+      "type": "array",
+      "title": "Base Resources",
+      "description": "A list of resources, and the max amount available at game start",
+      "items": {
+        "$id": "#/properties/baseResources/items",
+        "type": "object",
+        "title": "Base Resource",
+        "description": "Describes the max amount available at game start for a resource",
+        "required": ["resource", "maxAmount"],
+        "additionalProperties": false,
+        "properties": {
+          "resource": {
+            "$ref" : "#/definitions/consumableResource",
+            "$id": "#/properties/baseResources/items/properties/resource",
+            "title": "Resource",
+            "description": "The resource whose starting max amount this object describes"
+          },
+          "maxAmount": {
+            "$id": "#/properties/baseResources/items/properties/maxAmount",
+            "type": "integer",
+            "title": "Max Amount",
+            "description": "The starting max amount for this resource"
+          }
+        }
+      }
+    },
+    "upgradeItems": {
+      "$id": "#/properties/upgradeItems",
+      "type": "array",
+      "title": "Upgrade Items",
+      "description": "A list of non-consumable items that upgrade the player's capabilities",
+      "items": {
+        "$id": "#/properties/upgradeItems/items",
+        "type": "object",
+        "title": "Upgrade Item",
+        "description": "A non-consumable item that upgrades the player's capabilities",
+        "required": [
+          "name",
+          "data"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "$id": "#/properties/upgradeItems/items/properties/name",
+            "type": "string",
+            "title": "Item Name",
+            "description": "The name of the item, as it will appear in logical requirements",
+            "pattern": "^(.*)$"
+          },
+          "data": {
+            "$id": "#/properties/upgradeItems/items/properties/data",
+            "type": "string",
+            "title": "Item Data",
+            "description": "In-game data describing the item",
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    },
+    "expansionItems": {
+      "$id": "#/properties/expansionItems",
+      "type": "array",
+      "title": "Expansion Items",
+      "description": "A list of expansion items, that increase the player's max value for a consumable resource",
+      "items": {
+        "$id": "#/properties/expansionItems/items",
+        "type": "object",
+        "title": "Expansion Item",
+        "description": "An expansion item, that increases the player's max value for a consumable resource",
+        "required": [
+          "name",
+          "data",
+          "resource",
+          "resourceAmount"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "$id": "#/properties/expansionItems/items/properties/name",
+            "type": "string",
+            "title": "Item Name",
+            "description": "The name of the item",
+            "pattern": "^(.*)$"
+          },
+          "data": {
+            "$id": "#/properties/expansionItems/items/properties/data",
+            "type": "string",
+            "title": "Item Data",
+            "description": "In-game data describing the item",
+            "pattern": "^(.*)$"
+          },
+          "resource": {
+            "$ref" : "#/definitions/consumableResource",
+            "$id": "#/properties/expansionItems/items/properties/resource",
+            "title": "Expansion Item Resource",
+            "description": "The resource that this expansion item increases the max amount of"
+          },
+          "resourceAmount": {
+            "$id": "#/properties/expansionItems/items/properties/resourceAmount",
+            "type": "integer",
+            "title": "Resource Amount",
+            "description": "Indicates the amount by which this expansion item increases its resource's max amount"
+          }
+        }
+      }
+    },
+    "gameFlags": {
+      "$id": "#/properties/gameFlags",  
+      "type": "array",
+      "title": "Game Flags",
+      "description": "A list of game flags, that can be obtained by interacting with certain nodes",
+      "items": {
+        "$id": "#/properties/gameFlags/items",
+        "type": "string",
+        "title": "Game Flag",
+        "description": "The name of a game flag, as it will appear in requirements and in the `yields` property of nodes",
+        "pattern": "^(.*)$"
+      }
+    }
+  }
+}
