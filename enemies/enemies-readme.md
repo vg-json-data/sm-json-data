@@ -18,7 +18,11 @@ Indicates the number of individual drops (from the enemy's drops table) that are
 This property is intended to just be informative. It indicates what regions of the game have instances of this enemy.
 
 ### attacks
-This is an object containing attacks that the enemy is able to perform. Each property in the `attacks` object is named for the attack, and is an array with the damage caused to Samus by the attack. The array contains three values which refer, in order, to damage while wearing Power Suit, Varia Suit, and Gravity Suit.
+This is an array of attack objects, each of which describes an attack of the enemy. An attack can have the following properties:
+* _name_: The name of the attack
+* _baseDamage_: The base damage done to Samus by this attack when she is wearing only the power suit
+* _affectedByVaria_: Indicates whether Varia suit applies its normal damage reduction to this attack. Should be considered `true` if missing.
+* _affectedByGravity_: Indicates whether Gravity suit applies its normal damage reduction to this attack. Should be considered `true` if missing.
 
 ### drops
 This is the enemy's drop table. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
