@@ -1,0 +1,478 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://raw.githubusercontent.com/miketrethewey/sm-json-data/master/schema/m3-requirements.schema.json",
+  "title": "Super Metroid Logical Requirements Schema",
+
+  "definitions": {
+    "note": {
+      "type": ["string", "array"],
+      "title": "Note field",
+      "description": "Additional details or explanations, intended for human readers.",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "logicalRequirements": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "title": "Logical Requirements",
+      "description": "A logical condition that takes the form of equipment, tech, and flag requirements.",
+      "items": {
+        "$id": "#/definitions/logicalRequirements/items",
+        "type": [
+          "object",
+          "string"
+        ],
+        "title": "Logical element",
+        "description": "Elements are assumed to be ANDed together, except when inside an OR object.",
+        "minProperties": 1,
+        "maxProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "and": {
+            "$ref" : "#/definitions/logicalRequirements",
+            "$id": "#/definitions/logicalRequirements/items/properties/and",
+            "title": "AND Logical Element",
+            "description": "Fulfilled if all logical elements inside are fulfilled."
+          },
+          "or": {
+            "$ref" : "#/definitions/logicalRequirements",
+            "$id": "#/definitions/logicalRequirements/items/properties/or",
+            "title": "OR Logical Element",
+            "description": "Fulfilled if at least one logical element inside is fulfilled."
+          },
+          "ammo": {
+            "$id": "#/definitions/logicalRequirement/items/properties/ammo",
+            "type": "object",
+            "title": "Ammo Requirement",
+            "description": "Fulfilled by spending ammo",
+            "required": [
+              "type",
+              "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "$id": "#/definitions/logicalRequirement/items/properties/ammo/properties/type",
+                "type": "string",
+                "enum": [
+                  "Missile",
+                  "Super",
+                  "PowerBomb"
+                ],
+                "title": "Ammo Type",
+                "description": "The type of ammo that must be spent"
+              },
+              "count": {
+                "$id": "#/definitions/logicalRequirement/items/properties/ammo/properties/count",
+                "type": "integer",
+                "minimum": 1,
+                "title": "Ammo Count",
+                "description": "The amount of ammo that must be spent."
+              }
+            }
+          },
+          "ammoDrain": {
+            "$id": "#/definitions/logicalRequirement/items/properties/ammoDrain",
+            "type": "object",
+            "title": "Ammo Drain Cost",
+            "description": "Always fulfilled, but if the ammo is present, it will be drained.",
+            "required": [
+              "type",
+              "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "$id": "#/definitions/logicalRequirement/items/properties/ammoDrain/properties/type",
+                "type": "string",
+                "enum": [
+                  "Missile",
+                  "Super",
+                  "PowerBomb"
+                ],
+                "title": "Ammo Type",
+                "description": "The type of ammo that can be drained"
+              },
+              "count": {
+                "$id": "#/definitions/logicalRequirement/items/properties/ammoDrain/properties/count",
+                "type": "integer",
+                "minimum": 1,
+                "title": "Ammo Count",
+                "description": "The amount of ammo that can be drained."
+              }
+            }
+          },
+          "enemyKill": {
+            "$id": "#/definitions/logicalRequirement/items/properties/enemyKill",
+            "type": "object",
+            "title": "Enemy Kill",
+            "description": "Describes the need to be able to kill a set of enemies. By default, allows all non-situational weapons (provided they can damage the enemies)",
+            "required": ["enemies"],
+            "additionalProperties": false,
+            "properties": {
+              "enemies": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/enemies",
+                "type": "array",
+                "title": "Enemy Groups",
+                "description": "An array of enemy groups that must be killed. All enemies in each group can be hit by the same attack from an area of effect weapon.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/enemies/items",
+                  "type": "array",
+                  "title": "Enemy Group",
+                  "description": "A single group of enemies that can be hit by the same attack from an area of effect weapon.",
+                  "items": {
+                    "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/enemies/items/items",
+                    "type": "string",
+                    "title": "Enemy Name",
+                    "description": "The name of an enemy, as found in the enemies file or the boss file."
+                  }
+                }
+              },
+              "explicitWeapons": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/explicitWeapons",
+                "type": "array",
+                "title": "Explicit Weapons",
+                "description": "A list of weapons. If present, this list defines the only weapons that can be used to fulfill the EnemyKill logical element.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/explicitWeapons/items",
+                  "type": "string",
+                  "title": "Weapon Name",
+                  "description": "The name of a weapon, as found in the weapons file."
+                }
+              },
+              "excludedWeapons": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/excludedWeapons",
+                "type": "array",
+                "title": "Excluded Weapons",
+                "description": "A list of weapons. If present, this list defines weapons that cannot be used to fulfill this EnemyKill logical element.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/excludedWeapons/items",
+                  "type": "string",
+                  "title": "Weapon Name",
+                  "description": "The name of a weapon, as found in the weapons file."
+                }
+              },
+              "farmableAmmo": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/farmableAmmo",
+                "type": "array",
+                "title": "Farmable Ammo",
+                "description": "A list of ammo types that are considered farmable during this enemy kill. It voids all ammo costs for that type, unless superseded by a boss scenario.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/enemyKill/properties/farmableAmmo/items",
+                  "type": "string",
+                  "title": "Ammo Type",
+                  "description": "The name of an ammo type, which won't get spent (unless superseded by a boss scenario)."
+                }
+              }
+            }
+          },
+          "acidFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/acidFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Acid Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in acid."
+          },
+          "draygonElectricityFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/draygonElectricityFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Draygon Electricity Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames grapples to a broken Draygon turret."
+          },
+          "enemyDamage": {
+            "$id": "#/definitions/logicalRequirement/items/properties/enemyDamage",
+            "type": "object",
+            "title": "Enemy Dammage",
+            "description": "Fulfilled by spending an amount of energy that corresponds to taking a number of hits from an enemy.",
+            "required": [
+              "enemy",
+              "type",
+              "hits"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "enemy": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyDamage/properties/enemy",
+                "type": "string",
+                "title": "Enemy Name",
+                "description": "The name of an enemy that damage must be taken from, as found in the enemies file."
+              },
+              "type": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyDamage/properties/type",
+                "type": "string",
+                "title": "Attack Type",
+                "description": "The name of the enemy attack that damage must be taken from, as found in the enemy's list of attacks (in the enemies file)."
+              },
+              "hits": {
+                "$id": "#/definitions/logicalRequirement/items/properties/enemyDamage/properties/hits",
+                "type": "integer",
+                "minimum": 1,
+                "title": "Number of Hits",
+                "description": "The number of hits that must be taken."
+              }
+            }
+          },
+          "heatFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/heatFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Heat Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in a heat room."
+          },
+          "hibashiHits": {
+            "$id": "#/definitions/logicalRequirement/items/properties/hibashiHits",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Hibashi Hits",
+            "description": "Fulfilled by spending an amount of energy that corresponds to taking a number of hits from Norfair flame pillars (called Hibashi)."
+          },
+          "lavaFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/lavaFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Lava Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in lava."
+          },
+          "energyAtMost": {
+            "$id": "#/definitions/logicalRequirement/items/properties/energyAtMost",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Energy at Most",
+            "description": "Fulfilled by having Samus' energy drop to a maximum of this value, regardless of how much she had coming in."
+          },
+          "spikeHits": {
+            "$id": "#/definitions/logicalRequirement/items/properties/spikeHits",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Spike Hits",
+            "description": "Fulfilled by spending an amount of energy that corresponds to taking a number of hits from spikes."
+          },
+          "thornHits": {
+            "$id": "#/definitions/logicalRequirement/items/properties/thornHits",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Thorn Hits",
+            "description": "Fulfilled by spending an amount of energy that corresponds to taking a number of hits from thorns (the less damaging spikes found mainly in Brinstar)."
+          },
+          "adjacentRunway": {
+            "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway",
+            "type": "object",
+            "title": "Adjacent Runway",
+            "description": "Fulfilled by being able to come in via a specific door, if the door in the adjacent room has a runway that fulfills the other properties of this logical element.",
+            "required": [
+              "fromNode",
+              "usedTiles"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "fromNode": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/fromNode",
+                "type": "integer",
+                "title": "From Node",
+                "description": "The in-room ID of the node through which the adjacent runway must be accessed."
+              },
+              "usedTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/usedTiles",
+                "type": "integer",
+                "title": "Used Tiles",
+                "description": "The number of tiles the runway in the adjacent room must have."
+              }
+            }
+          },
+          "canComeInCharged": {
+            "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged",
+            "type": "object",
+            "title": "Can Come in Charged",
+            "description": "Fulfilled by being able to come into the room via a specific door, with a shinespark charge that has at least a number of frames remaining.",
+            "required": [
+              "fromNode",
+              "framesRemaining",
+              "shinesparkFrames"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "fromNode": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/fromNode",
+                "type": "integer",
+                "title": "From Node",
+                "description": "The in-room ID of the node through which a shinespark charge must be carried."
+              },
+              "framesRemaining": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/framesRemaining",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 180,
+                "title": "Frames Remaining",
+                "description": "The number of frames that must be left on the shinespark charge when coming in."
+              },
+              "shinesparkFrames": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/shinesparkFrames",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Shinespark Frames",
+                "description": "The duration (in frames) of the shinespark that must be executed. This defines the energy cost of the shinespark."
+              }
+            }
+          },
+          "canShineCharge": {
+            "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge",
+            "type": "object",
+            "title": "Can Shine Charge",
+            "description": "Fulfilled by being able to charge a shinespark under the described conditions.",
+            "required": [
+              "usedTiles",
+              "openEnd",
+              "shinesparkFrames"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "usedTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/usedTiles",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 31,
+                "title": "Used Tiles",
+                "description": "The number of contiguous tiles that are available to charge a shinespark."
+              },
+              "gentleUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/gentleUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Up Tiles",
+                "description": "The number of tiles that slope gently upward (going up by half a tile)."
+              },
+              "gentleDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/gentleDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Down Tiles",
+                "description": "The number of tiles that slope gently downward (going down by half a tile)."
+              },
+              "steepUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/steepUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Up Tiles",
+                "description": "The number of tiles that slope steeply upward (going up by a tile)."
+              },
+              "steepDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/steepDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Down Tiles",
+                "description": "The number of tiles that slope steeply downward (going down by a tile)."
+              },
+              "startingDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/startingDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Starting Down Tiles",
+                "description": "The number of tiles that slope downwards at the start of a run, preventing the execution of a stutter."
+              },
+              "openEnd": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/openEnd",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "title": "Number of Open Ends",
+                "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
+              },
+              "shinesparkFrames": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/shinesparkFrames",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Shinespark Frames",
+                "description": "The duration (in frames) of the shinespark that must be executed. This defines the energy cost of the shinespark."
+              }
+            }
+          },
+          "previousNode": {
+            "$id": "#/definitions/logicalRequirement/items/properties/previousNode",
+            "type": "integer",
+            "title": "Previous Node",
+            "description": "Fulfilled if the player arrived to the current node directly from the node with the provided in-room ID."
+          },
+          "previousStratProperty": {
+            "$id": "#/definitions/logicalRequirement/items/properties/previousStratProperty",
+            "type": "string",
+            "title": "Previous Strat Property",
+            "description": "Fulfilled if the player arrived to the current node via a strat that had a given stratProperty."
+          },
+          "resetRoom": {
+            "$id": "#/definitions/logicalRequirement/items/properties/resetRoom",
+            "type": "object",
+            "title": "Reset Room",
+            "description": "Fulfilled by able to enter the room in a specified node, and avoid visiting barred nodes and destroying barred obstacles.",
+            "required": [
+              "nodes"
+            ],
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "required": ["mustStayPut"]
+                  },
+                  {
+                    "required": ["nodesToAvoid"]
+                  }
+                ]
+              },
+              {
+                "required": ["obstaclesToAvoid"]
+              }
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "nodes": {
+                "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/nodes",
+                "type": "array",
+                "title": "Nodes",
+                "description": "The list of nodes from which entering the room is required to fulfill this logical element.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/nodes/items",
+                  "type": "integer",
+                  "title": "Node ID",
+                  "description": "The in-room ID of a node."
+                }
+              },
+              "nodesToAvoid": {
+                "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/nodesToAvoid",
+                "type": "array",
+                "title": "Nodes to Avoid",
+                "description": "The list of nodes that must not have been visited since entering the room in order to fulfill this logical element.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/nodesToAvoid/items",
+                  "type": "integer",
+                  "title": "Node ID",
+                  "description": "The in-room ID of a node."
+                }
+              },
+              "obstaclesToAvoid": {
+                "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/obstaclesToAvoid",
+                "type": "array",
+                "title": "Obstacles to Avoid",
+                "description": "The list of obstacles that must not have been destroyed since entering the room in order to fulfill this logical element.",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/obstaclesToAvoid/items",
+                  "type": "string",
+                  "title": "Obstacle ID",
+                  "description": "The in-room ID of an obstacle."
+                }
+              },
+              "mustStayPut": {
+                "$id": "#/definitions/logicalRequirement/items/properties/resetRoom/properties/mustStayPut",
+                "type": "boolean",
+                "title": "Must Stay Put",
+                "description": "Indicates that no other node but the entry node may be visited in order to fulfill this logical element. Must not be defined when it is intended to be false, unless there are no nodes or obstacles to avoid."
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+}
