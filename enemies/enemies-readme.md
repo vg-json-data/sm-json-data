@@ -25,7 +25,15 @@ This is an array of attack objects, each of which describes an attack of the ene
 * _affectedByGravity_: Indicates whether Gravity suit applies its normal damage reduction to this attack. Should be considered `true` if missing.
 
 ### drops
-This is the enemy's drop table. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
+This is the enemy's drop table. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work).
+
+In an enemies file, this takes the form of an object with the following properties:
+* _noDrop_
+* _smallEnergy_
+* _bigEnergy_
+* _missile_
+* _super_
+* _powerBomb_
 
 ### dims
 This is the width and height of the enemy in pixels.
@@ -35,6 +43,8 @@ Indicates whether this enemy respawns, making it farmable without having to rese
 
 ### farmableDrops
 This is the drop table of farmable particles spawned by the enemy. It will not be present if the enemy doesn't spawn farmable particles. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
+
+In an enemies file, this takes the same form as `drops`.
 
 ### grapplable
 Indicates whether Samus can use this enemy like a grapple block.
