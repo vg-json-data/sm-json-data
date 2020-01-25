@@ -72,7 +72,7 @@ The `yields` property is an array of game flags that are activated when interact
 #### runways
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
 * _length:_ The number of tiles in the runway
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 31 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
+* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
@@ -96,7 +96,7 @@ Runways on both sides of a door are meant to be combined when determining how mu
 #### canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 31 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
+* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
