@@ -107,7 +107,12 @@ Represents the possibility for Samus to charge a shinespark without using the do
 * _strats:_ An array of [strats](../strats.md), each of which may be executed in order to leave charged. Those all have implicit charging and shinesparking requirements.
 * _initiateAt:_ The node at which the charging operation must start. Samus must have access to this node to be able to leave the room charged. Additional considerations for this property:
   * If this property is missing, it is assumed to be the node by which Samus will leave the room
-  * If this property specifies a different node, the `canLeaveCharged` object's `requires` property must also account for all requirements for reaching the door from that node. Regular navigation is not intended to be used for that purpose.
+  * If this property specifies a different node, execution of the `canLeaveCharged` takes the player out of the room through the relevant door, without navigating any links. All requirements for leaving in this manner must be included in the `canLeaveCharged` object's `requires` property.
+  * See the definition of `mustOpenDoorFirst` as well. If it is `true`, it must be respected as well.
+* _mustOpenDoorFirst:_ Indicates whether Samus must have previously visited this node in order to open the door, in order to be able to execute this `canLeavedCharged`. This must have been done since the last time the room was entered. Additional considerations for this property:
+  * If this property is missing, it is assumed to be `false`.
+  * This is required if `initiateAt` is set.
+  * If `initiateAt` is not set, this property should be ommitted since Samus is already at the correct node and able to open the door.
 
 __Additional considerations__
 
