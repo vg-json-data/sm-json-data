@@ -220,6 +220,7 @@ This section contains logical elements centered around available running room, a
 An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
+* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
 
@@ -238,6 +239,7 @@ Please note that fulfilling this logical element requires interaction with the d
 #### canComeInCharged object
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
+* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
 * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
 
