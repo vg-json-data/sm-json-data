@@ -85,8 +85,8 @@ Determining what items can fulfill an `enemyKill` object should be done by doing
 
 An `enemyKill` object can have the following properties:
 * _enemies:_ An array of groups of enemies. Those groups are themselves represented as an array. Putting enemies together in a group communicates that they can all be hit by the same shot of a weapon that `hitsGroup` (most notably a Power Bomb).
-* _explicitWeapons:_ An array of weapons. If this is present, defines the only weapons that may be used to fulfill this object (assuming they are actually effective to kill the enemies). If this is not present, all non-`situational` weapons may be used.
-* _excludedWeapons:_ An array of weapons. If this property is present, all weapons found in it may not be used to fulfill the object, regardless of whether the enemies are vulnerable to them.
+* _explicitWeapons:_ An array of weapons. These must be weapon names, weapon categories are not allowed. If this is present, defines the only weapons that may be used to fulfill this object (assuming they are actually effective to kill the enemies). If this is not present, all non-`situational` weapons may be used.
+* _excludedWeapons:_ An array of weapons. These must be weapon names, weapon categories are not allowed. If this property is present, all weapons found in it may not be used to fulfill the object, regardless of whether the enemies are vulnerable to them.
 * _farmableAmmo:_ An array of ammo types, which are considered farmable in the context of the `enemyKill` object. No ammo cost should be considered if using weapons that consumes that ammo type. If using a [boss scenario](enemies/bossScenarios-readme.md), this flag should be ignored and replaced by an ammo cost that takes drops and fight duration into account.
 
 __Example:__
