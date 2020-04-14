@@ -36,10 +36,11 @@ A boolean that indicates whether the weapon is able to hit all enemies in a grou
 A list of categories that the weapon is a part of. Categories are used in the [enemies files](../enemies/enemies-readme.md) to reference sets of weapons at once when defining damage multipliers and invulnerabilities. Categories include:
 * _All:_ A category which all weapons are part of. Used for fully invulnerable enemies.
 * _Beam_: A category which includes all beam attacks, including charged shots.
+* _BeamNoPlasma_: A category which includes all beam combinations that don't include Plasma (charged and uncharged).
 * _ChargedBeam_: A category which includes all beam attack that are charged shots.
+* _PowerBombBlast:_ Power Bombs have been split into two weapons because the central area hits twice and the periphery hits once. This category groups both.
+* _SpecialBeamAttack:_ Attacks which are fired off by equipping a single beam upgrade, selecting Power Bombs, charging a shot, and holding charge long enough.
 * _UnchargedBeam_: A category which includes all beam attacks, but not charged shots.
+* _UnchargedBeamNoPlasma:_ A category which includes all uncharged beam combinations that don't include Plasma.
 * _UnchargedIceBeam_: A category which includes all beam attacks where Ice is involved but charge is not. A few enemies are weak specifically to those.
 * _UnchargedSpazerBeam_: A category which includes all beam attacks where Spazer is involved but charge is not. A few enemies are resistant specifically to those.
-* _BeamNoPlasma_: A category which includes all beam combinations that don't include Plasma (charged and uncharged).
-* _UnchargedBeamNoPlasma:_ A category which includes all uncharged beam combinations that don't include Plasma.
-* _PowerBombBlast:_ Power Bombs have been split into two weapons because the central area hits twice and the periphery hits once. This category groups both.
