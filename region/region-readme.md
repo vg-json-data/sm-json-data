@@ -50,6 +50,7 @@ The `locks` property is an array that contains different ways a node can be lock
   * _permanent:_ A lock that can never be unlocked.
   * _triggeredEvent:_ A type for miscellaneous events triggered by an action performed nearby by Samus.
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
+* _name:_ A name that identifies the lock. This name must be unique across all locks in the model.
 * _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
 * _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again.
 
