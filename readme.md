@@ -31,7 +31,7 @@ A file that defines helper functions. They are [logical requirement](logicalRequ
 
 ### items.json
 
-A file that contains a lot of the initial game state configuration. It contains all existing items and game flags, as well as starting items, resources, game flags, and location.
+A file that contains a lot of the initial game state configuration. It contains all existing items and game flags, as well as starting items, resources, game flags, open locks, and location.
 
 ### tech.json
 
