@@ -20,6 +20,8 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 * _item:_ A node that represents an item that can be picked up
 * _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
 
+A node's `name` property has to be unique across the entire model.
+
 Some node properties are self-explanatory, while others require additional definition:
 
 #### spawnAt
