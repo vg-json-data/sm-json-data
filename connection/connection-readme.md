@@ -20,6 +20,16 @@ Each connection has a `type`, which will be one of the following:
 * _Elevator:_ A transition between two rooms by an elevator.
 * _StoryMarker:_ A transition between two rooms that is handled by story progression rather than in-room mechanics.
 
+### direction
+Each connection has a `direction` which indicates how it can be navigated. This can be one of the following:
+* _Forward:_ The connection is one-way. Samus can only go from the first node to the second.
+* _Backward:_ The connection is one-way. Samus can only go from the second node to the first.
+* _Bidirectional:_ The connection is two-way. Samus can use it in both directions.
+
+__Additional Considerations__
+
+By default, a permanent grey door on one side shouldn't make a connection two-way. The absence of a door at all should. Naturally, a door that doesn't actually lead back to the same node would also make a connection one-way.
+
 ### node/position
 Both nodes in a connection have a position. This can be one of `left`, `right`, `top`, or `bottom`. Please note that this is the position of the node as compared to the other node in the connection, _not_ their position within their respective room.
 
