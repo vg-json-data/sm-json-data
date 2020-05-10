@@ -40,8 +40,8 @@ An object describing the dimensions of the enemy. Contains the following propert
 * _h_: "The height of the enemy in pixels.
 * _w_: "The width of the enemy in pixels.
 
-### farmable
-Indicates whether this enemy respawns, making it farmable without having to reset the room.
+### respawnFrames
+Indicates how long it takes (in frames) for this enemy to respawn whether this enemy respawns,if it respawns. Should be left empty for enemies that don't respawn.
 
 ### farmableDrops
 This is the drop table of farmable particles spawned by the enemy. It will not be present if the enemy doesn't spawn farmable particles. [See the wiki for an explanation of drop tables](https://wiki.supermetroid.run/Enemies#How_Drops_Work)
