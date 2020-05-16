@@ -492,17 +492,65 @@
                         "title": "Shinespark Frames",
                         "description": "If this requires shinespark out of the room, indicates how many frames that shinespark on the way out will last"
                       },
-                      "initiateAt": {
-                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateAt",
-                        "type": "integer",
-                        "title": "Node to initiate at",
-                        "description": "The ID of the node where Samus must be to begin the execution of this canLeaveCharged"
-                      },
-                      "mustOpenDoorFirst": {
-                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/mustOpenDoorFirst",
-                        "type": "boolean",
-                        "title": "Must OpenDoor First",
-                        "description": "Indicates whether this canLeaveCharged requires having previously visited the node's door to open it. Relevant (and required) only if initiateAt is set. If missing, assumed to be false."
+                      "initiateRemotely": {
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely",
+                        "type": "object",
+                        "title": "Initiate Remotely",
+                        "description": "If the canLeaveCharged is initiated at a different node, explains how the door is reached and anything that must be done beforehand.",
+                        "required": [
+                          "initiateAt",
+                          "mustOpenDoorFirst",
+                          "pathToDoor"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "initiateAt": {
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/initiateAt",
+                            "type": "integer",
+                            "title": "Initiate At",
+                            "description": "The ID of the node at which this CanLeaveCharged is remotely initiated."
+                          },
+                          "mustOpenDoorFirst": {
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/mustOpenDoorFirst",
+                            "type": "boolean",
+                            "title": "Must Open Door First",
+                            "description": "Indicates whether the player must have opened the door first, which means no locks can be active when initiating, and the door must have been visited previously in the room (since last entering)."
+                          },
+                          "pathToDoor": {
+                            "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/pathToDoor",
+                            "type": "array",
+                            "title": "Path to Door",
+                            "description": "The navigation that the player must follow, from the 'initiateAt' node to the door, in other to leave charged. This must be followed in order, and should end at the door.",
+                            "items": {
+                              "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/pathToDoor/items",
+                              "type": "object",
+                              "title": "Path to Door Node",
+                              "description": "A node in the execution path that takes a player from 'initiateAt' to the door. It's composed of a destination node and a strat to get there.",
+                              "required": ["destinationNode", "strats"],
+                              "additionalProperties": false,
+                              "properties": {
+                                "destinationNode": {
+                                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/pathToDoor/items/properties/destinationNode",
+                                  "type": "integer",
+                                  "title": "Node",
+                                  "description": "The ID of the node that must be visited"
+                                },
+                                "strats": {
+                                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/pathToDoor/items/properties/strats",
+                                  "type": "array",
+                                  "title": "Strats",
+                                  "description": "The strats that are acceptable to use to go to the destination node. These must be actual strats on an actual link that goes from the previously visited node to the destination.",
+                                  "items": {
+                                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely/properties/pathToDoor/items/properties/strats/items",
+                                    "type": "string",
+                                    "title": "Strat",
+                                    "description": "A possible strat to use to go to the destination node. This must be the name of an actual strat on an actual link that goes from the previously visited node to the destination."
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
                       },
                       "strats": {
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/strats",

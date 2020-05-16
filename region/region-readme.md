@@ -108,14 +108,12 @@ Represents the possibility for Samus to charge a shinespark without using the do
 * _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
 * _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
 * _strats:_ An array of [strats](../strats.md), each of which may be executed in order to leave charged. Those all have implicit charging and shinesparking requirements.
-* _initiateAt:_ The node at which the charging operation must start. Samus must have access to this node to be able to leave the room charged. Additional considerations for this property:
-  * If this property is missing, it is assumed to be the node by which Samus will leave the room
-  * If this property specifies a different node, execution of the `canLeaveCharged` takes the player out of the room through the relevant door, without navigating any links. All requirements for leaving in this manner must be included in the `canLeaveCharged` object's `requires` property.
-  * See the definition of `mustOpenDoorFirst` as well. If it is `true`, it must be respected as well.
-* _mustOpenDoorFirst:_ Indicates whether Samus must have previously visited this node in order to open the door, in order to be able to execute this `canLeavedCharged`. This must have been done since the last time the room was entered. Additional considerations for this property:
-  * If this property is missing, it is assumed to be `false`.
-  * This is required if `initiateAt` is set.
-  * If `initiateAt` is not set, this property should be ommitted since Samus is already at the correct node and able to open the door.
+* _initiateRemotely:_ An object for when a `canLeaveCharged` is initiated at a different node that the node being exited. This should be omitted for any `canLeaveCharged` that is initiated at the exited node. This has the following properties:
+  * _initiateAt:_ The node at which the charging operation must start. Samus must visit this node to start the leaving charged process.
+  * mustOpenDoorFirst:_ Indicates whether Samus needs to open the door before starting the leaving charged process. This requires having opened all active locks on the door (if any), and having visited the door (since last entering the room), because it needs to be shot open even if unlocked.
+  * _pathToDoor:_ A list of objects, which describes the path that Samus must follow through the room from the `initiateAt` node to the exited door in order to properly leave charged. This path must end at the exited node. Each object in the path represents one link to follow, and has the following properties:
+    * _destinationNode:_ The ID of the next node to visit, from the previous node in the path (and from the `initiateAt` node if at the first node in the path)
+    * _strats:_ A list of possible strats to follow to go to `destinationNode` These must be names of an actual strat on an actual link from the previous node to the destination node. Samus has to fulfill all requirements of a strat at each link in `pathToDoor` to be able to properly leave charged.
 
 __Additional considerations__
 
