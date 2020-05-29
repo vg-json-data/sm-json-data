@@ -900,16 +900,42 @@
               "$id": "#/properties/rooms/items/properties/enemies/items",
               "type": "object",
               "title": "Enemies",
-              "required": [
-                "name",
-                "quantity"
-              ],
-              "oneOf": [
-                { "required":
-                  [ "homeNodes" ]
+              "allOf": [
+                {
+                  "required": [
+                    "name",
+                    "quantity"
+                  ]
                 },
-                { "required":
-                  [ "betweenNodes" ]
+                {
+                  "oneOf": [
+                    { "required":
+                      [ "homeNodes" ]
+                    },
+                    { "required":
+                      [ "betweenNodes" ]
+                    }
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "required": ["dropRequires"]
+                    },
+                    {
+                      "required": ["farmCycles"]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "not": {"required": ["dropRequires"]}
+                        },
+                        {
+                          "not": {"required": ["farmCycles"]}
+                        }
+                      ]
+                    }
+                  ]
                 }
               ],
               "additionalProperties": false,
@@ -977,6 +1003,46 @@
                   "$id": "#/properties/rooms/items/properties/enemies/items/properties/dropRequires",
                   "title": "Drop Requires",
                   "description": "Equipment, tech, and flag requirements that are needed to obtain the drop from this enemy without taking any damage. These go on top of what's needed to reach and kill the enemy."
+                },
+                "farmCycles": {
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles",
+                  "type": "array",
+                  "title": "Farm Cycles",
+                  "description": "Only for respawning enemy groups. A list of objects, each of which describes requirements to farm this group of enemies as well as duration of a farm cycle.",
+                  "items": {
+                    "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items",
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "cycleFrames",
+                      "requires"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/name",
+                        "type": "string",
+                        "title": "Cycle Name",
+                        "description": "A name to identify this farming cycle. Only needs to be unique within the enemy group, not globally, and comparable farming cycles executions on different enemy groups should share the same name."
+                      },
+                      "cycleFrames": {
+                        "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/cycleFrames",
+                        "type": "integer",
+                        "title": "Cycle Frames",
+                        "description": "The number of frames between two full sets of drop pickups for this farming cycle."
+                      },
+                      "requires": {
+                        "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
+                        "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/requires",
+                        "title": "Farming Cycle Requirements",
+                        "description": "Equipment, tech, and flag requirements to perform this type of farm."
+                      },
+                      "note": {
+                        "$ref" : "m3-note.schema.json#/definitions/note",
+                        "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/note"
+                      }
+                    }
+                  }
                 },
                 "note": {
                   "$ref" : "m3-note.schema.json#/definitions/note",

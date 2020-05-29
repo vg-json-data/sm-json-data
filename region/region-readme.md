@@ -146,7 +146,11 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 * _betweenNodes:_ An array of exactly two nodes, indicating that the enemy is encountered while travelling between those two nodes. Mutually exclusive with `homeNodes`.
 * _spawn:_ The `spawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to spawn in the room. If this is missing, the enemy can spawn in the room from game start.
 * _stopSpawn:_ The `stopSpawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to no longer spawn in the room. If this is missing, the enemy will never stop spawning in the room after its spawn conditions have been met.
-* _dropRequires:_ This property defines additional [logical requirements](../logicalRequirements.md) that must be fulfilled to actually reach the enemies' drops without taking damage, after the enemies have been reached and killed.
+* _dropRequires:_ This property defines additional [logical requirements](../logicalRequirements.md) that must be fulfilled to actually reach the enemies' drops without taking damage, after the enemies have been reached and killed. This is mutually exclusive with `farmCycles`
+* _farmCycles:_ This property is a list of different ways respawning enemies can be farmed. This is mutually exclusive with `dropRequires`. Each object in this list has the following properties:
+  * _name:_ The name of this the farm cycle. Only needs to be unique for the enemy it's on, and identical executions on different enemies should share the same name.
+  * _cycleFrames:_ The number of frames it takes to wait for the enemies to spawn, kill them, and grab their drops
+  * _requires:_ The [logical requirements](../logicalRequirements.md) that must be fulfilled in order to execute a cycle of farming on the enemies.
 
 ### Links
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
