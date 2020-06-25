@@ -140,6 +140,8 @@ Obstacles are not systematically represented in the model. They are put in as ne
 
 ### Enemies
 A room can have an array of enemies. This is the list of enemies that may be present in the room. They may be relevant for farming purposes, or to get an assessment of the danger posed by the enemies in the room. Each `enemy` object can have the following properties:
+* _id:_ A short identifier for an `enemy` object that is only unique within the room.
+* _groupName:_ A name for an `enemy` object, that is unique across the entire game.
 * _enemyName:_ The name of the enemy. This must be the name of an enemy in the [enemies folder](../enemies/enemies-readme.md).
 * _quantity:_ How many enemies correspond to the description made by this `enemies` object. Note that if this is an enemy that respawns, it should be grouped according to how many can be farmed simultaneously, rather than the total number of enemies in a room or node. Accordingly, as many groups as needed should be used.
 * _homeNodes:_ An array of nodes through which the enemy can naturally roam. A player can expect to encounter that enemy in any of those nodes. Mutually exclusive with `betweenNodes`.
