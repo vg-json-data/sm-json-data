@@ -18,7 +18,8 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
 * _event:_ A node where an event that triggers game flags can happen
 * _item:_ A node that represents an item that can be picked up
-* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken)
+* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken).
+* _utility:_ A node that represents some kind of utility station, such as a refill station or a save capsule.
 
 A node's `name` property has to be unique across the entire model.
 
