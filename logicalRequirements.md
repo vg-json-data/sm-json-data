@@ -193,6 +193,14 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
+#### lavaPhysicsFrames
+A `lavaPhysicsFrames` object works exactly like a `lavaFrames` object, except that Samus needs to be working with lava physics during that period of time. This means Gravity Suit will be manually turned off for this duration, even if it's available.
+
+__Example:__
+```json
+{"lavaPhysicsFrames": 70}
+```
+
 #### spikeHits object
 A `spikeHits` object represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
 
