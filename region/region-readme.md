@@ -125,6 +125,15 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
+#### twinDoorAddresses
+A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
+
+When a door has a twin, that twin will not be in the JSON model; but knowing the existence of that other door (and its address) can be useful when reorganizing connections between doors.
+
+Each twin door address will be an object with two properties:
+* _doorAddress:_ The in-game address of the room in which the twin is found.
+* _roomAddress:_ The in-game address of the twin door itself.
+
 ### Obstacles
 A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. Destroying an obstacle is done while executing a [strat](../strats.md).
 
