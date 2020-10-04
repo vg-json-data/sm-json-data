@@ -6,7 +6,7 @@ A logical requirement is an array of logical elements, which are implicitly link
 * _The name of a helper._ Helpers are defined in [helpers.json](helpers.json) and they themselves represent a logical requirement. Those exist to reduce duplication and make logical requirements more readable. By convention, a helper's name should start with `h_`.
 * _The name of a tech._ Techs are defined in [tech.json](tech.json).  Those represent a technique that players can perform, which may also imply logical requirements of their own.
 * _The name of an item._ Those are defined in [items.json](items.json).
-* _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube.
+* _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube. By convention, a game flag's name should start with `f_`.
 * _"never"._ This indicates a logical element that cannot be fulfilled under any conditions.
 * More complex elements which will be defined in their own sub-sections
 
