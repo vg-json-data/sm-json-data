@@ -37,6 +37,8 @@ A file that contains a lot of the initial game state configuration. It contains 
 
 A file that contains techs and their [logical requirements](logicalRequirements.md). Techs are in-game techniques that players might want to be able to logically turn off.
 
+This file is structured in such a way that a tech can have an array of extension techs. Extension techs are more complex versions of their parent tech, and this structure is intended to help with organizing techs in a more presentable manner. Extension techs are expected to logically require their parent tech, but their logical requirements can still be understood without context and so this requirement is still stated explicitly in their requirements.
+
 ## Important concepts
 
 This section lists key concepts and links to deeper explanations of them.
