@@ -11,6 +11,11 @@ Region files follow the schema defined at [/schema/m3-region.schema.json](../sch
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
+### Room Environments
+A room has an array of environments. Only one environment should be applicable at any given time, but that environment can depend on which node Samus enters from. Has the following properties:
+* _heated:_ Indicates whether the environment is heated, i.e. whether Samus will take gradual damage without heat protection.
+* _entranceNodes:_ Indicates this environment is active when Samus entered from which nodes. If omitted, the environment is applicable at all times.
+
 ### Nodes
 A room has an array of nodes. Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types:
 * _door:_ A node that is connected to another node in another room, typically via a two-way connection
