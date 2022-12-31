@@ -308,11 +308,53 @@
               "$id": "#/properties/rooms/items/properties/nodes/items",
               "type": "object",
               "title": "Node Object",
-              "required": [
-                "id",
-                "name",
-                "nodeType",
-                "nodeSubType"
+              "allOf": [
+                {
+                  "required": [
+                    "id",
+                    "name",
+                    "nodeType",
+                    "nodeSubType"
+                  ]
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "nodeType": {"const": "door"}
+                    },
+                    "not": {
+                      "properties": {
+                        "nodeSubType": {"const": "elevator"}
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["doorEnvironments"]
+                  }
+                },
+                {
+                  "if": {
+                    "anyOf": [
+                      {
+                        "not": {
+                          "properties": {
+                            "nodeType": {"const": "door"}
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "nodeSubType": {"const": "elevator"}
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "not":{
+                      "required": ["doorEnvironments"]
+                    }
+                  }
+                }
               ],
               "additionalProperties": false,
               "properties": {
@@ -416,6 +458,57 @@
                   "title": "Memory Address",
                   "description": "Memory address of this location",
                   "examples": ["0x0019852", "0x001985e"]
+                },
+                "doorEnvironments": {
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments",
+                  "type": "array",
+                  "title": "Door Environments",
+                  "description": "An array of objects that describe the door's environment in certain circumstances. In most cases there's only one that's relevant all the time. This contains portions of the environment that are not room-wide.",
+                  "minItems": 1,
+                  "items": {
+                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items",
+                    "type": "object",
+                    "title": "Door Environment",
+                    "description": "An object that describes the portion of the game environment that can vary by door. This can optionally depend on what node Samus entered from.",
+                    "required": [
+                      "physics"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "physics": {
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/physics",
+                        "title": "Physics",
+                        "description": "Indicates what kind of physics are active at this door",
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "water",
+                          "lava",
+                          "acid",
+                          "previousRoom"
+                        ],
+                        "pattern": "^(.*)$"
+                      },
+                      "entranceNodes": {
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/entranceNodes",
+                        "title": "Entrance Nodes",
+                        "description": "The nodes from which Samus must have entered the room for this environment to be applicable. Can be left null if applicable for all nodes.",
+                        "type": "array",
+                        "items": {
+                          "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/entranceNodes/items",
+                          "type": "integer"
+                        }
+                      },
+                      "note": {
+                        "$ref" : "m3-note.schema.json#/definitions/note",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/devNote"
+                      }
+                    }
+                  }
                 },
                 "interactionRequires": {
                   "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
