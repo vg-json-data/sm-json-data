@@ -195,11 +195,89 @@
           "area",
           "subarea",
           "playable",
-          "roomEnvironments",
           "nodes",
           "links"
         ],
         "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "playable": {"const": true}
+              }
+            },
+            "then": {
+              "required": ["roomEnvironments"],
+              "properties": {
+                "nodes": {
+                  "items": {
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "nodeType": {"const": "door"}
+                          },
+                          "not": {
+                            "properties": {
+                              "nodeSubType": {"const": "elevator"}
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": ["doorEnvironments"]
+                        }
+                      },
+                      {
+                        "if": {
+                          "anyOf": [
+                            {
+                              "not": {
+                                "properties": {
+                                  "nodeType": {"const": "door"}
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "nodeSubType": {"const": "elevator"}
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "not":{
+                            "required": ["doorEnvironments"]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "playable": {"const": false}
+              }
+            },
+            "then": {
+              "not": {
+                "required": ["roomEnvironments"]
+              },
+              "properties": {
+                "nodes": {
+                  "items": {
+                    "not": {
+                      "required": ["doorEnvironments"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
         "properties": {
           "id": {
             "$id": "#/properties/rooms/items/properties/id",
@@ -316,53 +394,11 @@
               "$id": "#/properties/rooms/items/properties/nodes/items",
               "type": "object",
               "title": "Node Object",
-              "allOf": [
-                {
-                  "required": [
-                    "id",
-                    "name",
-                    "nodeType",
-                    "nodeSubType"
-                  ]
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "nodeType": {"const": "door"}
-                    },
-                    "not": {
-                      "properties": {
-                        "nodeSubType": {"const": "elevator"}
-                      }
-                    }
-                  },
-                  "then": {
-                    "required": ["doorEnvironments"]
-                  }
-                },
-                {
-                  "if": {
-                    "anyOf": [
-                      {
-                        "not": {
-                          "properties": {
-                            "nodeType": {"const": "door"}
-                          }
-                        }
-                      },
-                      {
-                        "properties": {
-                          "nodeSubType": {"const": "elevator"}
-                        }
-                      }
-                    ]
-                  },
-                  "then": {
-                    "not":{
-                      "required": ["doorEnvironments"]
-                    }
-                  }
-                }
+              "required": [
+                "id",
+                "name",
+                "nodeType",
+                "nodeSubType"
               ],
               "additionalProperties": false,
               "properties": {
@@ -492,8 +528,7 @@
                           "normal",
                           "water",
                           "lava",
-                          "acid",
-                          "previousRoom"
+                          "acid"
                         ],
                         "pattern": "^(.*)$"
                       },
