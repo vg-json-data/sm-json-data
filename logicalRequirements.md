@@ -35,6 +35,16 @@ __Example:__
 ]}
 ```
 
+#### not object
+A `not` object is fulfilled if each logical element given is not fulfilled
+
+__Example:__
+```json
+{"not": [
+    "f_KilledMetroidRoom1"
+]}
+```
+
 ### Ammo Management Objects
 This section contains logical elements that are fulfilled by spending ammo. Encountering many of those successively without having a chance to refill can impact how many power bomb/missile/super tanks can be required to get through.
 
