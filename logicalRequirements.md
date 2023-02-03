@@ -36,13 +36,11 @@ __Example:__
 ```
 
 #### not object
-A `not` object is fulfilled if each logical element given is not fulfilled
+A `not` object is fulfilled if the logical element given is not fulfilled
 
 __Example:__
 ```json
-{"not": [
-    "f_KilledMetroidRoom1"
-]}
+{"not": "f_KilledMetroidRoom1"}
 ```
 
 ### Ammo Management Objects
