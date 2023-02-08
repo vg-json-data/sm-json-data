@@ -54,22 +54,6 @@ __Example:__
 }}
 ```
 
-#### ammoCapacity object
-An `ammo` object represents the need for Samus to be capable of holding at least a set amount of a specific ammo. It can have the following properties:
-* _type:_ The type of ammo held. Can have the following values:
-  * PowerBomb
-  * Missile
-  * Super
-* _count:_ The amount of ammo capacity that Samus must have.
-
-__Example:__
-```json
-{"ammoCapacity": {
-  "type": "PowerBomb",
-  "count": 11
-}}
-```
-
 #### ammoDrain object
 An `ammoDrain` object works very much like `ammo`, except that spending the ammo isn't mandatory. The ammo is just always spent if it's there. This has the same properties as an `ammo` object.
 
@@ -235,6 +219,26 @@ A `thornHits` object represents the need for Samus to intentionally take a numbe
 __Example:__
 ```json
 {"thornHits": 1}
+```
+
+#### resourceCapacity object
+A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
+* _type:_ The type ofresource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+* _count:_ The amount of capacity that Samus must have.
+
+__Example:__
+```json
+{"resourceCapacity": [
+    { "type": "Missile", "count": 10},
+    { "type": "Super", "count":10},
+    { "type": "PowerBomb", "count": 11},
+    { "type": "RegularEnergy", "count":899}
+]}
 ```
 
 ### Momentum-Based Objects
