@@ -106,8 +106,17 @@ with open(helpersPath, encoding="utf-8") as helpersFile:
 techs = []
 techsPath = os.path.join("tech.json")
 with open(techsPath, encoding="utf-8") as techsFile:
-    techs = json.load(techsFile)
-    for tech in techs["techs"]:
+    techsJSON = json.load(techsFile)
+    if "techs" in techsJSON:
+        techs = techsJSON["techs"]
+    elif "techCategories" in techsJSON:
+        for techCat in techsJSON["techCategories"]:
+            if "techs" in techCat:
+                for tech in techCat["techs"]:
+                    if "name" in tech:
+                        techs.append(tech)
+
+    for tech in techs:
         requires = tech["requires"]
         if len(requires):
             result = find_keywords(requires)
@@ -157,7 +166,7 @@ with open(regionPath, encoding="utf-8") as regionFile:
                     for to in link["to"]:
                         if "strats" in to:
                             for strat in to["strats"]:
-                                for k in ["obstacles", "requires"]:
+                                for k in ["requires"]:
                                     if k in strat:
                                         if len(strat[k]):
                                             result = find_keywords(strat[k])
