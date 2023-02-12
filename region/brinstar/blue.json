@@ -6,7 +6,9 @@
       "name": "Morph Ball Room",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x79E9F",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -14,6 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x0018e9e",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Morph Ball Room Left Door (to Green Hill Zone)",
@@ -67,7 +70,11 @@
                   ]
                 }
               ],
-              "note": "Obstacle requirements not repeated here to avoid duplication. It can be destroyed either going 1 -> 6 or 6 -> 1."
+              "note": [
+                "Obstacle requirements not repeated here to avoid duplication.",
+                "It can be destroyed either going 1 -> 6 or 6 -> 1."
+              ],
+              "devNote":  "Technically this yields f_ZebesAwake, although it requires the same flag to spawn the enemies, so it's not possible here."
             }
           ]
         },
@@ -84,6 +91,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eaa",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Morph Ball Room Right Door (to Construction Zone)",
@@ -574,7 +582,9 @@
       "name": "Construction Zone",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x79F11",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -582,6 +592,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ec2",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Top Left Door (to Morph Ball)",
@@ -604,6 +615,7 @@
           "nodeType": "door",
           "nodeSubType": "red",
           "nodeAddress": "0x0018ece",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Right Door (to Ceiling E-Tank)",
@@ -639,6 +651,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eda",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Bottom Left Door (to Alpha Missiles)",
@@ -721,6 +734,12 @@
                     { "resetRoom": {
                       "nodes": [3],
                       "mustStayPut": true
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 3,
+                      "usedTiles": 0.5,
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 200
                     }}
                   ]
                 }
@@ -770,7 +789,9 @@
       "name": "First Missile Room",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x7A107",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -778,6 +799,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fa6",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - First Missiles Room Door (to Construction Zone)",
@@ -841,7 +863,9 @@
       "name": "Blue Brinstar Energy Tank Room",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x79F64",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -849,6 +873,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ee6",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Ceiling E-Tank Bottom Left Door (to Construction Zone)",
@@ -909,6 +934,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ef2",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Ceiling E-Tank Top Left Door (to Boulder Room)",
@@ -1009,7 +1035,7 @@
                   "name": "Ceiling E-Tank IBJ",
                   "notable": false,
                   "requires": ["canBombAboveIBJ"],
-                  "note": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
+                  "devNote": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
                 },
                 {
                   "name": "Ceiling E-Tank Dboost",
@@ -1114,7 +1140,13 @@
                 {
                   "name": "Go Back Up",
                   "notable": false,
-                  "requires": ["Morph"], 
+                  "requires": [
+                    "Morph",
+                      {"or": [
+                        "canWalljump",
+                        "h_canFly"
+                      ]}
+                  ], 
                   "obstacles": [
                     {
                       "id": "B",
@@ -1122,19 +1154,7 @@
                     },
                     {
                       "id": "A",
-                      "requires": [
-                        {"or":[
-                          "ScrewAttack",
-                          "Bombs",
-                          {"and":[
-                            "PowerBomb",
-                            {"ammo": {
-                              "type": "PowerBomb",
-                              "count": 1
-                            }}
-                          ]}
-                        ]}
-                      ]
+                      "requires": [ "h_canDestroyBombWalls" ]
                     }
                   ],
                   "note": "If the Crumble Block has been destroyed while going down, it's possible to go back up without breaking the PB blocks."
@@ -1142,31 +1162,41 @@
                 {
                   "name": "Break the PB Blocks",
                   "notable": false,
-                  "requires": ["h_canUsePowerBombs"],
+                  "requires": [
+                    "h_canUsePowerBombs",
+                      {"or": [
+                        "canWalljump",
+                        "h_canFly"
+                      ]}
+                  ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"or": [
-                          "ScrewAttack",
-                          "Bombs",
-                          {"canShineCharge": {
-                            "usedTiles": 33,
-                            "shinesparkFrames": 43,
-                            "openEnd": 2
-                          }},
-                          {"ammo": {
-                            "type": "PowerBomb",
-                            "count": 1
-                          }}
-                        ]}
+                        "h_canDestroyBombWalls"
                       ]
                     }
                   ],
-                  "note": [
-                    "Base strat when entering the room from below.",
-                    "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
-                  ]
+                  "note": "Base strat when entering the room from below."
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canUsePowerBombs",
+                      {"canShineCharge": {
+                        "usedTiles": 33,
+                        "shinesparkFrames": 43,
+                        "openEnd": 2
+                      }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
                 }
               ]
             }
@@ -1179,7 +1209,9 @@
       "name": "Blue Brinstar Boulder Room",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x7A1AD",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1187,6 +1219,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fee",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Boulder Room Left Door (to Billy Mays)",
@@ -1223,6 +1256,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fe2",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Boulder Room Right Door (to Ceiling E-Tank)",
@@ -1334,7 +1368,9 @@
       "name": "Billy Mays Room",
       "area": "Brinstar",
       "subarea": "Blue",
+      "playable": true,
       "roomAddress": "0x7A1D8",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1342,6 +1378,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ffa",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Billy Mays Room Door (to Boulder Room)",

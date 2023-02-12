@@ -6,7 +6,9 @@
       "name": "Tourian First Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DAAE",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -21,6 +23,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a984",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian First Room Left Door (to Metroid Room 1)",
@@ -43,6 +46,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a99c",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian First Room Right Door (to Save)",
@@ -124,14 +128,17 @@
       "name": "Upper Tourian Save Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DF1B",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
           "name": "Upper Tourian Save Door (to First Tourian Room)",
           "nodeType": "door",
-          "nodeAddress": "0x001ab40",
           "nodeSubType": "blue",
+          "nodeAddress": "0x001ab40",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Upper Tourian Save Door (to First Tourian Room)",
@@ -195,7 +202,9 @@
       "name": "Metroid Room 1",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DAE1",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -203,6 +212,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001a9b4",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 1 Left Door (to Metroid Room 2)",
@@ -232,61 +242,26 @@
               ]
             }
           ],
-          "yields": [ "f_KilledMetroidRoom1" ],
           "locks": [
             {
               "name": "Metroid Room 1 Grey Lock (to Metroid Room 2)",
               "lockType": "killEnemies",
               "unlockStrats": [
                 {
-                  "name": "Ammo Kill",
+                  "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Ice",
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "explicitWeapons": [ "Super", "Missile" ]
-                    }}
-                  ]
-                },
-                {
-                  "name": "Tank and PB Kill",
-                  "notable": false,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    {"enemyDamage": {
-                      "enemy": "Metroid",
-                      "type": "contact",
-                      "hits": 19
-                    }}
-                  ]
-                },
-                {
-                  "name": "Metroid Room 1 PB Dodge Kill",
-                  "notable": true,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    "canMetroidAvoid" 
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["never"]
+                    }
                   ]
                 }
+              ],
+              "yields": [
+                "f_KilledMetroidRoom1",
+                "f_ZebesAwake" 
               ]
             }
           ]
@@ -297,6 +272,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a9a8",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 1 Right Door (to First Tourian Room)",
@@ -326,6 +302,27 @@
               ]
             }
           ]
+        },
+        {
+          "id": 3,
+          "name": "Metroid Room 1 Junction (Get Past Metroids, Left to Right)",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "note": "Getting to this node is to represent passing the metroids from the left, leaving it will indicate getting past the acid pit to the right."
+        },
+        {
+          "id": 4,
+          "name": "Metroid Room 1 Junction (Get Past Metroids, Right to Left)",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "note": "Getting to this node is to represent passing the metroids from the right, leaving it will indicate getting past the acid pit to the left."
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Four Metroids",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -350,7 +347,7 @@
           "groupName": "Metroid Room 1 Middle Metroid",
           "enemyName": "Metroid",
           "quantity": 1,
-          "betweenNodes": [ 1,2 ],
+          "homeNodes": [ 3 ],
           "stopSpawn": [ "f_KilledMetroidRoom1" ]
         },
         {
@@ -373,6 +370,248 @@
           "from": 1,
           "to": [
             {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Already Cleared",
+                  "notable": false,
+                  "requires": ["f_KilledMetroidRoom1"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 19
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 1 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid" 
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Rinka",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 18
+                    }}
+                  ],
+                  "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
+                }
+              ],
+              "note": "This node is to represent getting past the Metroids."
+            }
+          ]
+        },
+        {
+          "from": 2,
+          "to": [
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Already Cleared",
+                  "notable": false,
+                  "requires": ["f_KilledMetroidRoom1"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 19
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 1 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid" 
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Rinka",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 18
+                    }}
+                  ],
+                  "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
+                }
+              ],
+              "note": "This node is to represent getting past the Metroids."
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
               "id": 2,
               "strats": [
                 {
@@ -386,16 +625,13 @@
                   "requires": ["SpeedBooster"]
                 },
                 {
-                  "name": "Metroid Room 1 Spring Ball Bounce (Left to Right)",
+                  "name": "Metroid Room 1 Spring Ball Jump (Left to Right)",
                   "notable": true,
-                  "requires": [
-                    "canMidAirMockball",
-                    "h_canUseSpringBall"
-                  ],
+                  "requires": ["canSpringBallJump"],
                   "note": "At max non-speed run speed, you can bounce on both platforms and avoid all acid."
                 },
                 {
-                  "name": "Metroid Room 1 Frozen Rinka (Left ro Right)",
+                  "name": "Metroid Room 1 Frozen Rinka (Left to Right)",
                   "notable": true,
                   "requires": ["canUseFrozenEnemies"],
                   "note": [
@@ -406,15 +642,27 @@
                 {
                   "name": "Fearless Dive",
                   "notable": false,
-                  "requires": [{"acidFrames": 30}]
+                  "requires": [
+                    {"acidFrames": 30},
+                    {"or":[
+                      "canWalljump",
+                      "Gravity"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Acid Run",
+                  "notable": false,
+                  "requires": [
+                    {"acidFrames": 100}
+                  ]
                 }
-              ],
-              "note": "FIXME don't we need Metroid avoidance strats too, like in Metroid rooms 3 and 4?"
+              ]
             }
           ]
         },
         {
-          "from": 2,
+          "from": 4,
           "to": [
             {
               "id": 1,
@@ -430,12 +678,9 @@
                   "requires": ["SpeedBooster"]
                 },
                 {
-                  "name": "Metroid Room 1 Spring Ball Bounce (Right to Left)",
+                  "name": "Metroid Room 1 Spring Ball Jump (Right to Left)",
                   "notable": true,
-                  "requires": [
-                    "canMidAirMockball",
-                    "h_canUseSpringBall"
-                  ],
+                  "requires": ["canSpringBallJump"],
                   "note": [
                     "At max non-speed run speed, you can bounce on both platforms and avoid all acid.",
                     "This even avoids the third Metroid."
@@ -450,7 +695,21 @@
                 {
                   "name": "Fearless Dive",
                   "notable": false,
-                  "requires": [{"acidFrames": 60}]
+                  "requires": [
+                    {"acidFrames": 30},
+                    {"or":[
+                      "canWalljump",
+                      "Gravity",
+                      "HiJump"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Acid Run",
+                  "notable": false,
+                  "requires": [
+                    {"acidFrames": 100}
+                  ]
                 }
               ]
             }
@@ -463,7 +722,9 @@
       "name": "Metroid Room 2",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DB31",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -471,6 +732,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a9c0",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 2 Top Right Door (to Metroid Room 1)",
@@ -493,6 +755,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001a9cc",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 2 Bottom Right Door (to Metroid Room 3)",
@@ -508,64 +771,36 @@
               "openEnd": 1
             }
           ],
-          "yields": [ "f_KilledMetroidRoom2" ],
           "locks": [
             {
               "name": "Metroid Room 2 Grey Lock (to Metroid Room 3)",
               "lockType": "killEnemies",
               "unlockStrats": [
                 {
-                  "name": "Ammo Kill",
+                  "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Ice",
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid"
-                        ]
-                      ],
-                      "explicitWeapons": [ "Super", "Missile" ]
-                    }}
-                  ]
-                },
-                {
-                  "name": "Tank and PB Kill",
-                  "notable": false,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    {"enemyDamage": {
-                      "enemy": "Metroid",
-                      "type": "contact",
-                      "hits": 6
-                    }}
-                  ]
-                },
-                {
-                  "name": "Metroid Room 2 PB Dodge Kill",
-                  "notable": true,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    "canMetroidAvoid"
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["never"]
+                    }
                   ]
                 }
+              ],
+              "yields": [
+                "f_KilledMetroidRoom2",
+                "f_ZebesAwake"
               ]
             }
           ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Two Metroids",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -593,9 +828,108 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Already Cleared",
                   "notable": false,
-                  "requires": []
+                  "requires": ["f_KilledMetroidRoom2"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 6
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 2 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 5
+                    }}
+                  ]
                 }
               ]
             }
@@ -608,9 +942,108 @@
               "id": 1,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Already Cleared",
                   "notable": false,
-                  "requires": []
+                  "requires": ["f_KilledMetroidRoom2"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 6
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 2 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 5
+                    }}
+                  ]
                 }
               ]
             }
@@ -623,7 +1056,9 @@
       "name": "Metroid Room 3",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DB7D",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -631,6 +1066,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a9d8",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 3 Left Door (to Metroid Room 2)",
@@ -667,6 +1103,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001a9e4",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 3 Right Door (to Metroid Room 4)",
@@ -696,64 +1133,36 @@
               ]
             }
           ],
-          "yields": [ "f_KilledMetroidRoom3" ],
           "locks": [
             {
               "name": "Metroid Room 3 Grey Lock (to Metroid Room 4)",
               "lockType": "killEnemies",
               "unlockStrats": [
                 {
-                  "name": "Ammo Kill",
+                  "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Ice",
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "explicitWeapons": [ "Super", "Missile" ]
-                    }}
-                  ]
-                },
-                {
-                  "name": "Tank and PB Kill",
-                  "notable": false,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    {"enemyDamage": {
-                      "enemy": "Metroid",
-                      "type": "contact",
-                      "hits": 17
-                    }}
-                  ]
-                },
-                {
-                  "name": "Metroid Room 3 PB Dodge Kill",
-                  "notable": true,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    "canMetroidAvoid"
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["never"]
+                    }
                   ]
                 }
+              ],
+              "yields": [
+                "f_KilledMetroidRoom3",
+                "f_ZebesAwake"
               ]
             }
           ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Three Metroids",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -781,24 +1190,82 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "from": 2,
-          "to": [
-            {
-              "id": 1,
-              "strats": [
-                {
                   "name": "Already Cleared",
                   "notable": false,
-                  "requires": ["f_KilledMetroidRoom3"]
+                  "requires": ["f_KilledMetroidRoom3"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 17
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 3 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
                 },
                 {
                   "name": "Easy Evade",
@@ -826,8 +1293,121 @@
                     }}
                   ]
                 }
-              ],
-              "note": "All strats here are to get through without killing the Metroids, since left door is unlocked."
+              ]
+            }
+          ]
+        },
+        {
+          "from": 2,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Already Cleared",
+                  "notable": false,
+                  "requires": ["f_KilledMetroidRoom3"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 17
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 3 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 11
+                    }}
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -838,7 +1418,9 @@
       "name": "Metroid Room 4",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DBCD",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -846,6 +1428,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001a9f0",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Metroid Room 4 Top Left Door (to Metroid Room 3)",
@@ -867,64 +1450,37 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001a9fc",
-          "yields": [ "f_KilledMetroidRoom4" ],
+          "doorEnvironments": [{"physics": "normal"}],
           "locks": [
             {
               "name": "Metroid Room 4 Grey Lock (to Blue Hoppers)",
               "lockType": "killEnemies",
               "unlockStrats": [
                 {
-                  "name": "Ammo Kill",
+                  "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Ice",
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "explicitWeapons": [ "Super", "Missile" ]
-                    }}
-                  ]
-                },
-                {
-                  "name": "Tank and PB Kill",
-                  "notable": false,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    {"enemyDamage": {
-                      "enemy": "Metroid",
-                      "type": "contact",
-                      "hits": 17
-                    }}
-                  ]
-                },
-                {
-                  "name": "Metroid Room 4 PB Dodge Kill",
-                  "notable": true,
-                  "requires": [
-                    {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Metroid", "Metroid", "Metroid"
-                        ]
-                      ],
-                      "excludedWeapons": [ "Super", "Missile" ]
-                    }},
-                    "canMetroidAvoid"
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["never"]
+                    }
                   ]
                 }
+              ],
+              "yields": [
+                "f_KilledMetroidRoom4",
+                "f_ZebesAwake"
               ]
             }
           ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Three Metroids",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -952,24 +1508,82 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "from": 2,
-          "to": [
-            {
-              "id": 1,
-              "strats": [
-                {
                   "name": "Already Cleared",
                   "notable": false,
-                  "requires": ["f_KilledMetroidRoom4"]
+                  "requires": ["f_KilledMetroidRoom4"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 17
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 4 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
                 },
                 {
                   "name": "Easy Evade",
@@ -1003,8 +1617,127 @@
                   ],
                   "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
                 }
-              ],
-              "note": "All strats here are to get through without killing the Metroids, since left door is unlocked."
+              ]
+            }
+          ]
+        },
+        {
+          "from": 2,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Already Cleared",
+                  "notable": false,
+                  "requires": ["f_KilledMetroidRoom4"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "Ice",
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "explicitWeapons": [ "Super", "Missile" ]
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Tank and PB Kill",
+                  "notable": false,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 17
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Metroid Room 4 PB Dodge Kill",
+                  "notable": true,
+                  "requires": [
+                    {"enemyKill":{
+                      "enemies": [
+                        [
+                          "Metroid", "Metroid", "Metroid"
+                        ]
+                      ],
+                      "excludedWeapons": [ "Super", "Missile" ]
+                    }},
+                    "canMetroidAvoid"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ]
+                },
+                {
+                  "name": "Easy Evade",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "ScrewAttack",
+                      "Ice"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Harder Evade",
+                  "notable": false,
+                  "requires": ["canMetroidAvoid"]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Rinka",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Metroid",
+                      "type": "contact",
+                      "hits": 16
+                    }}
+                  ],
+                  "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
+                }
+              ]
             }
           ]
         }
@@ -1015,14 +1748,17 @@
       "name": "Blue Hopper Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DC19",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
           "name": "Blue Hopper Room Top Door (to Metroid Room 4)",
           "nodeType": "door",
           "nodeSubType": "blue",
-          "nodeAddress": "0x001aa08"
+          "nodeAddress": "0x001aa08",
+          "doorEnvironments": [{"physics": "normal"}]
         },
         {
           "id": 2,
@@ -1030,6 +1766,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aa14",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Blue Hopper Room Left Door (to Dust Torizo)",
@@ -1124,7 +1861,9 @@
       "name": "Dust Torizo Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DC65",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1132,6 +1871,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001aa2c",
+          "doorEnvironments": [{"physics": "normal"}],
           "note": "Door is unlocked even if you don't touch the Dust Torizo",
           "runways": [
             {
@@ -1168,6 +1908,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001aa20",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Dust Torizo Room Right Door (to Blue Hoppers)",
@@ -1250,7 +1991,9 @@
       "name": "Big Boy Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DCB1",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1258,6 +2001,7 @@
           "nodeType": "door",
           "nodeSubType": "doorway",
           "nodeAddress": "0x001aa44",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Big Boy Room Left Doorway (to Seaweed)",
@@ -1294,6 +2038,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001aa38",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Big Boy Room Right Door (to Dust Torizo)",
@@ -1370,12 +2115,11 @@
                     "HiJump",
                     "canBabyMetroidAvoid"
                   ],
-                  "note": "Having Speed Booster or not changes the first jumps of this strat. Is it worth having an extra strat with Speed Booster as well?"
+                  "devNote": "Having Speed Booster or not changes the first jumps of this strat. Is it worth having an extra strat with Speed Booster as well?"
                 }
               ],
-              "note": [
-                "Not sure if the SpaceJump/SpringBall skip is RTA viable. It probably has all the requirements of classic baby skip and then some, so it will be left out.",
-                "The baby event doesn't seem to be based on a game flag per se, so it might happen every time you enter from the right? That might explain the permanent door lock."]
+              "note": "The baby event happens every time you enter from the right",
+                "devNote": "Not sure if the SpaceJump/SpringBall skip is RTA viable. It probably has all the requirements of classic baby skip and then some, so it will be left out."
             }
           ]
         }
@@ -1386,7 +2130,9 @@
       "name": "Seaweed Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DCFF",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1394,6 +2140,7 @@
           "nodeType": "door",
           "nodeSubType": "doorway",
           "nodeAddress": "0x001aa50",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Seaweed Room Top Right Doorway (to Big Boy)",
@@ -1418,7 +2165,7 @@
                 }
               ],
               "openEnd": 0,
-              "note": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming up will break the blocks this needs"
+              "devNote": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming up will break the blocks this needs"
             },
             {
               "name": "Maximum Runway - Seaweed Room Top Right Doorway (to Big Boy)",
@@ -1432,7 +2179,7 @@
               ],
               "usableComingIn": false,
               "openEnd": 1,
-              "note": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming up will break the blocks this needs"
+              "devNote": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming up will break the blocks this needs"
             }
           ]
         },
@@ -1442,6 +2189,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aa68",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Seaweed Room Left Door (to Recharge)",
@@ -1468,7 +2216,7 @@
               ],
               "usableComingIn": false,
               "openEnd": 1,
-              "note": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming in from 2 or 3 will break the blocks this needs"
+              "devNote": "This will need a resetRoom that avoids an obstacle for beamless, because PBs coming in from 2 or 3 will break the blocks this needs"
             }
           ]
         },
@@ -1478,6 +2226,7 @@
           "nodeType": "door",
           "nodeSubType": "red",
           "nodeAddress": "0x001aa5c",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Seaweed Room Bottom Right Door (to Eye Room)",
@@ -1602,7 +2351,9 @@
       "name": "Tourian Recharge Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DD2E",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1610,6 +2361,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aa74",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Recharge Room Door (to Seaweed)",
@@ -1705,7 +2457,9 @@
       "name": "Tourian Eye Door Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DDC4",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1713,6 +2467,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aa98",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Eye Door Room Left Door (to Seaweed)",
@@ -1734,6 +2489,7 @@
           "nodeType": "door",
           "nodeSubType": "eye",
           "nodeAddress": "0x001aaa4",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Eye Door (to Rinka Shaft)",
@@ -1802,7 +2558,9 @@
       "name": "Rinka Shaft",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DDF3",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1810,6 +2568,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aab0",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Rinka Shaft Top Left Door (to Eye Room)",
@@ -1831,6 +2590,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aabc",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Rinka Shaft Middle Left Door (to Save)",
@@ -1853,6 +2613,7 @@
           "nodeType": "door",
           "nodeSubType": "red",
           "nodeAddress": "0x001aac8",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Rinka Shaft Bottom Left Door (to Mother Brain)",
@@ -1954,7 +2715,9 @@
       "name": "Lower Tourian Save Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DE23",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1962,6 +2725,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aad4",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Lower Tourian Save Room Door (to Rinka Shaft)",
@@ -2024,8 +2788,10 @@
       "name": "Mother Brain Room",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DD58",
-      "note": "FIXME Maybe we can split MB into several events to properly indicate the ammo requirements?",
+      "devNote": "FIXME Maybe we can split MB into several events to properly indicate the ammo requirements?",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -2033,6 +2799,7 @@
           "nodeType": "door",
           "nodeSubType": "doorway",
           "nodeAddress": "0x001aa8c",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Mother Brain Room Left Blast Door (to Escape Room 1)",
@@ -2067,6 +2834,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aa80",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Mother Brain Room Right Door (to Rinka Shaft)",
@@ -2087,7 +2855,7 @@
           "name": "Mother Brain",
           "nodeType": "event",
           "nodeSubType": "boss",
-          "note": "The requirements for finishing MB1 is in the 3 to 4 link."
+          "devNote": "The requirements for finishing MB1 is in the 3 to 4 link."
         },
         {
           "id": 4,
@@ -2348,7 +3116,10 @@
                   ]
                 }
               ],
-              "note": "Glass takes 18 hits of any missile and must be killed to win the fight while MB1 itself requires 3000 hp worth of ammo after the initial 6 hits opens the hole. Hitting MB also damages glass."
+              "note": [
+                "Glass takes 18 hits of any missile and must be killed to win the fight while MB1 itself requires 3000 hp worth of ammo after the initial 6 hits opens the hole.",
+                "Each hit on MB also damages glass, counting for one of the 18 hits for that."
+              ]
             },
             {
               "id": 7,
@@ -2377,7 +3148,7 @@
                   "requires": [ "f_DefeatedMotherBrain" ]
                 }
               ],
-              "note": "This door appears only after Mother Brain is defeated. Because Mother Brain 3 requires practically nothing events move directly from MB2 to defeat"
+              "note": "This door appears only after Mother Brain is defeated. Because Mother Brain 3 requires practically nothing, events move directly from MB2 to defeat"
             }
           ]
         },
@@ -2391,7 +3162,7 @@
                   "name": "Remorph Zebetite Skip",
                   "notable": false,
                   "requires": ["canRemorphZebetiteSkip"],
-                  "note": "Would be a notable strat, but it already has its own tech."
+                  "devNote": "Would be a notable strat, but it already has its own tech."
                 }
               ],
               "note": "Direct link to MB1 for the Morph Zebetite skip"
@@ -2497,7 +3268,7 @@
                   "name": "Ice Zebetite Skip",
                   "notable": false,
                   "requires": ["canIceZebetitesSkip"],
-                  "note": "Would be a notable strat, but it already has its own tech."
+                  "devNote": "Would be a notable strat, but it already has its own tech."
                 },
                 {
                   "name": "Speed Zebetite Skip",
@@ -2511,7 +3282,7 @@
                       "shinesparkFrames": 15
                     }}
                   ],
-                  "note": "Would be a notable strat, but it already has its own tech."
+                  "devNote": "Would be a notable strat, but it already has its own tech."
                 }
               ],
               "note": "Direct link to MB1 for the Zebetite skips"
@@ -2535,7 +3306,9 @@
       "name": "Tourian Escape Room 1",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DE4D",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -2564,6 +3337,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001aaec",
+          "doorEnvironments": [{"physics": "normal"}],
           "canLeaveCharged": [
             {
               "usedTiles": 21,
@@ -2619,7 +3393,9 @@
       "name": "Tourian Escape Room 2",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DE7A",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -2627,6 +3403,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001aaf8",
+          "doorEnvironments": [{"physics": "normal"}],
           "locks": [
             {
               "name": "Tourian Escape 2 Lock (to Escape Room 1)",
@@ -2647,6 +3424,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001ab04",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Escape Room 2 Right Door (to Escape Room 3)",
@@ -2710,7 +3488,9 @@
       "name": "Tourian Escape Room 3",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DEA7",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -2718,6 +3498,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001ab10",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Escape Room 3 Left Door (to Escape Room 2)",
@@ -2767,6 +3548,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001ab1c",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Escape Room 3 Right Door (to Escape Room 4)",
@@ -2823,7 +3605,29 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    "HiJump",
+                    "canWalljump",
+                    "h_canFly"
+                  ]
+                },
+                {
+                  "name": "Speed Jump",
+                  "notable": false,
+                  "requires": [
+                    "SpeedBooster"
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 30,
+                      "openEnd": 2
+                    }}
+                  ]
                 }
               ]
             }
@@ -2851,7 +3655,9 @@
       "name": "Tourian Escape Room 4",
       "area": "Tourian",
       "subarea": "Main",
+      "playable": true,
       "roomAddress": "0x7DEDE",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -2859,6 +3665,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x001ab28",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Escape Room 4 Left Door (to Escape Room 3)",
@@ -2893,6 +3700,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001ab34",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Tourian Escape Room 4 Right Door (to Climb)",
@@ -2935,9 +3743,14 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    "HiJump",
+                    "h_canFly",
+                    "canWalljump"
+                  ]
                 }
-              ]
+              ],
+              "note": "The acid starts rising when Samus is at the bottom of the long fall"
             }
           ]
         },
@@ -2950,10 +3763,13 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    "SpaceJump",
+                    "canConsecutiveWalljump"
+                  ]
                 }
               ],
-              "note": "FIXME Would this room have acid rising backwards? If so, must take that into account."
+              "note": "The acid starts rising when Samus is at the bottom of the long climb"
             }
           ]
         }

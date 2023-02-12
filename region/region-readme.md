@@ -11,6 +11,11 @@ Region files follow the schema defined at [/schema/m3-region.schema.json](../sch
 
 Each region file is an array of Super Metroid rooms. Rooms contain the following elements:
 
+### Room Environments
+A room has a mandatory array of environments. Those environments describe some conditions that apply to the entire room. Only one environment should be applicable at any given time, but that environment can depend on which node Samus enters from. Has the following properties:
+* _heated:_ Indicates whether the environment is heated, i.e. whether Samus will take gradual damage without heat protection.
+* _entranceNodes:_ Indicates this environment is active when Samus entered from which nodes. If omitted, the environment is applicable at all times.
+
 ### Nodes
 A room has an array of nodes. Nodes represent points of interest in a room. Those are usually doors, items, bosses, or places where a game flag can be triggered. They can have the following types:
 * _door:_ A node that is connected to another node in another room, typically via a two-way connection
@@ -24,6 +29,20 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 A node's `name` property has to be unique across the entire model.
 
 Some node properties are self-explanatory, while others require additional definition:
+
+#### doorEnvironments
+Door nodes have an array of environments, much like rooms. Those environments describe some conditions that don't always apply to the entire room, but instead can vary with each door. Only one environment should be applicable at any given time, but that environment can depend on which node Samus enters from. Has the following properties:
+* _physics:_ Indicates what kind of physics are in play at this door. Possible values are:
+  * normal
+  * water
+  * lava
+  * acid
+  * previousRoom: This means that no actual movement happens in this room, and all physics and momentum actually carry over from the previous room.
+* _entranceNodes:_ Indicates this environment is active when Samus entered from which nodes. If omitted, the environment is applicable at all times.
+
+__Additional considerations__
+
+Door environments are mandatory on door nodes (except elevators). They are forbidden on all nodes where they're not mandatory.
 
 #### spawnAt
 The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
@@ -56,6 +75,7 @@ The `locks` property is an array that contains different ways a node can be lock
 * _name:_ A name that identifies the lock. This name must be unique across all locks in the model.
 * _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
 * _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again.
+* _yields:_ Exactly like the `yields` property found directly on a node, the `yields` property is an array of game flags. However, in this case those flags are activated when unlocking a lock.
 
 __Additional considerations__
 
@@ -126,7 +146,7 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
 #### twinDoorAddresses
-A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
+A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
 
 When a door has a twin, that twin will not be in the JSON model; but knowing the existence of that other door (and its address) can be useful when reorganizing connections between doors.
 

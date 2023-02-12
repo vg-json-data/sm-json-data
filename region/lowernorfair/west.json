@@ -6,7 +6,9 @@
       "name": "Acid Statue Room",
       "area": "Lower Norfair",
       "subarea": "West",
+      "playable": true,
       "roomAddress": "0x7B1E5",
+      "roomEnvironments": [{ "heated": true } ],
       "nodes": [
         {
           "id": 1,
@@ -14,6 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019846",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Acid Statue Room Top Right Door (to Main Hall)",
@@ -39,6 +42,15 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001983a",
+          "doorEnvironments": [
+            {
+              "physics": "normal", 
+              "devNote": [
+                "Technically it is acid if entering from node 1 and the statue hasn't been cleared, but that doesn't seem worth modeling.",
+                "The acid is not there regardless when entering from node 2."
+              ]
+            }
+          ],
           "runways": [
             {
               "name": "Base Runway - Acid Statue Room Bottom Right Door (to Golden Torizo)",
@@ -81,7 +93,7 @@
               ]
             }
           ],
-          "note": "This node represents the ledge the statue is on. This is why it can be reached without breaking the PB blocks, nut not unlocked."
+          "note": "This node represents the ledge the statue is on. This is why it can be reached without breaking the PB blocks, but not unlocked."
         },
         {
           "id": 4,
@@ -326,7 +338,9 @@
       "name": "Golden Torizo's Room",
       "area": "Lower Norfair",
       "subarea": "West",
+      "playable": true,
       "roomAddress": "0x7B283",
+      "roomEnvironments": [{ "heated": true } ],
       "nodes": [
         {
           "id": 1,
@@ -334,6 +348,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019876",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Golden Torizo Room Left Door (to Acid Statue)",
@@ -358,6 +373,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x0019882",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Golden Torizo Room Right Door (to Screw Attack)",
@@ -419,20 +435,133 @@
               "lockType": "bossFight",
               "unlockStrats": [
                 {
-                  "name": "Heatproof Supers",
+                  "name": "Safe Spot Heatproof Supers",
                   "notable": false,
                   "requires": [
                     "h_heatProof",
+                    "canSafeSpotGT",
                     "Super"
                   ],
                   "note": "Supers are farmable here, so no ammo requirement."
                 },
                 {
-                  "name": "Heatproof Charge",
+                  "name": "Safe Spot Heatproof Charge",
                   "notable": false,
                   "requires": [
                     "h_heatProof",
-                    "Charge"
+                    "canSafeSpotGT",
+                    "Charge",
+                    "canBePatient"
+                  ]
+                },
+                {
+                  "name": "Safe Spot Supers",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Super",
+                    {"heatFrames": 1200},
+                    {"ammo": {
+                      "type": "Super",
+                      "count": 30
+                    }}
+                  ],
+                  "devNote": [
+                    "No farming expected because that would change the heat frames.",
+                    "Supers count hard-coded because of GT's inherent 'dodging' ability.",
+                    "We could use an enemyKill if this were integrated into the enemy definition.",
+                    "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss"
+                  ]
+                },
+                {
+                  "name": "Safe Spot Full Combo",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Charge",
+                    "Ice",
+                    "Wave",
+                    "Plasma",
+                    {"heatFrames": 1250}
+                  ]
+                },
+                {
+                  "name": "Safe Spot Almost Full Combo",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Charge",
+                    "Wave",
+                    "Plasma",
+                    {"heatFrames": 1400}
+                  ]
+                },
+                {
+                  "name": "Safe Spot Charge Plasma",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Charge",
+                    "Plasma",
+                    {"heatFrames": 2000}
+                  ]
+                },
+                {
+                  "name": "Safe Spot Full Spazer",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Charge",
+                    "Ice",
+                    "Wave",
+                    "Spazer",
+                    {"heatFrames": 4000}
+                  ]
+                },
+                {
+                  "name": "Safe Spot Two Beam Charge",
+                  "notable": false,
+                  "requires": [
+                    "canHeatRun",
+                    "canSafeSpotGT",
+                    "Charge",
+                    {"heatFrames": 6500},
+                    {"or": [
+                      {"and": [
+                        "Ice",
+                        "Wave"
+                      ]},
+                      {"and": [
+                        "Ice",
+                        "Spazer"
+                      ]},
+                      {"and": [
+                        "Wave",
+                        "Spazer"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Heatproof Supers",
+                  "notable": false,
+                  "requires": [
+                    "h_heatProof",
+                    "Super",
+                    {"enemyDamage": {
+                      "enemy": "Golden Torizo",
+                      "type": "contact",
+                      "hits": 10
+                    }}
+                  ],
+                  "note": [
+                    "This is an estimate of the net damage taken, including farmed energy.",
+                    "Supers are farmable here, so no ammo requirement."
                   ]
                 },
                 {
@@ -445,11 +574,16 @@
                     {"ammo": {
                       "type": "Super",
                       "count": 30
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Golden Torizo",
+                      "type": "super",
+                      "hits": 4
                     }}
                   ],
-                  "note": [
+                  "devNote": [
                     "No farming expected because that would change the heat frames.",
-                    "Supers count hard-coded because og FT's inherent 'dodging' ability.",
+                    "Supers count hard-coded because of GT's inherent 'dodging' ability.",
                     "We could use an enemyKill if this were integrated into the enemy definition.",
                     "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss"
                   ]
@@ -459,45 +593,78 @@
                   "notable": false,
                   "requires": [
                     "canHeatRun",
+                    {"heatFrames": 1800},
                     "Charge",
                     "Ice",
                     "Wave",
                     "Plasma",
-                    {"heatFrames": 1250}
-                  ]
+                    {"enemyDamage": {
+                      "enemy": "Golden Torizo",
+                      "type": "contact",
+                      "hits": 4
+                    }}
+                  ],
+                  "note": "This is an estimate of the net damage taken, including farmed energy."
                 },
                 {
                   "name": "Almost Full Combo",
                   "notable": false,
                   "requires": [
                     "canHeatRun",
+                    {"heatFrames": 2150},
                     "Charge",
                     "Wave",
                     "Plasma",
-                    {"heatFrames": 1400}
-                  ]
+                    {"enemyDamage": {
+                      "enemy": "Golden Torizo",
+                      "type": "contact",
+                      "hits": 5
+                    }}
+                  ],
+                  "note": "This is an estimate of the net damage taken, including farmed energy."
                 },
                 {
                   "name": "Charge Plasma",
                   "notable": false,
                   "requires": [
                     "canHeatRun",
+                    {"heatFrames": 3600},
                     "Charge",
                     "Plasma",
-                    {"heatFrames": 2000}
-                  ]
+                    {"enemyDamage": {
+                      "enemy": "Golden Torizo",
+                      "type": "contact",
+                      "hits": 8
+                    }}
+                  ],
+                  "note": "This is an estimate of the net damage taken, including farmed energy."
                 },
                 {
                   "name": "Full Spazer",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_heatProof",
                     "Charge",
                     "Ice",
                     "Wave",
                     "Spazer",
-                    {"heatFrames": 4000}
-                  ]
+                    {"or": [
+                      {"enemyDamage": {
+                        "enemy": "Golden Torizo",
+                        "type": "contact",
+                        "hits": 14
+                      }},
+                      {"and": [
+                        "Gravity",
+                        {"enemyDamage": {
+                          "enemy": "Golden Torizo",
+                          "type": "contact",
+                          "hits": 9
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": "This is an estimate of the net damage taken, including farmed energy."
                 }
               ]
             }
@@ -548,7 +715,7 @@
                   "notable": true,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    "canSingleHBJ",
+                    "canBombHorizontally",
                     {"heatFrames": 200}
                   ],
                   "note": "Uses a single bomb blast to just barely get propelled past the crumble pit."
@@ -653,7 +820,7 @@
                   "notable": true,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    "canSingleHBJ",
+                    "canBombHorizontally",
                     {"heatFrames": 200}
                   ],
                   "note": "Uses a single bomb blast to just barely get propelled past the crumble pit."
@@ -787,7 +954,8 @@
                     "canIBJ",
                     {"heatFrames": 3000}
                   ],
-                  "note": "Expects two IBJs; one to break a block, then another one to get back up."
+                  "note": "Expects two IBJs; one to break a block, then another one to get back up.",
+                  "devNote": "Needs another strat for a bomb-above IBJ. But the heat frames need to be checked by someone who can execute it."
                 },
                 {
                   "name": "GT Supers Morph Bomb Springwall",
@@ -815,7 +983,9 @@
       "name": "Screw Attack Room",
       "area": "Lower Norfair",
       "subarea": "West",
+      "playable": true,
       "roomAddress": "0x7B6C1",
+      "roomEnvironments": [{ "heated": true } ],
       "nodes": [
         {
           "id": 1,
@@ -823,6 +993,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019a86",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Screw Attack Left Door (to Golden Torizo)",
@@ -848,6 +1019,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019a7a",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Screw Attack Bottom Right Door (to Recharge)",
@@ -873,6 +1045,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019a6e",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Screw Attack Top Right Door (to Fast Rippers)",
@@ -975,8 +1148,15 @@
                       "nodes": [1],
                       "mustStayPut": true
                     }},
-                    {"heatFrames": 300}
-                  ]
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 0.5,
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 200
+                    }},
+                    {"heatFrames": 1000}
+                  ],
+                  "note": "Heat frames split into the actual climb and the setup in the adjacent room."
                 }
               ],
               "note": "Shinespark and XRayClimb have a direct link. Other strats should go 1 -> 4 -> 2."
@@ -1017,8 +1197,15 @@
                       "nodes": [1],
                       "mustStayPut": true
                     }},
-                    { "heatFrames": 800 }
-                  ]
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 0.5,
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 200
+                    }},
+                    {"heatFrames": 2800}
+                  ],
+                  "note": "Heat frames split into the actual climb and the setup in the adjacent room."
                 }
               ],
               "note": "Shinespark and XRayClimb have a direct link. Other strats should go 1 -> 4 -> 2 -> 3."
@@ -1100,6 +1287,27 @@
                       "requires": []
                     }
                   ]
+                },
+                {
+                  "name": "Screw Attack Right-Side X-Ray Climb",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canLeftFacingDoorXRayClimb",
+                    { "resetRoom": {
+                      "nodes": [2],
+                      "mustStayPut": true
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "overrideRunwayRequirements": true,
+                      "physics": ["normal"],
+                      "useFrames": 200
+                    }},
+                    {"heatFrames": 1600}
+                  ],
+                  "note": "Heat frames split into the actual climb and the setup in the adjacent room."
                 }
               ]
             },
@@ -1422,7 +1630,8 @@
                   "note": "Position yourself in the door way, then run and jump. Makes it possible to walljump up."
                 }
               ],
-              "note": "Because getting to this node always requires breaking A, the strats here don't bother re-checking whether it's broken. Also, many of these strats expect that you come in from the door and fall down before doing anything."
+              "note": "Many of these strats expect that you come in from the door and fall down before doing anything.",
+              "devNote": "Because getting to this node always requires breaking A, the strats here don't bother re-checking whether it's broken"
             }
           ]
         }
@@ -1433,7 +1642,9 @@
       "name": "Golden Torizo Energy Recharge",
       "area": "Lower Norfair",
       "subarea": "West",
+      "playable": true,
       "roomAddress": "0x7B305",
+      "roomEnvironments": [{ "heated": false } ],
       "nodes": [
         {
           "id": 1,
@@ -1441,6 +1652,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00198a6",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Golden Torizo Energy Recharge Door (to Screw Attack)",
@@ -1504,7 +1716,9 @@
       "name": "Fast Ripper Room",
       "area": "Lower Norfair",
       "subarea": "West",
+      "playable": true,
       "roomAddress": "0x7B2DA",
+      "roomEnvironments": [{ "heated": true } ],
       "nodes": [
         {
           "id": 1,
@@ -1512,6 +1726,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001988e",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Fast Rippers Left Door (to Screw Attack)",
@@ -1536,6 +1751,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001989a",
+          "doorEnvironments": [{"physics": "normal"}],
           "runways": [
             {
               "name": "Base Runway - Fast Rippers Right Door (to Fast Pillars Setup Room)",
@@ -1571,7 +1787,7 @@
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": ["canHeatedGGG"]
+                      "requires": ["h_canHeatedGreenGateGlitch"]
                     }
                   ],
                   "note": "This longer runway requires the green gate to be open, and usually involves tanking some ripper hits."
@@ -1677,7 +1893,7 @@
                     {
                       "id": "A",
                       "requires": [
-                        "canHeatedGGG"
+                        "h_canHeatedGreenGateGlitch"
                       ]
                     }
                   ]

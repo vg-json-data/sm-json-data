@@ -32,6 +32,12 @@
             "title": "OR Logical Element",
             "description": "Fulfilled if at least one logical element inside is fulfilled."
           },
+          "not": {
+            "$id": "#/definitions/logicalRequirements/items/properties/not",
+            "type": "string",
+            "title": "NOT Logical Element",
+            "description": "Fulfilled if the logical element given is not fullfilled."
+          },
           "ammo": {
             "$id": "#/definitions/logicalRequirement/items/properties/ammo",
             "type": "object",
@@ -233,6 +239,13 @@
             "title": "Lava Physics Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in lava, with Gravity Suit turned off if available."
           },
+          "samusEaterFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/samusEaterFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Samus Eater Frames",
+            "description": "Fulfilled by spending an amount of energy that correlates to the number of frames captured by a Samus Eater."
+          },
           "energyAtMost": {
             "$id": "#/definitions/logicalRequirement/items/properties/energyAtMost",
             "type": "integer",
@@ -253,6 +266,46 @@
             "minimum": 1,
             "title": "Thorn Hits",
             "description": "Fulfilled by spending an amount of energy that corresponds to taking a number of hits from thorns (the less damaging spikes found mainly in Brinstar)."
+          },
+          "resourceCapacity": {
+            "$id": "#/definitions/logicalRequirement/items/properties/resourceCapacity",
+            "type": "array",
+            "title": "Resource Capacity Requirement",
+            "description": "Fulfilled by having at least the maximum capacity for all given resource types",
+            "items": {
+              "$id": "#/definitions/logicalRequirement/items/properties/resourceCapacity/items",
+              "type": "object",
+              "required": [
+                "type",
+                "count"
+              ],
+              "minItems": 1,
+              "maxItems": 5,
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceCapacity/properties/items/type",
+                  "type": "string",
+                  "enum": [
+                    "Missile",
+                    "Super",
+                    "PowerBomb",
+                    "RegularEnergy",
+                    "ReserveEnergy"
+                  ],
+                  "title": "Resource Type",
+                  "description": "The type of resource held."
+                },
+                "count": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceCapacity/properties/items/count",
+                  "type": "integer",
+                  "minimum": 0,
+                  "title": "Resource Count",
+                  "description": "The amount of resource capacity that Samus must have."
+                }
+              }
+            }
+
           },
           "adjacentRunway": {
             "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway",
@@ -288,6 +341,31 @@
                   "title": "In-Room Path node",
                   "description": "The ID of a node that is part of this path"
                 }
+              },
+              "physics": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics",
+                "type": "array",
+                "title": "Appropriate Physics",
+                "description": "An optional array describing which physics are acceptable in order for this adjacentRunway to be usable. All physics are acceptable if this is missing.",
+                "minItems": 1,
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics/items",
+                  "$ref" : "m3-region.schema.json#/definitions/physics",
+                  "description": "A physics that is acceptable in order for this adjacentRunway to be usable."
+                }
+              },
+              "useFrames":{
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/useFrames",
+                "type": "integer",
+                "title": "Use Frames",
+                "description": "An optional value that indicates a number of frames that Samus must spend at the adjacent runway. She should take appropriate damage according to that door's environment (acid/lava) and that room's environment (heat) when applicable.",
+                "minimum": 1
+              },
+              "overrideRunwayRequirements": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/overrideRunwayRequirements",
+                "type": "boolean",
+                "title": "Override Runway Requirements",
+                "description": "An optional value that indicates whether logical requirements on the runway itself d be ignored. If missing, this should be interpreted as false."
               }
             }
           },

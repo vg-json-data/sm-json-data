@@ -4,6 +4,7 @@
 
   "definitions": {
     "strat": {
+      "$id": "#/definitions/strat",
       "type": "object",
       "required": [
         "name",
@@ -82,6 +83,10 @@
               "note": {
                 "$ref" : "m3-note.schema.json#/definitions/note",
                 "$id": "#/definitions/strat/properties/obstacles/items/properties/note"
+              },
+              "devNote": {
+                "$ref" : "m3-note.schema.json#/definitions/devNote",
+                "$id": "#/definitions/strat/properties/obstacles/items/properties/devNote"
               }
             }
           }
@@ -135,6 +140,10 @@
               "note": {
                 "$ref" : "m3-note.schema.json#/definitions/note",
                 "$id": "#/definitions/strat/properties/failures/items/properties/note"
+              },
+              "devNote": {
+                "$ref" : "m3-note.schema.json#/definitions/devNote",
+                "$id": "#/definitions/strat/properties/failures/items/properties/devNote"
               }
             }
           }
@@ -155,8 +164,34 @@
         "note": {
           "$ref" : "m3-note.schema.json#/definitions/note",
           "$id": "#/definitions/strat/properties/note"
+        },
+        "devNote": {
+          "$ref" : "m3-note.schema.json#/definitions/devNote",
+          "$id": "#/definitions/strat/properties/devNote"
         }
       }
+    },
+    "yields": {
+      "$id": "#/definitions/yields",
+      "type": "array",
+      "title": "Yields",
+      "items": {
+        "$id": "#/definitions/yields/items",
+        "type": "string"
+      }
+    },
+    "physics": {
+      "$id": "#/definitions/physics",
+      "title": "Physics",
+      "description": "Indicates a kind of SuperMetroid physics",
+      "type": "string",
+      "enum": [
+        "normal",
+        "water",
+        "lava",
+        "acid"
+      ],
+      "pattern": "^(.*)$"
     }
   },
 
@@ -182,10 +217,90 @@
           "name",
           "area",
           "subarea",
+          "playable",
           "nodes",
           "links"
         ],
         "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "playable": {"const": true}
+              }
+            },
+            "then": {
+              "required": ["roomEnvironments"],
+              "properties": {
+                "nodes": {
+                  "items": {
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "nodeType": {"const": "door"}
+                          },
+                          "not": {
+                            "properties": {
+                              "nodeSubType": {"const": "elevator"}
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": ["doorEnvironments"]
+                        }
+                      },
+                      {
+                        "if": {
+                          "anyOf": [
+                            {
+                              "not": {
+                                "properties": {
+                                  "nodeType": {"const": "door"}
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "nodeSubType": {"const": "elevator"}
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "not":{
+                            "required": ["doorEnvironments"]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "playable": {"const": false}
+              }
+            },
+            "then": {
+              "not": {
+                "required": ["roomEnvironments"]
+              },
+              "properties": {
+                "nodes": {
+                  "items": {
+                    "not": {
+                      "required": ["doorEnvironments"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
         "properties": {
           "id": {
             "$id": "#/properties/rooms/items/properties/id",
@@ -228,9 +343,20 @@
             ],
             "pattern": "^(.*)$"
           },
+          "playable": {
+            "$id": "#/properties/rooms/items/properties/playable",
+            "type": "boolean",
+            "title": "Playable",
+            "description": "Indicates whether any gameplay happens in this room. When this is false, inputs do nothing and momentum is carried over from the previous room to the next one.",
+            "default": true
+          },
           "note": {
             "$ref" : "m3-note.schema.json#/definitions/note",
             "$id": "#/properties/rooms/items/properties/note"
+          },
+          "devNote": {
+            "$ref" : "m3-note.schema.json#/definitions/devNote",
+            "$id": "#/properties/rooms/items/properties/devNote"
           },
           "roomAddress": {
             "$id": "#/properties/rooms/items/properties/roomAddress",
@@ -239,6 +365,49 @@
             "description": "Memory address of this room.",
             "examples": ["0x79E9F", "0x79F11"],
             "pattern": "^(.*)$"
+          },
+          "roomEnvironments": {
+            "$id": "#/properties/rooms/items/properties/roomEnvironments",
+            "type": "array",
+            "title": "Room Environments",
+            "description": "An array of objects that describe the room's environment in certain circumstances. In most cases there's only one that's relevant all the time.",
+            "minItems": 1,
+            "items": {
+              "$id": "#/properties/rooms/items/properties/roomEnvironments/items",
+              "type": "object",
+              "title": "Room Environment",
+              "description": "An object that describes the room-wide portion of the game environment, which can optionally depend on what node Samus entered from.",
+              "required": [
+                "heated"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "heated": {
+                  "$id": "#/properties/rooms/items/properties/roomEnvironments/items/properties/heated",
+                  "title": "Heated",
+                  "description": "Indicates whether the room is heated",
+                  "type": "boolean"
+                },
+                "entranceNodes": {
+                  "$id": "#/properties/rooms/items/properties/roomEnvironments/items/properties/entranceNodes",
+                  "title": "Entrance Nodes",
+                  "description": "The nodes from which Samus must have entered the room for this environment to be applicable. Can be left null if applicable for all nodes.",
+                  "type": "array",
+                  "items": {
+                    "$id": "#/properties/rooms/items/properties/roomEnvironments/items/properties/entranceNodes/items",
+                    "type": "integer"
+                  }
+                },
+                "note": {
+                  "$ref" : "m3-note.schema.json#/definitions/note",
+                  "$id": "#/properties/rooms/items/properties/roomEnvironments/items/properties/note"
+                },
+                "devNote": {
+                  "$ref" : "m3-note.schema.json#/definitions/devNote",
+                  "$id": "#/properties/rooms/items/properties/roomEnvironments/items/properties/devNote"
+                }
+              }
+            }
           },
           "nodes": {
             "$id": "#/properties/rooms/items/properties/nodes",
@@ -357,6 +526,48 @@
                   "description": "Memory address of this location",
                   "examples": ["0x0019852", "0x001985e"]
                 },
+                "doorEnvironments": {
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments",
+                  "type": "array",
+                  "title": "Door Environments",
+                  "description": "An array of objects that describe the door's environment in certain circumstances. In most cases there's only one that's relevant all the time. This contains portions of the environment that are not room-wide.",
+                  "minItems": 1,
+                  "items": {
+                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items",
+                    "type": "object",
+                    "title": "Door Environment",
+                    "description": "An object that describes the portion of the game environment that can vary by door. This can optionally depend on what node Samus entered from.",
+                    "required": [
+                      "physics"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "physics": {
+                        "$ref" : "#/definitions/physics",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/physics",
+                        "description": "Indicates what kind of physics are active at this door"
+                      },
+                      "entranceNodes": {
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/entranceNodes",
+                        "title": "Entrance Nodes",
+                        "description": "The nodes from which Samus must have entered the room for this environment to be applicable. Can be left null if applicable for all nodes.",
+                        "type": "array",
+                        "items": {
+                          "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/entranceNodes/items",
+                          "type": "integer"
+                        }
+                      },
+                      "note": {
+                        "$ref" : "m3-note.schema.json#/definitions/note",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/doorEnvironments/items/properties/devNote"
+                      }
+                    }
+                  }
+                },
                 "interactionRequires": {
                   "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/interactionRequires",
@@ -463,6 +674,10 @@
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items/properties/devNote"
                       }
                     }
                   }
@@ -623,6 +838,10 @@
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/devNote"
                       }
                     }
                   }
@@ -699,6 +918,15 @@
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/devNote"
+                      },
+                      "yields": {
+                        "$ref" : "#/definitions/yields",
+                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/locks/items/properties/yields",
+                        "description": "A list of flags that are activated by unlocking with this lock."
                       }
                     }
                   }
@@ -792,18 +1020,17 @@
                   }
                 },
                 "yields": {
+                  "$ref" : "#/definitions/yields",
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/yields",
-                  "type": "array",
-                  "title": "Yields",
-                  "description": "A list of flags that are activated by interacting with this node.",
-                  "items": {
-                    "$id": "#/properties/rooms/items/properties/nodes/items/properties/yields/items",
-                    "type": "string"
-                  }
+                  "description": "A list of flags that are activated by interacting with this node."
                 },
                 "note": {
                   "$ref" : "m3-note.schema.json#/definitions/note",
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/note"
+                },
+                "devNote": {
+                  "$ref" : "m3-note.schema.json#/definitions/devNote",
+                  "$id": "#/properties/rooms/items/properties/nodes/items/properties/devNote"
                 }
               }
             }
@@ -870,6 +1097,10 @@
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/links/items/properties/to/items/properties/devNote"
                       }
                     }
                   }
@@ -928,6 +1159,10 @@
                 "note": {
                   "$ref" : "m3-note.schema.json#/definitions/note",
                   "$id": "#/properties/rooms/items/properties/obstacles/items/properties/note"
+                },
+                "devNote": {
+                  "$ref" : "m3-note.schema.json#/definitions/devNote",
+                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/devNote"
                 },
                 "requires": {
                   "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
@@ -1105,6 +1340,10 @@
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote",
+                        "$id": "#/properties/rooms/items/properties/enemies/items/properties/farmCycles/items/properties/devNote"
                       }
                     }
                   }
@@ -1112,6 +1351,10 @@
                 "note": {
                   "$ref" : "m3-note.schema.json#/definitions/note",
                   "$id": "#/properties/rooms/items/properties/enemies/items/properties/note"
+                },
+                "devNote": {
+                  "$ref" : "m3-note.schema.json#/definitions/devNote",
+                  "$id": "#/properties/rooms/items/properties/enemies/items/properties/devNote"
                 }
               }
             }

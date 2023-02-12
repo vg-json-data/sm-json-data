@@ -35,6 +35,14 @@ __Example:__
 ]}
 ```
 
+#### not object
+A `not` object is fulfilled if the logical element given is not fulfilled
+
+__Example:__
+```json
+{"not": "f_KilledMetroidRoom1"}
+```
+
 ### Ammo Management Objects
 This section contains logical elements that are fulfilled by spending ammo. Encountering many of those successively without having a chance to refill can impact how many power bomb/missile/super tanks can be required to get through.
 
@@ -193,12 +201,20 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
-#### lavaPhysicsFrames
+#### lavaPhysicsFrames object
 A `lavaPhysicsFrames` object works exactly like a `lavaFrames` object, except that Samus needs to be working with lava physics during that period of time. This means Gravity Suit will be manually turned off for this duration, even if it's available.
 
 __Example:__
 ```json
 {"lavaPhysicsFrames": 70}
+```
+
+#### samusEaterFrames object
+A `samusEaterFrames` object represents the need for Samus to take damage from the environmental enemy known as a Samus Eater.  When captured, fixed damage is dealt over a set number of frames. The frame amount is 320 for ceiling and 160 for floor variations.  The vanilla damage is 2 per 20 frames in Power Suit, 1 per 20 frames in Varia Suit, 1 per 40 frames in Gravity Suit.
+
+__Example:__
+```json
+{"samusEaterFrames": 160}
 ```
 
 #### spikeHits object
@@ -221,6 +237,26 @@ __Example:__
 {"thornHits": 1}
 ```
 
+#### resourceCapacity object
+A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
+* _type:_ The type ofresource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+* _count:_ The amount of capacity that Samus must have.
+
+__Example:__
+```json
+{"resourceCapacity": [
+    { "type": "Missile", "count": 10},
+    { "type": "Super", "count":10},
+    { "type": "PowerBomb", "count": 11},
+    { "type": "RegularEnergy", "count":899}
+]}
+```
+
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
@@ -229,6 +265,9 @@ An `adjacentRunway`object represents the need for Samus to be able to run (or po
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
 * _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
+* _physics:_ An optional array that indicates the acceptable physics that can be in effect at the adjacent door. If missing, all physics are acceptable.
+* _useFrames:_ An optional property that indicates the number of frames Samus should expect to spend at the adjacent door, being subjected to the door (acid/lava) and room (heat) environments there if applicable.
+* _overrideRunwayRequirements:_ An optional boolean (if missing, assume false). If true, indicates the the requirements on the runway itself don't need to be fulfilled.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
 
