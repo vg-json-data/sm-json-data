@@ -1374,16 +1374,55 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {
+                      "or": [
+                        "canWalljump",
+                        "SpaceJump",
+                        "canIBJ",
+                        {
+                          "and": [
+                            "HiJump",
+                            "SpeedBooster"
+                          ]
+                        },
+                        "canSpringBallJump",
+                        "canGravityJump"
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "name": "Suitless",
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {
+                      "canComeInCharged": {
+                        "fromNode": 1,
+                        "framesRemaining": 30,
+                        "shinesparkFrames": 55
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "Springball to the Fish",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "canUseFrozenEnemies",
                     "HiJump",
                     "canSpringBallJumpMidAir"
+                  ]
+                },
+                {
+                  "name": "Double Springball Jump",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canDoubleSpringBallJumpMidAir"
                   ]
                 }
               ]
@@ -1451,7 +1490,103 @@
                   "requires": []
                 }
               ]
-            }
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Freeze the Fish",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canPrepareForNextRoom",
+                    {"resetRoom": {
+                        "nodes": [ 4 ],
+                        "nodesToAvoid": [ 1 ]
+                    }},
+                    "canUseFrozenEnemies",
+                    {
+                      "or": [
+                        {
+                          "and": [
+                            "Wave",
+                            "Plasma"
+                          ]
+                        },
+                        {
+                          "and": [
+                            "Plasma",
+                            "Charge"
+                          ]
+                        },
+                        {
+                          "and": [
+                            "Wave",
+                            "Spazer",
+                            "Charge"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "note": "The beam must be pre-charged and aiming down before the transition is close to required.",
+                  "devNote": "The fish is too far left to naturally be above, entering the room."
+                },
+                {
+                  "name": "Damage Boost",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canDamageBoost",
+                    "canPrepareForNextRoom",
+                    {
+                      "enemyDamage": {
+                        "enemy": "Skultera",
+                        "hits": 1,
+                        "type": "contact"
+                      }
+                    },
+                    {"resetRoom": {
+                        "nodes": [ 4 ],
+                        "nodesToAvoid": [ 1 ]
+                    }}
+                  ]
+                },
+                {
+                  "name": "Reset Fall Speed",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canResetFallSpeed",
+                    "canPrepareForNextRoom",
+                    {"resetRoom": {
+                        "nodes": [ 4 ],
+                        "nodesToAvoid": [ 1 ]
+                    }}
+                  ],
+                  "note": "Morph and unmorph then drift to the ledge.",
+                  "devNote": "Strat starts before entering this transition.  An enemy can be used for this strat instead of morph."
+                },
+                {
+                  "name": "Planned Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canPrepareForNextRoom",
+                    {"canComeInCharged": {
+                        "fromNode": 4,
+                        "framesRemaining": 10,
+                        "shinesparkFrames": 5
+                    }},
+                    {"resetRoom": {
+                        "nodes": [ 4 ],
+                        "nodesToAvoid": [ 1 ]
+                    }}
+                  ],
+                  "note": "Assumes you enter in a state that can spark immediately."
+                }
+              ]
+            } 
           ]
         },
         {
@@ -1481,10 +1616,43 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "canUseFrozenEnemies",
-                    {"or": [
-                      "HiJump",
-                      "canSpringBallJumpMidAir"
-                    ]}
+                    {
+                      "or": [
+                        "HiJump",
+                        "canSpringBallJumpMidAir"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Rolling Jump",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "HiJump",
+                    "SpringBall"
+                  ]
+                },
+                {
+                  "name": "Flatley Jump",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canFlatleyJump",
+                    {
+                      "or": [
+                        "canSpringBallJump",
+                        "HiJump"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Wall Hug Turnaround",
+                  "notable": false,
+                  "requires": [
+                    "HiJump",
+                    "canMomentumConservingTurnaround"
                   ]
                 }
               ]
@@ -1549,14 +1717,17 @@
                   "requires": ["Gravity"]
                 },
                 {
-                  "name": "Suitless Jump Assists",
+                  "name": "Suitless",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    {"or": [
-                      "HiJump",
-                      "canSpringBallJumpMidAir"
-                    ]}
+                    {
+                      "or": [
+                        "HiJump",
+                        "canSpringBallJumpMidAir",
+                        "canTrickyJump"
+                      ]
+                    }
                   ]
                 },
                 {
@@ -1575,6 +1746,32 @@
         {
           "from": 7,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    {"canComeInCharged": {
+                        "fromNode": 3,
+                        "framesRemaining": 25,
+                        "shinesparkFrames": 90
+                    }},
+                    {"resetRoom": {
+                        "nodes": [ 3 ],
+                        "nodesToAvoid": [ 2 ]
+                    }}
+                  ],
+                  "devNote": [
+                    "Spark through 5 into the wall past 4.  Then fall down to 1.",
+                    "Ending the spark a bit early would work but lets work with the expected cost.",
+                    "If you can continue from 5 then it can be reached with another item already."
+                  ]
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
