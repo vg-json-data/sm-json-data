@@ -237,6 +237,26 @@ __Example:__
 {"thornHits": 1}
 ```
 
+#### resourceCapacity object
+A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
+* _type:_ The type ofresource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+* _count:_ The amount of capacity that Samus must have.
+
+__Example:__
+```json
+{"resourceCapacity": [
+    { "type": "Missile", "count": 10},
+    { "type": "Super", "count":10},
+    { "type": "PowerBomb", "count": 11},
+    { "type": "RegularEnergy", "count":899}
+]}
+```
+
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
