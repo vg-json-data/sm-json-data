@@ -75,6 +75,7 @@ def find_keywords(item):
                         "enemyDamage",
                         "energyAtMost",
                         "heatFrames",
+                        "hibashiHits",
                         "hits",
                         "id",
                         "lavaFrames",
