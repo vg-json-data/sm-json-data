@@ -114,7 +114,13 @@ def find_keywords(item):
         print("FAIL: " + str(item))
     return ret
 
-keywordsPath = os.path.join("resources","app","manifests","keywords.json")
+keywordsPath = os.path.join(
+    ".",
+    "resources",
+    "app",
+    "manifests",
+    "keywords.json"
+)
 with open(keywordsPath, encoding="utf-8") as keywordsFile:
     keywords = json.load(keywordsFile)
 
@@ -136,7 +142,7 @@ with open(enemiesPath, encoding="utf-8") as enemiesFile:
 
 # helpers
 helpers = []
-helpersPath = os.path.join("helpers.json")
+helpersPath = os.path.join(".", "helpers.json")
 with open(helpersPath, encoding="utf-8") as helpersFile:
     helpers = json.load(helpersFile)
     for helper in helpers["helpers"]:
@@ -189,13 +195,13 @@ with open(techsPath, encoding="utf-8") as techsFile:
                 print("")
 
 rooms = []
-for region in os.listdir(os.path.join("region")):
+for region in os.listdir(os.path.join(".", "region")):
     if os.path.isdir(os.path.join("region", region)):
         print(region)
-        for subregion in os.listdir(os.path.join("region", region)):
+        for subregion in os.listdir(os.path.join(".", "region", region)):
             if ".json" in subregion:
                 print(" " + subregion)
-                regionPath = os.path.join("region", region, subregion)
+                regionPath = os.path.join(".", "region", region, subregion)
                 with open(regionPath, encoding="utf-8") as regionFile:
                     rooms = json.load(regionFile)
                     rooms = rooms["rooms"]
