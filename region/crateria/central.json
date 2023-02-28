@@ -3035,6 +3035,34 @@
           "name": "Crateria Super Room Junction (Right of Spikes)",
           "nodeType": "junction",
           "nodeSubType": "junction"
+        },
+        {
+          "id": 5,
+          "name": "Crateria Super Room Junction (Right of Boyons)",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "viewableNodes": [
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Walljump",
+                  "notable": false,
+                  "requires": ["canConsecutiveWalljump"]
+                },
+                {
+                  "name": "SpaceJump",
+                  "notable": false,
+                  "requires": ["SpaceJump"]
+                },
+                {
+                  "name": "IBJ",
+                  "notable": false,
+                  "requires": ["canIBJ"]
+                }
+              ]
+            }
+          ]
         }
       ],
       "enemies": [
@@ -3044,6 +3072,13 @@
           "enemyName": "Boyon",
           "quantity": 4,
           "homeNodes": [ 2 ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Boyons",
+          "obstacleType": "enemies"
         }
       ],
       "links": [
@@ -3064,7 +3099,7 @@
                   ]
                 },
                 {
-                  "name": "Tank the Damage",
+                  "name": "Take Spike Damage",
                   "notable": false,
                   "requires": [{"spikeHits": 1}]
                 },
@@ -3093,28 +3128,31 @@
                   "name": "Vanilla Strat",
                   "notable": false,
                   "requires": [
+                    "canUseFrozenEnemies",
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 130,
                       "openEnd": 2
-                    }},
-                    "canUseFrozenEnemies"
+                    }}
                   ]
                 },
                 {
-                  "name": "Crateria Supers Dead Boyons Quick Charge",
-                  "notable": true,
+                  "name": "Dead Boyon Quick Charge",
+                  "notable": false,
                   "requires": [
                     {"canShineCharge": {
                       "usedTiles": 25,
                       "shinesparkFrames": 130,
                       "openEnd": 2
-                    }},
-                    {"enemyKill":{
-                      "enemies": [
-                        [ "Boyon", "Boyon", "Boyon", "Boyon" ]
-                      ]
                     }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        { "enemyKill": { "enemies": [ [ "Boyon", "Boyon", "Boyon", "Boyon" ] ] } }
+                      ]
+                    }
                   ],
                   "note": [
                     "This is doable without a short charge, but it's essentially harder than the bluesuit jump.",
@@ -3125,6 +3163,7 @@
                   "name": "Crateria Supers BlueSuit Jump",
                   "notable": true,
                   "requires": [
+                    "canCarefulJump",
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 130,
@@ -3135,6 +3174,62 @@
                 }
               ],
               "devNote": "No strat for getting through the Boyons with a dboost, since it's redundant with the bluesuit jump."
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Boyons Cleared",
+                  "notable": false,
+                  "requires": [{"obstaclesCleared": ["A"]}]
+                },
+                {
+                  "name": "Take Boyon Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}}
+                  ],
+                  "note": "Take damage before attempting to jump through to avoid falling in the acid."
+                },
+                {
+                  "name": "Screw Attack",
+                  "notable": false,
+                  "requires": [
+                    "ScrewAttack",
+                    {"or": [
+                      "canCarefulJump",
+                      "SpaceJump",
+                      "SpeedBooster"
+                    ]}
+                  ],
+                  "note": "Jump at the last tile to make it through all of the Boyons."
+                },
+                {
+                  "name": "Ice",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["Ice"]
+                    }
+                  ],
+                  "note": "Does not kill the boyons but does remove them as an obstacle."
+                },
+                {
+                  "name": "Kill The Boyons",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        { "enemyKill": { "enemies": [ [ "Boyon", "Boyon", "Boyon", "Boyon" ] ] } }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -3170,7 +3265,7 @@
                   ]
                 },
                 {
-                  "name": "Tank the Damage",
+                  "name": "Take Spike Damage",
                   "notable": false,
                   "requires": [{"spikeHits": 1}]
                 }
@@ -3183,6 +3278,85 @@
                   "name": "Base",
                   "notable": false,
                   "requires": ["Morph"]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "SpaceJump Speedball",
+                  "notable": false,
+                  "requires": [
+                    "canMockball",
+                    "canBlueSpaceJump",
+                    {"canComeInCharged": {
+                       "fromNode": 1,
+                       "framesRemaining": 180,
+                       "shinesparkFrames": 0
+                     }}
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 5,
+          "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Boyons Cleared",
+                  "notable": false,
+                  "requires": [{"obstaclesCleared": ["A"]}]
+                },
+                {
+                  "name": "Take Boyon Damage",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}}
+                  ],
+                  "note": "Take damage before attempting to jump through to avoid falling in the acid."
+                },
+                {
+                  "name": "Screw Attack",
+                  "notable": false,
+                  "requires": [
+                    "ScrewAttack",
+                    {"or": [
+                      "canCarefulJump",
+                      "SpaceJump",
+                      "SpeedBooster"
+                    ]}
+                  ],
+                  "note": "Jump at the last tile to make it through all of the Boyons."
+                },
+                {
+                  "name": "Ice",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["Ice"]
+                    }
+                  ],
+                  "note": "Does not kill the boyons but does remove them as an obstacle."
+                },
+                {
+                  "name": "Kill The Boyons",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        { "enemyKill": { "enemies": [ [ "Boyon", "Boyon", "Boyon", "Boyon" ] ] } }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
