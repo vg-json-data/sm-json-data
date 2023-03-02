@@ -203,7 +203,18 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "h_canUsePowerBombs" ]
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [ "h_canUsePowerBombs" ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Broken Tube Gravity Jump",
+                  "notable": false,
+                  "requires": [ {"obstaclesCleared": ["A"]} ]
                 }
               ]
             }
@@ -260,6 +271,13 @@
           "nodeSubType": "junction"
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Maridia Tube",
+          "obstacleType": "inanimate"
+        }
+      ],
       "enemies": [],
       "links": [
         {
@@ -274,7 +292,6 @@
                   "requires": [
                     "f_MaridiaTubeBroken",
                     "canCrossRoomJumpIntoWater",
-                    "canMomentumConservingTurnaround",
                     {"adjacentRunway": {
                       "fromNode": 1,
                       "usedTiles": 0.5,
@@ -379,7 +396,6 @@
                   "requires": [
                     "f_MaridiaTubeBroken",
                     "canCrossRoomJumpIntoWater",
-                    "canMomentumConservingTurnaround",
                     {"adjacentRunway": {
                       "fromNode": 3,
                       "usedTiles": 0.5,
@@ -449,30 +465,24 @@
               "id": 4,
               "strats": [
                 {
-                  "name": "Maridia Tube Transition Gravity Jump",
+                  "name": "Breaking the Maridia Tube Gravity Jump",
                   "notable": true,
                   "requires": [
-                    "f_MaridiaTubeBroken",
+                    { "not": "f_MaridiaTubeBroken" },
+                    "h_canUsePowerBombs",
                     "canSuitlessMaridia",
-                    {"or":[
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "inRoomPath": [1, 5],
-                        "usedTiles": 1,
-                        "physics": ["normal"]
-                      }},
-                      {"adjacentRunway": {
-                        "fromNode": 3,
-                        "inRoomPath": [3, 5],
-                        "usedTiles": 1,
-                        "physics": ["normal"]
-                      }}
-                    ]}
+                    "canTrickyJump"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
                   ]
                 }
               ],
-              "note": "This direct link involves using an adjacent room without water physics to initiate a jump that takes Samus through the top door.",
-              "devNote": "The runway is to get enough speed to clear the edge of the tube."
+              "note": "While breaking the tube, gravity jump up to the top door. This can only be attempted once.",
+              "devNote": "This direct link is for getting a gravity jump while breaking the Maridia Tube."
             },
             {
               "id": 6,
@@ -971,7 +981,6 @@
                     "canBombHorizontally",
                     "canSpringBallJumpMidAir",
                     "canCrossRoomJumpIntoWater",
-                    "canMomentumConservingTurnaround",
                     {"adjacentRunway": {
                       "fromNode": 2,
                       "usedTiles": 0.5,
@@ -987,7 +996,9 @@
                   ],
                   "note": [
                     "Only requires a runway of approximately 0.5 tiles in the adjacent room.",
-                    "Bomb boost through the doorway, then use spring ball to get to the bottom left ledge."
+                    "Bomb boost through the doorway, then use spring ball to get to the bottom left ledge.",
+                    "To avoid hitting the Skultera, place the bomb a few pixels from the doorway.",
+                    "One way to setup the positioning of the bomb is to place it, unmorph, rotate, and remorph"
                   ],
                   "devNote": "FIXME replace the first canSpringBallJumpMidAir with future bomb boost spring ball tech"
                 }
@@ -1511,7 +1522,6 @@
                   "requires": [
                     "SpeedBooster",
                     "canCrossRoomJumpIntoWater",
-                    "canMomentumConservingTurnaround",
                     {"adjacentRunway": {
                       "fromNode": 1,
                       "usedTiles": 19,
@@ -1583,6 +1593,23 @@
                   ]
                 },
                 {
+                  "name": "Cross Room Jump with HiJump and Speedbooster",
+                  "notable": false,
+                  "requires": [
+                    "HiJump",
+                    "SpeedBooster",
+                    "canCrossRoomJumpIntoWater",
+                    "canMomentumConservingTurnaround",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 3,
+                      "inRoomPath": [ 1, 5 ],
+                      "physics": ["normal"]
+                    }}
+                  ],
+                  "note": "Requires a runway of approximately 3 tiles in the adjacent room."
+                },
+                {
                   "name": "Cross Room Jump with HiJump",
                   "notable": false,
                   "requires": [
@@ -1602,9 +1629,8 @@
                   "name": "Cross Room Jump with Speedbooster",
                   "notable": false,
                   "requires": [
-                    "SpeedBooster",
+                    "canTrickyDashJump",
                     "canCrossRoomJumpIntoWater",
-                    "canMomentumConservingTurnaround",
                     {"adjacentRunway": {
                       "fromNode": 1,
                       "usedTiles": 7.5,
@@ -1613,6 +1639,21 @@
                     }}
                   ],
                   "note": "Requires a runway of approximately 7.5 tiles in the adjacent room, to hit a peak of the speed vs height graph."
+                },
+                {
+                  "name": "Cross Room Jump with Speedbooster",
+                  "notable": false,
+                  "requires": [
+                    "SpeedBooster",
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 12,
+                      "inRoomPath": [ 1, 5 ],
+                      "physics": ["normal"]
+                    }}
+                  ],
+                  "note": "Requires a runway of approximately 12 tiles in the adjacent room."
                 }
               ]
             }
@@ -2491,10 +2532,10 @@
                   ]
                 },
                 {
-                  "name": "Cross Room Jump with Speedbooster, Spring Ball",
+                  "name": "Everest Tricky Cross Room Jump (Right to Left)",
                   "notable": true,
                   "requires": [
-                    "SpeedBooster",
+                    "canTrickyDashJump",
                     "canSpringBallJump",
                     "canCrossRoomJumpIntoWater",
                     {"adjacentRunway": {
@@ -2524,10 +2565,10 @@
                   ]
                 },
                 {
-                  "name": "Cross Room Jump with Speedbooster, Spring Ball",
+                  "name": "Everest Tricky Cross Room Jump (Right to Top)",
                   "notable": true,
                   "requires": [
-                    "SpeedBooster",
+                    "canTrickyDashJump",
                     "canSpringBallJump",
                     "canCrossRoomJumpIntoWater",
                     {"adjacentRunway": {
@@ -2543,7 +2584,7 @@
                   ]
                 },
                 {
-                  "name": "Cross Room Jump with HiJump, Speedbooster, Spring Ball",
+                  "name": "Everest Tricky Cross Room Jump with HiJump (Right to Top)",
                   "notable": true,
                   "requires": [
                     "HiJump",
