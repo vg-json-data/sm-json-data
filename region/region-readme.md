@@ -33,7 +33,7 @@ Some node properties are self-explanatory, while others require additional defin
 #### doorEnvironments
 Door nodes have an array of environments, much like rooms. Those environments describe some conditions that don't always apply to the entire room, but instead can vary with each door. Only one environment should be applicable at any given time, but that environment can depend on which node Samus enters from. Has the following properties:
 * _physics:_ Indicates what kind of physics are in play at this door. Possible values are:
-  * normal
+  * air
   * water
   * lava
   * acid
