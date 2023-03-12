@@ -39,7 +39,7 @@ Some strats are flagged as "notable". this means a few things:
 
 ## Reusable Roomwide Notable Strats
 
-Some notable strats may be very similar to each other. If similar notable strats exist in different rooms, a tech might be made for them. Otherwise, if similar notable strats exist in the same room, a reusable notable strat can exist to connect them with a common name and description. This is often only the case for symmetric links with strats of notable difficulty. 
+Some notable strats may be very similar to each other. If similar notable strats exist in different rooms, a tech might be made for them. Otherwise, if similar notable strats exist in the same room, a [reusable notable strat](region/region-readme.md#reusable) can exist to connect them with a common name and description. This is often only the case for symmetric links with strats of notable difficulty. 
 
 ### Example
 
