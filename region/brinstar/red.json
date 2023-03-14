@@ -25,7 +25,8 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [],
+                  "devNote": "Assume no broken runway tiles since there is never a reason to break them."
                 }
               ],
               "openEnd": 1
@@ -262,8 +263,9 @@
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 100,
-                      "shinesparkFrames": 77
-                    }},
+                      "shinesparkFrames": 77,
+                      "excessShinesparkFrames": 3
+                     }},
                     "Missile",
                     {"ammo": {
                       "type": "Missile",
@@ -549,14 +551,16 @@
                         "fromNode": 4,
                         "inRoomPath": [4, 8],
                         "framesRemaining": 30,
-                        "shinesparkFrames": 45
-                      }},
+                        "shinesparkFrames": 45,
+                        "excessShinesparkFrames": 5
+                       }},
                       {"canComeInCharged": {
                         "fromNode": 3,
                         "inRoomPath": [3, 8],
                         "framesRemaining": 40,
-                        "shinesparkFrames": 45
-                      }}
+                        "shinesparkFrames": 45,
+                        "excessShinesparkFrames": 5
+                       }}
                     ]}
                   ]
                 }
@@ -755,7 +759,11 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ 
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark"
+                  ],
+                  "note": "Requires opening the door, then going to pit in the middle of the room to use the really small runway."
                 }
               ]
             }
@@ -817,8 +825,14 @@
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 150
-                    }}
+                      "shinesparkFrames": 150,
+                      "excessShinesparkFrames": 57
+                     }}
+                  ],
+                  "note": "Enter the door high to avoid a frame perfect spike hit.",
+                  "devNote": [
+                    "FIXME: There is one frame where ending the spark early puts you over spikes with no avoiding them, unless you entered the room at top of door.",
+                    "Which frame is determined by actual shinesparkFrames and shinespark velocity."
                   ]
                 },
                 {
@@ -873,20 +887,25 @@
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 150
-                    }}
+                      "shinesparkFrames": 146,
+                      "excessShinesparkFrames": 6
+                     }}
                   ]
                 },
                 {
                   "name": "In-Room Shinespark",
                   "notable": false,
                   "requires": [
+                    "canMidairShinespark",
+                    "canShinechargeMovementComplex",
                     {"canShineCharge": {
                       "usedTiles": 13,
                       "openEnd": 0,
-                      "shinesparkFrames": 106
-                    }}
-                  ]
+                      "shinesparkFrames": 107,
+                      "excessShinesparkFrames": 6
+                     }}
+                  ],
+                  "note": "Use the really small runway in a pit in the middle of the room."
                 },
                 {
                   "name": "Use Frozen Waver",
@@ -1649,6 +1668,27 @@
               "openEnd": 1
             }
           ],
+          "canLeaveCharged": [
+            {
+              "framesRemaining": 0,
+              "openEnd": 1,
+              "usedTiles": 17,
+              "shinesparkFrames": 22,
+              "strats": [
+                {
+                  "name": "Gate Open",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "note": "Slow rolling or getting a fast mockball work equally well."
+                  
+                }
+              ]
+            }
+          ],
           "locks": [
             {
               "name": "Caterpillar Room Top Left Green Lock (to Beta Power Bombs)",
@@ -2069,11 +2109,11 @@
               "strats": [
                 {
                   "name": "Samus Eater",
+                  "notable": false,
                   "requires": [
                     "canSamusEaterStandUp",
                     { "samusEaterFrames": 160 }
-                  ],
-                  "notable": false
+                  ]
                 }
               ]
             }
