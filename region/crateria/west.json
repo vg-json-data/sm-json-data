@@ -888,7 +888,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ "canShinechargeMovement" ]
                 }
               ]
             }
@@ -925,7 +925,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ "canShinechargeMovement" ]
                 }
               ]
             }
@@ -1147,11 +1147,18 @@
               "id": 3,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Gravity",
                   "notable": false,
                   "requires": [
                     "f_TourianOpen",
-                    "Gravity"
+                    "Gravity",
+                    {"or": [
+                       "HiJump",
+                       "h_canFly",
+                       "canSpringBallJumpMidAir",
+                       "canWalljump",
+                       "canGravityJump"
+                     ]}
                   ]
                 },
                 {
@@ -1163,6 +1170,23 @@
                     "HiJump",
                     "canSpringBallJumpMidAir"
                   ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "f_TourianOpen",
+                    "h_canNavigateUnderwater",
+                    "canShinechargeMovement",
+                    {"canComeInCharged": {
+                       "framesRemaining": 40,
+                       "fromNode": 2,
+                       "shinesparkFrames": 21,
+                       "excessShinesparkFrames": 7,
+                       "inRoomPath": [2,4]
+                     }}
+                  ],
+                  "note": "Jump to either side and diagonal spark out."
                 }
               ],
               "note": [
@@ -1204,6 +1228,62 @@
               ],
               "openEnd": 1
             }
+          ],
+          "canLeaveCharged": [
+            {
+              "framesRemaining": 0,
+              "usedTiles": 18,
+              "openEnd": 1,
+              "startingDownTiles": 0,
+              "steepDownTiles": 1,
+              "steepUpTiles": 2,
+              "shinesparkFrames": 45,
+              "strats": [
+                {
+                  "name": "Yapping Maw Alive",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canShinechargeMovement"
+                  ],
+                  "note": [
+                    "It is possible to run through the Yapping Maw while it is attacking a different direction.",
+                    "But that likely requires acid damage and isn't entirely reliable."
+                  ]
+                }
+              ]
+            },
+            {
+              "framesRemaining": 0,
+              "usedTiles": 21,
+              "openEnd": 0,
+              "startingDownTiles": 1,
+              "steepDownTiles": 2,
+              "steepUpTiles": 2,
+              "shinesparkFrames": 45,
+              "strats": [
+                {
+                  "name": "Yapping Maw Dead",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    {"enemyKill": {"enemies": [["Yapping Maw"]]}}
+                  ]
+                },
+                {
+                  "name": "Yapping Maw Frozen",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canUseFrozenEnemies"
+                  ],
+                  "note": "Freeze the Yapping Maw while it is in the air, extended."
+                }
+              ]
+            }
           ]
         },
         {
@@ -1228,6 +1308,73 @@
               ],
               "openEnd": 1
             }
+          ],
+          "canLeaveCharged": [
+            {
+              "framesRemaining": 0,
+              "usedTiles": 18,
+              "openEnd": 1,
+              "startingDownTiles": 2,
+              "steepDownTiles": 3,
+              "steepUpTiles": 1,
+              "shinesparkFrames": 45,
+              "strats": [
+                {
+                  "name": "Yapping Maw Alive",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark"
+                  ],
+                  "devNote": "The yapping maw prevents use of an extra runway tile because it will move to grab Samus"
+                }
+              ]
+            },
+            {
+              "framesRemaining": 0,
+              "usedTiles": 22,
+              "openEnd": 0,
+              "startingDownTiles": 2,
+              "steepDownTiles": 3,
+              "steepUpTiles": 2,
+              "shinesparkFrames": 45,
+              "strats": [
+                {
+                  "name": "Yapping Maw Dead",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    {"enemyKill": {"enemies": [["Yapping Maw"]]}}
+                  ]
+                },
+                {
+                  "name": "Gauntlet Entrance Shinecharge Under Yapping Maw",
+                  "notable": true,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark"
+                  ],
+                  "note": [
+                    "Jump towards the yapping maw before it is on screen so it moves up.",
+                    "Quickly move it off camera so it will be `frozen` in place.",
+                    "Shortcharge like normal.  If the Yapping Maw is returning to its hole, it will usually not grab Samus."
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Center Thick Bomb Blocks",
+          "obstacleType": "inanimate",
+          "note": "The centermost bomb block wall that can be destroyed to open up a new runway.",
+          "devNote": [
+            "FIXME: The room can be broken up further to mix and match power bomb usage with shinesparks, or bluesuits.",
+            "This can be done by adding obstacles on either end of this center runway, with a junction on the runway."
           ]
         }
       ],
@@ -1247,6 +1394,12 @@
           "betweenNodes": [1,2]
         }
       ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Gauntlet Entrance Blue SpaceJump",
+          "note": "This is a series of precise space jumps that clears a path through the room while avoiding the solid walls."
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -1257,12 +1410,14 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["ScrewAttack"]
+                  "requires": ["ScrewAttack"],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
                   "name": "Morph Bomb Gauntlet Entrance (Left to Right)",
                   "notable": false,
-                  "requires": ["h_canUseMorphBombs"]
+                  "requires": ["h_canUseMorphBombs"],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
                   "name": "Power Bomb Gauntlet Entrance (Left to Right)",
@@ -1274,18 +1429,76 @@
                       "type": "PowerBomb",
                       "count": 3
                     }}
-                  ]
+                  ],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
-                  "name": "Shinespark",
+                  "name": "Enter Shinesparking",
                   "notable": false,
                   "requires": [
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 100
+                      "shinesparkFrames": 95,
+                      "excessShinesparkFrames": 20
                     }}
                   ]
+                },
+                {
+                  "name": "Midair Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 50,
+                      "shinesparkFrames": 85,
+                      "excessShinesparkFrames": 20
+                    }}
+                  ],
+                  "note": "Shinespark below the top block or Samus will crash into a solid wall."
+                },
+                {
+                  "name": "Low Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 37,
+                      "shinesparkFrames": 70
+                    }},
+                    {"or": [
+                      "Morph",
+                      "canTunnelCrawl",
+                      "canTurnaroundAimCancel"
+                    ]}
+                  ],
+                  "note": [
+                    "Shinespark from the end of the entry runway, just past the down slope.",
+                    "Samus will crash into the last set of blocks preventing access to the opposite door."
+                  ]
+                },
+                {
+                  "name": "Gauntlet Entrance Blue SpaceJump (Left to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canBlueSpaceJump",
+                    "canTrickyJump",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0
+                    }}
+                  ],
+                  "obstacles": [{"id": "A", "requires": []}],
+                  "reusableRoomwideNotable": "Gauntlet Entrance Blue SpaceJump",
+                  "note": [
+                    "This is a series of precise jumps to fit between the solid walls while clearing a path through the room.",
+                    "Breaking the center blocks opens up a runway that can be used to charge a new spark in room."
+                  ],
+                  "devNote": "TODO: There is a blue SpringBall strat to investigate."
                 }
               ]
             }
@@ -1300,12 +1513,14 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["ScrewAttack"]
+                  "requires": ["ScrewAttack"],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
                   "name": "Morph Bomb Gauntlet Entrance (Right to Left)",
                   "notable": false,
-                  "requires": ["h_canUseMorphBombs"]
+                  "requires": ["h_canUseMorphBombs"],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
                   "name": "Power Bomb Gauntlet Entrance (Right to Left)",
@@ -1317,18 +1532,55 @@
                       "type": "PowerBomb",
                       "count": 3
                     }}
-                  ]
+                  ],
+                  "obstacles": [{"id": "A", "requires": []}]
                 },
                 {
-                  "name": "Shinespark",
+                  "name": "Enter in Shinespark",
                   "notable": false,
                   "requires": [
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 100
-                    }}
+                      "shinesparkFrames": 95,
+                      "excessShinesparkFrames": 13
+                     }}
                   ]
+                },
+                {
+                  "name": "Wait for Acid Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canMidairShinespark",
+                    "canShinechargeMovement",
+                    {"canComeInCharged": {
+                      "fromNode": 2,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 80,
+                      "excessShinesparkFrames": 13
+                     }}
+                  ],
+                  "note": "Wait for the acid to clear before moving to shinespark on the other side of the bomb blocks."
+                },
+                {
+                  "name": "Gauntlet Entrance Blue SpaceJump (Right to Left)",
+                  "notable": true,
+                  "requires": [
+                    "canBlueSpaceJump",
+                    "canTrickyJump",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0
+                    }}
+                  ],
+                  "obstacles": [{"id": "A", "requires": []}],
+                  "reusableRoomwideNotable": "Gauntlet Entrance Blue SpaceJump",
+                  "note": [
+                    "This is a series of precise jumps to fit between the solid walls while clearing a path through the room.",
+                    "Breaking the center blocks opens up a runway that can be used to charge a new spark in room."
+                  ],
+                  "devNote": "TODO: There is a blue SpringBall strat to investigate."
                 }
               ]
             }
@@ -1365,6 +1617,55 @@
                   "requires": []
                 }
               ],
+              "usableComingIn": false,
+              "openEnd": 0
+            },
+            {
+              "name": "Limited Coming In Runway - Gauntlet E-Tank Left Door (to Green Pirates Shaft)",
+              "length": 5,
+              "steepUpTiles": 0,
+              "steepDownTiles": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": []
+                }
+              ],
+              "usableComingIn": true,
+              "openEnd": 0
+            },
+            {
+              "name": "Coming In Runway - Gauntlet E-Tank Left Door (to Green Pirates Shaft)",
+              "length": 14,
+              "steepUpTiles": 1,
+              "steepDownTiles": 1,
+              "strats": [
+                {
+                  "name": "Slowed by Acid",
+                  "notable": false,
+                  "requires": [
+                    "Wave",
+                    {"acidFrames": 16}
+                  ],
+                  "note": "Using the full runway requires killing the Zebbo.",
+                  "devNote": [
+                    "FIXME: Running through acid doesn't stop a shinecharge, but does inhibit tapping without gravity.",
+                    "And the acid frame count may change slightly with speed."
+                  ]
+                },
+                {
+                  "name": "Gravity",
+                  "notable": false,
+                  "requires": [
+                    "Wave",
+                    "Gravity",
+                    {"acidFrames": 11}
+                  ],
+                  "note": "Using the full runway requires killing the Zebbo."
+                }
+              ],
+              "usableComingIn": true,
               "openEnd": 0
             },
             {
@@ -1506,20 +1807,74 @@
                   ]
                 },
                 {
-                  "name": "Shinespark",
+                  "name": "Shinespark Entry",
                   "notable": false,
-                  "requires": [],
+                  "requires": [
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 0,
+                      "shinesparkFrames": 90,
+                      "excessShinesparkFrames": 17
+                    }}
+                  ],
                   "obstacles": [
                     {
+                      "id": "A",
+                      "requires": []
+                    },
+                    {
                       "id": "B",
-                      "requires": [
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 0,
-                          "shinesparkFrames": 90
-                        }}
-                      ],
-                      "additionalObstacles": ["A"]
+                      "requires": []
+                    }
+                  ],
+                  "note": "Enter through the top of the door to reach all the way to the shot block wall."
+                },
+                {
+                  "name": "Shinespark in Room",
+                  "notable": false,
+                  "requires": [
+                    "canMidairShinespark",
+                    "canShinechargeMovement",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 77,
+                      "excessShinesparkFrames": 17
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    },
+                    {
+                      "id": "B",
+                      "requires": []
+                    }
+                  ],
+                  "note": "Avoid or kill the bug, then Midair Shinespark to make it all the way to the shot blocks."
+                },
+                {
+                  "name": "Blue SpaceJump",
+                  "notable": false,
+                  "requires": [
+                    "canBlueSpaceJump",
+                    "canCarefulJump",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    },
+                    {
+                      "id": "B",
+                      "requires": []
                     }
                   ]
                 },
@@ -1567,7 +1922,17 @@
                     },
                     {
                       "id": "B",
-                      "requires": ["h_canUsePowerBombs"]
+                      "requires": [
+                        {"or": [
+                          "h_canUsePowerBombs",
+                          {"canComeInCharged": {
+                            "framesRemaining": 180,
+                            "fromNode": 1,
+                            "shinesparkFrames": 0
+                          }}
+                        ]}
+                      ],
+                      "devNote": "Breaking B with speed only affects power bomb ammo.  Acid damage can be recovered after at the farm."
                     }
                   ]
                 }
@@ -1609,12 +1974,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [
-                    {"or":[
-                      "h_canUseMorphBombs",
-                      "h_canUsePowerBombs"
-                    ]}
-                  ]
+                  "requires": [ "h_canBombThings" ]
                 }
               ]
             }
@@ -1644,7 +2004,8 @@
                       "id": "B",
                       "requires": ["ScrewAttack"]
                     }
-                  ]
+                  ],
+                  "devNote": "A Back-of-Gauntlet-Spark strat would require at least Screw Attack and acid Frames to be reasonable."
                 },
                 {
                   "name": "Morph Bomb Gauntlet E-Tank Room (Right to Left)",
@@ -1729,12 +2090,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [
-                    {"or":[
-                      "h_canUseMorphBombs",
-                      "h_canUsePowerBombs"
-                    ]}
-                  ]
+                  "requires": [ "h_canBombThings" ]
                 }
               ]
             }
