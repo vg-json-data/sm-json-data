@@ -13,12 +13,13 @@ def coord_calc(origin,dims):
 
 roomIDs = {}
 
-for r,d,f in os.walk(
-    os.path.join(
-        ".",
-        "region"
-    )
-):
+rootPath = os.path.join(
+    ".",
+    "region",
+    # "crateria"
+)
+
+for r,d,f in os.walk(rootPath):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
             # JSON Files
