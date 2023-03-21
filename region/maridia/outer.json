@@ -263,12 +263,6 @@
           ],
           "yields": [ "f_MaridiaTubeBroken" ],
           "note": "Represents the area just below the tube; unlocking this node breaks the tube"
-        },
-        {
-          "id": 8,
-          "name": "Glass Tunnel Junction (Below Top Door)",
-          "nodeType": "junction",
-          "nodeSubType": "junction"
         }
       ],
       "obstacles": [
@@ -403,7 +397,7 @@
           "from": 4,
           "to": [
             {
-              "id": 8,
+              "id": 6,
               "strats": [
                 {
                   "name": "Base",
@@ -507,6 +501,43 @@
           "from": 6,
           "to": [
             {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": ["Gravity"]
+                },
+                {
+                  "name": "Suitless Base",
+                  "notable": false,
+                  "requires": [
+                    "f_MaridiaTubeBroken",
+                    "HiJump"
+                  ],
+                  "note": "Doesn't require canSuitlessMaridia because there is no risk, nor anything tricky whatsoever."
+                },
+                {
+                  "name": "Suitless",
+                  "notable": false,
+                  "requires": [
+                    "f_MaridiaTubeBroken",
+                    "canSuitlessMaridia",
+                    "canSpringBallJumpMidAir"
+                  ]
+                },
+                {
+                  "name": "Tube Intact",
+                  "notable": false,
+                  "requires": [
+                    { "not": "f_MaridiaTubeBroken" },
+                    "canRiskPermanentLossOfAccess"
+                  ],
+                  "note": "Until the tube is broken there is no water in this room."
+                }
+              ]
+            },
+            {
               "id": 5,
               "strats": [
                 {
@@ -536,34 +567,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "id": 8,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless Base",
-                  "notable": false,
-                  "requires": [
-                    "f_MaridiaTubeBroken",
-                    "HiJump"
-                  ],
-                  "note": "Doesn't require canSuitlessMaridia because there is no risk, nor anything tricky whatsoever."
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": [
-                    "f_MaridiaTubeBroken",
-                    "canSuitlessMaridia",
-                    "canSpringBallJumpMidAir"
-                  ]
-                }
-              ]
             }
           ]
         },
@@ -587,49 +590,6 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [ "f_MaridiaTubeBroken" ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "from": 8,
-          "to": [
-            {
-              "id": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless Base",
-                  "notable": false,
-                  "requires": [
-                    "f_MaridiaTubeBroken",
-                    "HiJump"
-                  ],
-                  "note": "Doesn't require canSuitlessMaridia because there is no risk, nor anything tricky whatsoever."
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": [
-                    "f_MaridiaTubeBroken",
-                    "canSuitlessMaridia",
-                    "canSpringBallJumpMidAir"
-                  ]
-                }
-              ]
-            },
-            {
-              "id": 6,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
                 }
               ]
             }
@@ -1029,7 +989,16 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "canUseFrozenEnemies",
+                      "canSpringBallJumpMidAir"
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless Jump Assists",
@@ -1099,6 +1068,10 @@
                   "notable": false,
                   "requires": [ "Morph" ]
                 }
+              ],
+              "note": [
+                "Turn HiJump and gravity suit off before jumping and morphing into the tunnel.",
+                "The crab will not come through the whole tunnel. Retreat to the right to avoid taking a hit."
               ]
             }
           ]
@@ -1162,7 +1135,15 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "canSpringBallJumpMidAir"
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless Jump Assists",
@@ -1174,15 +1155,16 @@
                   ]
                 },
                 {
-                  "name": "Suitless Frozen Enemies",
+                  "name": "Suitless Frozen Fish",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "canUseFrozenEnemies"
+                    "canUseFrozenEnemies",
+                    "canSunkenTileWideWallClimb"
                   ],
                   "note": [
-                    "It's possible to do consecutive walljumps off a frozen Skultera.",
+                    "It's possible to do consecutive walljumps off a frozen Skultera. Kick off the wall towards the fish to gain height faster.",
                     "That negates the need to user a super to freeze a Sciser in mid-air."
                   ]
                 },
@@ -1291,7 +1273,17 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "canSpringBallJumpMidAir",
+                      "h_canCrouchJumpDownGrab"
+                    ]}
+                  ],
+                  "devNote": "There is a frozen crab strat too, but it's generally a lot harder than the crouch jump and down grab."
                 },
                 {
                   "name": "Suitless Jump Assists",
@@ -1303,12 +1295,31 @@
                   ]
                 },
                 {
-                  "name": "Suitless Frozen Enemies",
+                  "name": "Suitless Frozen Crab",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "canUseFrozenEnemies"
+                    "canTrickyUseFrozenEnemies",
+                    "h_canCrouchJumpDownGrab"
+                  ],
+                  "note": [
+                    "The first crab, coming down, is a bit tricky to freeze fast enough without any other beams or a missile.",
+                    "Prevent it from coming on screen until Samus is in position to hit it accurately."
+                  ]
+                },
+                {
+                  "name": "Suitless Frozen Global Crab",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "HiJump",
+                    "canUseFrozenEnemies",
+                    "h_canCrouchJumpDownGrab",
+                    "canBePatient"
+                  ],
+                  "note": [
+                    "Wait for the global crab to come around and freeze it to get up to the third ledge."
                   ]
                 },
                 {
