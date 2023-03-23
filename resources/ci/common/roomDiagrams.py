@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, redefined-outer-name
 '''
 Manage Room Diagrams
 '''
@@ -8,6 +8,9 @@ import re
 from PIL import Image
 
 def coord_calc(origin,dims):
+    '''
+    With origin & dimensions, return tuple for pasting
+    '''
     x1, x2 = origin
     w, h = dims
     return (x1,x2,w+x1,h+x2)
@@ -17,13 +20,71 @@ roomIDs = {}
 rootPath = os.path.join(
     ".",
     "region",
-    "crateria"
+    "lowernorfair"
 )
 
+def test_pathways(rootPath):
+    '''
+    Use clean map and add extracted pathways
+    '''
+    for r,_,f in os.walk(rootPath):
+        for filename in f:
+            # it's a .png
+            # it's a roomDiagram
+            # it's a roomPathway
+            # it's not a clean map
+            # it's not a testPathway
+            if ".png" in filename and \
+                "roomDiagrams" in r and \
+                "roomPathways" in r and \
+                "clean" not in r and \
+                "testPathways" not in r:
+                if not os.path.isdir(
+                    os.path.join(
+                        ".",
+                        r,
+                        "testPathways"
+                    )
+                ):
+                    os.makedirs(
+                        os.path.join(
+                            ".",
+                            r,
+                            "testPathways"
+                        )
+                    )
+                pathImg = Image.open(os.path.join(r, filename))
+                pathImg = pathImg.convert("RGBA")
+                cleanImg = Image.open(os.path.join(r, filename).replace("roomPathways", "clean"))
+                cleanImg = cleanImg.convert("RGBA")
+                roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                if roomID in roomIDs:
+                    # areaSlug = roomIDs[roomID]["areaSlug"]
+                    # subareaSlug = roomIDs[roomID]["subareaSlug"]
+                    roomName = roomIDs[roomID]["name"]
+                    # if areaSlug == "ceres":
+                    #     subareaSlug = "ceres"
+                print(f"  > Testing {roomID}: {roomName}")
+                cleanImg.paste(pathImg, (0, 0), pathImg)
+                cleanImg.save(
+                    os.path.join(
+                        ".",
+                        r.replace("roomPathways", "testPathways"),
+                        filename
+                    )
+                )
+
 def lift_pathways(rootPath):
+    '''
+    Lift pathways from composite maps
+    '''
     makedot = 100
     for r,_,f in os.walk(rootPath):
         for filename in f:
+            # it's a .png
+            # it's a roomDiagram
+            # it's not a clean map
+            # it's not a roomPathway
             if ".png" in filename and \
                 "roomDiagrams" in r and \
                 "clean" not in r and \
@@ -73,6 +134,9 @@ def lift_pathways(rootPath):
                 print()
 
 def make_clean(rootPath):
+    '''
+    Slice map into rooms
+    '''
     for r,_,f in os.walk(rootPath):
         for filename in f:
             if "region_" in filename or "roomDiagrams.json" in filename:
@@ -199,3 +263,4 @@ def make_clean(rootPath):
 
 make_clean(rootPath)
 # lift_pathways(rootPath)
+# test_pathways(rootPath)
