@@ -1534,7 +1534,8 @@
                   "requires": [
                     "Gravity",
                     "canIBJ"
-                  ]
+                  ],
+                  "note": "Once high enough, it may be necessary to kill the fish and open the door."
                 },
                 {
                   "name": "Cross Room Jump with HiJump and Speedbooster",
@@ -1580,21 +1581,16 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
-                    {
-                      "or": [
-                        "canWalljump",
-                        "SpaceJump",
-                        "canIBJ",
-                        {
-                          "and": [
-                            "HiJump",
-                            "SpeedBooster"
-                          ]
-                        },
-                        "canSpringBallJumpMidAir",
-                        "canGravityJump"
-                      ]
-                    }
+                    {"or": [
+                      "canWalljump",
+                      "h_canFly",
+                      {"and": [
+                        "HiJump",
+                        "SpeedBooster"
+                      ]},
+                      "canSpringBallJumpMidAir",
+                      "canGravityJump"
+                    ]}
                   ]
                 },
                 {
@@ -1602,17 +1598,15 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    {
-                      "canComeInCharged": {
-                        "fromNode": 1,
-                        "framesRemaining": 30,
-                        "shinesparkFrames": 55
-                      }
-                    }
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 30,
+                      "shinesparkFrames": 55
+                    }}
                   ]
                 },
                 {
-                  "name": "Springball to the Fish",
+                  "name": "Springball to the Frozen Fish",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
@@ -1706,14 +1700,38 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "canCarefulJump",
+                      "canSpringBallJumpMidAir",
+                      "canGravityJump",
+                      { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "type": "contact", "hits": 1 } },
+                      { "enemyKill": { 
+                        "enemies": [ [ "Pink Space Pirate (standing)" ] ],
+                        "explicitWeapons": [ "Plasma" ]
+                      }}
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "HiJump"
+                    "HiJump",
+                    {"or": [
+                      "canCarefulJump",
+                      "canSpringBallJumpMidAir",
+                      { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "type": "contact", "hits": 1 } },
+                      { "enemyKill": { 
+                        "enemies": [ [ "Pink Space Pirate (standing)" ] ],
+                        "explicitWeapons": [ "Plasma", "ScrewAttack" ]
+                      }}
+                    ]}
                   ]
                 },
                 {
@@ -1769,33 +1787,25 @@
                     "h_canNavigateUnderwater",
                     "canPrepareForNextRoom",
                     {"resetRoom": {
-                        "nodes": [ 4 ],
-                        "nodesToAvoid": [ 1 ]
+                      "nodes": [ 4 ],
+                      "nodesToAvoid": [ 1 ]
                     }},
                     "canUseFrozenEnemies",
-                    {
-                      "or": [
-                        {
-                          "and": [
-                            "Wave",
-                            "Plasma"
-                          ]
-                        },
-                        {
-                          "and": [
-                            "Plasma",
-                            "Charge"
-                          ]
-                        },
-                        {
-                          "and": [
-                            "Wave",
-                            "Spazer",
-                            "Charge"
-                          ]
-                        }
-                      ]
-                    }
+                    {"or": [
+                      {"and": [
+                        "Wave",
+                        "Plasma"
+                      ]},
+                      {"and": [
+                        "Plasma",
+                        "Charge"
+                      ]},
+                      {"and": [
+                        "Wave",
+                        "Spazer",
+                        "Charge"
+                      ]}
+                    ]}
                   ],
                   "note": "The beam must be pre-charged and aiming down before the transition is close to required.",
                   "devNote": "The fish is too far left to naturally be above, entering the room."
@@ -1807,16 +1817,14 @@
                     "Gravity",
                     "canDamageBoost",
                     "canPrepareForNextRoom",
-                    {
-                      "enemyDamage": {
-                        "enemy": "Skultera",
-                        "hits": 1,
-                        "type": "contact"
-                      }
-                    },
+                    {"enemyDamage": {
+                      "enemy": "Skultera",
+                      "hits": 1,
+                      "type": "contact"
+                    }},
                     {"resetRoom": {
-                        "nodes": [ 4 ],
-                        "nodesToAvoid": [ 1 ]
+                      "nodes": [ 4 ],
+                      "nodesToAvoid": [ 1 ]
                     }}
                   ]
                 },
@@ -1828,12 +1836,12 @@
                     "canResetFallSpeed",
                     "canPrepareForNextRoom",
                     {"resetRoom": {
-                        "nodes": [ 4 ],
-                        "nodesToAvoid": [ 1 ]
+                      "nodes": [ 4 ],
+                      "nodesToAvoid": [ 1 ]
                     }}
                   ],
                   "note": "Morph and unmorph then drift to the ledge.",
-                  "devNote": "Strat starts before entering this transition.  An enemy can be used for this strat instead of morph."
+                  "devNote": "Strat starts before entering this transition. An enemy can be used for this strat instead of morph."
                 },
                 {
                   "name": "Planned Shinespark",
@@ -1842,19 +1850,43 @@
                     "h_canNavigateUnderwater",
                     "canPrepareForNextRoom",
                     {"canComeInCharged": {
-                        "fromNode": 4,
-                        "framesRemaining": 10,
-                        "shinesparkFrames": 5
+                      "fromNode": 4,
+                      "framesRemaining": 10,
+                      "shinesparkFrames": 5
                     }},
                     {"resetRoom": {
-                        "nodes": [ 4 ],
-                        "nodesToAvoid": [ 1 ]
+                      "nodes": [ 4 ],
+                      "nodesToAvoid": [ 1 ]
                     }}
                   ],
                   "note": "Assumes you enter in a state that can spark immediately."
                 }
               ]
-            } 
+            },
+            {
+              "id": 7,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPrepareForNextRoom",
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "fromNode": 4,
+                      "framesRemaining": 25,
+                      "shinesparkFrames": 85
+                    }}
+                  ],
+                  "note": "Immediately spark after the door transition into the wall just to the right of the top right door.",
+                  "devNote": [
+                    "Ending the spark a bit early would work but lets work with the expected cost.",
+                    "With gravity, only 68 shinespark frames are needed."
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
@@ -1876,7 +1908,16 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "canWalljump",
+                      "h_canFly",
+                      "canTrickyJump",
+                      "canUseFrozenEnemies",
+                      "canGravityJump"
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless",
@@ -1884,12 +1925,10 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "canUseFrozenEnemies",
-                    {
-                      "or": [
-                        "HiJump",
-                        "canSpringBallJumpMidAir"
-                      ]
-                    }
+                    {"or": [
+                      "HiJump",
+                      "canSpringBallJumpMidAir"
+                    ]}
                   ]
                 },
                 {
@@ -1898,7 +1937,7 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "SpringBall"
+                    "h_canUseSpringBall"
                   ]
                 },
                 {
@@ -1911,12 +1950,14 @@
                       "canSpringBallJumpMidAir",
                       "HiJump"
                     ]}
-                  ]
+                  ],
+                  "devNote": "Can be done with a spring ball jump without a flatley jump, but it's obscure and tight."
                 },
                 {
                   "name": "Wall Hug Turnaround",
                   "notable": false,
                   "requires": [
+                    "canSuitlessMaridia",
                     "HiJump",
                     "canMomentumConservingTurnaround"
                   ]
@@ -1929,12 +1970,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": ["canSuitlessMaridia"]
+                  "requires": [ "h_canNavigateUnderwater" ]
                 }
               ]
             }
@@ -1980,7 +2016,7 @@
                     "canCarefulJump",
                     "canUseFrozenEnemies"
                   ],
-                  "note": "Freeze the fish high in its swim cycle.  Build run speed on top of the fish before jumping to the ledge."
+                  "note": "Freeze the fish while it is moving leftward, a bit left of the peak in its swim cycle. Build run speed on top of the fish before jumping to the ledge."
                 }
               ]
             },
@@ -1990,21 +2026,43 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "canGravityJump",
+                      "canCarefulJump",
+                      "canSpringBallJumpMidAir",
+                      { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "type": "contact", "hits": 1 } },
+                      { "enemyKill": { 
+                        "enemies": [ [ "Pink Space Pirate (standing)" ] ],
+                        "explicitWeapons": [ "Plasma", "ScrewAttack" ]
+                      }}
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    {
-                      "or": [
-                        "HiJump",
-                        "canSpringBallJumpMidAir",
-                        "canTrickyJump"
-                      ]
-                    }
+                    {"or": [
+                      "HiJump",
+                      "canSpringBallJumpMidAir"
+                    ]}
                   ]
+                },
+                {
+                  "name": "Fish Tank Insane Naked Jump Over Pirate (Left to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canTrickyJump"
+                  ],
+                  "note": "This is particularly precise, and requires subpixel precision.",
+                  "devNote": "Possibly add a new tech, i.e. canInsaneJump, but it is probably worth keeping notable."
                 },
                 {
                   "name": "Suitless Frozen Pirate",
@@ -2031,17 +2089,17 @@
                   "requires": [
                     "canSuitlessMaridia",
                     {"canComeInCharged": {
-                        "fromNode": 3,
-                        "framesRemaining": 25,
-                        "shinesparkFrames": 90
+                      "fromNode": 3,
+                      "framesRemaining": 25,
+                      "shinesparkFrames": 90
                     }},
                     {"resetRoom": {
-                        "nodes": [ 3 ],
-                        "nodesToAvoid": [ 2 ]
+                      "nodes": [ 3 ],
+                      "nodesToAvoid": [ 2 ]
                     }}
                   ],
                   "devNote": [
-                    "Spark through 5 into the wall past 4.  Then fall down to 1.",
+                    "Spark through 5 into the wall past 4. Then fall down to 1.",
                     "Ending the spark a bit early would work but lets work with the expected cost.",
                     "If you can continue from 5 then it can be reached with another item already."
                   ]
@@ -2075,12 +2133,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": ["canSuitlessMaridia"]
+                  "requires": [ "h_canNavigateUnderwater" ]
                 }
               ]
             }
