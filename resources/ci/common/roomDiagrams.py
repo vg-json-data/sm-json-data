@@ -20,7 +20,7 @@ roomIDs = {}
 rootPath = os.path.join(
     ".",
     "region",
-    "brinstar"
+    "norfair"
 )
 
 def test_pathways(rootPath):
