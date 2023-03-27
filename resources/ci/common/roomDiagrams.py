@@ -16,6 +16,7 @@ def coord_calc(origin,dims):
     return (x1,x2,w+x1,h+x2)
 
 roomIDs = {}
+cleanIDs = []
 
 rootPath = os.path.join(
     ".",
@@ -265,7 +266,14 @@ def make_clean(rootPath):
                                         f"{subareaSlug}_{roomID}_{roomName}.png"
                                     )
                                 )
+                                cleanIDs.append(roomID)
 
 make_clean(rootPath)
 # lift_pathways(rootPath)
 # test_pathways(rootPath)
+
+# No 53, 72, 73, 221
+# End is 242
+# for i in range(0, 242):
+#     if str(i + 1) not in cleanIDs:
+#         print(i + 1)
