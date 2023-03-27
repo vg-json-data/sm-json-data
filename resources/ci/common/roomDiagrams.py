@@ -215,12 +215,17 @@ def make_clean(rootPath):
                                     roomName = roomIDs[roomID]["name"]
                                     if areaSlug == "ceres":
                                         subareaSlug = "ceres"
-                                print(f"  > Building {roomID}: {roomName}")
+                                print(f"  > Building {roomID.rjust(3)}: {roomName}")
                                 roomOrigin = roomData["origin"]
                                 roomOrigin = (
                                     (roomOrigin[0] * 256) + mapOrigin[0],
                                     (roomOrigin[1] * 256) + mapOrigin[1]
                                 )
+                                if "offset" in roomData:
+                                    (rX, rY) = roomOrigin
+                                    rX = rX + roomData["offset"][0]
+                                    rY = rY + roomData["offset"][1]
+                                    roomOrigin = (rX, rY)
                                 width = roomData["width"] if "width" in roomData else 1
                                 height = roomData["height"] if "height" in roomData else 1
                                 cropped_image = region_image.crop(
