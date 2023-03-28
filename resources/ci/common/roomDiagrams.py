@@ -5,6 +5,8 @@ Manage Room Diagrams
 import json
 import os
 import re
+import cv2
+import numpy as np
 from PIL import Image
 
 def coord_calc(origin,dims):
@@ -21,9 +23,93 @@ cleanIDs = []
 rootPath = os.path.join(
     ".",
     "region",
-    # "norfair"
+    # "wreckedship"
 )
 
+def search_doorways(rootPath):
+    '''
+    Use composite map and find doors
+    '''
+    searchImg = cv2.imread(
+        os.path.join(
+            ".",
+            "resources",
+            "ci",
+            "images",
+            "doorcollar.png"
+        )
+    )
+    searchDims = [
+      {},
+      {}
+    ]
+    dims = searchImg.shape[:-1]
+    searchDims[0] = {
+        "h": dims[0],
+        "w": dims[1]
+    }
+
+    searchImg90 = cv2.rotate(searchImg, cv2.ROTATE_90_CLOCKWISE)
+    dims90 = searchImg90.shape[:-1]
+    searchDims[1] = {
+        "h": dims90[0],
+        "w": dims90[1]
+    }
+
+    for r,_,f in os.walk(rootPath):
+        for filename in f:
+            # if it's a .png
+            # if it's a roomDiagram
+            # if it's not a roomPathway
+            # if it's not a clean map
+            # if it's not a testPathway
+            if ".png" in filename and \
+                "search_" not in filename and \
+                "roomDiagrams" in r and \
+                "roomPathways" not in r and \
+                "clean" not in r and \
+                "testPathways" not in r:
+                roomImg = cv2.imread(
+                    os.path.join(
+                        r,
+                        filename
+                    )
+                )
+                roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                # if roomID != "156":
+                #     continue
+                if roomID in roomIDs:
+                    # areaSlug = roomIDs[roomID]["areaSlug"]
+                    # subareaSlug = roomIDs[roomID]["subareaSlug"]
+                    roomName = roomIDs[roomID]["name"]
+                    # if areaSlug == "ceres":
+                    #     subareaSlug = "ceres"
+                print(f"  > Searching {roomID}: {roomName}")
+                for i, checkImg in enumerate([searchImg, searchImg90]):
+                    res = cv2.matchTemplate(
+                        roomImg,
+                        checkImg,
+                        cv2.TM_CCOEFF_NORMED
+                    )
+                    threshold = .9
+                    loc = np.where(res >= threshold)
+                    for pt in zip(*loc[::-1]):
+                        # print(pt, pt[0] + searchDims["w"], pt[1] + searchDims["h"])
+                        cv2.rectangle(
+                            roomImg,
+                            pt,
+                            (pt[0] + searchDims[i]["w"], pt[1] + searchDims[i]["h"]),
+                            (0, 0, 255),
+                            2
+                        )
+                cv2.imwrite(
+                    os.path.join(
+                        ".",
+                        r,
+                        "search_" + filename
+                    ),
+                    roomImg
+                )
 def test_pathways(rootPath):
     '''
     Use clean map and add extracted pathways
@@ -271,6 +357,7 @@ def make_clean(rootPath):
 make_clean(rootPath)
 # lift_pathways(rootPath)
 # test_pathways(rootPath)
+search_doorways(rootPath)
 
 # No 53, 72, 73, 221
 # End is 242
