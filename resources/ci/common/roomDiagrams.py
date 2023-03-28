@@ -21,7 +21,7 @@ cleanIDs = []
 rootPath = os.path.join(
     ".",
     "region",
-    "norfair"
+    # "norfair"
 )
 
 def test_pathways(rootPath):
