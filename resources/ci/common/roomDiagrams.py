@@ -23,6 +23,8 @@ cleanIDs = []
 rootPath = os.path.join(
     ".",
     "region",
+    # "crateria"
+    # "maridia"
     # "wreckedship"
 )
 
@@ -30,44 +32,66 @@ def search_doorways(rootPath):
     '''
     Use composite map and find doors
     '''
-    searchImg = cv2.imread(
-        os.path.join(
-            ".",
-            "resources",
-            "ci",
-            "images",
-            "doorcollar.png"
-        )
-    )
-    searchDims = [
-      {},
-      {}
-    ]
-    dims = searchImg.shape[:-1]
-    searchDims[0] = {
-        "h": dims[0],
-        "w": dims[1]
+    threshold = .665
+
+    thresholds = {
+       "19": .69,
+      "117": .7,
+      "193": .7,
+      "231": .7,
+      "235": .7
     }
 
-    searchImg90 = cv2.rotate(searchImg, cv2.ROTATE_90_CLOCKWISE)
-    dims90 = searchImg90.shape[:-1]
-    searchDims[1] = {
-        "h": dims90[0],
-        "w": dims90[1]
-    }
+    searchDir = os.path.join(
+        ".",
+        "resources",
+        "ci",
+        "images",
+        "search"
+    )
+
+    searchData = {}
+    for filename in os.listdir(searchDir):
+        if ".png" in filename:
+            cvImg = cv2.imread(
+                os.path.join(
+                    searchDir,
+                    filename
+                )
+            )
+            rotations = {
+                "Right": None,
+                "Down": cv2.ROTATE_90_CLOCKWISE,
+                "Left": cv2.ROTATE_180,
+                "Up": cv2.ROTATE_90_COUNTERCLOCKWISE
+            }
+            if filename not in searchData:
+                searchData[filename] = {}
+                for direction in rotations.keys():
+                    searchData[filename][direction] = {}
+            for [direction, rotate] in rotations.items():
+                if rotate:
+                    cvImg = cv2.rotate(cvImg, rotate)
+                dims = cvImg.shape[:-1]
+                searchData[filename][direction] = {
+                  "h": dims[0],
+                  "w": dims[1],
+                  "img": cvImg
+                }
+    # print(searchData)
 
     for r,_,f in os.walk(rootPath):
         for filename in f:
             # if it's a .png
+            # if it's a clean map
             # if it's a roomDiagram
             # if it's not a roomPathway
-            # if it's not a clean map
             # if it's not a testPathway
             if ".png" in filename and \
+                "clean" in r and \
                 "search_" not in filename and \
                 "roomDiagrams" in r and \
                 "roomPathways" not in r and \
-                "clean" not in r and \
                 "testPathways" not in r:
                 roomImg = cv2.imread(
                     os.path.join(
@@ -76,32 +100,78 @@ def search_doorways(rootPath):
                     )
                 )
                 roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
-                # if roomID != "156":
-                #     continue
+                room = roomIDs[roomID]
+                if roomID not in [
+                    "305",  # Crateria/East/Forgotten Highway Elbow
+                    "141",  # LNorf/East/Pre-Ridley
+                    "156"   # WS/Main/Pre-Phantoon
+                ]:
+                    # continue
+                    pass
                 if roomID in roomIDs:
-                    # areaSlug = roomIDs[roomID]["areaSlug"]
-                    # subareaSlug = roomIDs[roomID]["subareaSlug"]
-                    roomName = roomIDs[roomID]["name"]
-                    # if areaSlug == "ceres":
-                    #     subareaSlug = "ceres"
-                print(f"  > Searching {roomID}: {roomName}")
-                for i, checkImg in enumerate([searchImg, searchImg90]):
-                    res = cv2.matchTemplate(
-                        roomImg,
-                        checkImg,
-                        cv2.TM_CCOEFF_NORMED
-                    )
-                    threshold = .9
-                    loc = np.where(res >= threshold)
-                    for pt in zip(*loc[::-1]):
-                        # print(pt, pt[0] + searchDims["w"], pt[1] + searchDims["h"])
-                        cv2.rectangle(
+                    roomName = room["name"]
+                # print(f"  > Searching {roomID}: {roomName}")
+                doors = 0
+                for searchFile, searchImgs in searchData.items():
+                    if "ceres" in searchFile and "ceres" not in room["area"].lower():
+                        continue
+                    for [direction, searchImg] in searchImgs.items():
+                        checkImg = searchImg["img"]
+                        res = cv2.matchTemplate(
                             roomImg,
-                            pt,
-                            (pt[0] + searchDims[i]["w"], pt[1] + searchDims[i]["h"]),
-                            (0, 0, 255),
-                            2
+                            checkImg,
+                            cv2.TM_CCOEFF_NORMED
                         )
+                        thisThreshold = threshold
+                        if roomID in thresholds:
+                            thisThreshold = thresholds[roomID]
+                        loc = np.where(res >= thisThreshold)
+                        # RGB
+                        # 255,0,0     Red
+                        # 255,160,0   Orange
+                        # 255,255,0   Yellow
+                        # 0,255,0     Green
+                        #
+                        # BGR
+                        # 0,0,255
+                        # 0,160,255
+                        # 0,255,255
+                        # 0,255,0
+                        colors = {
+                            "Right": (0,0,255),
+                            "Left": (0,160,255),
+                            "Down": (0,255,255),
+                            "Up": (0,255,0),
+                        }
+                        paintRect = False
+                        if loc[::-1][0].size > 0:
+                            # print(f"   > Direction: {direction}")
+                            doors += 1
+                            color = colors[direction]
+                            paintRect = True
+                            lastPt = (0,0)
+
+                            for pt in zip(*loc[::-1]):
+                                for [one, two] in [[0,1],[1,0]]:
+                                    if pt[one] == lastPt[one]:
+                                        if abs(pt[two] - lastPt[two]) >= 0:
+                                            paintRect = False
+                                if paintRect:
+                                    endPt = (pt[0] + searchImg["w"], pt[1] + searchImg["h"])
+                                    # print(f"    > Point: {pt} {endPt}")
+                                    cv2.rectangle(
+                                        roomImg,
+                                        pt,
+                                        endPt,
+                                        color,
+                                        2
+                                    )
+                                lastPt = pt
+                # print(f"   > Doors ({doors}/{roomIDs[roomID]['doors']})")
+                doorCount = doors
+                doorTotal = roomIDs[roomID]["doors"]
+                if (doorCount < doorTotal) or (abs(doorTotal - doorCount) >= 2):
+                    print(f"  > {roomID.rjust(3)}: {room['area']}/{room['subarea']}/{roomName}: ({doorCount}/{doorTotal})")
                 cv2.imwrite(
                     os.path.join(
                         ".",
@@ -236,11 +306,13 @@ def make_clean(rootPath):
                     regionJSON = json.load(regionFile)
                     area = ""
                     subarea = ""
+                    subsubarea = ""
                     if "rooms" in regionJSON:
                         for room in regionJSON["rooms"]:
                             areaPath = os.path.dirname(os.path.join(r, filename)).split(os.sep)
                             area = room["area"]
                             subarea = room["subarea"]
+                            subsubarea = (room["subsubarea"] if ("subsubarea" in room) else subsubarea)
                             areaSlug = areaPath[-1]
                             subareaSlug = os.path.splitext(filename)[0]
                             roomIDs[str(room["id"])] = {
@@ -248,9 +320,18 @@ def make_clean(rootPath):
                                 "area": area,
                                 "subarea": subarea,
                                 "areaSlug": areaSlug,
-                                "subareaSlug": subareaSlug
+                                "subareaSlug": subareaSlug,
+                                "doors": 0
                             }
-                        print(f"> Reading {area}/{subarea}")
+                            for node in room["nodes"]:
+                                if node["nodeType"] == "door" and node["nodeSubType"] != "elevator":
+                                    roomIDs[str(room["id"])]["doors"] += 1
+                            if subsubarea != "":
+                                roomIDs[str(room["id"])]["subsubsarea"] = subsubarea
+                        msg = f"> Reading {area}/{subarea}"
+                        if subsubarea != "":
+                            msg += f"/{subsubarea}"
+                        # print(msg)
                     else:
                         print(f"!!! {os.path.join(r,filename)} has no rooms!")
             if ".png" in filename and "region_" in filename:
@@ -302,7 +383,7 @@ def make_clean(rootPath):
                                     roomName = roomIDs[roomID]["name"]
                                     if areaSlug == "ceres":
                                         subareaSlug = "ceres"
-                                print(f"  > Building {roomID.rjust(3)}: {roomName}")
+                                # print(f"  > Building {roomID.rjust(3)}: {roomName}")
                                 roomOrigin = roomData["origin"]
                                 roomOrigin = (
                                     (roomOrigin[0] * 256) + mapOrigin[0],
@@ -327,7 +408,8 @@ def make_clean(rootPath):
                                 if "covers" in roomData:
                                     for cover in roomData["covers"]:
                                         if "name" in cover:
-                                            print(f"   > Cover: {cover['name']}")
+                                            # print(f"   > Cover: {cover['name']}")
+                                            pass
                                         origin = cover["origin"] if "origin" in cover else [0, 0]
                                         width = cover["width"] if "width" in cover else 1
                                         height = cover["height"] if "height" in cover else 1
