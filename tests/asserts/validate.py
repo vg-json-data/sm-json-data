@@ -42,7 +42,7 @@ for region in os.listdir(os.path.join(".", "connection")):
     if os.path.isdir(os.path.join(".", "connection", region)):
         print("  " + region.capitalize())
         for subregion in os.listdir(os.path.join(".", "connection", region)):
-            if ".json" in subregion:
+            if ".json" in subregion and "roomDiagrams" not in subregion:
                 print("   " + subregion[:subregion.find(".")].capitalize())
                 with open(
                     os.path.join(
@@ -101,7 +101,7 @@ for region in os.listdir(os.path.join(".", "region")):
     if os.path.isdir(os.path.join(".", "region", region)):
         print("  " + region.capitalize())
         for subregion in os.listdir(os.path.join(".", "region", region)):
-            if ".json" in subregion:
+            if ".json" in subregion and "roomDiagrams" not in subregion:
                 print("   " + subregion[:subregion.find(".")].capitalize())
                 with open(
                     os.path.join(
