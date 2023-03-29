@@ -33,7 +33,7 @@ Some node properties are self-explanatory, while others require additional defin
 #### doorEnvironments
 Door nodes have an array of environments, much like rooms. Those environments describe some conditions that don't always apply to the entire room, but instead can vary with each door. Only one environment should be applicable at any given time, but that environment can depend on which node Samus enters from. Has the following properties:
 * _physics:_ Indicates what kind of physics are in play at this door. Possible values are:
-  * normal
+  * air
   * water
   * lava
   * acid
@@ -189,3 +189,8 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
 * _id:_ The in-room ID of the node to which the link leads
 * _strats:_ An array of [strats](../strats.md), each of which represents a way Samus can go to that destination.
+
+### <a name="reusable"></a>Reusable Roomwide Notable Strats
+A room may have an array of reusable notable strats. Some notable strats within a room may be very similar to each other, often when traversing symmetric links in opposite directions. These strats may be connected, such that they can share a reusable strat name and description. Each `reusableRoomwideNotable` will have the following properties:
+* _name:_ A common name used to describe the similar notable strats.
+* _note:_ A common description used to describe the similar notable strats.

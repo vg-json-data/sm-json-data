@@ -16,7 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x0018e9e",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Morph Ball Room Left Door (to Green Hill Zone)",
@@ -40,14 +40,11 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": ["never"]
-                    }
+                  "requires": [ 
+                    {"obstaclesCleared": ["C"]},
+                    "canShinechargeMovement"
                   ],
-                  "note": "Enabled by destroying obstacle C by travelling between nodes 1 and 6."
+                  "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
                 }
               ]
             }
@@ -61,18 +58,9 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": ["never"]
-                    }
-                  ]
+                  "requires": [ {"obstaclesCleared": ["C"]} ],
+                  "devNote": "Obstacle can be destroyed either going 1 -> 6 or 6 -> 1."
                 }
-              ],
-              "note": [
-                "Obstacle requirements not repeated here to avoid duplication.",
-                "It can be destroyed either going 1 -> 6 or 6 -> 1."
               ],
               "devNote":  "Technically this yields f_ZebesAwake, although it requires the same flag to spawn the enemies, so it's not possible here."
             }
@@ -91,7 +79,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eaa",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Morph Ball Room Right Door (to Construction Zone)",
@@ -115,7 +103,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ "canShinechargeMovement" ]
                 }
               ]
             }
@@ -258,6 +246,48 @@
                   ]
                 },
                 {
+                  "name": "Kill on Entry",
+                  "notable": false,
+                  "requires": [ "canPrepareForNextRoom" ],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": [
+                        {"or":[
+                          {"and": [
+                            "Plasma",
+                            "Charge"
+                          ]},
+                          "ScrewAttack",
+                          {"and": [
+                            "h_canUsePowerBombs",
+                            {"enemyKill":{
+                              "enemies": [
+                                ["Sidehopper"]
+                              ],
+                              "explicitWeapons": [
+                                "Missile",
+                                "Super",
+                                "PowerBomb"
+                              ]
+                            }}
+                          ]},
+                          {"canComeInCharged": {
+                            "fromNode": 1,
+                            "framesRemaining": 0,
+                            "shinesparkFrames": 40,
+                            "excessShinesparkFrames": 9
+                           }}
+                        ]}
+                      ]
+                    }
+                  ],
+                  "note": [
+                    "Enter the room ready to kill the hoppers before they can hit Samus.",
+                    "with a charge plasma shot ready, or in a shinespark, screw attack spin jump, or a morph, ready to lay a power bomb."
+                  ]
+                },
+                {
                   "name": "PB Sidehopper Kill with Bomb Blocks",
                   "notable": false,
                   "requires": [],
@@ -371,7 +401,28 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    {"or": [
+                      "canWalljump",
+                      "Morph",
+                      "SpaceJump",
+                      "HiJump"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Careful Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCarefulJump"
+                  ]
+                },
+                {
+                  "name": "Crouch Jump Down Grab",
+                  "notable": false,
+                  "requires": [
+                    "h_canCrouchJumpDownGrab"
+                  ]
                 }
               ]
             },
@@ -422,25 +473,14 @@
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": [
-                        {"or":[
-                          "Bombs",
-                          {"and":[
-                            "PowerBomb",
-                            {"ammo": {
-                              "type": "PowerBomb",
-                              "count": 1
-                            }}
-                          ]}
-                        ]}
-                      ]
+                      "requires": [ "h_canBombThings" ]
                     }
                   ]
                 },
                 {
                   "name": "Morph Ball Room Speedball (Right to Left)",
-                  "notable": true,
-                  "requires": ["Morph"],
+                  "notable": false,
+                  "requires": [ "Morph" ],
                   "obstacles": [
                     {
                       "id": "B",
@@ -483,10 +523,7 @@
                       "requires": ["never"]
                     }
                   ],
-                  "note": [
-                    "This strat is there to override all other strats' requirement if the Sidehoppers are already dead.",
-                    "Killing the Sidehoppers from here without coming from the PB item is undefined because it would be redundant."
-                  ]
+                  "devNote": "This strat is there to override all other strats' requirement if the Sidehoppers are already dead."
                 },
                 {
                   "name": "Tank the damage",
@@ -502,21 +539,18 @@
                 {
                   "name": "Safe Sidehopper Power Beam Kill",
                   "notable": false,
-                  "requires": ["Morph"],
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
+                  ],
                   "obstacles": [
                     {
                       "id": "C",
                       "requires": []
-                    },
-                    {
-                      "id": "A",
-                      "requires": ["never"]
                     }
                   ],
-                  "note": [
-                    "If the bomb blocks are broken, the SideHoppers can be killed safely from behind with Power Beam.",
-                    "Breaking the obstacle here isn't handled to avoid redundancy. Obstacle can be broken by going to 5 and back."
-                  ]
+                  "note": "If the bomb blocks are broken, the SideHoppers can be killed safely from behind with Power Beam.",
+                  "devNote": "Obstacle can be broken by going to 5 and back."
                 }
               ]
             },
@@ -530,30 +564,18 @@
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": [
-                        {"or":[
-                          "Bombs",
-                          {"and":[
-                            "PowerBomb",
-                            {"ammo": {
-                              "type": "PowerBomb",
-                              "count": 1
-                            }}
-                          ]}
-                        ]}
-                      ]
+                      "requires": [ "h_canBombThings" ]
                     }
                   ]
                 },
                 {
                   "name": "Morph Ball Room Speedball (Left to Right)",
-                  "notable": true,
-                  "requires": ["Morph"],
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["C"]}
+                  ],
                   "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": ["never"]
-                    },
                     {
                       "id": "A",
                       "requires": [
@@ -592,7 +614,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ec2",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Top Left Door (to Morph Ball)",
@@ -615,7 +637,7 @@
           "nodeType": "door",
           "nodeSubType": "red",
           "nodeAddress": "0x0018ece",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Right Door (to Ceiling E-Tank)",
@@ -651,7 +673,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eda",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Construction Zone Bottom Left Door (to Alpha Missiles)",
@@ -728,7 +750,7 @@
                 },
                 {
                   "name": "Construction Room X-Ray Climb",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
                     "canRightFacingDoorXRayClimb",
                     { "resetRoom": {
@@ -799,7 +821,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fa6",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - First Missiles Room Door (to Construction Zone)",
@@ -873,7 +895,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ee6",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Ceiling E-Tank Bottom Left Door (to Construction Zone)",
@@ -898,7 +920,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ "canShinechargeMovement" ]
                 }
               ]
             },
@@ -910,7 +932,10 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["h_canUsePowerBombs"]
+                  "requires": [
+                    "h_canUsePowerBombs",
+                    "canShinechargeMovement"
+                  ]
                 }
               ]
             }
@@ -934,7 +959,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ef2",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Ceiling E-Tank Top Left Door (to Boulder Room)",
@@ -1038,8 +1063,17 @@
                   "devNote": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
                 },
                 {
+                  "name": "Ceiling E-Tank Jump Into IBJ",
+                  "notable": false,
+                  "requires": [
+                    "canJumpIntoIBJ",
+                    "canDoubleBombJump"
+                  ],
+                  "note": "An alternate strat to canBombAboveIBJ. Shoot the block, jump into an IBJ, then do a quick double bomb jump to make it in time."
+                },
+                {
                   "name": "Ceiling E-Tank Dboost",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
                     "f_ZebesAwake",
                     "canDamageBoost",
@@ -1052,14 +1086,24 @@
                 },
                 {
                   "name": "Ceiling E-Tank Speed Jump",
-                  "notable": true,
+                  "notable": false,
                   "requires": ["SpeedBooster"],
                   "note": "Does not require a shinespark. You can shoot the block, then just run and jump."
                 },
                 {
                   "name": "Ceiling E-Tank PB Boost",
-                  "notable": true,
+                  "notable": false,
                   "requires": ["canUnmorphBombBoost"]
+                },
+                {
+                  "name":"Taco Tank",
+                  "notable": true,
+                  "requires": [
+                    "canCWJ",
+                    "canInsaneWalljump",
+                    "canStationarySpinJump"
+                  ],
+                  "note": "Triple frame perfect dashing stationary spinjump into delayed CWJ and precise hitbox manipulation."
                 }
               ]
             },
@@ -1088,13 +1132,7 @@
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": [
-                        {"or":[
-                          "ScrewAttack",
-                          "Bombs",
-                          "h_canUsePowerBombs"
-                        ]}
-                      ]
+                      "requires": [ "h_canDestroyBombWalls" ]
                     },
                     {
                       "id": "B",
@@ -1142,39 +1180,28 @@
                   "notable": false,
                   "requires": [
                     "Morph",
-                      {"or": [
-                        "canWalljump",
-                        "h_canFly"
-                      ]}
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]},
+                    {"obstaclesCleared": ["A", "B"]}
                   ], 
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": ["never"]
-                    },
-                    {
-                      "id": "A",
-                      "requires": [ "h_canDestroyBombWalls" ]
-                    }
-                  ],
-                  "note": "If the Crumble Block has been destroyed while going down, it's possible to go back up without breaking the PB blocks."
+                  "note": "The Crumble Block does not respawn, so it's possible to go back up without breaking the PB blocks."
                 },
                 {
                   "name": "Break the PB Blocks",
                   "notable": false,
                   "requires": [
                     "h_canUsePowerBombs",
-                      {"or": [
-                        "canWalljump",
-                        "h_canFly"
-                      ]}
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": [
-                        "h_canDestroyBombWalls"
-                      ]
+                      "requires": [ "h_canDestroyBombWalls" ]
                     }
                   ],
                   "note": "Base strat when entering the room from below."
@@ -1184,11 +1211,11 @@
                   "notable": false,
                   "requires": [
                     "h_canUsePowerBombs",
-                      {"canShineCharge": {
-                        "usedTiles": 33,
-                        "shinesparkFrames": 43,
-                        "openEnd": 2
-                      }}
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 43,
+                      "openEnd": 2
+                    }}
                   ],
                   "obstacles": [
                     {
@@ -1196,7 +1223,32 @@
                       "requires": []
                     }
                   ],
-                  "note": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
+                  "devNote": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
+                },
+                {
+                  "name": "Walljump Up Shaft and Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canUsePowerBombs",
+                    "canShinechargeMovementComplex",
+                    "canConsecutiveWalljump",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 17,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Breaking the power bomb blocks exactly wide enough makes it easier to quickly enter the one-tile gap.",
+                    "Aligning the power bomb with the left side of the ceiling fixture that sticks down will position the explosion correctly for this."
+                  ],
+                  "devNote": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
                 }
               ]
             }
@@ -1219,7 +1271,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fee",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Boulder Room Left Door (to Billy Mays)",
@@ -1256,7 +1308,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fe2",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Boulder Room Right Door (to Ceiling E-Tank)",
@@ -1274,13 +1326,41 @@
           "canLeaveCharged": [
             {
               "usedTiles": 19,
-              "framesRemaining": 50,
+              "framesRemaining": 80,
               "openEnd": 2,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Gravity" ]
+                  "requires": [ 
+                    "canShinechargeMovement",
+                    "Gravity"
+                  ]
+                }
+              ]
+            },
+            {
+              "usedTiles": 19,
+              "framesRemaining": 50,
+              "openEnd": 1,
+              "strats": [
+                {
+                  "name": "Boulder Room Shinecharge into PreOpened Door",
+                  "notable": true,
+                  "requires": [ 
+                    "canShinechargeMovement",
+                    "canCarefulJump"
+                  ],
+                  "note": [
+                    "Shoot the bridge to see where it ends.",
+                    "Opening the door requires a shot that is fired while Samus has some momentum from running to the right.",
+                    "Charge a spark running left then run off right into a preopened door."
+                  ],
+                  "devNote": [
+                    "Using the second openEnd means you cannot make it to the door in time.",
+                    "Could attach `canMomentumShot` tech if that gets added.",
+                    "Emphasis on Careful.  There is no jump."
+                  ]
                 }
               ]
             }
@@ -1306,7 +1386,31 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    {"or":[
+                      "Gravity",
+                      "HiJump",
+                      "SpaceJump"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Wall Jump",
+                  "notable": false,
+                  "requires": [ "canWalljump" ],
+                  "note": "Wall jump when the water is low."
+                },
+                {
+                  "name": "Crouch Jump Down Grab",
+                  "notable": false,
+                  "requires": [ "h_canCrouchJumpDownGrab" ],
+                  "note": "Crouch jump down grab when the water is high."
+                },
+                {
+                  "name": "Careful Jump",
+                  "notable": false,
+                  "requires": [ "canCarefulJump" ],
+                  "note": "It is possible to open the doorway and jump through it without going into the water below."
                 }
               ]
             }
@@ -1330,11 +1434,14 @@
                 },
                 {
                   "name": "Boulder Room Jump Through the Door",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
+                    "canCarefulJump",
                     {"adjacentRunway": {
                       "fromNode": 2,
-                      "usedTiles": 0.5
+                      "usedTiles": 0.5,
+                      "inRoomPath": [ 2, 1 ],
+                      "physics": ["normal"]
                     }},
                     "canWalljump"
                   ],
@@ -1342,20 +1449,32 @@
                 },
                 {
                   "name": "Boulder Room Doorsill Jump",
-                  "notable": true,
-                  "requires": ["canWalljump"],
+                  "notable": false,
+                  "requires": [
+                    "canPreciseWalljump",
+                    "canCarefulJump",
+                    {"or":[
+                      "canTrickyJump",
+                      "canMoonwalk",
+                      "canXrayTurnaround",
+                      "Morph"
+                     ]}
+                  ],
                   "note": "It's not even necessary to jump through the door, the in-room doorsill gives enough running room to make it up."
                 },
                 {
                   "name": "Boulder Room SpringWall",
-                  "notable": true,
+                  "notable": false,
                   "requires": ["canSpringwall"]
                 },
                 {
                   "name": "Boulder Room Naked Walljump",
-                  "notable": true,
+                  "notable": false,
                   "requires": ["canInsaneWalljump"],
-                  "note": "It's a delayed walljump while the water is low, followed by a tight walljump off the bridge."
+                  "note": [
+                    "It's a delayed walljump while the water is low, followed by a tight walljump off the bridge.",
+                    "This strat is easily bypassed by jumping through the door, or if the door can be opened."
+                  ]
                 }
               ]
             }
@@ -1378,7 +1497,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ffa",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Billy Mays Room Door (to Boulder Room)",

@@ -16,7 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001902a",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Tower Top Left Door (to Noob Bridge)",
@@ -25,7 +25,8 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [],
+                  "devNote": "Assume no broken runway tiles since there is never a reason to break them."
                 }
               ],
               "openEnd": 1
@@ -38,7 +39,7 @@
           "nodeType": "door",
           "nodeSubType": "yellow",
           "nodeAddress": "0x0019036",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Tower Center Left Door (to Firefleas)",
@@ -74,7 +75,7 @@
           "nodeType": "door",
           "nodeSubType": "green",
           "nodeAddress": "0x001904e",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Tower Bottom Left Door (to Sloaters Refill)",
@@ -109,7 +110,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019042",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Tower Bottom Right Door (to Bat Room)",
@@ -131,7 +132,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001901e",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Tower Top Right Door (to Hellway)",
@@ -173,6 +174,18 @@
           "nodeType": "junction",
           "nodeSubType": "junction",
           "note": "This is meant to contain all Rippers in the top climb except the bottom one"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Top of Tower Rippers",
+          "obstacleType": "enemies"
+        },
+        {
+          "id": "B",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "inanimate"
         }
       ],
       "enemies": [
@@ -230,7 +243,13 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "h_canUsePowerBombs" ]
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [ "h_canUsePowerBombs" ]
+                    }
+                  ]
                 }
               ]
             },
@@ -244,8 +263,9 @@
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 100,
-                      "shinesparkFrames": 77
-                    }},
+                      "shinesparkFrames": 77,
+                      "excessShinesparkFrames": 3
+                     }},
                     "Missile",
                     {"ammo": {
                       "type": "Missile",
@@ -300,11 +320,17 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["h_canUsePowerBombs"]
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [ "h_canUsePowerBombs" ]
+                    }
+                  ]
                 },
                 {
                   "name": "Red Tower X-Ray Climb",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
                     "canRightFacingDoorXRayClimb",
                     {"resetRoom":{
@@ -406,12 +432,12 @@
                     {"or":[
                       "SpaceJump",
                       {"and": [
-                          "HiJump",
-                          "SpeedBooster"
-                        ]},
+                        "HiJump",
+                        "SpeedBooster"
+                      ]},
                       {"and": [
                         "HiJump",
-                        "canWalljump"
+                        "canConsecutiveWalljump"
                       ]}
                     ]}
                   ]
@@ -421,12 +447,12 @@
                   "notable": false,
                   "requires": [
                     "canUseFrozenEnemies",
-                      {"or":[
-                        "HiJump",
-                        "canWalljump",
-                        "canSpringBallJump",
-                        "canIBJ"
-                       ]}
+                    {"or":[
+                      "HiJump",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir",
+                      "canIBJ"
+                    ]}
                   ]
                 },
                 {
@@ -444,24 +470,24 @@
                   ]
                 },
                 {
-                  "name": "IBJ Between the Rippers",
+                  "name": "Red Tower IBJ Between the Bottom Rippers",
                   "notable": true,
                   "requires": [
                     "canDoubleBombJump",
-                    "canStaggeredBombJump"
+                    "canStaggeredIBJ"
                   ],
                   "note": "Requires switching between single and double IBJs.  While Doubles are not required, they make the strat more bearable."
                 },
                 {
                   "name": "Red Tower Midair Spring Ball",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
                     "canSpringBallJumpMidAir",
                     "canWalljump"
                   ]
                 },
                 {
-                  "name": "Midair Double HBJ",
+                  "name": "Red Tower Midair HBJ",
                   "notable": true,
                   "requires": [
                     "canWallJumpBombBoost",
@@ -525,14 +551,16 @@
                         "fromNode": 4,
                         "inRoomPath": [4, 8],
                         "framesRemaining": 30,
-                        "shinesparkFrames": 45
-                      }},
+                        "shinesparkFrames": 45,
+                        "excessShinesparkFrames": 5
+                       }},
                       {"canComeInCharged": {
                         "fromNode": 3,
                         "inRoomPath": [3, 8],
                         "framesRemaining": 40,
-                        "shinesparkFrames": 45
-                      }}
+                        "shinesparkFrames": 45,
+                        "excessShinesparkFrames": 5
+                       }}
                     ]}
                   ]
                 }
@@ -573,51 +601,53 @@
                   "requires": ["canUseFrozenEnemies"]
                 },
                 {
-                  "name": "Red Tower Walljump Climb",
+                  "name": "Red Tower Hero Shot",
                   "notable": true,
-                  "requires": ["canPreciseWalljump"]
-                },
-                {
-                  "name": "Wall Jump with Space Jump",
-                  "notable": false,
                   "requires": [
-                    "SpaceJump",
-                    "canWalljump",
-                    {"enemyKill":{
-                      "enemies": [
-                        [ "Ripper" ]
-                      ]
-                    }}
-                  ],
-                  "note": [
-                    "This strat exists on the belief that only the final wall jump is tricky",
-                    "The top Ripper has to be killed otherwise there's no room to leverage Space Jump as an actual advantage."
+                    "canPreciseWalljump",
+                    "canStaggeredWalljump"
                   ]
                 },
                 {
                   "name": "Space Jump",
                   "notable": false,
                   "requires": [
-                    "SpaceJump",
-                    {"enemyKill":{
-                      "enemies": [
-                        [ "Ripper", "Ripper", "Ripper", "Ripper" ]
-                      ]
-                    }}
+                    "SpaceJump"
                   ],
-                  "note": "This strat is for killing all of the Rippers and then using Space Jump to get up without wall jumps."
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        {"enemyKill":{
+                          "enemies": [
+                            [ "Ripper", "Ripper", "Ripper", "Ripper" ]
+                          ]
+                        }}
+                      ]
+                    }
+                  ],
+                  "note": [
+                    "This strat is for killing all of the Rippers and then using Space Jump to get up without wall jumps.",
+                    "Space jump up near the shot block, then shoot it while falling right as it goes off screen, then space jump back up."
+                  ]
                 },
                 {
                   "name": "Red Tower IBJ",
-                  "notable": true,
-                  "requires": [
-                    "canBombAboveIBJ",
-                    {"enemyKill":{
-                      "enemies": [
-                        [ "Ripper", "Ripper", "Ripper", "Ripper" ]
+                  "notable": false,
+                  "requires": [ "canBombAboveIBJ" ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        {"enemyKill":{
+                          "enemies": [
+                            [ "Ripper", "Ripper", "Ripper", "Ripper" ]
+                          ]
+                        }}
                       ]
-                    }}
-                  ]
+                    }
+                  ],
+                  "note": "Without canJumpIntoIBJ, you will need to kill the rippers and break the bomb blocks then start from the platforms below."
                 }
               ]
             }
@@ -640,7 +670,7 @@
           "nodeType": "door",
           "nodeSubType": "red",
           "nodeAddress": "0x001905a",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Firefleas Left Door (to X-Ray)",
@@ -704,7 +734,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019066",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Red Firefleas Right Door (to Red Tower)",
@@ -729,7 +759,11 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ 
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark"
+                  ],
+                  "note": "Requires opening the door, then going to pit in the middle of the room to use the really small runway."
                 }
               ]
             }
@@ -791,15 +825,21 @@
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 150
-                    }}
+                      "shinesparkFrames": 150,
+                      "excessShinesparkFrames": 57
+                     }}
+                  ],
+                  "note": "Enter the door high to avoid a frame perfect spike hit.",
+                  "devNote": [
+                    "FIXME: There is one frame where ending the spark early puts you over spikes with no avoiding them, unless you entered the room at top of door.",
+                    "Which frame is determined by actual shinesparkFrames and shinespark velocity."
                   ]
                 },
                 {
                   "name": "X-Ray Exit Damage Boost",
                   "notable": true,
                   "requires": [
-                    "canDamageBoost",
+                    "canContinuousDboost",
                     {"enemyDamage": {
                       "enemy": "Waver",
                       "type": "contact",
@@ -813,10 +853,13 @@
                 },
                 {
                   "name": "X-Ray Exit Spike Floor",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
-                    {"spikeHits": 4}
+                    {"spikeHits": 4},
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 3}
+                    ]}
                   ],
                   "note": "This strat is simply running and jumping across the spikes."
                 }
@@ -847,66 +890,90 @@
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 0,
-                      "shinesparkFrames": 150
-                    }}
+                      "shinesparkFrames": 146,
+                      "excessShinesparkFrames": 6
+                     }}
                   ]
                 },
                 {
                   "name": "In-Room Shinespark",
                   "notable": false,
                   "requires": [
+                    "canMidairShinespark",
+                    "canShinechargeMovementComplex",
                     {"canShineCharge": {
                       "usedTiles": 13,
                       "openEnd": 0,
-                      "shinesparkFrames": 106
-                    }}
-                  ]
+                      "shinesparkFrames": 107,
+                      "excessShinesparkFrames": 6
+                     }}
+                  ],
+                  "note": "Use the really small runway in a pit in the middle of the room."
                 },
                 {
                   "name": "Use Frozen Waver",
                   "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
                     "canUseFrozenEnemies",
-                    {"spikeHits": 3}
+                    {"spikeHits": 3},
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 3}
+                    ]}
                   ]
                 },
                 {
                   "name": "X-Ray Access IBJ",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
-                    {"spikeHits": 6},
-                    "canIBJ"
+                    "canJumpIntoIBJ",
+                    {"spikeHits": 5},
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 3}
+                    ]}
                   ]
                 },
                 {
                   "name": "X-Ray Access Springwall",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
-                    {"spikeHits": 6},
-                    "canSpringwall"
+                    "canSpringwall",
+                    {"spikeHits": 5},
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 3}
+                    ]}
                   ]
                 },
                 {
                   "name": "X-Ray Access Speed HiJump",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
                     "HiJump",
                     {"spikeHits": 4},
-                    "SpeedBooster"
+                    "SpeedBooster",
+                    {"or":[
+                      "canTrickyJump",
+                      "canWalljump"
+                    ]},
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 2}
+                    ]}
                   ]
                 },
                 {
                   "name": "X-Ray Access MidAir Spring Ball",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
-                    "canIframeSpikeJump",
                     "HiJump",
                     {"spikeHits": 4},
-                    "canSpringBallJumpMidAir"
+                    "canSpringBallJumpMidAir",
+                    {"or": [
+                      "canIframeSpikeJump",
+                      {"spikeHits": 3}
+                    ]}
                   ]
                 },
                 {
@@ -946,7 +1013,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019072",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - X-Ray Room Door (to Firefleas)",
@@ -1023,20 +1090,19 @@
                   "notable": false,
                   "requires": [
                     {"or":[
-                      "h_canPassBombPassages",
+                      "h_canBombThings",
                       "h_canUseSpringBall"
                     ]}
                   ]
                 },
                 {
                   "name": "X-Ray Escape Wall Morph",
-                  "notable": true,
-                  "requires": ["can2HighWallMidAirMorph"],
-                  "note": "Maybe a little bit harder than in West Sand Hole, since you also need to change direction."
+                  "notable": false,
+                  "requires": [ "h_canTwoTileJumpMorph" ]
                 },
                 {
                   "name": "X-Ray Escape Running Morph",
-                  "notable": true,
+                  "notable": false,
                   "requires": ["canLateralMidAirMorph"],
                   "note": "A running lateral mid-air morph can squeeze into the hole with good enough timing."
                 }
@@ -1061,7 +1127,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00190f6",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Bat Room Left Door (to Red Tower)",
@@ -1083,7 +1149,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019102",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Bat Room Right Door (to Below Spazer)",
@@ -1157,7 +1223,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001910e",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Below Spazer Left Door (to Bat Room)",
@@ -1180,7 +1246,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001911a",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Below Spazer Bottom Right Door (to West Tunnel)",
@@ -1202,7 +1268,7 @@
           "nodeType": "door",
           "nodeSubType": "green",
           "nodeAddress": "0x0019126",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Below Spazer Top Right Door (to Spazer)",
@@ -1270,12 +1336,12 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "h_canPassBombPassages",
-                      {"or": [
-                        "HiJump",
-                        "h_canFly",
-                        "canWalljump"
-                      ]}
+                    "h_canBombThings",
+                    {"or": [
+                      "HiJump",
+                      "h_canFly",
+                      "canWalljump"
+                    ]}
                   ]
                 }
               ]
@@ -1300,7 +1366,7 @@
               "strats": [
                 {
                   "name": "Below Spazer X-Ray Climb",
-                  "notable": true,
+                  "notable": false,
                   "requires": [
                     "canLeftFacingDoorXRayClimb",
                     { "resetRoom": {
@@ -1329,7 +1395,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["h_canPassBombPassages"]
+                  "requires": ["h_canBombThings"]
                 }
               ]
             }
@@ -1352,7 +1418,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019132",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Spazer Door (to Below Spazer)",
@@ -1426,7 +1492,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001907e",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Hellway Left Door (to Red Tower)",
@@ -1466,7 +1532,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001908a",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Hellway Right Door (to Caterpillar Room)",
@@ -1605,7 +1671,7 @@
           "nodeType": "door",
           "nodeSubType": "green",
           "nodeAddress": "0x00190a2",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Room Top Left Door (to Beta Power Bombs)",
@@ -1618,6 +1684,27 @@
                 }
               ],
               "openEnd": 1
+            }
+          ],
+          "canLeaveCharged": [
+            {
+              "framesRemaining": 0,
+              "openEnd": 1,
+              "usedTiles": 17,
+              "shinesparkFrames": 22,
+              "strats": [
+                {
+                  "name": "Gate Open",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "note": "Slow rolling or getting a fast mockball work equally well."
+                  
+                }
+              ]
             }
           ],
           "locks": [
@@ -1640,7 +1727,7 @@
           "nodeType": "door",
           "nodeSubType": "yellow",
           "nodeAddress": "0x00190ae",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Room Center Left Door (to Hellway)",
@@ -1684,7 +1771,7 @@
           "nodeType": "door",
           "nodeSubType": "green",
           "nodeAddress": "0x0019096",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Room Bottom Left Door (to Alpha Power Bombs)",
@@ -1719,7 +1806,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00190d2",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Room Bottom Right Door (to Save)",
@@ -1742,7 +1829,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00190c6",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Room Top Right Door (to Red Fish Room)",
@@ -1835,16 +1922,13 @@
                 {
                   "name": "Backtrack",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["never"]
-                    }
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
                   ],
                   "note": [
-                    "Only doable if entering the room from 5.",
-                    "Only worthwhile to go kill the Zeros for PBs (and/or Cacatacs for Supers) then go back out."
+                    "Only doable if entering the room from 5 and backtracking.",
+                    "Only worthwhile to go kill the Zeros for PBs and Cacatacs for Supers."
                   ]
                 }
               ]
@@ -2020,7 +2104,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00190ea",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Alpha Power Bombs Door (to Caterpillar Room)",
@@ -2043,11 +2127,11 @@
               "strats": [
                 {
                   "name": "Samus Eater",
+                  "notable": false,
                   "requires": [
                     "canSamusEaterStandUp",
                     { "samusEaterFrames": 160 }
-                  ],
-                  "notable": false
+                  ]
                 }
               ]
             }
@@ -2152,7 +2236,7 @@
           "nodeType": "door",
           "nodeSubType": "grey",
           "nodeAddress": "0x00190de",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Beta Power Bombs Door (to Caterpillar Room)",
@@ -2162,22 +2246,17 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
+                    {"obstaclesCleared": ["A"]},
                     {"resetRoom": {
                       "nodes": [1],
                       "obstaclesToAvoid": ["B"]
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["never"],
-                      "note": "To avoid redundant requirements, killing the Sidehoppers requires going to 3 and back."
-                    }
-                  ],
                   "note": [
                     "This runway requires the PB blocks to be intact, but the sidehoppers to be dead.",
                     "This is relevant because it can limit the player's options for killing the Sidehoppers."
-                  ]
+                  ],
+                  "devNote": "Killing the Sidehoppers requires going to 3 and back."
                 }
               ],
               "openEnd": 0
@@ -2191,14 +2270,8 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["never"]
-                    }
-                  ],
-                  "note": "To avoid redundant requirements, obstacle must be destroyed by going to 3 and back."
+                  "requires": [ {"obstaclesCleared": ["A"]} ],
+                  "note": "Killing the Sidehoppers requires going to 3 and back."
                 }
               ],
               "yields": [ "f_ZebesAwake" ]
@@ -2398,7 +2471,7 @@
                       "requires": ["h_canUsePowerBombs"]
                     }
                   ],
-                  "note": "It's a bit pointless to put the obstacle requirement in since you can't get there without breaking the obstacle, but might as well since we have the obstacle."
+                  "devNote": "The obstacle should already be broken, as it's required to get here."
                 }
               ]
             }
@@ -2413,14 +2486,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["never"]
-                    }
-                  ],
-                  "note": "To avoid redundant requirements, obstacle must be destroyed on the way in."
+                  "requires": []
                 }
               ]
             },
@@ -2459,7 +2525,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00191fe",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Sloaters Refill Door (to Red Tower)",
@@ -2532,7 +2598,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001926a",
-          "doorEnvironments": [{"physics": "normal"}],
+          "doorEnvironments": [{"physics": "air"}],
           "runways": [
             {
               "name": "Base Runway - Caterpillar Save Door (to Caterpillar Room)",

@@ -8,8 +8,8 @@ Strats are usually presented within an array of strats, where all individual str
 Some strats are flagged as "notable". this means a few things:
   * The strat's name must be unique amongst all existing strats in the project.
   * Just having the required items and the ability to perform the required techs may not be enough to execute a notable strat. It might require:
-    * A harder version of a tech
-    * Knowledge specific to the strat (such as a unique setup)
+    * An increased difficulty than what the tech would typically imply
+    * Knowledge of the strat or specific to the strat (such as an obscure strat or unique setup)
   * An algorithm using this project to drive its logic should consider allowing to toggle off (or on) any given notable strat.
 
 ## Logical Requirements
@@ -23,6 +23,10 @@ Execution of a strat may also require an [obstacle](region/region-readme.md#obst
  * Destroying the obstacle while executing the current strat, by fulfilling specific [logical requirements](logicalRequirements.md).
  * Bypassing the obstacle without destroying it, by fulfilling specific [logical requirements](logicalRequirements.md).
 
+## Reusable Roomwide Notable Strats
+
+Some notable strats may be very similar to each other. If similar notable strats exist in different rooms, a tech might be made for them. Otherwise, if similar notable strats exist in the same room, a [reusable notable strat](region/region-readme.md#reusable) can exist to connect them with a common name and description. This is often only the case for symmetric links with strats of notable difficulty. 
+
 ## Structure
 
 A `strat` can have the following properties:
@@ -35,6 +39,7 @@ A `strat` can have the following properties:
     * _bypass:_ Some [logical requirements](logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
     * _additionalObstacles:_ An array containing the ID of additional obstacles that may not need to be destroyed to execute the strat, but that will be destroyed by destroying the containing `obstacle` via this `strat`. Additional obstacles are _not_ destroyed when bypassing the main obstacle.
   * _stratProperties:_ An array of keywords, which can be used as a requirement for strats in the destination node. These properties can be used to describe miscellaneous details (such as being in a spinjump) that will impact whether it's possible to follow-up with another specific strat.
+  * _reusableRoomwideNotable:_ The name of the reusable roomwide notable strat. This must share an identical name with an entry in the `reusableRoomwideNotable` array and the other strats that are connected to this one. This is only applicable for strats where `notable` is `true`.
 
 ### Example
 
