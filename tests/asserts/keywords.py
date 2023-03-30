@@ -5,6 +5,7 @@ Check for validity of keywords in files
 import json
 import os
 import re
+import sys
 from flatten_json import flatten
 
 last_enemy = ""
@@ -160,6 +161,7 @@ for jsonPath in [
 
 print("")
 print("Check Regions")
+bail = False
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
@@ -226,21 +228,28 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         if "strats" in path:
                                                             showNodes = True
                                                             for strat in path["strats"]:
+                                                                stratRef = f"{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}:{strat}"
                                                                 if remote["initiateAt"] in roomData["links"]["from"]:
                                                                     if path["destinationNode"] in roomData["links"]["from"][remote["initiateAt"]]["to"]:
                                                                         if strat not in roomData["links"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]]["strats"]:
-                                                                            print("🔴ERROR: Invalid strat")
+                                                                            print(f"🔴ERROR: Invalid strat:{stratRef}")
+                                                                            bail = True
                                                                         else:
                                                                             if showArea:
-                                                                                print(f"🟢{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}:{strat}")
+                                                                                print(f"🟢{stratRef}")
                                                                                 # print(roomData["nodes"]["leaveCharged"]["from"])
                                                                             roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]]["strats"].append(strat)
                                                                     else:
                                                                         print(f"🔴ERROR: Destination node not found:{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}")
+                                                                        bail = True
                                                                 else:
-                                                                    print("🔴ERROR: From node not found")
+                                                                    print(f"🔴ERROR: From node not found:{room['id']}:{room['name']}:{remote['initiateAt']}")
+                                                                    bail = True
                             if showNodes:
                                 # print(json.dumps(roomData, indent=2))
                                 pass
                     if showArea:
                         print()
+
+if bail:
+    sys.exit(1)
