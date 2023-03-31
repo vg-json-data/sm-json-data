@@ -8,13 +8,23 @@ import re
 import sys
 from flatten_json import flatten
 
+bail = False
 last_enemy = ""
+uniques = {
+    "groupName": [],
+    "roomID": [],
+    "roomName": [],
+    "roomAddress": [],
+    "nodeAddress": []
+}
 
 def process_keyvalue(k, v):
     '''
     Take a keyvalue pair and see if the value exists in our list of keywords
     '''
+    global bail
     global last_enemy
+    global uniques
     goodValue = True
     processValue = True
     goodKeys = [
@@ -25,21 +35,20 @@ def process_keyvalue(k, v):
     ]
     badKeys = [
         "$schema",      # immaterial
-        "name",         # !!could check for unique
         "description",  # immaterial
-        "doorAddress",  # !!could check for unique
-        "groupName",    # !!could check for unique
+        "devNote",      # immaterial
+        "note",         # immaterial
+        "name",         # !!could check for unique
         "id",           # !!could check for unique
+        # "groupName",    # !!could check for unique
+        # "nodeAddress",  # !!could check for unique
+        # "roomAddress",  # !!could check for unique
         "lockType",     # validated by schema
-        "nodeAddress",  # !!could check for unique
         "nodeType",     # validated by schema
         "nodeSubType",  # validated by schema
-        "note",         # immaterial
         "obstacleType", # validated by schema
         "physics",      # validated by schema
-        "roomAddress",  # !!could check for unique
-        "utility",      # validated by schema
-        "devNote"       # immaterial
+        "utility"       # validated by schema
     ]
     if k in badKeys or k in goodKeys:
         processValue = False
@@ -51,56 +60,66 @@ def process_keyvalue(k, v):
             if checkKey in k:
                 processValue = False
 
+    isSkip = False
+    kCheck = k.split(".")[-1]
+    if kCheck in uniques and "twinDoorAddresses" not in k:
+        if v not in uniques[kCheck]:
+            uniques[kCheck].append(v)
+            isSkip = True
+        else:
+            print(f"🔴ERROR: {k}:{v} not unique!")
+            bail = True
+
     if processValue:
         isFloat = isinstance(v, float)
         isInt = isinstance(v, int)
         isList = isinstance(v, list)
         isEmptyList = isList and len(v) == 0
         isNumeric = not isFloat and not isInt and not isList and v.isnumeric()
-    if processValue and \
-        not isFloat and \
-        not isInt and \
-        not isEmptyList and \
-        not isNumeric:
-        isArea = v \
-            .replace("Ceres Station", "Ceres") \
-            .replace(" ", "") \
-            .lower() in keywords["areas"]
-        isEnemy = v in keywords["enemies"]["enemyByName"]
-        isHelper = v in keywords["helpers"]
-        isItem = v in keywords["items"]
-        isFlag = v in keywords["flags"]
-        isTech = v in keywords["techs"]
-        isWeapon = v in keywords["weapons"]
-        isValue = v in keywords["values"]
-        if (isEnemy or last_enemy != "") and ".enemy" in k:
-            if ".type" not in k:
-                last_enemy = v
-            elif ".type" in k:
-                if last_enemy in keywords["enemies"]["enemyByName"]:
-                    enemyID = keywords["enemies"]["enemyByName"][last_enemy]
-                    if enemyID in enemies:
-                        if "attacks" in enemies[enemyID]:
-                            attackExists = False
-                            for attack in enemies[enemyID]["attacks"]:
-                                if "name" in attack:
-                                    if attack["name"] == v:
-                                        attackExists = True
-                            goodValue = attackExists
-                    last_enemy = ""
-                else:
-                    print(f"{last_enemy} not found!")
-        else:
-            if not isArea and \
-                not isEnemy and \
-                not isHelper and \
-                not isItem and \
-                not isFlag and \
-                not isTech and \
-                not isWeapon and \
-                not isValue:
-                goodValue = False
-                print(k, v)
+        if not isFloat and \
+            not isInt and \
+            not isEmptyList and \
+            not isNumeric and \
+            not isSkip:
+            isArea = v \
+                .replace("Ceres Station", "Ceres") \
+                .replace(" ", "") \
+                .lower() in keywords["areas"]
+            isEnemy = v in keywords["enemies"]["enemyByName"]
+            isHelper = v in keywords["helpers"]
+            isItem = v in keywords["items"]
+            isFlag = v in keywords["flags"]
+            isTech = v in keywords["techs"]
+            isWeapon = v in keywords["weapons"]
+            isValue = v in keywords["values"]
+            if (isEnemy or last_enemy != "") and ".enemy" in k:
+                if ".type" not in k:
+                    last_enemy = v
+                elif ".type" in k:
+                    if last_enemy in keywords["enemies"]["enemyByName"]:
+                        enemyID = keywords["enemies"]["enemyByName"][last_enemy]
+                        if enemyID in enemies:
+                            if "attacks" in enemies[enemyID]:
+                                attackExists = False
+                                for attack in enemies[enemyID]["attacks"]:
+                                    if "name" in attack:
+                                        if attack["name"] == v:
+                                            attackExists = True
+                                goodValue = attackExists
+                        last_enemy = ""
+                    else:
+                        print(f"{last_enemy} not found!")
+            else:
+                if not isArea and \
+                    not isEnemy and \
+                    not isHelper and \
+                    not isItem and \
+                    not isFlag and \
+                    not isTech and \
+                    not isWeapon and \
+                    not isValue:
+                    goodValue = False
+                    print(k, v)
     return goodValue
 
 keywords = []
@@ -160,12 +179,11 @@ for jsonPath in [
                 process_keyvalue(k, v)
 
 cheatSheetJSON = {}
-with open(os.path.join(".","tests","asserts","canLeaveCharged.json")) as cheatSheetFile:
+with open(os.path.join(".","tests","asserts","canLeaveCharged.json"), encoding="utf-8") as cheatSheetFile:
     cheatSheetJSON = json.load(cheatSheetFile)
 
 print("")
 print("Check Regions")
-bail = False
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
@@ -188,6 +206,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         if not ret and not showArea:
                             showArea = True
                     for room in regionJSON["rooms"]:
+                        roomRef = f"{room['id']}:{room['name']}"
+                        if room["id"] not in uniques["roomID"]:
+                            uniques["roomID"].append(room["id"])
+                        else:
+                            print(f"🔴ERROR: Room ID not unique! {roomRef}")
+                            bail = True
+                        if room["name"] not in uniques["roomName"]:
+                            uniques["roomName"].append(room["name"])
+                        else:
+                            print(f"🔴ERROR: Room Name not unique! {roomRef}")
+                            bail = True
                         if "nodes" in room:
                             roomData = {
                                 "id": room["id"],
@@ -220,46 +249,64 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         if "initiateRemotely" in leave:
                                             remote = leave["initiateRemotely"]
                                             if "initiateAt" in remote:
+                                                fromNode = remote["initiateAt"]
+                                                fromNodeRef = f"{roomRef}:{fromNode}"
                                                 if "pathToDoor" in remote:
                                                     for path in remote["pathToDoor"]:
+                                                        toNode = -1
                                                         if "destinationNode" in path:
-                                                            if remote["initiateAt"] not in roomData["nodes"]["leaveCharged"]["from"]:
-                                                                roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]] = {
+                                                            toNode = path["destinationNode"]
+                                                            if fromNode not in roomData["nodes"]["leaveCharged"]["from"]:
+                                                                roomData["nodes"]["leaveCharged"]["from"][fromNode] = {
                                                                     "to": {}
                                                                 }
-                                                            if path["destinationNode"] not in roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]]["to"]:
-                                                                roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]] = {"strats":[]}
+                                                            if toNode not in roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"]:
+                                                                roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"][toNode] = {
+                                                                    "strats": []
+                                                                }
+                                                        if toNode == -1:
+                                                            print(f"🔴ERROR: Destination node not defined:{fromNodeRef}")
+                                                            bail = True
                                                         if "strats" in path:
                                                             showNodes = True
+                                                            toNodeRef = f"{fromNodeRef}:{toNode}"
                                                             for strat in path["strats"]:
-                                                                stratRef = f"{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}:{strat}"
-                                                                if remote["initiateAt"] in roomData["links"]["from"]:
-                                                                    if path["destinationNode"] in roomData["links"]["from"][remote["initiateAt"]]["to"]:
-                                                                        if strat not in roomData["links"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]]["strats"]:
+                                                                stratRef = f"{toNodeRef}:{strat}"
+                                                                if fromNode in roomData["links"]["from"]:
+                                                                    if toNode in roomData["links"]["from"][fromNode]["to"]:
+                                                                        if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
                                                                             print(f"🔴ERROR: Invalid strat:{stratRef}")
                                                                             bail = True
                                                                         else:
                                                                             if showArea:
                                                                                 print(f"🟢{stratRef}")
-                                                                                # print(roomData["nodes"]["leaveCharged"]["from"])
-                                                                            roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]]["strats"].append(strat)
+                                                                                pass
+                                                                            roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"][toNode]["strats"].append(strat)
                                                                     else:
-                                                                        if str(room["id"]) in cheatSheetJSON and \
-                                                                            str(remote["initiateAt"]) in cheatSheetJSON[str(room["id"])] and \
-                                                                            str(path["destinationNode"]) in cheatSheetJSON[str(room["id"])][str(remote["initiateAt"])]:
-                                                                            intermediateNode = cheatSheetJSON[str(room["id"])][str(remote["initiateAt"])][str(path["destinationNode"])]["via"]
-                                                                            print(f"🟡{stratRef}::{remote['initiateAt']}:{intermediateNode}:{path['destinationNode']}")
-                                                                        else:
-                                                                            print(f"🔴ERROR: Destination node not found:{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}")
-                                                                            bail = True
+                                                                        foundPath = False
+                                                                        for tNode in roomData["links"]["from"][fromNode]["to"]:
+                                                                            if (not foundPath) and (toNode in roomData["links"]["from"][tNode]["to"]):
+                                                                                foundPath = True
+                                                                                print(f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}")
+                                                                        if not foundPath:
+                                                                            if str(room["id"]) in cheatSheetJSON and \
+                                                                                str(fromNode) in cheatSheetJSON[str(room["id"])] and \
+                                                                                str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
+                                                                                intermediateNode = cheatSheetJSON[str(room["id"])][str(fromNode)][str(toNode)]["via"]
+                                                                                print(f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}")
+                                                                            else:
+                                                                                print(f"🔴ERROR: Destination node path not found:{toNodeRef}")
+                                                                                bail = True
                                                                 else:
-                                                                    print(f"🔴ERROR: From node not found:{room['id']}:{room['name']}:{remote['initiateAt']}")
+                                                                    print(f"🔴ERROR: From node not found:{fromNodeRef}")
                                                                     bail = True
                             if showNodes:
                                 # print(json.dumps(roomData, indent=2))
                                 pass
                     if showArea:
                         print()
+
+# print(uniques)
 
 if bail:
     sys.exit(1)
