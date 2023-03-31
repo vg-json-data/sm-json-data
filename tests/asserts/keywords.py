@@ -159,6 +159,10 @@ for jsonPath in [
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v)
 
+cheatSheetJSON = {}
+with open(os.path.join(".","tests","asserts","canLeaveCharged.json")) as cheatSheetFile:
+    cheatSheetJSON = json.load(cheatSheetFile)
+
 print("")
 print("Check Regions")
 bail = False
@@ -240,8 +244,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                                 # print(roomData["nodes"]["leaveCharged"]["from"])
                                                                             roomData["nodes"]["leaveCharged"]["from"][remote["initiateAt"]]["to"][path["destinationNode"]]["strats"].append(strat)
                                                                     else:
-                                                                        print(f"🔴ERROR: Destination node not found:{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}")
-                                                                        bail = True
+                                                                        if str(room["id"]) in cheatSheetJSON and \
+                                                                            str(remote["initiateAt"]) in cheatSheetJSON[str(room["id"])] and \
+                                                                            str(path["destinationNode"]) in cheatSheetJSON[str(room["id"])][str(remote["initiateAt"])]:
+                                                                            intermediateNode = cheatSheetJSON[str(room["id"])][str(remote["initiateAt"])][str(path["destinationNode"])]["via"]
+                                                                            print(f"🟡{stratRef}::{remote['initiateAt']}:{intermediateNode}:{path['destinationNode']}")
+                                                                        else:
+                                                                            print(f"🔴ERROR: Destination node not found:{room['id']}:{room['name']}:{remote['initiateAt']}:{path['destinationNode']}")
+                                                                            bail = True
                                                                 else:
                                                                     print(f"🔴ERROR: From node not found:{room['id']}:{room['name']}:{remote['initiateAt']}")
                                                                     bail = True
