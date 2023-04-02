@@ -2998,6 +2998,10 @@
         {
           "name": "Colosseum Suitless Grapple Only",
           "note": "Cross the Colosseum with Grapple. Even if this is turned off it can be expected to go from the bottom right to top right door."
+        },
+        {
+          "name": "Colosseum Spike Platforming",
+          "note": "Cross the Colosseum by using the spikes as platforms to stay out of the water.  Requires knowing where the spike platforms are and how to use them efficiently."
         }
       ],
       "links": [
@@ -3012,6 +3016,8 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
+                    "canPlayInSand",
+                    "canWalljump",
                     {"or": [
                       "HiJump",
                       "canConsecutiveWalljump"
@@ -3023,12 +3029,15 @@
                   "name": "Space Jump",
                   "notable": false,
                   "requires": ["SpaceJump"],
-                  "note": "No water involved here, so no need for Gravity or canSuitlessMaridia."
+                  "devNote": "No water involved here, so no need for Gravity or canSuitlessMaridia."
                 },
                 {
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    "canCarefulJump",
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 60,
@@ -3037,20 +3046,83 @@
                   ]
                 },
                 {
-                  "name": "Colosseum Suitless Grapple (Left to Right)",
+                  "name": "Colosseum Grapple Only (Left to Right)",
                   "notable": true,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "Grapple"
+                    "h_canNavigateUnderwater",
+                    "Grapple",
+                    "canCarefulJump",
+                    "canPlayInSand",
+                    {"or": [
+                      {"and": [
+                        "canDamageBoost",
+                        {"spikeHits": 1},
+                        "canIframeSpikeJump"
+                      ]},
+                      {"and": [
+                        {"spikeHits": 2},
+                        "canIframeSpikeJump"
+                      ]},
+                      "canTrickyJump",
+                      "canGrappleJump"
+                    ]}
                   ],
-                  "reusableRoomwideNotable": "Colosseum Suitless Grapple Only"
+                  "reusableRoomwideNotable": "Colosseum Suitless Grapple Only",
+                  "note": [
+                    "Use Grapple Beam to cross the Colosseum.",
+                    "The first two room segments can be safely grappled across from in the water.",
+                    "The third room segment grapple is tricky, and it may be easier to walking on the spikes instead."
+                  ],
+                  "devNote": "Play In Sand is not required, but it can prevent softlocks and sand is associated with the room."
+                },
+                {
+                  "name": "Colosseum Spike Platforming (Left to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canWalljump",
+                    "Morph",
+                    "canTrickyJump",
+                    "canIframeSpikeJump",
+                    {"spikeHits": 3},
+                    {"or": [
+                      "canDamageBoost",
+                      {"spikeHits": 1}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Colosseum Spike Platforming",
+                  "note": [
+                    "Stay out of the water, and by extension the sand, of Colosseum by using the spikes as platforms.",
+                    "Use the property of getting a small boost when taking a spike hit in Morph Ball to land on a spike and jump to the next platform.",
+                    "Requires knowing the position of every spike in the room.",
+                    "The first jump onto spikes is very difficult.  Having speed helps."
+                  ]
                 },
                 {
                   "name": "Colosseum Mochtroid Climb (Left to Right)",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "canSandMochtroidIceClimb"
+                    "h_canNavigateUnderwater",
+                    "canMochtroidIceClimb",
+                    "canPlayInSand",
+                    "canWalljump",
+                    {"enemyDamage": {
+                      "enemy": "Mochtroid",
+                      "type": "contact",
+                      "hits": 2
+                    }},
+                    {"or": [
+                      "HiJump",
+                      "canTrickyJump"
+                    ]}
+                  ],
+                  "note": [
+                    "Climb a mochtroid with ice using the wall to help guide them.",
+                    "It is very easy to take damage if not careful."
+                  ],
+                  "devNote": [
+                    "Mochtroid damage is pretty hard to avoid, but can be.",
+                    "HiJump listed as a safety mostly to counter how easy it is to fall in sand and die without it.",
+                    "canWalljump is also a safety.  Mochtroid movement and freeze timing gets harder for the jump out of the water."
                   ]
                 }
               ]
@@ -3066,22 +3138,54 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "canWalljump",
+                      "canIBJ",
+                      "SpaceJump",
+                      {"and": [
+                        "HiJump",
+                        "canSpringBallJumpMidAir"
+                      ]},
+                      {"and": [
+                        "HiJump",
+                        "canGravityJump"
+                      ]},
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        "canGravityJump"
+                      ]}
+                    ]}
+                  ]
                 },
                 {
                   "name": "Mochtroid Climb",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "h_canNavigateUnderwater",
                     "canMochtroidIceClimb"
                   ]
                 },
                 {
-                  "name": "Suitless Grapple",
+                  "name": "Grapple",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "h_canNavigateUnderwater",
                     "Grapple"
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {"canComeInCharged": {
+                      "framesRemaining": 20,
+                      "fromNode": 2,
+                      "shinesparkFrames": 24,
+                      "excessShinesparkFrames": 6
+                    }}
                   ]
                 },
                 {
@@ -3094,7 +3198,6 @@
                     {"adjacentRunway": {
                       "fromNode": 2,
                       "usedTiles": 1,
-                      "inRoomPath": [ 2, 3 ],
                       "physics": ["air"]
                     }},
                     {"enemyDamage": {
@@ -3116,7 +3219,6 @@
                     {"adjacentRunway": {
                       "fromNode": 2,
                       "usedTiles": 1.5,
-                      "inRoomPath": [ 2, 3 ],
                       "physics": ["air"]
                     }}
                   ],
@@ -3133,7 +3235,6 @@
                     {"adjacentRunway": {
                       "fromNode": 2,
                       "usedTiles": 7.5,
-                      "inRoomPath": [ 2, 3 ],
                       "physics": ["air"]
                     }}
                   ],
@@ -3149,7 +3250,6 @@
                     {"adjacentRunway": {
                       "fromNode": 2,
                       "usedTiles": 1,
-                      "inRoomPath": [ 2, 3 ],
                       "physics": ["air"]
                     }}
                   ],
@@ -3170,6 +3270,8 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
+                    "canWalljump",
+                    "canPlayInSand",
                     {"or": [
                       "HiJump",
                       "canConsecutiveWalljump"
@@ -3180,12 +3282,15 @@
                   "name": "Space Jump",
                   "notable": false,
                   "requires": ["SpaceJump"],
-                  "note": "No water involved here, so no need for Gravity or canSuitlessMaridia."
+                  "devNote": "No water involved here, so no need for Gravity or canSuitlessMaridia."
                 },
                 {
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    "canCarefulJump",
                     {"canComeInCharged": {
                       "fromNode": 3,
                       "framesRemaining": 60,
@@ -3194,20 +3299,64 @@
                   ]
                 },
                 {
-                  "name": "Colosseum Suitless Grapple (Right to Left)",
+                  "name": "Colosseum Grapple Only (Right to Left)",
                   "notable": true,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "Grapple"
+                    "h_canNavigateUnderwater",
+                    "Grapple",
+                    {"or": [
+                      "canPlayInSand",
+                      "canTrickyJump"
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Colosseum Suitless Grapple Only"
+                },
+                {
+                  "name": "Colosseum Spike Platforming (Right to Left)",
+                  "notable": true,
+                  "requires": [
+                    "canPreciseWalljump",
+                    "canTrickyJump",
+                    "canIframeSpikeJump",
+                    {"spikeHits": 3},
+                    {"or": [
+                      "canDamageBoost",
+                      {"spikeHits": 1}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Colosseum Spike Platforming",
+                  "note": [
+                    "Stay out of the water, and by extension the sand, of Colosseum by using the spikes as platforms.",
+                    "Landing on spikes aiming down with no other direction pressed can help contol the knockback.",
+                    "Requires knowing the position of every spike in the room.",
+                    "The final spike jump is very difficult."
+                  ]
                 },
                 {
                   "name": "Colosseum Mochtroid Climb (Right to Left)",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "canSandMochtroidIceClimb"
+                    {"or": [
+                       "Gravity",
+                       {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump"
+                      ]}
+                    ]},
+                    "canWalljump",
+                    "canPlayInSand",
+                    "canMochtroidIceClimb",
+                    {"enemyDamage": {
+                      "enemy": "Mochtroid",
+                      "type": "contact",
+                      "hits": 2
+                    }}
+                  ],
+                  "note": "Jump out of the sand to lure down mochtroids to freeze.  Or bring them from the previous section of room.",
+                  "devNote": [
+                    "Mochtroid damage is pretty hard to avoid, but can be.",
+                    "HiJump is used to lure down Mochtroids.",
+                    "canWalljump is a safety.  Mochtroid movement and freeze timing gets harder for the jump out of the water."
                   ]
                 }
               ]
@@ -3218,12 +3367,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": ["canSuitlessMaridia"]
+                  "requires": [ "h_canNavigateUnderwater" ]
                 }
               ]
             }
