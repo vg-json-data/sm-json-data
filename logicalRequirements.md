@@ -368,10 +368,10 @@ Please refer to the sections on `leaveWithGModeSetup` in [the Region documentati
 #### comeInWithGMode object
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
-* _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either.
-* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to enter in an artificially morphed state (without necessarily having collected the Morph item).
+* _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
+* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room.
 * _previouslyOverloadedPLMs:_ A boolean indicating whether the logical requirement expects that PLMs have already been overloaded when entering the room. This is only applicable to indirect G-mode.
-* _immobile:_ A boolean indicating whether the logical requirement expects Samus to enter in a G-mode immobile state, which means an enemy must be available in the right location to hit Samus and return control.
+* _immobile:_ A boolean indicating whether the logical requirement expects Samus to enter in a G-mode immobile state, which means an enemy must be able to hit Samus where she spawns in the destination room in order to regain control.
 
 __Example:__
 ```json

@@ -147,21 +147,69 @@ Much like using runways, a `canLeaveCharged` can only be executed if the associa
 
 #### leaveWithGModeSetup
 
-Represents the ability to exit through the door while taking damage from an enemy during the transition. This can be achieved with enemies that are able to follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. Note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not count. The node property `leaveWithGModeSetup` is an array of `leaveWithGModeSetup` objects which each currently have a single property:
+Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
+
+The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work.
+
+The node property `leaveWithGModeSetup` is an array of objects which each currently have a single property:
 
 * _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while taking damage.
 
 #### leaveWithGMode
 
-Represents the ability to exit through the door while in G-mode. This is an array of `leaveWithGMode` objects which have the following properties:
+Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
 
 * _leavesWithOverloadedPLMs_: A boolean indicating if these strats ensure that PLMs have been overloaded before exiting through the door.
 * _leavesWithArtificialMorph_: A boolean indicating if these strats exit through the door while in an artificially morphed state (i.e. without the Morph item necessarily having been collected).
 * _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while in G-mode with the given conditions.
 
-The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, typically strats for `leaveWithGMode` will require `comeInWithGMode` with `fromNodes` consisting of only the same node on which the `leaveWithGMode` is placed. There are some cases where this may not be true, such as in rooms with door transitions having no door cap (e.g. elevators, sand, tunnels), or if there is some way to bypass the door cap of another door.
+The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, typically strats for `leaveWithGMode` will require `comeInWithGMode` with `fromNodes` consisting of only the same node on which the `leaveWithGMode` is placed. There are some cases where this may not be true, such as in rooms with door transitions having no door cap (e.g. elevators, sand, tunnels), or if there is some way to bypass the door cap of another door. But in typical cases, the purpose of a `leaveWithGMode` strat is to express that PLMs may be overloaded in the room before returning back through the door.
 
-A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door, as this is always an implicit possibility (except at door nodes with a `spawnAt` property). In typical cases, the purpose of a `leaveWithGMode` strat is to express that PLMs may be overloaded in the room before returning back through the door.
+##### Implicit leaveWithGMode
+
+A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door without overloading PLMs or doing anything else. Specifically, for every door node that has no `spawnAt` property and exits to the left, right, or down, there are two implicit `leaveWithGMode` objects of the form
+
+```json
+{"leaveWithGMode": {
+  "leavesWithOverloadedPLMs": false,
+  "leavesWithArtificialMorph": false,
+  "strats": {
+    "name": "Base",
+    "notable": false,
+    "requires": [
+      {"comeInWithGMode": {
+        "fromNodes": [0],
+        "mode": "direct",
+        "artificialMorph": false,
+        "previouslyOverloadedPLMs": false,
+        "immobile": false
+      }}
+    ]
+  }
+}}
+```
+
+```json
+{"leaveWithGMode": {
+  "leavesWithOverloadedPLMs": false,
+  "leavesWithArtificialMorph": true,
+  "strats": {
+    "name": "Base",
+    "notable": false,
+    "requires": [
+      {"comeInWithGMode": {
+        "fromNodes": [0],
+        "mode": "direct",
+        "artificialMorph": true,
+        "previouslyOverloadedPLMs": false,
+        "immobile": false
+      }}
+    ]
+  }
+}}
+```
+
+where in `"fromNodes": [0]`, the 0 is replaced with the node ID of the given node.
 
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
