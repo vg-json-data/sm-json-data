@@ -343,6 +343,67 @@ __Additional considerations__
 * A `canShineCharge` object implicitly requires the Speed Booster.
 * A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
 
+#### comeInWithRMode object
+A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
+* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
+
+__Example:__
+```json
+{"comeInWithRMode": {
+  "fromNodes": [1],
+}}
+```
+
+__Additional considerations__
+
+* A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
+* A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
+* A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithDamage`.
+  * The `leaveWithDamage` object must satisfy following requirements in order to match:
+    * Samus must have non-zero reserve energy.
+    * Any additional requirements in the `requires` property of the `leaveWithDamage` object.
+
+Please refer to the sections on `leaveWithDamage` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
+
+#### comeInWithGMode object
+A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
+* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
+* _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either.
+* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to enter in an artificially morphed state (without necessarily having collected the Morph item).
+* _previouslyOverloadedPLMs:_ A boolean indicating whether the logical requirement expects that PLMs have already been overloaded when entering the room. This is only applicable to indirect G-mode.
+* _immobile:_ A boolean indicating whether the logical requirement expects Samus to enter in a G-mode immobile state, which means an enemy must be available in the right location to hit Samus and return control.
+
+__Example:__
+```json
+{"comeInWithGMode": {
+  "fromNodes": [1],
+  "mode": "any",
+  "artificialMorph": false,
+  "previouslyOverloadedPLMs": false,
+  "immobile": false
+}}
+```
+
+__Additional considerations__
+
+* A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
+* A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
+  * If `immobile` is `true` then it also requires the `canEnterGModeImmobile` tech.
+  * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
+* A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithDamage` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
+  * A `leaveWithDamage` object must satisfy following requirements in order to match:
+    * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
+    * Samus must have non-zero reserve energy.
+    * Any additional requirements in the `requires` property of the `leaveWithDamage`.
+  * A `leaveWithGMode` object must satisfy the following requirements in order to match:
+    * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
+    * If `artificialMorph` is `true`, then the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true`.
+    * If `previouslyOverloadedPLMs` is `true`, then the `leavesWithOverloadedPLMs` property of the `leaveWithGMode` object must be `true`.
+    * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
+
+Please refer to the sections on `leaveWithDamage` and `leaveWithGMode` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
+
+
 ### Room Pathing Objects
 This section contains logical elements that are affected by Samus' pathing within a room.
 

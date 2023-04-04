@@ -145,6 +145,24 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
+#### leaveWithDamage
+
+Represents the ability to exit through the door while taking damage from an enemy during the transition. This can be achieved with enemies that are able to follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. Note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not count. The node property `leaveWithDamage` is an array of `leaveWithDamage` objects which each currently have a single property:
+
+* _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while taking damage.
+
+#### leaveWithGMode
+
+Represents the ability to exit through the door while in G-mode. This is an array of `leaveWithGMode` objects which have the following properties:
+
+* _leavesWithOverloadedPLMs_: A boolean indicating if these strats ensure that PLMs have been overloaded before exiting through the door.
+* _leavesWithArtificialMorph_: A boolean indicating if these strats exit through the door while in an artificially morphed state (i.e. without the Morph item necessarily having been collected).
+* _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while in G-mode with the given conditions.
+
+The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, typically strats for `leaveWithGMode` will require `comeInWithGMode` with `fromNodes` consisting of only the same node on which the `leaveWithGMode` is placed. There are some cases where this may not be true, such as in rooms with door transitions having no door cap (e.g. elevators, sand, tunnels), or if there is some way to bypass the door cap of another door.
+
+A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door, as this is always an implicit possibility (except at door nodes with a `spawnAt` property). In typical cases, the purpose of a `leaveWithGMode` strat is to express that PLMs may be overloaded in the room before returning back through the door.
+
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
 
