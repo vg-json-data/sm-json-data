@@ -358,12 +358,12 @@ __Additional considerations__
 
 * A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
-* A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithDamage`.
-  * The `leaveWithDamage` object must satisfy following requirements in order to match:
+* A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
+  * The `leaveWithGModeSetup` object must satisfy following requirements in order to match:
     * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithDamage` object.
+    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
 
-Please refer to the sections on `leaveWithDamage` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
+Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
 
 #### comeInWithGMode object
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
@@ -390,18 +390,18 @@ __Additional considerations__
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
   * If `immobile` is `true` then it also requires the `canEnterGModeImmobile` tech.
   * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
-* A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithDamage` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithDamage` object must satisfy following requirements in order to match:
+* A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
+  * A `leaveWithGModeSetup` object must satisfy following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
     * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithDamage`.
+    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
   * A `leaveWithGMode` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
     * If `artificialMorph` is `true`, then the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true`.
     * If `previouslyOverloadedPLMs` is `true`, then the `leavesWithOverloadedPLMs` property of the `leaveWithGMode` object must be `true`.
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 
-Please refer to the sections on `leaveWithDamage` and `leaveWithGMode` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
+Please refer to the sections on `leaveWithGModeSetup` and `leaveWithGMode` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
 
 ### Room Pathing Objects

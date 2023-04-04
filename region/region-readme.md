@@ -145,9 +145,9 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
-#### leaveWithDamage
+#### leaveWithGModeSetup
 
-Represents the ability to exit through the door while taking damage from an enemy during the transition. This can be achieved with enemies that are able to follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. Note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not count. The node property `leaveWithDamage` is an array of `leaveWithDamage` objects which each currently have a single property:
+Represents the ability to exit through the door while taking damage from an enemy during the transition. This can be achieved with enemies that are able to follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. Note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not count. The node property `leaveWithGModeSetup` is an array of `leaveWithGModeSetup` objects which each currently have a single property:
 
 * _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while taking damage.
 
