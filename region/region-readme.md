@@ -186,6 +186,10 @@ A `leaveWithGMode` object does not need to be included for strats which simply t
 
 where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`.
 
+#### gModeImmobileRequires
+
+Logical requirements to be able to restore control to Samus when entering the room with G-mode immobile. This should include an `enemyDamage` requirement to account for the damage Samus takes from the hit, or it may be `"never"` if there is no applicable enemy.
+
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
 

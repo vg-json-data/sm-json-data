@@ -370,15 +370,13 @@ A `comeInWithGMode` object represents the need to either have or obtain G-mode w
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
 * _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room.
-* _immobile:_ A boolean indicating whether the logical requirement expects Samus to enter in a G-mode immobile state, which means an enemy must be able to hit Samus where she spawns in the destination room in order to regain control.
 
 __Example:__
 ```json
 {"comeInWithGMode": {
   "fromNodes": [1],
   "mode": "any",
-  "artificialMorph": false,
-  "immobile": false
+  "artificialMorph": false
 }}
 ```
 
@@ -386,7 +384,6 @@ __Additional considerations__
 
 * A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `immobile` is `true` then it also requires the `canEnterGModeImmobile` tech.
   * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
 * A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
   * A `leaveWithGModeSetup` object must satisfy following requirements in order to match:
