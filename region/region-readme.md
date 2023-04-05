@@ -159,19 +159,15 @@ The node property `leaveWithGModeSetup` is an array of objects which each curren
 
 Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
 
-* _leavesWithOverloadedPLMs_: A boolean indicating if these strats ensure that PLMs have been overloaded before exiting through the door.
 * _leavesWithArtificialMorph_: A boolean indicating if these strats exit through the door while in an artificially morphed state (i.e. without the Morph item necessarily having been collected).
 * _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while in G-mode with the given conditions.
 
-The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, typically strats for `leaveWithGMode` will require `comeInWithGMode` with `fromNodes` consisting of only the same node on which the `leaveWithGMode` is placed. There are some cases where this may not be true, such as in rooms with door transitions having no door cap (e.g. elevators, sand, tunnels), or if there is some way to bypass the door cap of another door. But in typical cases, the purpose of a `leaveWithGMode` strat is to express that PLMs may be overloaded in the room before returning back through the door.
+The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, the only way to leave with G-mode through a different door is in cases where there is no door cap (e.g. elevators, sand, tunnels) or if there is some way to bypass the door cap.
 
-##### Implicit leaveWithGMode
-
-A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door without overloading PLMs or doing anything else. Specifically, for every door node that has no `spawnAt` property and exits to the left, right, or down, there are two implicit `leaveWithGMode` objects, one of the form
+A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door. Specifically, for every door node that exits to the left, right, or down, there are two implicit `leaveWithGMode` objects, one of the form
 
 ```json
 {"leaveWithGMode": {
-  "leavesWithOverloadedPLMs": false,
   "leavesWithArtificialMorph": false,
   "strats": {
     "name": "Base",
@@ -181,7 +177,6 @@ A `leaveWithGMode` object does not need to be included for strats which simply t
         "fromNodes": [0],
         "mode": "direct",
         "artificialMorph": false,
-        "previouslyOverloadedPLMs": false,
         "immobile": false
       }}
     ]

@@ -370,7 +370,6 @@ A `comeInWithGMode` object represents the need to either have or obtain G-mode w
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
 * _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room.
-* _previouslyOverloadedPLMs:_ A boolean indicating whether the logical requirement expects that PLMs have already been overloaded when entering the room. This is only applicable to indirect G-mode.
 * _immobile:_ A boolean indicating whether the logical requirement expects Samus to enter in a G-mode immobile state, which means an enemy must be able to hit Samus where she spawns in the destination room in order to regain control.
 
 __Example:__
@@ -379,7 +378,6 @@ __Example:__
   "fromNodes": [1],
   "mode": "any",
   "artificialMorph": false,
-  "previouslyOverloadedPLMs": false,
   "immobile": false
 }}
 ```
@@ -398,7 +396,6 @@ __Additional considerations__
   * A `leaveWithGMode` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
     * If `artificialMorph` is `true`, then the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true`.
-    * If `previouslyOverloadedPLMs` is `true`, then the `leavesWithOverloadedPLMs` property of the `leaveWithGMode` object must be `true`.
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 
 Please refer to the sections on `leaveWithGModeSetup` and `leaveWithGMode` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
