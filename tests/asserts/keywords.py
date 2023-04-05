@@ -282,6 +282,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 }
                             }
                             showNodes = False
+                            gModeObjects = []
                             if "links" in room:
                                 for link in room["links"]:
                                     if "from" in link:
@@ -291,6 +292,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         for to in link["to"]:
                                             if to["id"] not in roomData["nodes"]["tos"]:
                                                 roomData["nodes"]["tos"].append(to["id"])
+                                                gModeTo = to
+                                                gModeTo["fromNode"] = link["from"]
+                                                gModeObjects.append(gModeTo)
                                             roomData["links"]["from"][link["from"]]["to"][to["id"]] = {
                                                 "strats": []
                                             }
@@ -299,8 +303,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                     roomData["links"]["from"][link["from"]]["to"][to["id"]]["strats"].append(strat["name"])
                             for node in room["nodes"]:
                                 if "id" in node:
+                                    nodeRef = f"{roomRef}:{node['id']}"
                                     if node["id"] in roomData["nodes"]["froms"]:
-                                        nodeRef = f"{roomRef}:{node['id']}"
                                         print(f"🔴ERROR: Node ID not unique! {nodeRef}")
                                         bail = True
                                     else:
@@ -343,18 +347,28 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                                 if "leaveWithGMode" in node:
                                     for leaveG in node["leaveWithGMode"]:
-                                        if "strats" in leaveG:
-                                            for strat in leaveG["strats"]:
-                                                stratRef = f"{nodeRef}:{strat['name']}"
-                                                if "requires" in strat:
-                                                    for req in strat["requires"]:
-                                                        if "comeInWithGMode" in req:
-                                                            if "fromNodes" in req["comeInWithGMode"]:
-                                                                for fromNode in req["comeInWithGMode"]["fromNodes"]:
-                                                                    fromNodeRef = f"{stratRef}:{fromNode}"
-                                                                    if fromNode not in roomData["nodes"]["froms"]:
-                                                                        print(f"🔴ERROR: From Node doesn't exist:{fromNodeRef}")
-                                                                        bail = True
+                                        gModeObjects.append(leaveG)
+                            for gModeObj in gModeObjects:
+                                if "strats" in gModeObj:
+                                    parentNodeRef = ""
+                                    if "fromNode" in gModeObj:
+                                        parentNodeRef = f"{gModeObj['fromNode']}:"
+                                    toNodeRef = f"{roomRef}:{parentNodeRef}"
+                                    if "id" in gModeObj:
+                                        toNodeRef += f"{gModeObj['id']}:"
+                                    for strat in gModeObj["strats"]:
+                                        stratRef = f"{toNodeRef}{strat['name']}"
+                                        if "requires" in strat:
+                                            for req in strat["requires"]:
+                                                if "comeInWithGMode" in req:
+                                                    if "fromNodes" in req["comeInWithGMode"]:
+                                                        for fromNode in req["comeInWithGMode"]["fromNodes"]:
+                                                            fromNodeRef = f"{stratRef}:{fromNode}"
+                                                            if fromNode not in roomData["nodes"]["froms"]:
+                                                                print(f"🔴ERROR: From Node doesn't exist:{fromNodeRef}")
+                                                                bail = True
+                                                            else:
+                                                                print(f"🟢{fromNodeRef}")
                             for node in room["nodes"]:
                                 orphaned = False
                                 if node["nodeType"] != "door" and \
