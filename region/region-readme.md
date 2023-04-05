@@ -167,7 +167,7 @@ The only known way to enter G-mode is to have or obtain G-mode while entering th
 
 ##### Implicit leaveWithGMode
 
-A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door without overloading PLMs or doing anything else. Specifically, for every door node that has no `spawnAt` property and exits to the left, right, or down, there are two implicit `leaveWithGMode` objects of the form
+A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door without overloading PLMs or doing anything else. Specifically, for every door node that has no `spawnAt` property and exits to the left, right, or down, there are two implicit `leaveWithGMode` objects, one of the form
 
 ```json
 {"leaveWithGMode": {
@@ -189,27 +189,7 @@ A `leaveWithGMode` object does not need to be included for strats which simply t
 }}
 ```
 
-```json
-{"leaveWithGMode": {
-  "leavesWithOverloadedPLMs": false,
-  "leavesWithArtificialMorph": true,
-  "strats": {
-    "name": "Base",
-    "notable": false,
-    "requires": [
-      {"comeInWithGMode": {
-        "fromNodes": [0],
-        "mode": "direct",
-        "artificialMorph": true,
-        "previouslyOverloadedPLMs": false,
-        "immobile": false
-      }}
-    ]
-  }
-}}
-```
-
-where in `"fromNodes": [0]`, the 0 is replaced with the node ID of the given node.
+where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`.
 
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
