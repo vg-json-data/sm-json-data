@@ -385,10 +385,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     with open(os.path.join(connectionPath, "inter.json"), "r", encoding="utf-8") as connectionFile:
                                         connections["inter"] = json.load(connectionFile)
                                     for sector in ["intra", "subarea"]:
-                                        sectorPath = os.path.join(".","connection", area)
+                                        sectorPath = os.path.join(".","connection", area.lower())
                                         filename = sector
                                         if sector == "subarea":
-                                            filename = subarea
+                                            filename = subarea.lower()
                                         with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
                                             connections[sector] = json.load(connectionFile)
                                     foundNode = False
