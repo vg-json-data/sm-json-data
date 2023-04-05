@@ -362,6 +362,9 @@ __Additional considerations__
   * The `leaveWithGModeSetup` object must satisfy following requirements in order to match:
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
+* A `comeInWithRMode` object implicitly requires a reserve trigger.
+  * Therefore Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
+  * Samus' reserve energy will become zero.
 
 Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
 
@@ -396,10 +399,10 @@ __Additional considerations__
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 * In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and preceding setup:
   * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobileRequires` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Otherwise, Samus' regular energy will become 4, or whatever her reserve energy was before the transition if it was less than 4.
-  * Samus' reserve energy will always be drained to zero.
+  * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
+  * Samus' reserve energy will always become zero.
 
-Please refer to the sections on `leaveWithGModeSetup` and `leaveWithGMode` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
+Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobileRequires` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
 
 ### Room Pathing Objects
