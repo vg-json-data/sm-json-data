@@ -164,7 +164,7 @@ Represents the ability to exit through the door while in G-mode. This is an arra
 
 The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, the only way to leave with G-mode through a different door is in cases where there is no door cap (e.g. elevators, sand, tunnels) or if there is some way to bypass the door cap.
 
-A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door. Specifically, for every door node that exits to the left, right, or down, there are two implicit `leaveWithGMode` objects, one of the form
+A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door. Specifically, for every door node without a `spawnAt` property, there are two implicit `leaveWithGMode` objects, one of the form
 
 ```json
 {"leaveWithGMode": {
