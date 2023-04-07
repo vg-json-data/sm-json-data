@@ -372,7 +372,7 @@ Please refer to the sections on `leaveWithGModeSetup` in [the Region documentati
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
-* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room.
+* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room, or to have collected the Morph item.
 
 __Example:__
 ```json
@@ -395,7 +395,7 @@ __Additional considerations__
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
   * A `leaveWithGMode` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
-    * If `artificialMorph` is `true`, then the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true`.
+    * If `artificialMorph` is `true`, then either the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true` or there is an additional requirement that the Morph item be collected.
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 * In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and preceding setup:
   * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
