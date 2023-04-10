@@ -359,7 +359,7 @@ __Additional considerations__
 * A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
 * A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
-  * The `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * The `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
 * A `comeInWithRMode` object implicitly requires a reserve trigger.
@@ -389,7 +389,7 @@ __Additional considerations__
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
   * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
 * A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
