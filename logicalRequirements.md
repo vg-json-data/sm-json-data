@@ -387,7 +387,7 @@ __Additional considerations__
 
 * A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
+  * If `artificialMorph` is `true` then it also requires either the `canArtificialMorph` tech or the Morph item.
 * A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
   * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
