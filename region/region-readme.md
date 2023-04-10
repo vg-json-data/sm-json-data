@@ -184,7 +184,7 @@ A `leaveWithGMode` object does not need to be included for strats which simply t
 }}
 ```
 
-where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`.
+where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`. Here we are referring to nodes with `"nodeType": "door"`, which excludes sand entrances (which instead have `"nodeType": "entrance"`).
 
 #### gModeImmobile
 
