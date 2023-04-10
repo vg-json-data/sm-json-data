@@ -399,7 +399,7 @@ __Additional considerations__
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 * In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and preceding setup:
   * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
+  * Otherwise, Samus' regular energy will become 4, reflecting the need  or whatever reserve energy she had before the transition if it was less than 4.
   * Samus' reserve energy will always become zero.
 
 Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
