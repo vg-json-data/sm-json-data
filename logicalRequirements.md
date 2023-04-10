@@ -359,7 +359,7 @@ __Additional considerations__
 * A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
 * A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
-  * The `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * The `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
 * A `comeInWithRMode` object implicitly requires a reserve trigger.
@@ -387,9 +387,9 @@ __Additional considerations__
 
 * A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
+  * If `artificialMorph` is `true` then it also requires either the `canArtificialMorph` tech or the Morph item.
 * A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
@@ -399,7 +399,7 @@ __Additional considerations__
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
 * In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and preceding setup:
   * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
+  * Otherwise, Samus' regular energy will become 4, reflecting the need  or whatever reserve energy she had before the transition if it was less than 4.
   * Samus' reserve energy will always become zero.
 
 Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
