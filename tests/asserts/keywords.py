@@ -31,7 +31,8 @@ def process_keyvalue(k, v):
         "additionalObstacles",
         "obstaclesCleared",
         "obstaclesNotCleared",
-        "subarea"
+        "subarea",
+        "twinDoorAddresses"
     ]
     badKeys = [
         "$schema",      # immaterial
@@ -92,7 +93,7 @@ def process_keyvalue(k, v):
             isTech = v in keywords["techs"]
             isWeapon = v in keywords["weapons"]
             isValue = v in keywords["values"]
-            if (isEnemy or last_enemy != "") and ".enemy" in k:
+            if (isEnemy or last_enemy != "") and ".enemy" in k and ".enemyKill" not in k:
                 if ".type" not in k:
                     last_enemy = v
                 elif ".type" in k:
@@ -108,7 +109,7 @@ def process_keyvalue(k, v):
                                 goodValue = attackExists
                         last_enemy = ""
                     else:
-                        print(f"{last_enemy} not found!")
+                        print(f"🔴ERROR: {last_enemy} not found!")
             else:
                 if not isArea and \
                     not isEnemy and \
@@ -119,7 +120,7 @@ def process_keyvalue(k, v):
                     not isWeapon and \
                     not isValue:
                     goodValue = False
-                    print(k, v)
+                    print(f"🟡{k} {v}")
     return goodValue
 
 def process_strats(src, paramData):
@@ -187,6 +188,7 @@ with open(keywordsPath, encoding="utf-8") as keywordsFile:
     keywords = json.load(keywordsFile)
 
 keywords["values"] = [
+    "any",
     "never",
     "spinjump"
 ]
