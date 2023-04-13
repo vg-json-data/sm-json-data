@@ -405,17 +405,17 @@ __Additional considerations__
 Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
 
-#### itemNotCollected object
-An `itemNotCollected` object represents the need to have not yet collected the item at a given node in the same room. For example, such
+#### itemNotCollectedAtNode object
+An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
 an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
 Wrecked Ship items) are not included in this requirement and would need to be specified separately if applicable. In many situations,
-an `itemNotCollected` requirement should be accompanied by a `canRiskPermanentLossOfAccess`, if it is possible to prematurely obtain
-the item and then get stuck from being able to do the strat.
+an `itemNotCollectedAtNode` requirement should be accompanied by a `canRiskPermanentLossOfAccess`, if it is possible to prematurely obtain
+the item and then get stuck from being unable to do the strat.
 
 __Example:__
 ```json
 {"requires": [
-  {"itemNotCollected": 1},
+  {"itemNotCollectedAtNode": 1},
   "canRiskPermanentLossOfAccess"
 ]}
 ```
