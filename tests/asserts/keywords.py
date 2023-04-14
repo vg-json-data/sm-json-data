@@ -44,6 +44,7 @@ def process_keyvalue(k, v):
         # "groupName",    # !!could check for unique
         # "nodeAddress",  # !!could check for unique
         # "roomAddress",  # !!could check for unique
+        "mode",         # validated by schema
         "lockType",     # validated by schema
         "nodeType",     # validated by schema
         "nodeSubType",  # validated by schema
@@ -188,7 +189,6 @@ with open(keywordsPath, encoding="utf-8") as keywordsFile:
     keywords = json.load(keywordsFile)
 
 keywords["values"] = [
-    "any",
     "never",
     "spinjump"
 ]
