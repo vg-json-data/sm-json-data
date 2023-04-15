@@ -31,7 +31,8 @@ def process_keyvalue(k, v):
         "additionalObstacles",
         "obstaclesCleared",
         "obstaclesNotCleared",
-        "subarea"
+        "subarea",
+        "twinDoorAddresses"
     ]
     badKeys = [
         "$schema",      # immaterial
@@ -43,6 +44,7 @@ def process_keyvalue(k, v):
         # "groupName",    # !!could check for unique
         # "nodeAddress",  # !!could check for unique
         # "roomAddress",  # !!could check for unique
+        "mode",         # validated by schema
         "lockType",     # validated by schema
         "nodeType",     # validated by schema
         "nodeSubType",  # validated by schema
@@ -92,7 +94,7 @@ def process_keyvalue(k, v):
             isTech = v in keywords["techs"]
             isWeapon = v in keywords["weapons"]
             isValue = v in keywords["values"]
-            if (isEnemy or last_enemy != "") and ".enemy" in k:
+            if (isEnemy or last_enemy != "") and ".enemy" in k and ".enemyKill" not in k:
                 if ".type" not in k:
                     last_enemy = v
                 elif ".type" in k:
@@ -108,7 +110,7 @@ def process_keyvalue(k, v):
                                 goodValue = attackExists
                         last_enemy = ""
                     else:
-                        print(f"{last_enemy} not found!")
+                        print(f"🔴ERROR: {last_enemy} not found!")
             else:
                 if not isArea and \
                     not isEnemy and \
@@ -119,8 +121,58 @@ def process_keyvalue(k, v):
                     not isWeapon and \
                     not isValue:
                     goodValue = False
-                    print(k, v)
+                    print(f"🟡{k} {v}")
     return goodValue
+
+def process_strats(src, paramData):
+    key = paramData["key"]
+    fromNode = paramData["fromNode"]
+    fromNodeRef = paramData["fromNodeRef"]
+    roomData = paramData["roomData"]
+    toNode = paramData["toNode"]
+    bail = paramData["bail"]
+
+    showNodes = True
+    toNodeRef = f"{fromNodeRef}:{toNode}"
+    for strat in src["strats"]:
+        stratRef = f"{toNodeRef}:{strat}"
+        if fromNode in roomData["links"]["from"]:
+            if toNode in roomData["links"]["from"][fromNode]["to"]:
+                if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
+                    print(f"🔴ERROR: Invalid strat:{stratRef}")
+                    bail = True
+                else:
+                    if showArea:
+                        print(f"🟢{stratRef}")
+                    roomData["nodes"][key]["from"][fromNode]["to"][toNode]["strats"].append(strat)
+            else:
+                foundPath = False
+                for tNode in roomData["links"]["from"][fromNode]["to"]:
+                    if (not foundPath) and (toNode in roomData["links"]["from"][tNode]["to"]):
+                        foundPath = True
+                        print(f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}")
+                if not foundPath:
+                    if str(room["id"]) in cheatSheetJSON and \
+                        str(fromNode) in cheatSheetJSON[str(room["id"])] and \
+                        str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
+                        intermediateNode = cheatSheetJSON[str(room["id"])][str(fromNode)][str(toNode)]["via"]
+                        print(f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}")
+                    else:
+                        print(f"🔴ERROR: Destination node path not found:{toNodeRef}")
+                        bail = True
+        else:
+            print(f"🔴ERROR: From node not found:{fromNodeRef}")
+            bail = True
+
+    paramData = {
+        "fromNode": fromNode,
+        "fromNodeRef": fromNodeRef,
+        "roomData": roomData,
+        "showNodes": showNodes,
+        "toNode": toNode,
+        "bail": bail
+    }
+    return paramData
 
 keywords = []
 
@@ -224,12 +276,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     "from": {}
                                 },
                                 "nodes": {
+                                    "froms": [],
+                                    "tos": [],
                                     "leaveCharged": {
                                         "from": {}
                                     }
                                 }
                             }
                             showNodes = False
+                            gModeObjects = []
                             if "links" in room:
                                 for link in room["links"]:
                                     if "from" in link:
@@ -237,6 +292,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                             "to": {}
                                         }
                                         for to in link["to"]:
+                                            if to["id"] not in roomData["nodes"]["tos"]:
+                                                roomData["nodes"]["tos"].append(to["id"])
+                                                gModeTo = to
+                                                gModeTo["fromNode"] = link["from"]
+                                                gModeObjects.append(gModeTo)
                                             roomData["links"]["from"][link["from"]]["to"][to["id"]] = {
                                                 "strats": []
                                             }
@@ -244,6 +304,13 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 for strat in to["strats"]:
                                                     roomData["links"]["from"][link["from"]]["to"][to["id"]]["strats"].append(strat["name"])
                             for node in room["nodes"]:
+                                if "id" in node:
+                                    nodeRef = f"{roomRef}:{node['id']}"
+                                    if node["id"] in roomData["nodes"]["froms"]:
+                                        print(f"🔴ERROR: Node ID not unique! {nodeRef}")
+                                        bail = True
+                                    else:
+                                        roomData["nodes"]["froms"].append(node["id"])
                                 if "canLeaveCharged" in node:
                                     for leave in node["canLeaveCharged"]:
                                         if "initiateRemotely" in leave:
@@ -268,38 +335,83 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                             print(f"🔴ERROR: Destination node not defined:{fromNodeRef}")
                                                             bail = True
                                                         if "strats" in path:
-                                                            showNodes = True
-                                                            toNodeRef = f"{fromNodeRef}:{toNode}"
-                                                            for strat in path["strats"]:
-                                                                stratRef = f"{toNodeRef}:{strat}"
-                                                                if fromNode in roomData["links"]["from"]:
-                                                                    if toNode in roomData["links"]["from"][fromNode]["to"]:
-                                                                        if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
-                                                                            print(f"🔴ERROR: Invalid strat:{stratRef}")
-                                                                            bail = True
-                                                                        else:
-                                                                            if showArea:
-                                                                                print(f"🟢{stratRef}")
-                                                                                pass
-                                                                            roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"][toNode]["strats"].append(strat)
-                                                                    else:
-                                                                        foundPath = False
-                                                                        for tNode in roomData["links"]["from"][fromNode]["to"]:
-                                                                            if (not foundPath) and (toNode in roomData["links"]["from"][tNode]["to"]):
-                                                                                foundPath = True
-                                                                                print(f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}")
-                                                                        if not foundPath:
-                                                                            if str(room["id"]) in cheatSheetJSON and \
-                                                                                str(fromNode) in cheatSheetJSON[str(room["id"])] and \
-                                                                                str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
-                                                                                intermediateNode = cheatSheetJSON[str(room["id"])][str(fromNode)][str(toNode)]["via"]
-                                                                                print(f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}")
-                                                                            else:
-                                                                                print(f"🔴ERROR: Destination node path not found:{toNodeRef}")
-                                                                                bail = True
-                                                                else:
-                                                                    print(f"🔴ERROR: From node not found:{fromNodeRef}")
-                                                                    bail = True
+                                                            paramData = {
+                                                                "key": "leaveCharged",
+                                                                "fromNode": fromNode,
+                                                                "fromNodeRef": fromNodeRef,
+                                                                "roomData": roomData,
+                                                                "toNode": toNode,
+                                                                "bail": bail
+                                                            }
+                                                            paramData = process_strats(path, paramData)
+                                                            showNodes = paramData["showNodes"]
+                                                            bail = paramData["bail"]
+
+                                if "leaveWithGMode" in node:
+                                    for leaveG in node["leaveWithGMode"]:
+                                        gModeObjects.append(leaveG)
+                            for gModeObj in gModeObjects:
+                                if "strats" in gModeObj:
+                                    parentNodeRef = ""
+                                    if "fromNode" in gModeObj:
+                                        parentNodeRef = f"{gModeObj['fromNode']}:"
+                                    toNodeRef = f"{roomRef}:{parentNodeRef}"
+                                    if "id" in gModeObj:
+                                        toNodeRef += f"{gModeObj['id']}:"
+                                    for strat in gModeObj["strats"]:
+                                        stratRef = f"{toNodeRef}{strat['name']}"
+                                        if "requires" in strat:
+                                            for req in strat["requires"]:
+                                                if "comeInWithGMode" in req:
+                                                    if "fromNodes" in req["comeInWithGMode"]:
+                                                        for fromNode in req["comeInWithGMode"]["fromNodes"]:
+                                                            fromNodeRef = f"{stratRef}:{fromNode}"
+                                                            if fromNode not in roomData["nodes"]["froms"]:
+                                                                print(f"🔴ERROR: From Node doesn't exist:{fromNodeRef}")
+                                                                bail = True
+                                                            else:
+                                                                print(f"🟢{fromNodeRef}")
+                            for node in room["nodes"]:
+                                orphaned = False
+                                if node["nodeType"] != "door" and \
+                                    node["id"] not in roomData["nodes"]["tos"]:
+                                    nodeRef = f"{roomRef}:{node['id']}:{node['name']}"
+                                    orphaned = True
+                                if orphaned:
+                                    connections = {
+                                        "inter": {},
+                                        "intra": {},
+                                        "subarea": {}
+                                    }
+                                    connectionPath = os.path.join(".","connection")
+                                    with open(os.path.join(connectionPath, "inter.json"), "r", encoding="utf-8") as connectionFile:
+                                        connections["inter"] = json.load(connectionFile)
+                                    for sector in ["intra", "subarea"]:
+                                        sectorPath = os.path.join(".","connection", area.lower())
+                                        filename = sector
+                                        if sector == "subarea":
+                                            filename = subarea.lower()
+                                        with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
+                                            connections[sector] = json.load(connectionFile)
+                                    foundNode = False
+                                    otherRef = ""
+                                    for sector in ["subarea", "intra", "inter"]:
+                                        for connection in connections[sector]["connections"]:
+                                            for [cNodeIDX, cNode] in enumerate(connection["nodes"]):
+                                                if foundNode:
+                                                    break
+                                                if cNode["roomid"] == room["id"]:
+                                                    if cNode["nodeid"] == node["id"]:
+                                                        oNode = connection["nodes"][0 if cNodeIDX == 1 else 1]
+                                                        otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
+                                                        foundNode = True
+                                    if not foundNode:
+                                        print(f"🔴ERROR: Orphaned Node! {nodeRef}")
+                                        bail = True
+                                    else:
+                                        print(f"🟢{nodeRef}")
+                                        print(f"::{otherRef}")
+                                        showArea = True
                             if showNodes:
                                 # print(json.dumps(roomData, indent=2))
                                 pass

@@ -359,7 +359,7 @@ __Additional considerations__
 * A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
 * A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
-  * The `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * The `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
 * A `comeInWithRMode` object implicitly requires a reserve trigger.
@@ -387,9 +387,9 @@ __Additional considerations__
 
 * A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
 * A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `artificialMorph` is `true` then it also requires the `canArtificialMorph` tech.
+  * If `artificialMorph` is `true` then it also requires either the `canArtificialMorph` tech or the Morph item.
 * A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithGModeSetup` object must satisfy following requirements in order to match:
+  * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
     * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
     * Samus must have non-zero reserve energy.
     * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
@@ -397,13 +397,28 @@ __Additional considerations__
     * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
     * If `artificialMorph` is `true`, then either the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true` or there is an additional requirement that the Morph item be collected.
     * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
-* In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and preceding setup:
+* In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and the need to damage down (and possibly drain most of reserves) in the preceding setup:
   * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
   * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
   * Samus' reserve energy will always become zero.
 
 Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
+
+#### itemNotCollectedAtNode object
+An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
+an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
+Wrecked Ship items) are not included in this requirement and would need to be specified separately if applicable. In many situations,
+an `itemNotCollectedAtNode` requirement should be accompanied by a `canRiskPermanentLossOfAccess`, if it is possible to prematurely obtain
+the item and then get stuck from being unable to do the strat.
+
+__Example:__
+```json
+{"requires": [
+  {"itemNotCollectedAtNode": 1},
+  "canRiskPermanentLossOfAccess"
+]}
+```
 
 ### Room Pathing Objects
 This section contains logical elements that are affected by Samus' pathing within a room.

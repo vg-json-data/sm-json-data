@@ -151,7 +151,7 @@ Represents the ability to exit through the door while taking damage during the t
 
 The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work.
 
-The node property `leaveWithGModeSetup` is an array of objects which each currently have a single property:
+The node property `leaveWithGModeSetup` is an array of objects each of which has one main property:
 
 * _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while taking damage.
 
@@ -184,7 +184,7 @@ A `leaveWithGMode` object does not need to be included for strats which simply t
 }}
 ```
 
-where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`.
+where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`. Here we are referring to nodes with `"nodeType": "door"`, which excludes sand entrances (which instead have `"nodeType": "entrance"`).
 
 #### gModeImmobile
 
