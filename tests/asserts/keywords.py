@@ -17,6 +17,7 @@ uniques = {
     "roomAddress": [],
     "nodeAddress": []
 }
+messages = {}
 
 def process_keyvalue(k, v):
     '''
@@ -69,7 +70,9 @@ def process_keyvalue(k, v):
             uniques[kCheck].append(v)
             isSkip = True
         else:
-            print(f"🔴ERROR: {k}:{v} not unique!")
+            msg = f"🔴ERROR: {k}:{v} not unique!"
+            messages["reds"].append(msg)
+            messages["counts"]["reds"] += 1
             bail = True
 
     if processValue:
@@ -108,9 +111,17 @@ def process_keyvalue(k, v):
                                         if attack["name"] == v:
                                             attackExists = True
                                 goodValue = attackExists
+                                if not goodValue:
+                                    msg = f"🔴ERROR: {k}:{last_enemy} doesn't have attack '{v}'"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                    bail = True
                         last_enemy = ""
                     else:
-                        print(f"🔴ERROR: {last_enemy} not found!")
+                        msg = f"🔴ERROR: {last_enemy} not found!"
+                        messages["reds"].append(msg)
+                        messages["counts"]["reds"] += 1
+                        bail = True
             else:
                 if not isArea and \
                     not isEnemy and \
@@ -121,7 +132,9 @@ def process_keyvalue(k, v):
                     not isWeapon and \
                     not isValue:
                     goodValue = False
-                    print(f"🟡{k} {v}")
+                    msg = f"🔴{k} {v}"
+                    messages["reds"].append(msg)
+                    messages["counts"]["reds"] += 1
     return goodValue
 
 def process_strats(src, paramData):
@@ -129,6 +142,7 @@ def process_strats(src, paramData):
     fromNode = paramData["fromNode"]
     fromNodeRef = paramData["fromNodeRef"]
     roomData = paramData["roomData"]
+    roomIDX = paramData["roomIDX"]
     toNode = paramData["toNode"]
     bail = paramData["bail"]
 
@@ -139,29 +153,42 @@ def process_strats(src, paramData):
         if fromNode in roomData["links"]["from"]:
             if toNode in roomData["links"]["from"][fromNode]["to"]:
                 if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
-                    print(f"🔴ERROR: Invalid strat:{stratRef}")
+                    msg = f"🔴ERROR: Invalid strat:{stratRef}"
+                    messages["reds"].append(msg)
+                    messages["counts"]["reds"] += 1
                     bail = True
                 else:
                     if showArea:
-                        print(f"🟢{stratRef}")
+                        msg = ""
+                        msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
+                        messages["greens"].append(msg)
+                        messages["counts"]["greens"] += 1
                     roomData["nodes"][key]["from"][fromNode]["to"][toNode]["strats"].append(strat)
             else:
                 foundPath = False
                 for tNode in roomData["links"]["from"][fromNode]["to"]:
                     if (not foundPath) and (toNode in roomData["links"]["from"][tNode]["to"]):
                         foundPath = True
-                        print(f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}")
+                        msg = f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}"
+                        # messages["greens"].append(msg)
+                        # messages["counts"]["greens"] += 1
                 if not foundPath:
                     if str(room["id"]) in cheatSheetJSON and \
                         str(fromNode) in cheatSheetJSON[str(room["id"])] and \
                         str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
                         intermediateNode = cheatSheetJSON[str(room["id"])][str(fromNode)][str(toNode)]["via"]
-                        print(f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}")
+                        msg = f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}"
+                        messages["yellows"].append(msg)
+                        messages["counts"]["yellows"] += 1
                     else:
-                        print(f"🔴ERROR: Destination node path not found:{toNodeRef}")
+                        msg = f"🔴ERROR: Destination node path not found:{toNodeRef}"
+                        messages["reds"].append(msg)
+                        messages["counts"]["reds"] += 1
                         bail = True
         else:
-            print(f"🔴ERROR: From node not found:{fromNodeRef}")
+            msg = f"🔴ERROR: From node not found:{fromNodeRef}"
+            messages["reds"].append(msg)
+            messages["counts"]["reds"] += 1
             bail = True
 
     paramData = {
@@ -247,6 +274,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                 ][0]
                 # print(flattened_dict)
                 if "rooms" in regionJSON:
+                    messages = {
+                        "reds": [],
+                        "yellows": [],
+                        "greens": [],
+                        "counts": {
+                            "reds": 0,
+                            "yellows": 0,
+                            "greens": 0
+                        }
+                    }
+
                     room = regionJSON["rooms"][0]
                     area = room["area"]
                     subarea = room["subarea"]
@@ -257,18 +295,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         ret = process_keyvalue(k, v)
                         if not ret and not showArea:
                             showArea = True
-                    for room in regionJSON["rooms"]:
+                    for [roomIDX, room] in enumerate(regionJSON["rooms"]):
                         roomRef = f"{room['id']}:{room['name']}"
                         if room["id"] not in uniques["roomID"]:
                             uniques["roomID"].append(room["id"])
                         else:
-                            print(f"🔴ERROR: Room ID not unique! {roomRef}")
-                            bail = True
+                            msg = f"🔴ERROR: Room ID not unique! {roomRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
                         if room["name"] not in uniques["roomName"]:
                             uniques["roomName"].append(room["name"])
                         else:
-                            print(f"🔴ERROR: Room Name not unique! {roomRef}")
-                            bail = True
+                            msg = f"🔴ERROR: Room Name not unique! {roomRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
                         if "nodes" in room:
                             roomData = {
                                 "id": room["id"],
@@ -307,8 +347,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 if "id" in node:
                                     nodeRef = f"{roomRef}:{node['id']}"
                                     if node["id"] in roomData["nodes"]["froms"]:
-                                        print(f"🔴ERROR: Node ID not unique! {nodeRef}")
-                                        bail = True
+                                        msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
                                     else:
                                         roomData["nodes"]["froms"].append(node["id"])
                                 if "canLeaveCharged" in node:
@@ -332,14 +373,16 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                     "strats": []
                                                                 }
                                                         if toNode == -1:
-                                                            print(f"🔴ERROR: Destination node not defined:{fromNodeRef}")
-                                                            bail = True
+                                                            msg = f"🔴ERROR: Destination node not defined:{fromNodeRef}"
+                                                            messages["reds"].append(msg)
+                                                            messages["counts"]["reds"] += 1
                                                         if "strats" in path:
                                                             paramData = {
                                                                 "key": "leaveCharged",
                                                                 "fromNode": fromNode,
                                                                 "fromNodeRef": fromNodeRef,
                                                                 "roomData": roomData,
+                                                                "roomIDX": roomIDX,
                                                                 "toNode": toNode,
                                                                 "bail": bail
                                                             }
@@ -367,10 +410,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         for fromNode in req["comeInWithGMode"]["fromNodes"]:
                                                             fromNodeRef = f"{stratRef}:{fromNode}"
                                                             if fromNode not in roomData["nodes"]["froms"]:
-                                                                print(f"🔴ERROR: From Node doesn't exist:{fromNodeRef}")
-                                                                bail = True
+                                                                msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
+                                                                messages["reds"].append(msg)
+                                                                messages["counts"]["reds"] += 1
                                                             else:
-                                                                print(f"🟢{fromNodeRef}")
+                                                                msg = ""
+                                                                msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
+                                                                messages["greens"].append(msg)
+                                                                messages["counts"]["greens"] += 1
                             for node in room["nodes"]:
                                 orphaned = False
                                 if node["nodeType"] != "door" and \
@@ -406,19 +453,53 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
                                                         foundNode = True
                                     if not foundNode:
-                                        print(f"🔴ERROR: Orphaned Node! {nodeRef}")
-                                        bail = True
+                                        msg = f"🔴ERROR: Orphaned Node! {nodeRef}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
                                     else:
-                                        print(f"🟢{nodeRef}")
-                                        print(f"::{otherRef}")
-                                        showArea = True
+                                        msg = f"🟢{nodeRef}" + "\n" + f"::{otherRef}"
+                                        # messages["greens"].append(msg)
+                                        # messages["counts"]["greens"] += 1
+                                        # showArea = True
                             if showNodes:
                                 # print(json.dumps(roomData, indent=2))
                                 pass
                     if showArea:
-                        print()
+                        usedGroups = []
+                        for clr in ["green", "yellow", "red"]:
+                        # for clr in ["green", "red", "yellow"]:
+                            if len(messages[f"{clr}s"]) > 0:
+                                for msg in messages[f"{clr}s"]:
+                                    # print(msg)
+                                    pattern = r"([🔴|🟡|🟢]{1})(rooms)(?:\.)([\d]+)(?:\.)(nodes)(?:\.)([\w]+)(?:\.)([^\.]+)(?:\.)([\w]+)(?:\.)(initiateRemotely.pathToDoor)(?:\.)([\w]+)(?:\.)(strats)(?:\.)([\w]+)(?:[\s])(.*)"
+                                    matches = re.match(pattern, msg)
+                                    if matches:
+                                        groups = list(matches.groups())
+                                        del groups[0]
+                                        groups[3] = 'x'
+                                        groups[5] = 'x'
+                                        groups[7] = 'x'
+                                        groups[9] = 'x'
+                                        if ".".join(groups) not in usedGroups:
+                                            usedGroups.append(".".join(groups))
+                                            showArea = False
+                                            if clr not in ["green"]:
+                                                showArea = True
+                                                print(".".join(groups))
+                                                # print(msg)
+                                        elif clr == "red":
+                                            messages["counts"]["reds"] -= 1
+                                    else:
+                                        print(msg)
+                                # print("\n".join(messages[f"{clr}s"]))
+                        if showArea:
+                            print()
+                    # print(messages["counts"])
+                    if messages["counts"]["reds"] > 0:
+                        bail = True
 
 # print(uniques)
 
 if bail:
+    print("🔴ERROR🔴")
     sys.exit(1)
