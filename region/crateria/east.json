@@ -860,6 +860,17 @@
                 }
               ]
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit by Zeb",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
         },
         {
@@ -903,6 +914,13 @@
           "name": "West Ocean Junction (North-South Transition)",
           "nodeType": "junction",
           "nodeSubType": "junction"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Shoot Respawning Super Block",
+          "obstacleType": "abstract"
         }
       ],
       "enemies": [
@@ -1113,6 +1131,17 @@
                   "note": "The shot blocks can be destroyed without using bombs"
                 },
                 {
+                  "name": "X-Ray Standup",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "canXRayStandUp",
+                    "canPartialFloorClip",
+                    "canDownGrab"
+                  ],
+                  "note": "Unmorph and cancel g-mode, shoot the shot block, then x-ray standup, partial floor clip, and down grab to escape."
+                },
+                {
                   "name": "West Ocean Bug Boost",
                   "notable": true,
                   "requires": [
@@ -1131,6 +1160,21 @@
                     "This strat is a one-shot try and failure is a softlock."
                   ],
                   "devNote": "Could use a failure definition?"
+                },
+                {
+                  "name": "G-mode Morph X-Ray Standup",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [6],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "canXRayStandUp",
+                    "canPartialFloorClip",
+                    "canDownGrab"
+                  ],
+                  "note": "Unmorph and cancel g-mode, shoot the shot block, then x-ray standup, partial floor clip, and down grab to escape."
                 }
               ]
             }
@@ -1238,13 +1282,19 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "Super",
-                    {"ammo": {
-                      "type": "Super",
-                      "count": 1
-                    }}
+                    {"ammo": { "type": "Super", "count": 1 }}
                   ],
-                  "note": "Super is for a Super Block. It's not an obstacle because it respawns."
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": "The super block respawns.",
+                  "devNote": [
+                    "This obstacle is to represent shooting the super block and is only used in quickly returning after grabbing the item.",
+                    "It is necessary because there is a g-mode strat to get to 14."
+                  ]
                 }
               ]
             }
@@ -1359,16 +1409,65 @@
               "id": 14,
               "strats": [
                 {
-                  "name": "G-mode to overload plms by bombing Crumble Block",
+                  "name": "G-mode Morph Overload PLMs by Bombing Crumble Block",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }},
+                      {"and": [
+                        {"comeInWithGMode": {
+                          "fromNodes": [5],
+                          "mode": "any",
+                          "artificialMorph": true
+                        }},
+                        {"or": [
+                          "Gravity",
+                          "Morph",
+                          {"and": [
+                            "SpringBall",
+                            {"or": [
+                              "HiJump",
+                              "canCarefulJump"
+                            ]}
+                          ]}
+                        ]}
+                      ]}
+                    ]},
+                    "h_canArtificialMorphIBJ",
+                    "h_canArtificialMorphCeilingBombJump"
+                  ],
+                  "note": "Start the IBJ on the second downward tile from the door. The crumble block is the leftmost flat ceiling tile.",
+                  "devNote": "Without canCeilingBombJump, this would take more than 10 minutes."
+                },
+                {
+                  "name": "G-mode Morph Overload PLMs by Bombing Crumble Block",
                   "notable": false,
                   "requires": [
                     {"comeInWithGMode": {
-                      "fromNodes": [1, 2],
+                      "fromNodes": [4],
                       "mode": "any",
-                      "artificialMorph": false
+                      "artificialMorph": true
                     }},
-                    "canIBJ"
-                  ]
+                    {"or": [
+                      "Gravity",
+                      "Morph",
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "HiJump",
+                          "canCarefulJump"
+                        ]}
+                      ]}
+                    ]},
+                    "h_canArtificialMorphIBJ",
+                    "h_canArtificialMorphCeilingBombJump"
+                  ],
+                  "note": "Start the IBJ on the second downward tile from the door. The crumble block is the leftmost flat ceiling tile.",
+                  "devNote": "Without canCeilingBombJump, this would take more than 10 minutes."
                 }
               ]
             }
@@ -1394,22 +1493,18 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "Super",
-                    {"ammo": {
-                      "type": "Super",
-                      "count": 1
-                    }}
+                    {"ammo": { "type": "Super", "count": 1 }}
                   ],
-                  "devNote": "Super is for a Super Block. It's not an obstacle because it respawns."
+                  "note": "The super block respawns."
                 },
                 {
                   "name": "Beat West Ocean Super Block Respawn",
                   "notable": false,
-                  "requires": [],
-                  "note": [
-                    "It's possible to go 12 -> 14 -> 10 -> 14 -> 12 before the Super block respawns, if going quick enough.",
-                    "Note that this representation of the strat would need to be reworked if there were another way to access 14 or 10."
-                  ]
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canCarefulJump"
+                  ],
+                  "note": "It's possible to go down, grab the item, and return before the Super block respawns, if going quick enough."
                 }
               ]
             },
