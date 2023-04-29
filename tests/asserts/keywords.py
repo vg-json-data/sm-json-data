@@ -17,7 +17,16 @@ uniques = {
     "roomAddress": [],
     "nodeAddress": []
 }
-messages = {}
+messages = {
+    "greens": [],
+    "yellows": [],
+    "reds": [],
+    "counts": {
+        "greens": 0,
+        "yellows": 0,
+        "reds": 0
+    }
+}
 
 def process_keyvalue(k, v):
     '''
@@ -25,7 +34,7 @@ def process_keyvalue(k, v):
     '''
     global bail
     global last_enemy
-    global uniques
+    global messages
     goodValue = True
     processValue = True
     goodKeys = [
@@ -73,7 +82,7 @@ def process_keyvalue(k, v):
             msg = f"🔴ERROR: {k}:{v} not unique!"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
-            bail = True
+            # bail = True
 
     if processValue:
         isFloat = isinstance(v, float)
@@ -115,13 +124,13 @@ def process_keyvalue(k, v):
                                     msg = f"🔴ERROR: {k}:{last_enemy} doesn't have attack '{v}'"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-                                    bail = True
+                                    # bail = True
                         last_enemy = ""
                     else:
                         msg = f"🔴ERROR: {last_enemy} not found!"
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
-                        bail = True
+                        # bail = True
             else:
                 if not isArea and \
                     not isEnemy and \
@@ -138,6 +147,9 @@ def process_keyvalue(k, v):
     return goodValue
 
 def process_strats(src, paramData):
+    '''
+    Process strats
+    '''
     key = paramData["key"]
     fromNode = paramData["fromNode"]
     fromNodeRef = paramData["fromNodeRef"]
@@ -156,14 +168,17 @@ def process_strats(src, paramData):
                     msg = f"🔴ERROR: Invalid strat:{stratRef}"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
-                    bail = True
+                    # bail = True
                 else:
                     if showArea:
                         msg = ""
                         msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
                         messages["greens"].append(msg)
                         messages["counts"]["greens"] += 1
-                    roomData["nodes"][key]["from"][fromNode]["to"][toNode]["strats"].append(strat)
+                    roomData["nodes"][key] \
+                      ["from"][fromNode] \
+                      ["to"][toNode] \
+                      ["strats"].append(strat)
             else:
                 foundPath = False
                 for tNode in roomData["links"]["from"][fromNode]["to"]:
@@ -176,7 +191,10 @@ def process_strats(src, paramData):
                     if str(room["id"]) in cheatSheetJSON and \
                         str(fromNode) in cheatSheetJSON[str(room["id"])] and \
                         str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
-                        intermediateNode = cheatSheetJSON[str(room["id"])][str(fromNode)][str(toNode)]["via"]
+                        intermediateNode = cheatSheetJSON[str(room["id"])] \
+                          [str(fromNode)] \
+                          [str(toNode)] \
+                          ["via"]
                         msg = f"🟡{stratRef}::{fromNode}:{intermediateNode}:{toNode}"
                         messages["yellows"].append(msg)
                         messages["counts"]["yellows"] += 1
@@ -184,12 +202,12 @@ def process_strats(src, paramData):
                         msg = f"🔴ERROR: Destination node path not found:{toNodeRef}"
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
-                        bail = True
+                        # bail = True
         else:
             msg = f"🔴ERROR: From node not found:{fromNodeRef}"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
-            bail = True
+            # bail = True
 
     paramData = {
         "fromNode": fromNode,
@@ -258,7 +276,15 @@ for jsonPath in [
                 process_keyvalue(k, v)
 
 cheatSheetJSON = {}
-with open(os.path.join(".","tests","asserts","canLeaveCharged.json"), encoding="utf-8") as cheatSheetFile:
+with open(
+    os.path.join(
+        ".",
+        "tests",
+        "asserts",
+        "canLeaveCharged.json"
+    ),
+    encoding="utf-8"
+) as cheatSheetFile:
     cheatSheetJSON = json.load(cheatSheetFile)
 
 print("")
@@ -274,21 +300,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                 ][0]
                 # print(flattened_dict)
                 if "rooms" in regionJSON:
-                    messages = {
-                        "reds": [],
-                        "yellows": [],
-                        "greens": [],
-                        "counts": {
-                            "reds": 0,
-                            "yellows": 0,
-                            "greens": 0
-                        }
-                    }
-
                     room = regionJSON["rooms"][0]
                     area = room["area"]
                     subarea = room["subarea"]
-                    subsubarea = "subsubarea" in room and room["subsubarea"] or ""
+                    subsubarea = room["subsubarea"] if "subsubarea" in room else ""
                     showArea = False
                     print(f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or ""))
                     for [k, v] in flattened_dict.items():
@@ -318,6 +333,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 "nodes": {
                                     "froms": [],
                                     "tos": [],
+                                    "spawnAts": [],
                                     "leaveCharged": {
                                         "from": {}
                                     }
@@ -337,12 +353,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 gModeTo = to
                                                 gModeTo["fromNode"] = link["from"]
                                                 gModeObjects.append(gModeTo)
-                                            roomData["links"]["from"][link["from"]]["to"][to["id"]] = {
+                                            roomData["links"] \
+                                              ["from"][link["from"]] \
+                                              ["to"][to["id"]] = {
                                                 "strats": []
                                             }
                                             if "strats" in to:
                                                 for strat in to["strats"]:
-                                                    roomData["links"]["from"][link["from"]]["to"][to["id"]]["strats"].append(strat["name"])
+                                                    roomData["links"] \
+                                                      ["from"][link["from"]] \
+                                                      ["to"][to["id"]] \
+                                                      ["strats"].append(strat["name"])
                             for node in room["nodes"]:
                                 if "id" in node:
                                     nodeRef = f"{roomRef}:{node['id']}"
@@ -352,6 +373,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         messages["counts"]["reds"] += 1
                                     else:
                                         roomData["nodes"]["froms"].append(node["id"])
+                                if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
+                                    roomData["nodes"]["spawnAts"].append(node["spawnAt"])
                                 if "canLeaveCharged" in node:
                                     for leave in node["canLeaveCharged"]:
                                         if "initiateRemotely" in leave:
@@ -424,34 +447,46 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     node["id"] not in roomData["nodes"]["tos"]:
                                     nodeRef = f"{roomRef}:{node['id']}:{node['name']}"
                                     orphaned = True
+
+                                foundNode = False
+                                if "spawnAt" in node:
+                                    foundNode = node["spawnAt"] in roomData["nodes"]["froms"]
+                                    orphaned = not foundNode
+                                    if orphaned:
+                                        msg = f"🔴ERROR: Orphaned SpawnAt! {nodeRef}::{node['spawnAt']}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+
                                 if orphaned:
                                     connections = {
                                         "inter": {},
                                         "intra": {},
                                         "subarea": {}
                                     }
+
                                     connectionPath = os.path.join(".","connection")
-                                    with open(os.path.join(connectionPath, "inter.json"), "r", encoding="utf-8") as connectionFile:
-                                        connections["inter"] = json.load(connectionFile)
-                                    for sector in ["intra", "subarea"]:
-                                        sectorPath = os.path.join(".","connection", area.lower())
-                                        filename = sector
-                                        if sector == "subarea":
-                                            filename = subarea.lower()
-                                        with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
-                                            connections[sector] = json.load(connectionFile)
-                                    foundNode = False
                                     otherRef = ""
-                                    for sector in ["subarea", "intra", "inter"]:
-                                        for connection in connections[sector]["connections"]:
-                                            for [cNodeIDX, cNode] in enumerate(connection["nodes"]):
-                                                if foundNode:
-                                                    break
-                                                if cNode["roomid"] == room["id"]:
-                                                    if cNode["nodeid"] == node["id"]:
-                                                        oNode = connection["nodes"][0 if cNodeIDX == 1 else 1]
-                                                        otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
-                                                        foundNode = True
+
+                                    if not foundNode:
+                                        with open(os.path.join(connectionPath, "inter.json"), "r", encoding="utf-8") as connectionFile:
+                                            connections["inter"] = json.load(connectionFile)
+                                        for sector in ["intra", "subarea"]:
+                                            sectorPath = os.path.join(".","connection", area.lower())
+                                            filename = sector
+                                            if sector == "subarea":
+                                                filename = subarea.lower()
+                                            with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
+                                                connections[sector] = json.load(connectionFile)
+                                        for sector in ["subarea", "intra", "inter"]:
+                                            for connection in connections[sector]["connections"]:
+                                                for [cNodeIDX, cNode] in enumerate(connection["nodes"]):
+                                                    if foundNode:
+                                                        break
+                                                    if cNode["roomid"] == room["id"]:
+                                                        if cNode["nodeid"] == node["id"]:
+                                                            oNode = connection["nodes"][0 if cNodeIDX == 1 else 1]
+                                                            otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
+                                                            foundNode = True
                                     if not foundNode:
                                         msg = f"🔴ERROR: Orphaned Node! {nodeRef}"
                                         messages["reds"].append(msg)
@@ -469,9 +504,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         for clr in ["green", "yellow", "red"]:
                         # for clr in ["green", "red", "yellow"]:
                             if len(messages[f"{clr}s"]) > 0:
-                                for msg in messages[f"{clr}s"]:
+                                for [msgIDX, msg] in enumerate(messages[f"{clr}s"]):
                                     # print(msg)
-                                    pattern = r"([🔴|🟡|🟢]{1})(rooms)(?:\.)([\d]+)(?:\.)(nodes)(?:\.)([\w]+)(?:\.)([^\.]+)(?:\.)([\w]+)(?:\.)(initiateRemotely.pathToDoor)(?:\.)([\w]+)(?:\.)(strats)(?:\.)([\w]+)(?:[\s])(.*)"
+                                    pattern = r"([🔴|🟡|🟢]{1})" + \
+                                      r"(rooms)(?:\.)" + \
+                                      r"([\d]+)(?:\.)" + \
+                                      r"(nodes)(?:\.)" + \
+                                      r"([\w]+)(?:\.)" + \
+                                      r"([^\.]+)(?:\.)" + \
+                                      r"([\w]+)(?:\.)" + \
+                                      r"(initiateRemotely.pathToDoor)(?:\.)" + \
+                                      r"([\w]+)(?:\.)" + \
+                                      r"(strats)(?:\.)" + \
+                                      r"([\w]+)(?:\.)" + \
+                                      r"(.*)"
                                     matches = re.match(pattern, msg)
                                     if matches:
                                         groups = list(matches.groups())
@@ -490,7 +536,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         elif clr == "red":
                                             messages["counts"]["reds"] -= 1
                                     else:
-                                        print(msg)
+                                        # print(msg)
+                                        pass
                                 # print("\n".join(messages[f"{clr}s"]))
                         if showArea:
                             print()
@@ -501,5 +548,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
 # print(uniques)
 
 if bail:
-    print("🔴ERROR🔴")
-    sys.exit(1)
+    firstErr = True
+    foundErr = False
+    for msg in messages["reds"]:
+        if "ERROR" in msg:
+            foundErr = True
+            if firstErr:
+                print("🔴ERROR🔴")
+                firstErr = False
+            print(msg)
+    if foundErr:
+        print("🔴Something fucked up! Bailing!")
+        sys.exit(1)
