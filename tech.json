@@ -51,6 +51,53 @@
               "name": "canCrossRoomJumpIntoWater",
               "requires": [ "canSuitlessMaridia" ],
               "note": "Using the momentum from jumping through a doorway from normal to water physics."
+            },
+            {
+              "name": "canSpaceJumpWaterBounce",
+              "requires": [
+                "canSuitlessMaridia",
+                "SpaceJump"
+              ],
+              "note": "Using Space Jump to bounce along the water line. It can be used to escape the water with a wall jump, or to get onto low platforms just above the water level.",
+              "extensionTechs": [
+                {
+                  "name": "canSpaceJumpWaterEscape",
+                  "requires": [ "canSpaceJumpWaterBounce" ],
+                  "note": "Converting Space Jump Water Bouncing into regular space jumps without Gravity. Typically requires HiJump."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "canPlayInSand",
+          "requires": [],
+          "note": [
+            "The ability to control Samus while under the effects of sand physics.",
+            "This includes the ability to perform a clean jump from the top of sand,",
+            "to platform while impeded by sandfalls, and to escape from a sand floor in water with Gravity.",
+            "This also allows using a sandfall to escape a sand floor with HiJump, and using Bombs to escape a 1-tile deep sand pit.",
+            "This does not include simply falling through sand or touching a negligible sandfall or using springball to avoid interacting with the sand."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canEscapeSand",
+              "requires": [ "canPlayInSand", "h_canCrouchJumpDownGrab", "canSuitlessMaridia" ],
+              "note": [
+                "The ability to escape from the bottom of a sand pit in water without Gravity Suit.",
+                "This means escaping 1-tile deep pits with a sandfall overtop without HiJump but with the help of the solid ledge or a frozen enemy.",
+                "This also applies to escaping deeper sand pits HiJump but no sandfall.",
+                "This does not include deep sand pits with a sandfall or 1-tile sand pits with no sandfall.",
+                "This is done by holding down and then crouch jumping to become unstuck, then transitioning to another action to ascend through the sand."
+              ]
+            },
+            {
+              "name": "canSandfallBounce",
+              "requires": [ "canPlayInSand", "canSuitlessMaridia" ],
+              "note": [
+                "Breaking the sand line while exiting a sandfall at the same time can be used as a way to gain an irregular amount of height.",
+                "Only useful while under the effects of water physics."
+              ]
             }
           ]
         }
@@ -66,6 +113,11 @@
           "note":"The ability to aim down to reduce Samus' hitbox to reach higher ledges. Commonly paired with a Crouch Jump."
         },
         {
+          "name": "canDownBack",
+          "requires": [],
+          "note": "Holding the direction buttons down and then also backwards in order to move forwards, while in the correct falling state."
+        },
+        {
           "name": "canMoonwalk",
           "requires": [],
           "note": "This is an option that can be turned on in the special setting mode after selecting a save file. It is required for some tech.",
@@ -79,7 +131,7 @@
         },
         {
           "name": "canResetFallSpeed",
-          "requires": [ "Morph" ],
+          "requires": [],
           "note": "Using unmorph as a way to reset fall speed.",
           "devNote": "Taking enemy damage can get the same effect but more situations where this is used would need to be found first."
         },
@@ -138,7 +190,7 @@
               "requires": [ "canTwoTileSqueeze" ],
               "note": [
                 "Moving along a 2-tile-high passage while standing up by repeatedly spin-jumping and then pressing down.",
-                "The tech comes with softlock risks without Morph Ball or a way wiggle to the right with canTurnaroundAimCancel."
+                "The tech comes with softlock risks without Morph Ball or a way to wiggle to the right with canTurnaroundAimCancel."
               ]
             }
           ]
@@ -180,9 +232,22 @@
           "requires": [],
           "note": [
             "Turning around quickly so as to manipulate game physics.",
-            "For using screw attack to break blocks and to shrink Samus hitbox following a wall jump",
-            "And for maneuvering sharply underwater."
+            "For using screw attack to break blocks and to shrink Samus hitbox following a wall jump,",
+            "and for maneuvering sharply underwater."
           ]
+        },
+        {
+          "name": "canOffScreenMovement",
+          "requires": [],
+          "note": [
+            "The ability to perform non-trivial movement while Samus is off-camera.",
+            "This does not include movement where visual feedback is unimportant, such as simply falling down or holding a single direction"
+          ]
+        },
+        {
+          "name": "canPreciseGrapple",
+          "requires": [ "Grapple" ],
+          "note": "The ability to precisely aim at grapple points while moving quickly, and precise control of Samus' speed and trajectory when releasing from a grapplable object."
         }
       ]
     },
@@ -406,28 +471,25 @@
         },
         {
           "name": "canBombHorizontally",
-          "requires": [ "h_canBombThings" ],
+          "requires": [],
           "note": "A horizontal bomb jump using a single bomb. Since it uses one bomb, it works with PBs as well.",
           "extensionTechs": [
             {
               "name": "canHBJ",
-              "requires": [
-                "h_canUseMorphBombs",
-                "canBombHorizontally"
-              ],
+              "requires": [ "canBombHorizontally" ],
               "note": "A horizontal bomb jump using two bombs. Longer range than single HBJ, much harder to execute, doesn't work with PBs."
             }
           ]
         },
         {
           "name": "canIBJ",
-          "requires": [ "h_canUseMorphBombs" ],
+          "requires": [],
           "note": "Infinite Bomb Jump. Using consecutive bomb jumps to gain height indefinitely.",
           "extensionTechs": [
             {
               "name": "canJumpIntoIBJ",
               "requires": [ "canIBJ" ],
-              "note": "The ability to start an IBJ from a jump. Can be required in strats that need Samus to IBJ up faster or to avoid something near the ground."
+              "note": "The ability to start an IBJ from a jump or spring ball jump. Can be required in strats that need Samus to IBJ up faster or to avoid something near the ground."
             },
             {
               "name": "canBombAboveIBJ",
@@ -446,7 +508,7 @@
             },
             {
               "name": "canSandIBJ",
-              "requires": [ "canJumpIntoIBJ" ],
+              "requires": [ "h_canJumpIntoIBJ" ],
               "note": "The ability to start an IBJ off a jump on sand. Pretty obnoxious."
             },
             {
@@ -462,10 +524,26 @@
           ]
         },
         {
+          "name": "canSpringBallBombJump",
+          "requires": ["SpringBall"],
+          "note": [
+            "After gaining some height with a single bomb explosion from the ground, use springball to jump higher.",
+            "Usable only when Samus' vertical speed is 0 (at the max height gained by the bomb)."
+          ]
+        },
+        {
           "name": "canBombJumpWaterEscape",
           "requires": [ "h_canBombThings" ],
           "note": "From a submerged platform, setting up a single bomb jump above the water line to propel Samus up and out of the water.",
           "devNote": "It's recommended to apply a number of tries as leniency here for the PBs version."
+        },
+        {
+          "name": "canBombJumpOnSand",
+          "requires": [ "canPlayInSand", "h_canBombThings" ],
+          "note": [
+            "The ability to bomb jump while dealing with the sinking effect of sand physics.",
+            "This is done by placing the bomb on or above the top of the sand line and then jumping again to land on the bomb explosion."
+          ]
         }
       ]
     },
@@ -546,14 +624,7 @@
                 {
                   "name": "canMochtroidIceClimb",
                   "requires": [ "canUseFrozenEnemies" ],
-                  "note": "Using a Mochtroid's movement to climb upwards by continually freezing it higher up",
-                  "extensionTechs": [
-                    {
-                      "name": "canSandMochtroidIceClimb",
-                      "requires": [ "canMochtroidIceClimb" ],
-                      "note": "Setting up a Mochtroid climb from a sand floor, where failure in a suitless environment can mean death"
-                    }
-                  ]
+                  "note": "Using a Mochtroid's movement to climb upwards by continually freezing it higher up"
                 },
                 {
                   "name": "canRemorphZebetiteSkip",
@@ -796,7 +867,22 @@
             "Used to fall on top of breakable bomb blocks or enemies.",
             "Performed by storing a spark while falling off a ledge, holding angle and crouching after storing a spark, or unmorphing."
           ],
-          "devNote": "This is not a momentum continuing action like canBlueSpaceJump"
+          "devNote": "This is not a momentum continuing action like canBlueSpaceJump",
+          "extensionTechs": [
+            {
+              "name": "canSpeedKeepChain",
+              "requires": [
+                "canSpeedKeep",
+                "canLateralMidAirMorph"
+              ],
+              "note": [
+                "The ability to move while using a speedkeep. This can be done by jumping, releasing angle, then doing a midair morph on the descent, using mockball inputs.",
+                "Afterwards, hold angle again while soft unmorphing and continue to hold angle after landing.",
+                "Hold forward the entire time while morphed after the mockball inputs to prevent losing the speedkeep.",
+                "It is possible to use this alongside canXrayTurnaround to change directions during a speedkeep chain."
+              ]
+            }
+          ]
         }
       ]
     },
@@ -863,6 +949,25 @@
           ]
         },
         {
+          "name": "canXMode",
+          "requires": ["XRayScope"],
+          "note": [
+            "Ability to enter XMode using spikes by unmorphing frame perfectly before knockback ends with XRay ready to activate.",
+            "This can be used to charge a shinespark or to slowly move forward by armpumping.",
+            "Walking into a solid tile while in XMode will crash the game."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canSuperJump",
+              "requires": ["canXMode"],
+              "note": [
+                "Ability to Shinespark while in XMode in a controlled way.",
+                "A side effect of Super Jumping is that Samus gains a Blue Suit."
+              ]
+            }
+          ]
+        },
+        {
           "name": "canEnterRMode",
           "requires": [ "XRayScope", "ReserveTank", "canUseEnemies" ],
           "note": [
@@ -898,6 +1003,15 @@
                   ]
                 }
               ]
+            },
+            {
+              "name": "canDownwardGModeSetup",
+              "requires": [ "canEnterRMode" ],
+              "note": [
+                "Ability to setup an R-mode or G-mode through a downward door.",
+                "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition.",
+                "This is typically done using quicksand, clipping into the floor, or using a thawing frozen wall crawler."
+              ]
             }
           ]
         }
@@ -924,24 +1038,7 @@
       "techs": [
         {
           "name": "canCrystalFlash",
-          "requires": [
-            {"ammo": {
-              "type": "Missile",
-              "count": 10
-            }},
-            {"ammo": {
-              "type": "Super",
-              "count": 10
-            }},
-            {"ammo": {
-              "type": "PowerBomb",
-              "count": 11
-            }},
-            "Morph",
-            "Missile",
-            "Super",
-            "PowerBomb"
-          ],
+          "requires": [],
           "note": "Performing a Crystal Flash.",
           "extensionTechs": [
             {
