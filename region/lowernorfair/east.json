@@ -1074,7 +1074,7 @@
       "reusableRoomwideNotable": [
         {
           "name": "Lower Norfair Pillar Room with Power Bombs",
-          "note": "Cross the Pillar Room with 2 PBs and minimal damage."
+          "note": "Cross the Pillar Room with Power Bombs and minimal damage."
         }
       ],
       "links": [
@@ -1090,7 +1090,11 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "ScrewAttack",
-                    {"heatFrames": 550}
+                    {"or": [
+                      "canCarefulJump",
+                      {"heatFrames": 60}
+                    ]},
+                    {"heatFrames": 480}
                   ]
                 },
                 {
@@ -1100,7 +1104,17 @@
                     "h_canNavigateHeatRooms",
                     "ScrewAttack",
                     "SpaceJump",
-                    {"heatFrames": 380}
+                    {"or": [
+                      {"and": [
+                        "canCarefulJump",
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 2
+                        }},
+                        {"heatFrames": 300}
+                      ]},
+                      {"heatFrames": 380}
+                    ]}
                   ]
                 },
                 {
@@ -1108,12 +1122,19 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    "canMidairShinespark",
                     {"canComeInCharged": {
                       "fromNode": 1,
-                      "framesRemaining": 0,
-                      "shinesparkFrames": 75
+                      "framesRemaining": 15,
+                      "shinesparkFrames": 78,
+                      "excessShinesparkFrames": 8
                     }},
-                    {"heatFrames": 200}
+                    {"heatFrames": 210}
+                  ],
+                  "note": "Jump before shinesparking to avoid an early crash.",
+                  "devNote": [
+                    "There is a heatframe vs shinespark frame tradeoff here.",
+                    "This excessShinesparkFrame count breaks the small pillar near the door at 2"
                   ]
                 },
                 {
@@ -1128,7 +1149,7 @@
                       "shinesparkFrames": 0
                     }}
                   ],
-                  "note": [
+                  "devNote": [
                     "This is considered faster than Space Screw becomes we can safely assume carried momentum from previous rooms.",
                     "The heat frame count is conservative and assumes only the speed of a 4-tap."
                   ]
@@ -1139,16 +1160,53 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "Morph",
-                    "PowerBomb",
                     {"ammo": {
                       "type": "PowerBomb",
                       "count": 2
                     }},
-                    {"heatFrames": 800},
-                    {"acidFrames": 50}
+                    {"or": [
+                      {"and": [
+                        "canCarefulJump",
+                        "canResetFallSpeed",
+                        {"heatFrames": 660}
+                      ]},
+                      {"and": [
+                        "canWalljump",
+                        {"heatFrames": 660},
+                        {"or": [
+                          "canPreciseWalljump",
+                          {"acidFrames": 28}
+                        ]}
+                      ]},
+                      {"and": [
+                        {"heatFrames": 750},
+                        {"acidFrames": 36}
+                      ]}
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Lower Norfair Pillar Room with Power Bombs",
-                  "note": "Place the PBs next to the pillars in order to only use 2."
+                  "note": [
+                    "Place the PBs next to the pillars in order to only use 2.",
+                    "Minimize acid by unmorphing high to land back on the jump spot or walljumping before placing the bomb."
+                  ]
+                },
+                {
+                  "name": "Pillar Room with Three Power Bombs (Left to Right)",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    {"ammo": {
+                      "type": "PowerBomb",
+                      "count": 3
+                    }},
+                    {"heatFrames": 670}
+                  ],
+                  "reusableRoomwideNotable": "Lower Norfair Pillar Room with Power Bombs",
+                  "note": [
+                    "The power bombs can be placed pretty far from the next pillar in line.",
+                    "PB1 - Above the mound of dirt on the ground.  PB2 - On pillar 2.  PB3 - Near pillar 5."
+                  ]
                 }
               ],
               "devNote": "Potentially doable with morph bombs and enough energy, maybe, but let's not go there"
