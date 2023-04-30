@@ -46,6 +46,8 @@ for region in os.listdir(regionPath):
                                     stripped = re.sub(r"[" + search + "]+", repl, room["name"].lower())
                                 stripped = re.sub(r"[\s]{2,}", " ", stripped)
                                 stripped = re.sub(r" s ", "s ", stripped)
+                                if stripped.startswith("the "):
+                                    data["roomIDsByLCRoomName"][stripped[4:]] = room["id"]
                                 if stripped != room["name"].lower():
                                     data["roomIDsByLCRoomName"][stripped] = room["id"]
 
