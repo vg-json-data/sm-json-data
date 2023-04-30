@@ -9,6 +9,7 @@ import re
 data = {
     "regions": {},
     "roomIDsByLCRoomName": {},
+    "roomMetasByID": {},
     "roomsByRegion": {}
 }
 regionPath = os.path.join(
@@ -54,10 +55,17 @@ for region in os.listdir(regionPath):
 
                         # trim nodes
                         for [i, node] in enumerate(room["nodes"]):
-                            if "runways" in node:         del node["runways"]
-                            if "canLeaveCharged" in node: del node["canLeaveCharged"]
-                            if "viewableNodes" in node:   del node["viewableNodes"]
-                            if "locks" in node:           del node["locks"]
+                            for nuke in [
+                                "runways",
+                                "canLeaveCharged",
+                                "leaveWithGMode",
+                                "leaveWithGModeSetup",
+                                "gModeImmobile",
+                                "viewableNodes",
+                                "locks"
+                            ]:
+                                if nuke in node:
+                                    del node[nuke]
                             room["nodes"][i] = node
 
                         # trim room
@@ -117,6 +125,10 @@ for region in os.listdir(regionPath):
                         if subarea.lower() not in data["roomsByRegion"][region]:
                             data["roomsByRegion"][region][subarea] = {}
                         data["roomsByRegion"][region][subarea][room["id"]] = room
+                        data["roomMetasByID"][room["id"]] = {
+                             "region": region,
+                             "subarea": subarea
+                        }
 
 with open(
     os.path.join(
@@ -143,6 +155,18 @@ with open(
     encoding="utf-8"
 ) as lcNamesFile:
     lcNamesFile.write(json.dumps(data["roomIDsByLCRoomName"], indent=2))
+with open(
+    os.path.join(
+        ".",
+        "resources",
+        "app",
+        "manifests",
+        "roomMetasByID.json"
+    ),
+    "w",
+    encoding="utf-8"
+) as roomNamesFile:
+    roomNamesFile.write(json.dumps(data["roomMetasByID"], indent=2))
 
 for region, regionData in data["roomsByRegion"].items():
     for subregion, subregionData in regionData.items():
