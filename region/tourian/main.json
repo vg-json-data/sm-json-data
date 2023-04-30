@@ -255,7 +255,7 @@
               ],
               "yields": [
                 "f_KilledMetroidRoom1",
-                "f_ZebesAwake" 
+                "f_ZebesAwake"
               ]
             }
           ]
@@ -433,7 +433,7 @@
                       ],
                       "excludedWeapons": [ "Super", "Missile" ]
                     }},
-                    "canMetroidAvoid" 
+                    "canMetroidAvoid"
                   ],
                   "obstacles": [
                     {
@@ -548,7 +548,7 @@
                       ],
                       "excludedWeapons": [ "Super", "Missile" ]
                     }},
-                    "canMetroidAvoid" 
+                    "canMetroidAvoid"
                   ],
                   "obstacles": [
                     {
@@ -629,10 +629,18 @@
                   "name": "Fearless Dive",
                   "notable": false,
                   "requires": [
-                    {"acidFrames": 30},
                     {"or":[
-                      "canWalljump",
-                      "Gravity"
+                      {"and":[
+                        {"or":[
+                          "canWalljump",
+                          "HiJump"
+                        ]},
+                        {"acidFrames": 20}
+                      ]},
+                      {"and":[
+                        "Gravity",
+                        {"acidFrames": 10}
+                      ]}
                     ]}
                   ]
                 },
@@ -640,7 +648,15 @@
                   "name": "Acid Run",
                   "notable": false,
                   "requires": [
-                    {"acidFrames": 100}
+                    {"acidFrames": 80}
+                  ]
+                },
+                {
+                  "name": "Bounce Ball",
+                  "notable": false,
+                  "requires": [
+                    {"acidFrames": 60},
+                    "canBounceBall"
                   ]
                 }
               ]
@@ -682,11 +698,20 @@
                   "name": "Fearless Dive",
                   "notable": false,
                   "requires": [
-                    {"acidFrames": 30},
                     {"or":[
-                      "canWalljump",
-                      "Gravity",
-                      "HiJump"
+                      {"and":[
+                        "canPreciseWalljump",
+                        {"acidFrames": 20}
+                      ]},
+                      {"and":[
+                        "HiJump",
+                        "canWalljump",
+                        {"acidFrames": 20}
+                      ]},
+                      {"and":[
+                        "Gravity",
+                        {"acidFrames": 10}
+                      ]}
                     ]}
                   ]
                 },
@@ -694,7 +719,7 @@
                   "name": "Acid Run",
                   "notable": false,
                   "requires": [
-                    {"acidFrames": 100}
+                    {"acidFrames": 70}
                   ]
                 }
               ]
@@ -1798,21 +1823,34 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Avoid Damage",
+                  "name": "Avoid Hoppers",
                   "notable": false,
-                  "requires": [ "ScrewAttack" ]
+                  "requires": [
+                    "canTrickyJump"
+                  ],
+                  "note": [
+                    "Wait for the top hopper to move right then precisely jump over the left hopper.",
+                    "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper for all patterns."
+                  ]
+                },
+                {
+                  "name": "Screw Attack",
+                  "notable": false,
+                  "requires": [ "ScrewAttack" ],
+                  "note": "Wait for the top hopper to move right, then jump through the left hopper."
                 },
                 {
                   "name": "Kill the enemies",
                   "notable": false,
                   "requires": [
                     {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Blue Sidehopper", "Blue Sidehopper"
-                        ]
-                      ]
+                      "enemies": [["Blue Sidehopper", "Blue Sidehopper"]]
                     }}
+                  ],
+                  "note": [
+                    "Kill the top hopper quickly; the left hopper is more random.",
+                    "To be safe, plan to retreat right while attacking.",
+                    "It also helps to attempt to move the hopper off camera between attacks."
                   ]
                 },
                 {
@@ -1824,6 +1862,10 @@
                       "type": "contact",
                       "hits": 1
                     }}
+                  ],
+                  "note": [
+                    "Wait for the left hopper to move right so it does not follow Samus as IFrames run out.",
+                    "A damage boost using the top hopper also moves through the room fast enough to be safe."
                   ]
                 }
               ]
@@ -1836,6 +1878,54 @@
             {
               "id": 1,
               "strats": [
+
+                {
+                  "name": "Screw Attack",
+                  "notable": false,
+                  "requires": [
+                    "canPrepareForNextRoom",
+                    "ScrewAttack",
+                    {"or": [
+                      "SpaceJump",
+                      "canCarefulJump"
+                    ]},
+                    {"adjacentRunway": {
+                      "usedTiles": 2,
+                      "fromNode": 2
+                    }}
+                  ],
+                  "note": "Samus must enter the room in a screw attack spin jump, with enough speed to go deep into the room, to avoid hopper damage."
+                },
+                {
+                  "name": "Blue Hopper Room Roll Under Hoppers",
+                  "notable": true,
+                  "requires": [
+                    "Morph",
+                    "canPrepareForNextRoom",
+                    "canTrickyJump"
+                  ],
+                  "note": [
+                    "Time Samus' movement carefully to roll underneath a Blue Hopper and also race it to the far door.",
+                    "Enter the room in ball mode and let the hoppers jump against the wall a couple of times.",
+                    "After the lower hopper has long enough time between jumps, roll under and run to the door."
+                  ]
+                },
+                {
+                  "name": "Kill Hopper",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "canPrepareForNextRoom",
+                    {"enemyKill": {
+                      "enemies": [["Blue Sidehopper"]]
+                    }}
+                  ],
+                  "note": [
+                    "Enter the room in ball mode and let the hoppers jump against the wall a couple of times.",
+                    "Between hops, unmorph and shoot the lower hopper.",
+                    "Roll under the top hopper until it goes off camera to the left."
+                  ]
+                },
                 {
                   "name": "Take the Damage",
                   "notable": false,
@@ -1848,25 +1938,22 @@
                   ]
                 },
                 {
-                  "name": "Avoid Damage",
-                  "notable": false,
-                  "requires": [
-                    "canPrepareForNextRoom",
-                    "ScrewAttack"
-                  ],
-                  "note": "Samus must enter the room in a screw attack spin jump to avoid the damage."
-                },
-                {
                   "name": "Blue Speed Jump through Hoppers",
                   "notable": false,
                   "requires": [
-                    "canCarefulJump",
+                    "canPrepareForNextRoom",
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 180,
                       "shinesparkFrames": 0
-                    }}
-                  ]
+                    }},
+                    {"or": [
+                      "SpaceJump",
+                      "canCarefulJump"
+                    ]}
+                  ],
+                  "note": "Jump far enough to land on the first floor pillar.",
+                  "devNote": "This is not the level of precision that would call for canBlueSpaceJump."
                 }
               ]
             }
@@ -3263,7 +3350,7 @@
                   "requires": [ "f_KilledZebetites3" ]
                 }
               ]
-            }            
+            }
           ]
         },
         {
@@ -3624,9 +3711,13 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "HiJump",
-                    "canWalljump",
-                    "h_canFly"
+                    {
+                      "or": [
+                        "HiJump",
+                        "canWalljump",
+                        "h_canFly"    
+                      ]
+                    }
                   ]
                 },
                 {
@@ -3762,9 +3853,11 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "HiJump",
-                    "h_canFly",
-                    "canWalljump"
+                    {"or": [
+                      "HiJump",
+                      "h_canFly",
+                      "canWalljump"  
+                    ]}
                   ]
                 }
               ],
@@ -3782,8 +3875,10 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "SpaceJump",
-                    "canConsecutiveWalljump"
+                    {"or": [
+                      "SpaceJump",
+                      "canConsecutiveWalljump"
+                    ]}
                   ]
                 }
               ],
