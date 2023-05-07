@@ -462,7 +462,7 @@
                       "nodes": [1, 4],
                       "obstaclesToAvoid": ["A"]
                     }},
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     {"heatFrames": 420},
                     {"enemyKill":{
                       "enemies": [["Yellow Space Pirate (standing)"]],
@@ -1526,7 +1526,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ]
                 }
               ]
@@ -1539,8 +1539,27 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
-                  ]
+                    {"or": [
+                      {"and": [
+                        "canTrickyJump",
+                        {"heatFrames": 150}
+                      ]},
+                      {"and": [
+                        "canCarefulJump",
+                        {"heatFrames": 300}
+                      ]},
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": ["ScrewAttack", "Charge+Ice+Wave+Plasma"]
+                        }},
+                        {"heatFrames": 240}
+                      ]},
+                      {"heatFrames": 360}
+                    ]}
+                    
+                  ],
+                  "note": "It is possible to get past the pirate without waiting by moving fast enough, or by making it turn around."
                 }
               ]
             }
@@ -1553,16 +1572,37 @@
               "id": 4,
               "strats": [
                 {
+                  "name": "SpaceJump ScrewAttack",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    "ScrewAttack",
+                    {"or": [
+                      {"and": [
+                        "canConsecutiveWalljump",
+                        {"heatFrames": 240}
+                      ]},
+                      {"and": [
+                        "HiJump",
+                        {"heatFrames": 240}
+                      ]},
+                      {"heatFrames": 360}
+                    ]}
+                  ]
+                },
+                {
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
                     {"canComeInCharged": {
                       "fromNode": 2,
-                      "framesRemaining": 120,
-                      "shinesparkFrames": 40
+                      "framesRemaining": 60,
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 3
                     }},
-                    {"heatFrames": 400}
+                    {"heatFrames": 240}
                   ],
                   "obstacles": [
                     {
@@ -1572,10 +1612,83 @@
                   ]
                 },
                 {
+                  "name": "Writg New Route with HiJump, Speed, and PowerBombs",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "HiJump",
+                    "SpeedBooster",
+                    "canPreciseWalljump",
+                    "canCarefulJump",
+                    "h_canUsePowerBombs",
+                    "canHitBox",
+                    {"heatFrames": 420}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Jump with some run speed to place the power bomb high enough to break the bomb blocks.",
+                    "During the explosion, jump through the left wall pirate and precisely walljump to reach the upper area."
+                  ]
+                },
+                {
+                  "name": "HiJump, Screw, and PowerBomb",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_canUsePowerBombs",
+                    "canPreciseWalljump",
+                    "canConsecutiveWalljump",
+                    "HiJump",
+                    "ScrewAttack",
+                    {"heatFrames": 330}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Use ScrewAttack to remove the left wall pirate and walljump high enough to place a power bomb to destroy the bomb blocks",
+                    "Then walljump up again to reach the upper region."
+                  ]
+                },
+                {
+                  "name": "Jump Assist and PowerBomb",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canPreciseWalljump",
+                    "canHitbox",
+                    "h_canUsePowerBombs",
+                    {"or": [
+                      "canSpringwall",
+                      "HiJump",
+                      "SpaceJump"
+                    ]},
+                    {"heatFrames": 530}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Avoid the bottom pirates and jump high enough to break the bomb blocks with a power bomb.",
+                    "During the explosion, climb the right wall passing through any pirates and use a movement item to reach the top."
+                  ]
+                },
+                {
                   "name": "Writg Frozen Pirate Platforms",
                   "notable": true,
                   "requires": [
-                    "canUseFrozenEnemies",
+                    "canTrickyUseFrozenEnemies",
                     "Charge",
                     "h_heatProof",
                     "canDelayedWalljump"
@@ -1589,6 +1702,84 @@
                   "note": [
                     "Freeze the pirates to use as platforms to get up through the bomb blocks. Note that the pirates' hitboxes are larger than they seem."
                   ]
+                },
+                {
+                  "name": "Writg Low Ice Pirate Freeze",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canTrickyUseFrozenEnemies",
+                    "Charge",
+                    "canPreciseWalljump",
+                    "canWalljumpWithCharge",
+                    "Morph",
+                    {"ammo": {"type": "Missile","count": 1}},
+                    {"ammo": {"type": "Super","count": 1}},
+                    {"ammo": {"type": "PowerBomb","count": 1}},
+                    {"heatFrames": 870}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Deal an exact amount of damage to a wall pirate to freeze it while breaking the bomb blocks with a power bomb without taking damage.",
+                    "Quickly move to the right side and walljump up to the right height to power bomb out the bomb blocks, double hitting the top wall pirate.",
+                    "Wait for the full power bomb effect to end and wall jump once on the right wall and hit top pirate with 1 missile and 1 super.",
+                    "Jump and shoot the top pirate with a charge+ice shot.",
+                    "Hold a charge and walljump up the left wall and freeze the top pirate when it jumps across.",
+                    "Use the pirate to jump to the higher area."
+                  ]
+                },
+                {
+                  "name": "Writg New Low Ice Pirate Freeze",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canTrickyUseFrozenEnemies",
+                    "Charge",
+                    "canPreciseWalljump",
+                    "canResetFallSpeed",
+                    "canWalljumpWithCharge",
+                    "h_canUseMorphBombs",
+                    {"ammo": {"type": "Missile","count": 4}},
+                    {"ammo": {"type": "PowerBomb","count": 1}},
+                    {"heatFrames": 900}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Deal an exact amount of damage to a wall pirate to freeze it while breaking the bomb blocks with a power bomb without taking damage.",
+                    "Wait briefly on the left side of the center platform, then jump and shoot 4 missiles at the top pirate.",
+                    "Walljump up the left wall such that the lower pirates are on screen long enough to jump accross to the left.",
+                    "Place a Morph Bomb on the left wall to hit the top pirate when it jumps over, followed by a power bomb.",
+                    "Unmorph precisely below the middle pirate so both top pirates will jump back to the right, and begin charging Ice.",
+                    "Walljump up the left wall with charge held and freeze the top pirate when it jumps over and use it to reach the upper region."
+                  ]
+                },
+                {
+                  "name": "Writg Power Bomb Diagonal Bomb Jump",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canFastWalljumpClimb",
+                    "canWallJumpBombBoost",
+                    "canDiagonalBombJump",
+                    "h_canUsePowerBombs",
+                    {"heatFrames": 930}
+                  ],
+                  "note": [
+                    "Ignore the Yellow Pirates by walljumping up the left side to start a diagonal bomb jump from the wall, including a power bomb to clear the bomb blocks.",
+                    "Two quick walljumps upon entering the room can position Samus to get the left pirate to jump to the right and jump over the right pirate's lazer attack.",
+                    "Jump up the left wall and begin bomb jumping starting with a power bomb."
+                  ],
+                  "devNote": "There is a very similar strat using an HBJ that is a little faster but more precise and overall harder."
                 },
                 {
                   "name": "Writg X-Ray Climb",
@@ -1619,9 +1810,12 @@
                     {"heatFrames": 2800}
                   ],
                   "note": [
-                    "Same length as the long climb in Screw Attack Room.",
-                    "Heat frames split into the actual climb and the setup in the adjacent room."
-                  ]
+                    "Climb Writg while avoiding wall pirates and Namihe flames.",
+                    "Immediately climb above the Namihe flames and wait for the wall pirate to jump across into Samus.",
+                    "Once the pirate starts going up, resume X-Ray climbing.",
+                    "This is a Two screen X-Ray climb.  Watch for enemies when fixing the camera after the climb."
+                  ],
+                  "devNote": "Two Namihe hits as leniency."
                 }
               ],
               "note": "This link is for strats that don't require killing the pirates."
@@ -1649,47 +1843,98 @@
                   "name": "Screw Attack Pirates Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     "ScrewAttack",
-                    {"heatFrames": 250}
+                    {"or": [
+                      {"and": [
+                        "canWalljump",
+                        {"heatFrames": 265}
+                      ]},
+                      {"and": [
+                        "HiJump",
+                        {"heatFrames": 240}
+                      ]},
+                      {"heatFrames": 430}
+                    ]}
                   ]
                 },
                 {
                   "name": "Charge Plasma Pirates Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
-                    "Charge",
-                    "Plasma",
-                    {"heatFrames": 600}
+                    "h_canNavigateHeatRooms",
+                    {"enemyKill":{
+                      "enemies": [
+                          ["Yellow Space Pirate (wall)", "Yellow Space Pirate (wall)"], 
+                          ["Yellow Space Pirate (wall)"]
+                      ],
+                      "explicitWeapons": [ "Charge+Plasma" ]
+                    }},
+                    {"heatFrames": 450}
                   ]
                 },
                 {
                   "name": "Supers Pirates Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"and": [
+                        {"enemyKill":{
+                          "enemies": [
+                            ["Yellow Space Pirate (wall)"], 
+                            ["Yellow Space Pirate (wall)"]
+                          ],
+                          "explicitWeapons": [ "Super" ]
+                        }},
+                        {"heatFrames": 395}
+                      ]},
+                      {"and": [
+                        {"enemyKill":{
+                          "enemies": [
+                            ["Yellow Space Pirate (wall)"], 
+                            ["Yellow Space Pirate (wall)"], 
+                            ["Yellow Space Pirate (wall)"]
+                          ],
+                          "explicitWeapons": [ "Super" ]
+                        }},
+                        {"heatFrames": 330}
+                      ]}
+                    ]}
+                  ],
+                  "note": "The bottom wall pirates can be killed while stacked to save ammo."
+                },
+                {
+                  "name": "Missiles Pirates Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
                     {"enemyKill":{
                       "enemies": [
-                        [
-                          "Yellow Space Pirate (wall)", "Yellow Space Pirate (wall)", "Yellow Space Pirate (wall)"
-                        ]
+                        ["Yellow Space Pirate (wall)"], 
+                        ["Yellow Space Pirate (wall)"], 
+                        ["Yellow Space Pirate (wall)"]
                       ],
-                      "explicitWeapons": [ "Super" ]
+                      "explicitWeapons": [ "Missile" ]
                     }},
-                    {"heatFrames": 450}
-                  ]
+                    {"heatFrames": 600}
+                  ],
+                  "note": "The bottom wall pirates can be killed while stacked to save ammo, but it is not expected."
                 },
                 {
                   "name": "Full Spazer Pirates Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
-                    "Charge",
-                    "Ice",
-                    "Spazer",
-                    "Wave",
-                    {"heatFrames": 1150}
+                    "h_canNavigateHeatRooms",
+                    {"enemyKill":{
+                      "enemies": [
+                        ["Yellow Space Pirate (wall)"], 
+                        ["Yellow Space Pirate (wall)"], 
+                        ["Yellow Space Pirate (wall)"]
+                      ],
+                      "explicitWeapons": [ "Charge+Ice+Wave+Spazer" ]
+                    }},
+                    {"heatFrames": 900}
                   ]
                 },
                 {
@@ -1697,15 +1942,25 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"or": [
+                      "canSpringBallJumpMidAir",
+                      "SpaceJump",
+                      "canWalljump",
+                      "h_canIBJ",
+                      {"and": [
+                        "SpeedBooster",
+                        "HiJump"
+                      ]}
+                    ]},
                     {"enemyKill":{
                       "enemies": [
-                        [
-                          "Yellow Space Pirate (wall)", "Yellow Space Pirate (wall)", "Yellow Space Pirate (wall)"
-                        ]
+                        ["Yellow Space Pirate (wall)", 
+                         "Yellow Space Pirate (wall)", 
+                         "Yellow Space Pirate (wall)"]
                       ],
                       "explicitWeapons": ["PowerBombPeriphery"]
                     }},
-                    {"heatFrames": 700}
+                    {"heatFrames": 790}
                   ],
                   "obstacles": [
                     {
@@ -1714,13 +1969,19 @@
                     }
                   ],
                   "note": [
+                    "Jump morph from the center platform to place the first Power Bomb",
+                    "Place two more on the platform itself to kill the bottom pirates",
+                    "Use a fourth to break the bomb blocks while also killing the last pirate."
+                  ],
+                  "devNote": [
                     "It's not really possible to hit all enemies with double-PB hits while not taking damage.",
                     "Using Power Bomb Periphery is based on a strat that allows killing them and taking out the blocks with 4 PBs.",
-                    "This calculation ends up taking 5, leaving a spare PB."
+                    "This calculation ends up taking 5, leaving a spare PB.",
+                    "The movement item used does not increase heat frames except for IBJ in which case the PB can be used while IBJing."
                   ]
                 }
               ],
-              "note": "It's a one-way link because the way back goes 4 -> 2."
+              "devNote": "This is a one-way link because the way back goes 4 -> 2."
             }
           ]
         },
@@ -1735,8 +1996,9 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 350}
-                  ]
+                    {"heatFrames": 210}
+                  ],
+                  "note": "The shot blocks can be safely cleared from the door."
                 }
               ]
             },
@@ -1748,8 +2010,21 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 150}
-                  ]
+                    {"or": [
+                      {"and": [
+                        {"or": [
+                          "canCarefulJump",
+                          {"enemyKill": {
+                            "enemies": [["Yellow Space Pirate (standing)"]],
+                            "explicitWeapons": ["ScrewAttack"]
+                          }}
+                        ]},
+                        {"heatFrames": 100}
+                      ]},
+                      {"heatFrames": 180}
+                    ]}
+                  ],
+                  "note": "Spinjump over the pirate, or clear shot blocks first for more space."
                 }
               ]
             }
@@ -1797,7 +2072,16 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 250}
+                    {"heatFrames": 200}
+                  ]
+                },
+                {
+                  "name": "HiJump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "HiJump",
+                    {"heatFrames": 150}
                   ]
                 }
               ]
@@ -1811,11 +2095,62 @@
               "id": 1,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Wait for Pirate",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 520}
+                  ]
+                },
+                {
+                  "name": "HiJump Pirate Dodge",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "HiJump",
+                    "canTrickyJump",
+                    {"heatFrames": 240}
+                  ]
+                },
+                {
+                  "name": "HJBless Pirate Dodge",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canPreciseWalljump",
+                    "Morph",
+                    "canTrickyJump",
+                    {"heatFrames": 290}
+                  ]
+                },
+                {
+                  "name": "Fast Pirate Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": [ "ScrewAttack", "Charge+Ice+Wave+Plasma" ]
+                        }},
+                        {"heatFrames": 240}
+                      ]},
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": ["Missile","Charge+Plasma"]
+                        }},
+                        {"heatFrames": 360}
+                      ]},
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": ["Super"]
+                        }},
+                        {"heatFrames": 320}
+                      ]}
+                    ]}
                   ]
                 }
               ]
@@ -1824,11 +2159,62 @@
               "id": 3,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Wait for Pirate",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 520}
+                  ]
+                },
+                {
+                  "name": "HiJump Pirate Dodge",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "HiJump",
+                    "canTrickyJump",
+                    {"heatFrames": 160}
+                  ]
+                },
+                {
+                  "name": "HJBless Pirate Dodge",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canPreciseWalljump",
+                    "Morph",
+                    "canTrickyJump",
+                    {"heatFrames": 160}
+                  ]
+                },
+                {
+                  "name": "Fast Pirate Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": [ "ScrewAttack", "Charge+Ice+Wave+Plasma" ]
+                        }},
+                        {"heatFrames": 180}
+                      ]},
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": ["Missile","Charge+Plasma"]
+                        }},
+                        {"heatFrames": 280}
+                      ]},
+                      {"and": [
+                        {"enemyKill": {
+                          "enemies": [["Yellow Space Pirate (standing)"]],
+                          "explicitWeapons": ["Super"]
+                        }},
+                        {"heatFrames": 210}
+                      ]}
+                    ]}
                   ]
                 }
               ]
@@ -1841,7 +2227,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 120}
+                    {"heatFrames": 160}
                   ]
                 }
               ]
@@ -1855,49 +2241,86 @@
               "id": 4,
               "strats": [
                 {
-                  "name": "Space Screw",
+                  "name": "IBJ",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    "ScrewAttack",
-                    "SpaceJump",
-                    {"heatFrames": 300}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
-                },
-                {
-                  "name": "Writg IBJ",
-                  "notable": false,
-                  "requires": [
                     "h_canIBJ",
-                    "h_heatProof"
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
-                },
-                {
-                  "name": "Space",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    "SpaceJump",
-                    {"heatFrames": 300}
+                    {"or": [
+                      {"and": [
+                        "canJumpIntoIBJ",
+                        {"heatFrames": 1460}
+                      ]},
+                      {"and": [
+                        "canDoubleBombJump",
+                        {"heatFrames": 1000}
+                      ]},
+                      {"and": [
+                        "canJumpIntoIBJ",
+                        "canDoubleBombJump",
+                        {"heatFrames": 800}
+                      ]},
+                      {"heatFrames": 2000}
+                    ]}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        "h_canUsePowerBombs",
-                        {"heatFrames": 250}
+                        {"or": [
+                          "h_canUsePowerBombs",
+                          {"and": [
+                            "h_canBombAboveIBJ",
+                            "canStaggeredIBJ",
+                            {"heatFrames": 180}
+                          ]},
+                          "h_heatProof"
+                        ]}
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "SpaceJump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    {"or": [
+                      {"and": [
+                        "canConsecutiveWalljump",
+                        {"heatFrames": 260}
+                      ]},
+                      {"heatFrames": 360}
+                    ]}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        {"or": [
+                          "Screwattack",
+                          {"and": [
+                            "h_canUsePowerBombs",
+                            {"or": [
+                              {"and": [
+                                "canWalljump",
+                                {"heatFrames": 120}
+                              ]},
+                              {"heatFrames": 200}
+                            ]}
+                          ]},
+                          {"and": [
+                            "h_canUseMorphBombs",
+                            {"or": [
+                              {"and": [
+                                "canConsecutiveWalljump",
+                                {"heatFrames": 520}
+                              ]},
+                              {"heatFrames": 800}
+                            ]}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -1908,14 +2331,23 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "canSpringwall",
+                    "canConsecutiveWalljump",
                     {"heatFrames": 300}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        "h_canUsePowerBombs",
-                        {"heatFrames": 250}
+                        {"or": [
+                          {"and": [
+                            "h_canUsePowerBombs",
+                            {"heatFrames": 180}
+                          ]},
+                          {"and": [
+                            "h_canUseMorphBombs",
+                            {"heatFrames": 800}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -1927,14 +2359,24 @@
                     "h_canNavigateHeatRooms",
                     "HiJump",
                     "canPreciseWalljump",
+                    "canConsecutiveWalljump",
                     {"heatFrames": 300}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        "h_canUsePowerBombs",
-                        {"heatFrames": 250}
+                        {"or": [
+                          {"and": [
+                            "h_canUsePowerBombs",
+                            {"heatFrames": 200}
+                          ]},
+                          {"and": [
+                            "canDelayedWalljump",
+                            "h_canUseMorphBombs",
+                            {"heatFrames": 520}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -1944,6 +2386,7 @@
                   "notable": false,
                   "requires": [
                     "canInsaneWalljump",
+                    "canConsecutiveWalljump",
                     "h_heatProof"
                   ],
                   "obstacles": [
@@ -1954,9 +2397,31 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "Writg HiJump and Only Screw",
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "HiJump",
+                    "ScrewAttack",
+                    "canInsaneWalljump",
+                    "canConsecutiveWalljump",
+                    "canMidairWiggle"
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Break the bomb blocks in The Worst Room In The Game with extremely precise walljumps.",
+                    "Either with a fully delayed max height jump from the wall, or with an instant turnaround after jumping from the lower layer of bomb blocks."
+                  ]
                 }
               ],
-              "note": "It's a one-way link because the way back goes 4 -> 2."
+              "note": "This is a one-way link because the way back goes 4 -> 2."
             }
           ]
         }
@@ -2056,7 +2521,7 @@
                   "name": "Quick Suitless Pirate Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     {"heatFrames": 220},
                     {"enemyKill":{
                       "enemies": [
@@ -2070,7 +2535,7 @@
                   "name": "Medium Suitless Pirate Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     {"heatFrames": 450},
                     {"enemyKill":{
                       "enemies": [
@@ -2454,7 +2919,7 @@
                   "name": "Heat Run Through",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     {"heatFrames": 850},
                     {"enemyDamage": {
                       "enemy": "Kihunter (red)",
@@ -2468,7 +2933,7 @@
                   "name": "Wave Plasma Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     "Wave",
                     "Plasma",
                     {"heatFrames": 1150}
@@ -2478,7 +2943,7 @@
                   "name": "Screw Kill",
                   "notable": false,
                   "requires": [
-                    "canHeatRun",
+                    "h_canNavigateHeatRooms",
                     "ScrewAttack",
                     {"heatFrames": 650}
                   ]
