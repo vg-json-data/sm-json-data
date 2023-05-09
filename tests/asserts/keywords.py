@@ -32,9 +32,7 @@ def process_keyvalue(k, v):
     '''
     Take a keyvalue pair and see if the value exists in our list of keywords
     '''
-    global bail
     global last_enemy
-    global messages
     goodValue = True
     processValue = True
     goodKeys = [
@@ -551,7 +549,7 @@ if bail:
     firstErr = True
     foundErr = False
     for msg in messages["reds"]:
-        if "ERROR" in msg:
+        if "ERROR" in msg or "requires" in msg:
             foundErr = True
             if firstErr:
                 print("🔴ERROR🔴")
