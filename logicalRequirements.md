@@ -292,7 +292,7 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
 * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
 * _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
-* _unusedTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The unusedTiles must count from the end of the runway in the current room that is not touching the door.  The number of unusedTiles may be larger than the current room's runway.
+* _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
 
 __Example:__
 ```json
