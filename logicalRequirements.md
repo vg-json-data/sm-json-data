@@ -289,10 +289,8 @@ Please note that fulfilling this logical element requires interaction with the d
 An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _type:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.
-* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition. Likewise, for a platform 
-jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition.
-* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform 
-jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
+* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition. Likewise, for a platform  jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition.
+* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
 * _maxLeftPosition:_ Maximum value of "leftPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the left.
 * _minRightPosition:_ Minimum value of "rightPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the right.
 
