@@ -299,7 +299,7 @@ Please refer to the section about jumpways in [the Region documentation](region/
 __Example:__
 ```json
 {"adjacentJumpway": {
-  "type": "platformBelow",
+  "jumpwayType": "platformBelow",
   "fromNode": 2,
   "minHeight": 9,
   "maxHeight": 9,

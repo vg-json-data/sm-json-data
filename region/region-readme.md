@@ -135,13 +135,13 @@ __Example:__
 "jumpways": [
   {
     "name": "Door frame",
-    "type": "doorFrameBelow",
+    "jumpwayType": "doorFrameBelow",
     "height": 3,
     "requires": [{"heatFrames": 120}]
   },
   {
     "name": "Platform",
-    "type": "platformBelow",
+    "jumpwayType": "platformBelow",
     "height": 9,
     "leftPosition": -3.5,
     "rightPosition": 3.5,
