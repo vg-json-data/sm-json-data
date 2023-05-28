@@ -729,7 +729,7 @@
           "canLeaveCharged": [
             {
               "initiateRemotely": {
-                "initiateAt": 1,
+                "initiateAt": 5,
                 "mustOpenDoorFirst": false,
                 "pathToDoor": [
                   {
@@ -783,7 +783,7 @@
           "canLeaveCharged": [
             {
               "initiateRemotely": {
-                "initiateAt": 1,
+                "initiateAt": 5,
                 "mustOpenDoorFirst": false,
                 "pathToDoor": [
                   {
@@ -824,6 +824,12 @@
           "nodeSubType": "hidden",
           "nodeItem": "Missile",
           "nodeAddress": "0x789EC"
+        },
+        {
+          "id": 5,
+          "name": "KiHunter Junction (Kihunters Killed)",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
         }
       ],
       "obstacles": [
@@ -844,7 +850,7 @@
           "groupName": "Warehouse Kihunters",
           "enemyName": "Kihunter (green)",
           "quantity": 4,
-          "homeNodes": [ 1 ]
+          "homeNodes": [ 5 ]
         }
       ],
       "links": [
@@ -852,68 +858,35 @@
           "from": 1,
           "to": [
             {
-              "id": 2,
+              "id": 5,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
-                }
-              ]
-            },
-            {
-              "id": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [ "h_canBombThings" ]
-                    }
+                  "requires": [
+                    {"or": [
+                      {"enemyDamage": {
+                        "enemy": "Kihunter (green)",
+                        "type": "contact",
+                        "hits": 1
+                      }},
+                      {"enemyKill": {
+                        "enemies": [["Kihunter (green)","Kihunter (green)","Kihunter (green)","Kihunter (green)"]],
+                        "excludedWeapons": ["PowerBeam"]
+                      }}
+                    ]}
                   ]
                 },
                 {
-                  "name": "Warehouse Kihunter Speedball",
-                  "notable": true,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [
-                        "canMockball",
-                        "canSlowShortCharge",
-                        {"canShineCharge": {
-                          "usedTiles": 17,
-                          "shinesparkFrames": 0,
-                          "openEnd": 0
-                        }}
-                      ]
-                    }
+                  "name": "Tricky Dodge",
+                  "notable": false,
+                  "requires": [
+                    "canTrickyJump",
+                    "canDodgeWhileShooting"
                   ],
                   "note": [
-                    "The biggest factor for the short charge here isn't so much the available room as the speed attained.",
-                    "A very low horizontal speed is needed to drop down and break the block without hitting the corner to the left or the block above the bomb block."
-                  ]
-                }
-              ],
-              "devNote": "FIXME add speedkeep bounce."
-            },
-            {
-              "id": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ],
-                      "additionalObstacles": ["B"]
-                    }
+                    "Jump between the kihunters to avoid damage.",
+                    "To kill the kihunters, shoot them as they come on screen."
                   ]
                 }
               ]
@@ -924,7 +897,7 @@
           "from": 2,
           "to": [
             {
-              "id": 1,
+              "id": 5,
               "strats": [
                 {
                   "name": "Base",
@@ -946,6 +919,22 @@
                   "note": "This crouch jump down grab is a little tighter than most."
                 },
                 {
+                  "name": "Damage Boost",
+                  "notable": false,
+                  "requires": [
+                    "canDamageBoost",
+                    {"enemyDamage": {
+                      "enemy": "Kihunter (green)",
+                      "type": "contact",
+                      "hits": 3
+                    }}
+                  ],
+                  "note": [
+                    "Use a kihunter to knock Samus out of the hole at the peak of her jump",
+                    "This strat may take a few attempts to get a good boost."
+                  ]
+                },
+                {
                   "name": "Warehouse Kihunter Room X-Ray Climb",
                   "notable": false,
                   "requires": [
@@ -960,6 +949,11 @@
                       "overrideRunwayRequirements": true,
                       "physics": ["normal"],
                       "useFrames": 200
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Kihunter (green)",
+                      "type": "contact",
+                      "hits": 1
                     }}
                   ]
                 }
@@ -971,7 +965,7 @@
           "from": 3,
           "to": [
             {
-              "id": 1,
+              "id": 5,
               "strats": [
                 {
                   "name": "Bomb the Block",
@@ -1034,13 +1028,38 @@
           "from": 4,
           "to": [
             {
-              "id": 1,
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [ "Morph" ]
+                }
+              ]
+            },
+            {
+              "id": 5,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
                   "requires": ["Morph"],
                   "note": "Reaching 4 means obstacle B is open."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 5,
+          "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": []
                 }
               ]
             },
@@ -1050,7 +1069,66 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Morph" ]
+                  "requires": ["Morph"],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [ "h_canBombThings" ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Warehouse Kihunter Speedball",
+                  "notable": true,
+                  "requires": ["Morph"],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [
+                        {"or": [
+                          {"and": [
+                            "canSlowShortCharge",
+                            "canMockball",
+                            {"canShineCharge": {
+                              "usedTiles": 17,
+                              "shinesparkFrames": 0,
+                              "openEnd": 0
+                            }}
+                          ]},
+                          {"and": [
+                            "canSpeedKeep",
+                            "canLateralMidAirMorph",
+                            {"canShineCharge": {
+                              "usedTiles": 32,
+                              "openEnd": 1,
+                              "shinesparkFrames": 0
+                            }}
+                          ]}
+                        ]}
+                      ]
+                    }
+                  ],
+                  "note": [
+                    "A very low horizontal speed is needed to drop down and break the block without hitting the corner to the left or the block above the bomb block.",
+                    "Or with a SpeedKeep, Samus can bounce into the bomb block."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": ["Morph"],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [ "h_canUsePowerBombs" ],
+                      "additionalObstacles": ["B"]
+                    }
+                  ]
                 }
               ]
             }
