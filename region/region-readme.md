@@ -122,7 +122,7 @@ Runways on both sides of a door are meant to be combined when determining how mu
 Represents an array of jumpways connected to a door. A jumpway is a wall or platform which Samus can use to carry momentum into the next room. Unlike runways, jumpways do not need to be directly connected to a door, and it is not possible to use a jumpway to run into the neighboring room. Naturally, a jumpway can only be used if interaction with the connected door is possible (no active locks, and interaction requirements fulfilled). Jumpways have the following properties:
 
 * _name:_ A name, which only needs to be unique for the given node.
-* _type:_ One of two possible types: "doorFrameBelow" or "platformBelow".
+* _jumpwayType:_ One of two possible types: "doorFrameBelow" or "platformBelow".
   * "doorFrameBelow" applies to a vertical door leading upwards and represents the door frame below the door, which can be used, for example, to perform a wall jump up through the doorway.
   * "platformBelow" applies to a vertical door leading upwards and represents a platform below the door, which can be used to jump up through the doorway.
 * _height:_ For "doorFrameBelow" jumpways, this represents the vertical length, in number of tiles, of the door frame surface that is usable for for wall jumping (not including door transition tiles themselves). For "platformBelow", it represents the number of tiles between the door transition and the part of the platform where the jump would occur (not including the door transition tiles or platform tiles themselves). A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
