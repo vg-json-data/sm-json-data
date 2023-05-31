@@ -827,7 +827,7 @@
         },
         {
           "id": 5,
-          "name": "KiHunter Junction (Kihunters Killed)",
+          "name": "KiHunter Junction",
           "nodeType": "junction",
           "nodeSubType": "junction"
         }
@@ -842,6 +842,11 @@
           "id": "B",
           "name": "Bomb Block",
           "obstacleType": "inanimate"
+        },
+        {
+          "id": "C",
+          "name": "Kihunters",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -861,20 +866,14 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Take Damage",
                   "notable": false,
                   "requires": [
-                    {"or": [
-                      {"enemyDamage": {
-                        "enemy": "Kihunter (green)",
-                        "type": "contact",
-                        "hits": 1
-                      }},
-                      {"enemyKill": {
-                        "enemies": [["Kihunter (green)","Kihunter (green)","Kihunter (green)","Kihunter (green)"]],
-                        "excludedWeapons": ["PowerBeam"]
-                      }}
-                    ]}
+                    {"enemyDamage": {
+                      "enemy": "Kihunter (green)",
+                      "type": "contact",
+                      "hits": 1
+                    }}
                   ]
                 },
                 {
@@ -884,9 +883,35 @@
                     "canTrickyJump",
                     "canDodgeWhileShooting"
                   ],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": []
+                    }
+                  ],
                   "note": [
                     "Jump between the kihunters to avoid damage.",
                     "To kill the kihunters, shoot them as they come on screen."
+                  ],
+                  "devNote": [
+                    "This strat can avoid the kihunters well enough to reach further nodes or it can kill them.",
+                    "In both cases tricky dodging and accurate shooting is used."
+                  ]
+                },
+                {
+                  "name": "Quick Kihunter Kill",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": [
+                        {"enemyKill": {
+                          "enemies": [["Kihunter (green)","Kihunter (green)","Kihunter (green)","Kihunter (green)"]],
+                          "excludedWeapons": ["PowerBeam"]
+                        }}
+                      ]
+                    }
                   ]
                 }
               ]
@@ -908,7 +933,14 @@
                       "h_canFly",
                       "canWalljump"
                     ]}
-                  ]
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": []
+                    }
+                  ],
+                  "note": "The Kihunters can be killed from below but there is a chance one will drop down the hole.  Watch them before breaking the shot block."
                 },
                 {
                   "name": "Crouch Jump Down Grab",
@@ -916,12 +948,22 @@
                   "requires": [
                     "h_canCrouchJumpDownGrab"
                   ],
-                  "note": "This crouch jump down grab is a little tighter than most."
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "This crouch jump down grab is a little tighter than most.",
+                    "The Kihunters can be killed from below but there is a chance one will drop down the hole.  Watch them before breaking the shot block."
+                  ]
                 },
                 {
                   "name": "Damage Boost",
                   "notable": false,
                   "requires": [
+                    {"obstaclesNotCleared": ["C"]},
                     "canDamageBoost",
                     {"enemyDamage": {
                       "enemy": "Kihunter (green)",
@@ -932,7 +974,8 @@
                   "note": [
                     "Use a kihunter to knock Samus out of the hole at the peak of her jump",
                     "This strat may take a few attempts to get a good boost."
-                  ]
+                  ],
+                  "devNote": "2 leniency hits."
                 },
                 {
                   "name": "Warehouse Kihunter Room X-Ray Climb",
@@ -975,8 +1018,13 @@
                     {
                       "id": "B",
                       "requires": ["Bombs"]
+                    },
+                    {
+                      "id": "C",
+                      "requires": []
                     }
-                  ]
+                  ],
+                  "note": "The Kihunters can be killed by retreating to the morph tunnel if needed."
                 },
                 {
                   "name": "Power Bomb the Block",
@@ -987,8 +1035,13 @@
                       "id": "B",
                       "requires": [ "h_canUsePowerBombs" ],
                       "additionalObstacles": ["A"]
+                    },
+                    {
+                      "id": "C",
+                      "requires": []
                     }
-                  ]
+                  ],
+                  "note": "The Kihunters can be killed by retreating to the morph tunnel if needed."
                 },
                 {
                   "name": "SpeedBall",
@@ -1017,8 +1070,13 @@
                     {
                       "id": "B",
                       "requires": []
+                    },
+                    {
+                      "id": "C",
+                      "requires": []
                     }
-                  ]
+                  ],
+                  "note": "The Kihunters can be killed by retreating to the morph tunnel if needed."
                 }
               ]
             }
@@ -1046,13 +1104,33 @@
                   "requires": ["Morph"],
                   "note": "Reaching 4 means obstacle B is open."
                 }
-              ]
+              ],
+              
             }
           ]
         },
         {
           "from": 5,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"obstaclesCleared": ["C"]},
+                      {"enemyDamage": {
+                        "enemy": "Kihunter (green)",
+                        "type": "contact",
+                        "hits": 1
+                      }}
+                    ]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -1078,9 +1156,24 @@
                   ]
                 },
                 {
+                  "name": "Power Bomb the Block",
+                  "notable": false,
+                  "requires": ["Morph"],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [ "h_canUsePowerBombs" ],
+                      "additionalObstacles": ["A", "C"]
+                    }
+                  ]
+                },
+                {
                   "name": "Warehouse Kihunter Speedball",
                   "notable": true,
-                  "requires": ["Morph"],
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["C"]}
+                  ],
                   "obstacles": [
                     {
                       "id": "B",
@@ -1126,7 +1219,7 @@
                     {
                       "id": "A",
                       "requires": [ "h_canUsePowerBombs" ],
-                      "additionalObstacles": ["B"]
+                      "additionalObstacles": ["B", "C"]
                     }
                   ]
                 }
