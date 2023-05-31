@@ -57,6 +57,7 @@ def process_keyvalue(k, v):
         "nodeType",     # validated by schema
         "nodeSubType",  # validated by schema
         "obstacleType", # validated by schema
+        "jumpwayType",  # validated by schema
         "physics",      # validated by schema
         "utility"       # validated by schema
     ]

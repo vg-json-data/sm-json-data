@@ -285,6 +285,33 @@ __Additional considerations__
 
 Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
+#### adjacentJumpway object
+An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. Currently supported jumpway types involve jumping up through a vertical doorway. The object has the following properties:
+* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
+* _jumpwayType:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.
+* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition (in tiles, not including the transition tiles). Likewise, for a platform  jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
+* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
+* _maxLeftPosition:_ Maximum value of "leftPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+* _minRightPosition:_ Minimum value of "rightPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+
+Please refer to the section about jumpways in [the Region documentation](region/region-readme.md) for a more detailed explanation of jumpways. 
+
+__Example:__
+```json
+{"adjacentJumpway": {
+  "jumpwayType": "platformBelow",
+  "fromNode": 2,
+  "minHeight": 9,
+  "maxHeight": 9,
+  "maxLeftPosition": -38.5,
+  "minRightPosition": -7
+}}
+```
+
+__Additional considerations__
+
+Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
+
 #### canComeInCharged object
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room

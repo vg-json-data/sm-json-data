@@ -118,6 +118,38 @@ Runways on both sides of a door are meant to be combined when determining how mu
 * Because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
 * Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
 
+#### jumpways
+Represents an array of jumpways connected to a door. A jumpway is a wall or platform which Samus can use to carry momentum into the next room. Unlike runways, jumpways do not need to be directly connected to a door, and it is not possible to use a jumpway to run into the neighboring room. Naturally, a jumpway can only be used if interaction with the connected door is possible (no active locks, and interaction requirements fulfilled). Jumpways have the following properties:
+
+* _name:_ A name, which only needs to be unique for the given node.
+* _jumpwayType:_ One of two possible types: "doorFrameBelow" or "platformBelow".
+  * "doorFrameBelow" applies to a vertical door leading upwards and represents the door frame below the door, which can be used, for example, to perform a wall jump up through the doorway.
+  * "platformBelow" applies to a vertical door leading upwards and represents a platform below the door, which can be used to jump up through the doorway.
+* _height:_ For "doorFrameBelow" jumpways, this represents the vertical length, in number of tiles, of the door frame surface that is usable for wall jumping (not including door transition tiles themselves). For "platformBelow", it represents the number of tiles between the door transition and the part of the platform where the jump would occur (not including the door transition tiles or platform tiles themselves). A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
+* _leftPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest left tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+* _rightPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest right tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+* _requires:_ Logical requirements for this jumpway to be used.
+
+__Example:__
+```json
+"jumpways": [
+  {
+    "name": "Door frame",
+    "jumpwayType": "doorFrameBelow",
+    "height": 3,
+    "requires": [{"heatFrames": 120}]
+  },
+  {
+    "name": "Platform",
+    "jumpwayType": "platformBelow",
+    "height": 9,
+    "leftPosition": -3.5,
+    "rightPosition": 3.5,
+    "requires": [{"heatFrames": 120}]
+  }
+]
+```
+
 #### canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
