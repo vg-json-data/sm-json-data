@@ -777,6 +777,19 @@
               "devNote": "mustOpenDoorFirst is false because the door can be shot before initiating the spark."
             }
           ]
+        },
+        {
+          "id": 3,
+          "name": "Northwest Maridia Bug Room Central Junction",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Right Door Menus",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -814,15 +827,14 @@
           "from": 1,
           "to": [
             {
-              "id": 2,
+              "id": 3,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Morph" ]
+                  "requires": []
                 }
-              ],
-              "devNote": "FIXME Menus are tricky to deal with with Power Beam alone, information should be added to kill or avoid them, likely while adding a third node."
+              ]
             }
           ]
         },
@@ -830,7 +842,50 @@
           "from": 2,
           "to": [
             {
-              "id": 1,
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Kill or Tank the Menus",
+                  "notable": false,
+                  "requires": [],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": [
+                        {"or":[
+                          {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 1 }},
+                          {"and":[
+                            "canDodgeWhileShooting",
+                            {"enemyKill":{ "enemies": [ [ "Menu", "Menu" ] ] }}
+                          ]},
+                          {"enemyKill":{
+                            "enemies": [ [ "Menu", "Menu" ] ],
+                            "explicitWeapons": [
+                              "PowerBomb",
+                              "ScrewAttack",
+                              "Wave",
+                              "Spazer",
+                              "Plasma",
+                              "Missile",
+                              "Super"
+                            ]
+                          }},
+                          {"and":[
+                            "canPrepareForNextRoom",
+                            {"enemyKill":{
+                              "enemies": [ [ "Menu", "Menu" ] ],
+                              "explicitWeapons": [ "PseudoScrew" ]
+                            }}
+                          ]}
+                        ]}
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
               "strats": [
                 {
                   "name": "Base",
@@ -841,14 +896,7 @@
                       "h_canBombThings",
                       "h_canUseSpringBall"
                     ]},
-                    {"or":[
-                      "HiJump",
-                      "h_canFly",
-                      "canWalljump",
-                      "canSpringBallJumpMidAir",
-                      "canTrickyDashJump",
-                      "canTrickyUseFrozenEnemies"
-                    ]}
+                    {"obstaclesCleared": ["A"]}
                   ]
                 },
                 {
@@ -858,14 +906,7 @@
                     "Morph",
                     "Gravity",
                     "canTrickyJump",
-                    {"or":[
-                      "HiJump",
-                      "h_canFly",
-                      "canWalljump",
-                      "canSpringBallJumpMidAir",
-                      "canTrickyDashJump",
-                      "canTrickyUseFrozenEnemies"
-                    ]}
+                    {"obstaclesCleared": ["A"]}
                   ],
                   "note": [
                     "With Gravity, it's possible to move forward and mid-air morph into the morph passage.",
@@ -877,14 +918,7 @@
                   "notable": false,
                   "requires": [
                     "h_canTwoTileJumpMorph",
-                    {"or":[
-                      "HiJump",
-                      "h_canFly",
-                      "canWalljump",
-                      "canSpringBallJumpMidAir",
-                      "canTrickyDashJump",
-                      "canTrickyUseFrozenEnemies"
-                    ]}
+                    {"obstaclesCleared": ["A"]}
                   ]
                 },
                 {
@@ -907,8 +941,81 @@
                     "Then morph on top and damage boost into the morph tunnel as it unfreezes."
                   ]
                 }
-              ],
-              "devNote": "FIXME Menus are tricky to deal with with Power Beam alone, information should be added to kill or avoid them, likely while adding a third node."
+              ]
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      "HiJump",
+                      "SpaceJump",
+                      "canTrickyDashJump",
+                      "canTrickyUseFrozenEnemies",
+                      "canPreciseWalljump"
+                    ]}
+                  ],
+                  "devNote": "The menus don't really matter with these strats."
+                },
+                {
+                  "name": "Kill the Menus",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      "h_canIBJ",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir"
+                    ]},
+                    {"or":[
+                      {"enemyKill":{
+                        "enemies": [ [ "Menu", "Menu", "Menu" ] ],
+                        "explicitWeapons": [
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Wave",
+                          "Spazer",
+                          "Plasma",
+                          "Missile",
+                          "Super"
+                        ]
+                      }},
+                      {"and":[
+                        {"enemyKill":{ "enemies": [ [ "Menu", "Menu", "Menu" ] ] }},
+                        {"or":[
+                          {"and":[
+                            "canDodgeWhileShooting",
+                            "canTrickyJump"
+                          ]},
+                          {"and":[
+                            "canDodgeWhileShooting",
+                            {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 1 }}
+                          ]},
+                          {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 2 }}
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "devNote": "The Menus are relatively hard to dodge, and would end up with the same requirements as killing them with the Power Beam."
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [ "Morph" ]
+                }
+              ]
             }
           ]
         }
