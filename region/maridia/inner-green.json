@@ -646,7 +646,13 @@
         },
         {
           "id": 4,
-          "name": "West Sand Hall Junction (Below Sand Entrance)",
+          "name": "West Sand Hall Middle Junction (Below Sand Entrance)",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
+        },
+        {
+          "id": 5,
+          "name": "West Sand Hall Left Pillar Junction",
           "nodeType": "junction",
           "nodeSubType": "junction"
         }
@@ -665,6 +671,16 @@
           "enemyName": "Evir",
           "quantity": 1,
           "betweenNodes": [ 1, 4 ]
+        }
+      ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "West Sand Hall Suitless Bootless Spring Ball",
+          "note": [
+            "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
+            "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
+            "Falling into the sand will often result in a soft lock."
+          ]
         }
       ],
       "links": [
@@ -687,23 +703,15 @@
                   "note": "Frame cost assumes no Gravity"
                 }
               ],
-              "note": "This link is only for sparking. All other strats should go 1 -> 4 -> 2."
+              "note": "This link is only for sparking. All other strats should go 1 -> 5 -> 4 -> 2."
             },
             {
-              "id": 4,
+              "id": 5,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Gravity",
-                    {"or": [
-                      "SpaceJump",
-                      "HiJump",
-                      "canPreciseWalljump",
-                      "canPlayInSand"
-                    ]}
-                  ]
+                  "requires": [ "Gravity" ]
                 },
                 {
                   "name": "Suitless",
@@ -712,20 +720,7 @@
                     "canSuitlessMaridia",
                     "HiJump",
                     "canSpringBallJumpMidAir",
-                    "canPlayInSand",
-                    {"or": [
-                      "canCarefulJump",
-                      "Ice",
-                      {"enemyKill": {
-                        "enemies": [["Evir"]],
-                        "explicitWeapons": [ "Plasma", "Super", "PowerBombPeriphery" ]
-                      }},
-                      {"enemyDamage": {
-                        "enemy": "Evir",
-                        "type": "particle",
-                        "hits": 1
-                      }}
-                    ]}
+                    "canPlayInSand"
                   ]
                 },
                 {
@@ -733,27 +728,121 @@
                   "notable": true,
                   "requires": [
                     "canSuitlessMaridia",
-                    "HiJump",
+                    "canTrickyJump",
                     "canBombJumpOnSand",
                     "canSandfallBounce",
-                    {"or": [
-                      "canCarefulJump",
-                      "Ice",
-                      {"enemyKill": {
-                        "enemies": [["Evir"]],
-                        "explicitWeapons": [ "Plasma", "Super", "PowerBombPeriphery" ]
-                      }},
-                      {"enemyDamage": {
-                        "enemy": "Evir",
-                        "type": "particle",
-                        "hits": 1
-                      }}
+                    {"or":[
+                      "canSandIBJ",
+                      "HiJump"
                     ]}
                   ],
                   "note": [
                     "Time a bomb to hit Samus when she is morphed, 1 pixel into the sand, inside a sandfall, and moving horizontally.",
-                    "There is a setup using a sand IBJ to get the right timing, and another setup using a very fast jump morph."
+                    "There is a setup using a sand IBJ to get the right timing, and another setup using a very fast jump morph with HiJump."
                   ]
+                },
+                {
+                  "name": "HiJump with Momentum",
+                  "notable": false,
+                  "requires": [
+                    "HiJump",
+                    "canCrossRoomJumpIntoWater",
+                    "canTrickyJump",
+                    "canPlayInSand",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 1,
+                      "physics": ["air"]
+                    }}
+                  ],
+                  "note": [
+                    "Gain momentum in the room to the left, then jump at the edge of the runway in order to land on the first pillar.",
+                    "Requires a runway of only approximately 1 tile in the adjacent room."
+                  ],
+                  "devNote": "This is not technically a canCrossRoomJumpIntoWater, but it is used here because of the way the momentum changes as Samus enters the water."
+                },
+                {
+                  "name": "Jump with Momentum",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    "canPlayInSand",
+                    {"or":[
+                      {"and":[
+                        "canCarefulJump",
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 5.5,
+                          "physics": ["air"]
+                        }}
+                      ]},
+                      {"and":[
+                        "canTrickyJump",
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 5,
+                          "physics": ["air"]
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar.",
+                    "With a short runway of 5 tiles in the adjacent room, it is required to jump as late as possible at the edge of the runway in this room.",
+                    "With any longer of a runway, the jump is much less precise."
+                  ],
+                  "devNote": "This is not technically a canCrossRoomJumpIntoWater, but it is used here because of the way the momentum changes as Samus enters the water."
+                },
+                {
+                  "name": "Cross Room Jump into Air Ball",
+                  "notable": false,
+                  "requires": [
+                    "canLateralMidAirMorph",
+                    "canCrossRoomJumpIntoWater",
+                    "canPlayInSand",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 7,
+                      "physics": ["air"]
+                    }}
+                  ],
+                  "note": [
+                    "Requires a runway of approximately 7 tiles in the adjacent room.",
+                    "Perform an air ball before hitting the ceiling in order to land on the first pillar."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump into Air Ball with HiJump",
+                  "notable": false,
+                  "requires": [
+                    "canLateralMidAirMorph",
+                    "canCrossRoomJumpIntoWater",
+                    "HiJump",
+                    "canPlayInSand",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 0.5,
+                      "physics": ["air"]
+                    }}
+                  ],
+                  "note": [
+                    "Requires a runway of only approximately 0.5 tiles in the adjacent room.",
+                    "Perform an air ball before hitting the ceiling in order to land on the first pillar."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump with Bomb Boost",
+                  "notable": false,
+                  "requires": [
+                    "h_canBombHorizontally",
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 0.5,
+                      "physics": ["air"]
+                    }}
+                  ],
+                  "note": "Bomb boost through the doorway. Get the bomb boost while as close to the door transition as possible in order to get to the first pillar."
                 }
               ]
             }
@@ -778,7 +867,7 @@
                   "note": "Frame cost assumes no Gravity"
                 }
               ],
-              "note": "This link is only for sparking. All other strats should go 2 -> 4 -> 1."
+              "note": "This link is only for sparking. All other strats should go 2 -> 4 -> 5 -> 1."
             },
             {
               "id": 4,
@@ -789,13 +878,23 @@
                   "requires": ["Gravity"]
                 },
                 {
-                  "name": "Suitless",
+                  "name": "Suitless HiJump",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
                     "canPlayInSand"
                   ]
+                },
+                {
+                  "name": "Suitless",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canTrickyJump",
+                    "canPlayInSand"
+                  ],
+                  "note": "It is possible to cross this segment with nothing. Cancel spin before hitting the sand, then get a good jump off the sand in multiple places."
                 }
               ]
             }
@@ -830,7 +929,69 @@
           "from": 4,
           "to": [
             {
-              "id": 1,
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "SpaceJump",
+                      "canPlayInSand",
+                      "canUseFrozenEnemies",
+                      "canTrickyJump"
+                    ]}
+                  ],
+                  "devNote": "Tricky for avoiding damage while platforming."
+                },
+                {
+                  "name": "Suitless",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "HiJump"
+                  ]
+                },
+                {
+                  "name": "West Sand Hall Suitless Bootless Spring Ball (Center to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "canTrickyJump",
+                    "canCrouchJump",
+                    "canSpringBallJumpMidAir",
+                    "canStationaryLateralMidAirMorph"
+                  ],
+                  "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
+                  "note": [
+                    "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
+                    "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
+                    "Falling into the sand will often result in a soft lock."
+                  ]
+                },
+                {
+                  "name": "West Sand Hall Ice Only (Center to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "canTrickyJump",
+                    "canTrickyUseFrozenEnemies"
+                  ],
+                  "note": [
+                    "From the sand fall, quickly get onto the left platform to prevent the right side Evir from lowering too far.",
+                    "Freeze the right Evir, then jump on the sand to the right while shooting ice over the first Evir to also freeze the second.",
+                    "After crossing with both Evirs frozen and high, let them lower just enough to use them as platforms to jump through to the right door.",
+                    "As a backup, it may be possible to make them rise again by hitting them with a PB - place the PB in the air to avoid double hitting and killing them."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
               "strats": [
                 {
                   "name": "Base",
@@ -849,7 +1010,7 @@
                       "canPlayInSand",
                       "canWalljump",
                       "h_canUseSpringBall",
-                      "canDownGrab"
+                      "canCarefulJump"
                     ]},
                     {"or": [
                       "canCarefulJump",
@@ -875,11 +1036,82 @@
                     "HiJump",
                     "canPlayInSand"
                   ]
+                },
+                {
+                  "name": "West Sand Hall Suitless Bootless Spring Ball (Center to Left)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "canTrickyJump",
+                    "canCrouchJump",
+                    "canSpringBallJumpMidAir",
+                    "canStationaryLateralMidAirMorph"
+                  ],
+                  "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
+                  "note": [
+                    "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
+                    "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
+                    "Falling into the sand will often result in a soft lock."
+                  ]
+                },
+                {
+                  "name": "West Sand Hall Ice Beam Only (Center to Left)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "canTrickyJump",
+                    "canTrickyUseFrozenEnemies"
+                  ],
+                  "note": [
+                    "Freeze the Evir quickly before it descends and use it to get to the platforms.",
+                    "Getting a good jump while on the right side of the floating block can get Samus to the rightmost block.",
+                    "With a clean jump off of the sand, Samus can then get onto the final vertical pillar."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 5,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {"or": [
+                      "Gravity",
+                      "canPlayInSand",
+                      "HiJump"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Hidden Tunnel",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "Morph",
+                    {"or": [
+                      "canSunkenTileWideWallClimb",
+                      "h_canCrouchJumpDownGrab"
+                    ]}
+                  ],
+                  "note": [
+                    "Fall into the sand and roll all the way to the left, through an invisible tile and under the door platform.",
+                    "Shoot upwards to break part of the platform, then perform a crouch jump and down grab or a tile-wide wall jump climb to escape."
+                  ]
                 }
               ]
             },
             {
-              "id": 2,
+              "id": 4,
               "strats": [
                 {
                   "name": "Base",
@@ -888,20 +1120,54 @@
                     "Gravity",
                     {"or": [
                       "SpaceJump",
-                      "canPlayInSand",
-                      "canUseFrozenEnemies",
-                      "canTrickyJump"
+                      "HiJump",
+                      "canPreciseWalljump",
+                      "canPlayInSand"
                     ]}
-                  ],
-                  "devNote": "Tricky for avoiding damage while platforming."
+                  ]
                 },
                 {
                   "name": "Suitless",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
+                    "HiJump",
                     "canPlayInSand",
-                    "HiJump"
+                    {"or": [
+                      "canCarefulJump",
+                      "canSpringBallJumpMidAir"
+                    ]},
+                    {"or": [
+                      "canCarefulJump",
+                      "Ice",
+                      {"enemyKill": {
+                        "enemies": [["Evir"]],
+                        "explicitWeapons": [ "Plasma", "Super", "PowerBombPeriphery" ]
+                      }},
+                      {"enemyDamage": {
+                        "enemy": "Evir",
+                        "type": "particle",
+                        "hits": 1
+                      }}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "West Sand Hall Suitless Bootless Spring Ball (Left to Center)",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPlayInSand",
+                    "canTrickyJump",
+                    "canCrouchJump",
+                    "canSpringBallJumpMidAir",
+                    "canStationaryLateralMidAirMorph"
+                  ],
+                  "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
+                  "note": [
+                    "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
+                    "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
+                    "Falling into the sand will often result in a soft lock."
                   ]
                 }
               ]
