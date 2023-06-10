@@ -136,25 +136,55 @@
           "devNote": "Taking enemy damage can get the same effect but more situations where this is used would need to be found first."
         },
         {
-          "name": "canLateralMidAirMorph",
-          "requires": [ "Morph" ],
-          "note": "Performing the same input as a mockball, but in midair, in order to maintain forward momentum while morphing in midair",
+          "name": "canMidAirMorph",
+          "requires": ["Morph"],
+          "note": [
+            "The ability to enter Morph Ball while in the air.",
+            "There can be an expectation to Morph quickly as well, usually following a jump from the ground.",
+            "Out of water physics this means jumping and morphing in a 4 tile high space.",
+            "In water physics this means jumping and morphing in a 3 tile high space (Samus takes up 3 tiles when standing)."
+          ],
           "extensionTechs": [
             {
-              "name": "canSpringBallBounce",
-              "requires": [
-                "canLateralMidAirMorph",
-                "SpringBall"
-              ],
-              "note": "Using a lateral mid-air morph to bounce off a surface with SpringBall while retaining previous momentum."
+              "name": "can3HighMidAirMorph",
+              "requires": [ "canMidAirMorph" ],
+              "note" : "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room). It's a lot more precise than with more room."
             },
             {
-              "name": "canStationaryLateralMidAirMorph",
-              "requires": [ "canLateralMidAirMorph" ],
+              "name": "canRJump",
+              "requires": [ "canMidAirMorph" ],
               "note": [
-                "While performing a stationary vertical jump, it's possible to mid-air morph in a manner similar to a lateral mid-air morph.",
-                "Doing this immediately gives lateral momentum equivalent to maximum walk speed.",
-                "This is meaningless under normal physics, but has underwater applications."
+                "A technique for mid-air morphing over a two tile wall in air physics, or a one tile wall in water physics.",
+                "The key point is that pausing can be used to morph much faster than double pressing down.",
+                "\"R\" means holding angle aim before the first down press so Samus has a smaller hitbox for slightly more space to work with.",
+                "1) Hold angle aim(up or down) and down while in a crouching position.",
+                "2) Pause and jump as late as possible.",
+                "3) Release all inputs during the pause screen.",
+                "4) Hold jump and down and forward after the pause screen clears but before game control resumes."
+              ]
+            },
+            {
+              "name": "canLateralMidAirMorph",
+              "requires": [ "canMidAirMorph" ],
+              "note": "Performing the same input as a mockball, but in midair, in order to maintain forward momentum while morphing in midair",
+              "extensionTechs": [
+                {
+                  "name": "canSpringBallBounce",
+                  "requires": [
+                    "canLateralMidAirMorph",
+                    "SpringBall"
+                  ],
+                  "note": "Using a lateral mid-air morph to bounce off a surface with SpringBall while retaining previous momentum."
+                },
+                {
+                  "name": "canStationaryLateralMidAirMorph",
+                  "requires": [ "canLateralMidAirMorph" ],
+                  "note": [
+                    "While performing a stationary vertical jump, it's possible to mid-air morph in a manner similar to a lateral mid-air morph.",
+                    "Doing this immediately gives lateral momentum equivalent to maximum walk speed.",
+                    "This is meaningless under normal physics, but has underwater applications."
+                  ]
+                }
               ]
             }
           ]
@@ -199,24 +229,6 @@
           "name": "canQuickCrumbleEscape",
           "requires": [],
           "note":"The combination of a crumble quick drop, and landing on a lower surface and jumping back over the crumble block before it re-forms."
-        },
-        {
-          "name": "can3HighMidAirMorph",
-          "requires": [ "Morph" ],
-          "note" : "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room). It's a lot more precise than with more room."
-        },
-        {
-          "name": "canRJump",
-          "requires": ["Morph"],
-          "note": [
-            "A technique for mid-air morphing over a two tile wall in air physics, or a one tile wall in water physics.",
-            "The key point is that pausing can be used to morph much faster than double pressing down.",
-            "\"R\" means holding angle aim before the first down press so Samus has a smaller hitbox for slightly more space to work with.",
-            "1) Hold angle aim(up or down) and down while in a crouching position.",
-            "2) Pause and jump as late as possible.",
-            "3) Release all inputs during the pause screen.",
-            "4) Hold jump and down and forward after the pause screen clears but before game control resumes."
-          ]
         },
         {
           "name": "canMidairWiggle",
@@ -275,7 +287,7 @@
         {
           "name": "canSpringBallJumpMidAir",
           "requires": [
-            "Morph",
+            "canMidAirMorph",
             "SpringBall"
           ],
           "note": [
@@ -296,10 +308,7 @@
             },
             {
               "name": "canDoubleSpringBallJumpMidAir",
-              "requires": [
-                "Morph",
-                "SpringBall"
-              ],
+              "requires": [ "canSpringBallJumpMidAir" ],
               "note": [
                 "Using the SpringBallJumpMidAir twice during a single jump to gain even more height. This typically only works underwater with HiJump.",
                 "This consists of a tight variant of SpringBallJumpMidAir, then turning off spring ball, then a second SpringBallJumpMidAir all while still climbing upwards."
@@ -409,7 +418,7 @@
                   "name": "can2HighWallMidAirMorph",
                   "requires": [
                     "canPreciseWalljump",
-                    "Morph"
+                    "canMidAirMorph"
                   ],
                   "note" : "Getting up a 2-tile-high jump in a morph passage by mid-air morphing off the opposite wall.  Morphing after a wall jump only requires one down press."
                 }
@@ -449,6 +458,7 @@
           "name": "canWallJumpBombBoost",
           "requires": [
             "canWalljump",
+            "canMidAirMorph",
             "h_canBombThings"
           ],
           "note": [
@@ -484,7 +494,10 @@
           "extensionTechs": [
             {
               "name": "canJumpIntoIBJ",
-              "requires": [ "canIBJ" ],
+              "requires": [ 
+                "canMidAirMorph",
+                "canIBJ" 
+              ],
               "note": "The ability to start an IBJ from a jump or spring ball jump. Can be required in strats that need Samus to IBJ up faster or to avoid something near the ground."
             },
             {
@@ -529,13 +542,20 @@
         },
         {
           "name": "canBombJumpWaterEscape",
-          "requires": [ "h_canBombThings" ],
+          "requires": [ 
+            "canMidAirMorph",
+            "h_canBombThings" 
+          ],
           "note": "From a submerged platform, setting up a single bomb jump above the water line to propel Samus up and out of the water.",
           "devNote": "It's recommended to apply a number of tries as leniency here for the PBs version."
         },
         {
           "name": "canBombJumpOnSand",
-          "requires": [ "canPlayInSand", "h_canBombThings" ],
+          "requires": [ 
+            "canPlayInSand", 
+            "h_canBombThings",
+            "canMidAirMorph"
+          ],
           "note": [
             "The ability to bomb jump while dealing with the sinking effect of sand physics.",
             "This is done by placing the bomb on or above the top of the sand line and then jumping again to land on the bomb explosion."
@@ -1201,7 +1221,7 @@
               "requires": [
                 "canCrystalFlash",
                 "canCeilingClip",
-                "Morph"
+                "canMidAirMorph"
               ],
               "note": [
                 "Setting up a Crystal Flash by jumping and morphing.  Once to place the power bomb, then again to activate the Crystal Flash.",
