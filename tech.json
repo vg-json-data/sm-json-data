@@ -70,6 +70,17 @@
           ]
         },
         {
+          "name": "canDisableEquipment",
+          "requires": [],
+          "note": [
+            "Collecting equipment can make movement more difficult in certain situations.",
+            "Speedbooster will reduce Samus' jump height and turning Speedbooster off will return the jump height to normal.",
+            "Disabling HiJump will give more time to perform a mid-air morph",
+            "Disabling Gravity will allow Samus to float farther in water, or jump slower for a mid-air morph",
+            "Beams may need to be disabled to control how enemies are killed (i.e. Remove plasma for canUseFrozenEnemies, or remove ice to effeciently use heat room farm points)."
+          ]
+        },
+        {
           "name": "canPlayInSand",
           "requires": [],
           "note": [
@@ -118,6 +129,14 @@
           "note": "Holding the direction buttons down and then also backwards in order to move forwards, while in the correct falling state."
         },
         {
+          "name": "canStopOnADime",
+          "requires": [],
+          "note": [
+            "Holding the angle up or angle down buttons when no directional inputs are held will completely stop Samus in place.",
+            "This is used to enter elevators instantly, but can also be used to avoid being carried into some rooms by momentum."
+          ]
+        },
+        {
           "name": "canMoonwalk",
           "requires": [],
           "note": "This is an option that can be turned on in the special setting mode after selecting a save file. It is required for some tech.",
@@ -136,25 +155,55 @@
           "devNote": "Taking enemy damage can get the same effect but more situations where this is used would need to be found first."
         },
         {
-          "name": "canLateralMidAirMorph",
-          "requires": [ "Morph" ],
-          "note": "Performing the same input as a mockball, but in midair, in order to maintain forward momentum while morphing in midair",
+          "name": "canMidAirMorph",
+          "requires": ["Morph"],
+          "note": [
+            "The ability to enter Morph Ball while in the air.",
+            "There can be an expectation to Morph quickly as well, usually following a jump from the ground.",
+            "Out of water physics this means jumping and morphing in a 4 tile high space.",
+            "In water physics this means jumping and morphing in a 3 tile high space (Samus takes up 3 tiles when standing)."
+          ],
           "extensionTechs": [
             {
-              "name": "canSpringBallBounce",
-              "requires": [
-                "canLateralMidAirMorph",
-                "SpringBall"
-              ],
-              "note": "Using a lateral mid-air morph to bounce off a surface with SpringBall while retaining previous momentum."
+              "name": "can3HighMidAirMorph",
+              "requires": [ "canMidAirMorph" ],
+              "note" : "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room). It's a lot more precise than with more room."
             },
             {
-              "name": "canStationaryLateralMidAirMorph",
-              "requires": [ "canLateralMidAirMorph" ],
+              "name": "canRJump",
+              "requires": [ "canMidAirMorph" ],
               "note": [
-                "While performing a stationary vertical jump, it's possible to mid-air morph in a manner similar to a lateral mid-air morph.",
-                "Doing this immediately gives lateral momentum equivalent to maximum walk speed.",
-                "This is meaningless under normal physics, but has underwater applications."
+                "A technique for mid-air morphing over a two tile wall in air physics, or a one tile wall in water physics.",
+                "The key point is that pausing can be used to morph much faster than double pressing down.",
+                "\"R\" means holding angle aim before the first down press so Samus has a smaller hitbox for slightly more space to work with.",
+                "1) Hold angle aim(up or down) and down while in a crouching position.",
+                "2) Pause and jump as late as possible.",
+                "3) Release all inputs during the pause screen.",
+                "4) Hold jump and down and forward after the pause screen clears but before game control resumes."
+              ]
+            },
+            {
+              "name": "canLateralMidAirMorph",
+              "requires": [ "canMidAirMorph" ],
+              "note": "Performing the same input as a mockball, but in midair, in order to maintain forward momentum while morphing in midair",
+              "extensionTechs": [
+                {
+                  "name": "canSpringBallBounce",
+                  "requires": [
+                    "canLateralMidAirMorph",
+                    "SpringBall"
+                  ],
+                  "note": "Using a lateral mid-air morph to bounce off a surface with SpringBall while retaining previous momentum."
+                },
+                {
+                  "name": "canStationaryLateralMidAirMorph",
+                  "requires": [ "canLateralMidAirMorph" ],
+                  "note": [
+                    "While performing a stationary vertical jump, it's possible to mid-air morph in a manner similar to a lateral mid-air morph.",
+                    "Doing this immediately gives lateral momentum equivalent to maximum walk speed.",
+                    "This is meaningless under normal physics, but has underwater applications."
+                  ]
+                }
               ]
             }
           ]
@@ -201,24 +250,6 @@
           "note":"The combination of a crumble quick drop, and landing on a lower surface and jumping back over the crumble block before it re-forms."
         },
         {
-          "name": "can3HighMidAirMorph",
-          "requires": [ "Morph" ],
-          "note" : "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room). It's a lot more precise than with more room."
-        },
-        {
-          "name": "canRJump",
-          "requires": ["Morph"],
-          "note": [
-            "A technique for mid-air morphing over a two tile wall in air physics, or a one tile wall in water physics.",
-            "The key point is that pausing can be used to morph much faster than double pressing down.",
-            "\"R\" means holding angle aim before the first down press so Samus has a smaller hitbox for slightly more space to work with.",
-            "1) Hold angle aim(up or down) and down while in a crouching position.",
-            "2) Pause and jump as late as possible.",
-            "3) Release all inputs during the pause screen.",
-            "4) Hold jump and down and forward after the pause screen clears but before game control resumes."
-          ]
-        },
-        {
           "name": "canMidairWiggle",
           "requires": [],
           "note": [
@@ -236,9 +267,44 @@
           ]
         },
         {
-          "name": "canPreciseGrapple",
-          "requires": [ "Grapple" ],
-          "note": "The ability to precisely aim at grapple points while moving quickly, and precise control of Samus' speed and trajectory when releasing from a grapplable object."
+          "name": "canUseGrapple",
+          "requires": ["Grapple"],
+          "note": [
+            "The ability to fling Samus moderate distances by grappling onto attach points to build up momentum.",
+            "Knowing how to use Grapple also means knowing that the Grapple Beam can be used as a weapon to instantly kill certain enemies."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canPreciseGrapple",
+              "requires": [ "canUseGrapple" ],
+              "note": "The ability to precisely aim at grapple points while moving quickly, and precise control of Samus' speed and trajectory when releasing from a grapplable object."
+            },
+            {
+              "name": "canGrappleJump",
+              "requires": [
+                "canUseGrapple",
+                "canMidAirMorph",
+                {"or": [
+                  "HiJump",
+                  "can3HighMidAirMorph"
+                ]}
+              ],
+              "note": [
+                "Using grapple to propel yourself upwards, then continuously morphing/unmorphing/jumping in midair to climb upwards",
+                "Much more lenient with HiJump."
+              ],
+              "extensionTechs": [
+                {
+                  "name": "canDraygonTurretGrappleJump",
+                  "requires": [
+                    "canGrappleJump",
+                    {"draygonElectricityFrames": 60}
+                  ],
+                  "note": "Using grapple jump off a Draygon turret.  Usually done by bouncing off the wall for momentum."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -252,8 +318,32 @@
           "note":"The ability to crouch before jumping to reach higher ledges. Commonly paired with a Down Grab."
         },
         {
+          "name": "canTurnaroundSpinJump",
+          "requires": [],
+          "note": [
+            "The ability to buffer a jump by using the turnaround animation frames.",
+            "This allows for an easier Spin Jump timing and works as a way jump far underwater without building up run speed."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canFlatleyJump",
+              "requires": [ 
+                "canTurnaroundSpinJump",
+                "canTrickyJump"
+              ],
+              "note": [
+                "Positioning Samus at the very edge of a platform, facing away, then turning around and jumping to initiate the jump from a position that is off the platform (and slightly below it)",
+                "Sometimes referred to as a corner jump."
+              ]
+            }
+          ]
+        },
+        {
           "name": "canGravityJump",
-          "requires": [ "Gravity" ],
+          "requires": [ 
+            "canDisableEquipment",
+            "Gravity"
+          ],
           "note": [
             "Turning off Gravity Suit right after the start of an underwater jump to achieve higher height.",
             "Can be performed in water, lava, or acid."
@@ -275,7 +365,8 @@
         {
           "name": "canSpringBallJumpMidAir",
           "requires": [
-            "Morph",
+            "canDisableEquipment",
+            "canMidAirMorph",
             "SpringBall"
           ],
           "note": [
@@ -296,10 +387,7 @@
             },
             {
               "name": "canDoubleSpringBallJumpMidAir",
-              "requires": [
-                "Morph",
-                "SpringBall"
-              ],
+              "requires": [ "canSpringBallJumpMidAir" ],
               "note": [
                 "Using the SpringBallJumpMidAir twice during a single jump to gain even more height. This typically only works underwater with HiJump.",
                 "This consists of a tight variant of SpringBallJumpMidAir, then turning off spring ball, then a second SpringBallJumpMidAir all while still climbing upwards."
@@ -313,31 +401,6 @@
           "note": [
             "The ability to reliably jump while landing on a crumble block.",
             "A straight jump may employ the small amount of jump buffering the game offers, but a spinjump can only use the time before the crumble block breaks."
-          ]
-        },
-        {
-          "name": "canGrappleJump",
-          "requires": [
-            "Grapple",
-            "Morph",
-            {"or": [
-              "HiJump",
-              "can3HighMidAirMorph"
-            ]}
-          ],
-          "note": [
-            "Using grapple to propel yourself upwards, then continuously morphing/unmorphing/jumping in midair to climb upwards",
-            "Much more lenient with HiJump."
-          ],
-          "extensionTechs": [
-            {
-              "name": "canDraygonTurretGrappleJump",
-              "requires": [
-                "canGrappleJump",
-                {"draygonElectricityFrames": 60}
-              ],
-              "note": "Using grapple jump off a Draygon turret.  Usually done by bouncing off the wall for momentum."
-            }
           ]
         },
         {
@@ -370,14 +433,6 @@
                     "A slow CWJ uses a wall or ledge near the initial jump point.",
                     "A fast CWJ will wall jump using the opposite side of a distant object."
                   ]
-                },
-                {
-                  "name": "canFlatleyJump",
-                  "requires": [ "canTrickyJump" ],
-                  "note": [
-                    "Positioning Samus at the very edge of a platform, facing away, then turning around and jumping to initiate the jump from a position that is off the platform (and slightly below it)",
-                    "Sometimes referred to as a corner jump."
-                  ]
                 }
               ]
             }
@@ -409,7 +464,7 @@
                   "name": "can2HighWallMidAirMorph",
                   "requires": [
                     "canPreciseWalljump",
-                    "Morph"
+                    "canMidAirMorph"
                   ],
                   "note" : "Getting up a 2-tile-high jump in a morph passage by mid-air morphing off the opposite wall.  Morphing after a wall jump only requires one down press."
                 }
@@ -433,17 +488,6 @@
               ]
             }
           ]
-        },
-        {
-          "name": "canWalljumpWithCharge",
-          "requires": [
-            "Charge",
-            "canWalljump"
-          ],
-          "note": [
-            "The ability to store charge beam and continue walljumping.",
-            "This is done by releasing the shoot button when trying to walljump. Otherwise Samus will stop spinning."
-          ]
         }
       ]
     },
@@ -460,6 +504,7 @@
           "name": "canWallJumpBombBoost",
           "requires": [
             "canWalljump",
+            "canMidAirMorph",
             "h_canBombThings"
           ],
           "note": [
@@ -495,7 +540,9 @@
           "extensionTechs": [
             {
               "name": "canJumpIntoIBJ",
-              "requires": [ "canIBJ" ],
+              "requires": [ 
+                "canIBJ" 
+              ],
               "note": "The ability to start an IBJ from a jump or spring ball jump. Can be required in strats that need Samus to IBJ up faster or to avoid something near the ground."
             },
             {
@@ -540,16 +587,23 @@
         },
         {
           "name": "canBombJumpWaterEscape",
-          "requires": [ "h_canBombThings" ],
+          "requires": [ 
+            "canMidAirMorph",
+            "h_canBombThings" 
+          ],
           "note": "From a submerged platform, setting up a single bomb jump above the water line to propel Samus up and out of the water.",
           "devNote": "It's recommended to apply a number of tries as leniency here for the PBs version."
         },
         {
           "name": "canBombJumpOnSand",
-          "requires": [ "canPlayInSand", "h_canBombThings" ],
+          "requires": [ 
+            "canPlayInSand", 
+            "h_canBombThings"
+          ],
           "note": [
             "The ability to bomb jump while dealing with the sinking effect of sand physics.",
-            "This is done by placing the bomb on or above the top of the sand line and then jumping again to land on the bomb explosion."
+            "This is done by placing the bomb on or above the top of the sand line and then jumping again to land on the bomb explosion.",
+            "Or by rising out of the sand using Bombs inside of a sandfall to then land on the bomb that is at the sand line."
           ]
         }
       ]
@@ -777,6 +831,11 @@
               "name": "canDodgeWhileShooting",
               "requires": [],
               "note": "The ability to run from, jump over, or duck under attacks that do not require precise avoidance movements while shooting the enemy."
+            },
+            {
+              "name": "canEscapeEnemyGrab",
+              "requires": [],
+              "note": "The ability to become grabbed by Draygon or a Beetom and then escape by pressing 60+ inputs."
             }
           ]
         }
@@ -792,6 +851,46 @@
           "note": [
             "The ability to pass through some enemies undamaged by shooting.",
             "May involve running through the enemy after making its hitbox inactive (e.g. Metal Pirates) or while the enemy has iframes (e.g. using Plasma)."
+          ]
+        },
+        {
+          "name": "canPseudoScrew",
+          "requires": ["Charge"],
+          "note": [
+            "The ability to spinjump with Charge beam stored.",
+            "Pseudo screw gives Samus some protection from projecitles and enemies.",
+            "It will damage enemies who are vulnerable to this attack and Samus will only take damage if the enemy takes damage and is not killed."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canWalljumpWithCharge",
+              "requires": [
+                "canPseudoScrew",
+                "canWalljump"
+              ],
+              "note": [
+                "The ability to store charge beam and continue walljumping.",
+                "This is done by releasing the shoot button when trying to walljump. Otherwise Samus will stop spinning."
+              ]
+            }
+          ]
+        },
+        {
+          "name": "canSpecialBeamAttack",
+          "requires": [
+            "Charge",
+            "PowerBomb",
+            {"or": [
+              "Ice",
+              "Wave",
+              "Spazer",
+              "Plasma"
+            ]}
+          ],
+          "note": [
+            "The knowledge of how to use a Special Beam Attack (SBA) for any beam type.",
+            "A SBA is activated by equipping exactly Charge and one other Beam and selecting Power Bombs.",
+            "After charging the beam, a power bomb will be consumed, and a beam specific attack will occur."
           ]
         },
         {
@@ -1171,8 +1270,7 @@
               "name": "canJumpIntoCrystalFlashClip",
               "requires": [
                 "canCrystalFlash",
-                "canCeilingClip",
-                "Morph"
+                "canCeilingClip"
               ],
               "note": [
                 "Setting up a Crystal Flash by jumping and morphing.  Once to place the power bomb, then again to activate the Crystal Flash.",
@@ -1195,6 +1293,16 @@
           "note": [
             "Uses the uninteruptable frames of turning around in order to continue moving after hitting a solid object.",
             "Can be used to make it through an opening door, or barely just past a ledge."
+          ]
+        },
+        {
+          "name": "canCameraManip",
+          "requires": [],
+          "note": [
+            "The ability to scroll the camera to bring enemies or projectiles on or off camera.",
+            "Most enemes become inactive while off camera, and most projectiles cease to exist.",
+            "This can be done by jumping in place; changing Samus' hitbox with aim down will scroll the camera lower.",
+            "By running back and forth the camera will scroll horizontally; Moonwalk can be used to camera scroll without travelling as far."
           ]
         }
       ]
