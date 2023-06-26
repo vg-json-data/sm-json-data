@@ -401,7 +401,8 @@ A `comeInWithGMode` object represents the need to either have or obtain G-mode w
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
 * _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room, or to have collected the Morph item.
-
+* _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
+required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough that knockback frames do not expire until after reserves finish filling.
 __Example:__
 ```json
 {"comeInWithGMode": {
