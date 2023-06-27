@@ -6458,7 +6458,7 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     {"or": [
-                      "h_canCrouchJumpLedgeGrab",
+                      "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "canSpringBallJumpMidAir",
                       "HiJump",
@@ -6545,7 +6545,7 @@
                         {"or": [
                           {"obstaclesCleared": ["F"]},
                           {"enemyDamage": {
-                            "enemy": "MultiViola",
+                            "enemy": "Multiviola",
                             "type": "contact",
                             "hits": 2
                           }}
@@ -6578,18 +6578,19 @@
                   ]
                 },
                 {
-                  "name": "HeatProof Kill",
+                  "name": "Slow Kill",
                   "notable": false,
-                  "requires": ["h_heatProof"],
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 3000}
+                  ],
                   "obstacles": [
                     {
                       "id": "F",
                       "requires": [
                         {"enemyKill":{
-                          "enemies": [
-                            [ "Dessgeega", "Dessgeega" ]
-                          ],
-                          "excludedWeapons": [ "Bombs" ]
+                          "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                          "excludedWeapons": [ "Bombs", "PseudoScrew" ]
                         }}
                       ]
                     }
@@ -6597,7 +6598,7 @@
                   "devNote": "Morph Bombs excluded because there's no safe setup."
                 },
                 {
-                  "name": "Wave Plasma Kill",
+                  "name": "Beam Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
@@ -6607,48 +6608,20 @@
                     {
                       "id": "F",
                       "requires": [
-                        "Plasma",
-                        {"heatFrames": 250},
-                        "Wave"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Plasma Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 150}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "F",
-                      "requires": [
-                        "Plasma",
-                        {"heatFrames": 400}
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Power Bomb Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 150}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "F",
-                      "requires": [
-                        {"enemyKill":{
-                          "enemies": [
-                            [ "Dessgeega", "Dessgeega" ]
-                          ],
-                          "explicitWeapons": [ "PowerBomb" ]
-                        }},
-                        {"heatFrames": 350}
+                        {"or":[
+                          {"and": [
+                            "Plasma",
+                            {"heatFrames": 250}
+                          ]},
+                          {"and": [
+                            {"and": [
+                              "Ice",
+                              "Wave",
+                              "Spazer",
+                              {"heatFrames": 600}
+                            ]}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -6669,9 +6642,47 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 150}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "F",
+                      "requires": [
+                        {"or": [
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "Missile" ]
+                            }},
+                            {"heatFrames": 420}
+                          ]},
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "Super" ]
+                            }},
+                            {"heatFrames": 250}
+                          ]},
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "PowerBomb" ]
+                            }},
+                            {"heatFrames": 350}
+                          ]}
+                        ]}
+                      ]
+                    }
+                  ]
                 }
               ],
-              "note": "Options are to tank the damage or kill the Dessgeegas"
+              "devNote": "The Dessgeegas can be assumed to be fought from above, going 4->6->7."
             },
             {
               "id": 9,
@@ -6681,12 +6692,12 @@
                   "notable": false,
                   "requires": [
                     "h_heatProof",
+                    "canUseFrozenEnemies",
                     {"obstaclesNotCleared": ["E"]},
-                    "Ice",
                     {"enemyDamage": {
                       "enemy": "Multiviola",
                       "type": "contact",
-                      "hits": 1
+                      "hits": 3
                     }}
                   ],
                   "obstacles": [
@@ -6699,7 +6710,14 @@
                             ["Dessgeega"],
                             ["Dessgeega"]
                           ],
-                          "excludedWeapons": ["Bombs"]
+                          "explicitWeapons": [
+                            "Plasma",
+                            "ScrewAttack",
+                            "Charge+Ice+Wave",
+                            "Ice+Wave+Spazer",
+                            "Missile",
+                            "Super"
+                          ]
                         }}
                       ]
                     },
@@ -6707,12 +6725,15 @@
                       "id": "F",
                       "requires": [
                         {"enemyKill":{
-                          "enemies": [
-                            [
-                              "Dessgeega","Dessgeega"
-                            ]
-                          ],
-                          "excludedWeapons": ["Bombs"]
+                          "enemies": [["Dessgeega","Dessgeega"]],
+                          "explicitWeapons": [
+                            "Plasma",
+                            "ScrewAttack",
+                            "Charge+Ice+Wave",
+                            "Ice+Wave+Spazer",
+                            "Missile",
+                            "Super"
+                          ]
                         }}
                       ]
                     },
@@ -6722,11 +6743,15 @@
                     }
                   ],
                   "note": [
-                    "Ice is required because it's needed for the clip anyway.",
-                    "It's relevant here because it two-shots Multiviolas.",
-                    "The one hit is here as a safety."
+                    "Guide the bottom-right MultiViola to the upper section of the room.",
+                    "It will need bounce each room segment multiple times before lining up to go through each shot block.",
+                    "Lure the Dessgeegas away to avoid killing the multiviola."
                   ],
-                  "devNote": "This is not just getting up there, but also bringing the correct Multiviola with you."
+                  "devNote": [
+                    "This is not just getting up there, but also bringing the correct Multiviola with you.",
+                    "Three hits for leniency because it is hard to avoid damage even freezing the multiviola.",
+                    "2.5min strat with plasma"
+                  ]
                 }
               ]
             }
@@ -7327,7 +7352,7 @@
                       "id": "C",
                       "requires": [
                         "Plasma",
-                        "canHitBox"
+                        "canHitbox"
                       ]
                     },
                     {
@@ -8598,7 +8623,7 @@
                   ]
                 },
                 {
-                  "name": "HitBox the Kihunters",
+                  "name": "Hitbox the Kihunters",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
