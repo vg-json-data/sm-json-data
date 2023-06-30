@@ -5612,6 +5612,39 @@
               ],
               "usableComingIn": false,
               "openEnd": 1
+            },
+            {
+              "name": "Small Runway - Micky Mouse Left Door (to Fast Pillars Setup Room)",
+              "length": 13,
+              "strats": [
+                {
+                  "name": "Kill Multiviola",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"obstaclesCleared": ["E"]},
+                      {"and": [
+                        "canPrepareForNextRoom",
+                        {"or": [
+                          "Plasma",
+                          {"and": [
+                            "Charge",
+                            {"or": [
+                              "Wave",
+                              "Spazer"
+                            ]}
+                          ]}
+                        ]}
+                      ]}
+                     ]},
+                    {"heatFrames": 45}
+                  ],
+                  "note": "The Multiviola can be killed by aiming diagonally down when entering the room and shooting a strong enough beam shot (not ice)."
+                }
+              ],
+              "usableComingIn": true,
+              "openEnd": 1
             }
           ],
           "locks": [
@@ -5708,14 +5741,14 @@
           "name": "Mickey Mouse Junction (Before Last Two Dessgeegas)",
           "nodeType": "junction",
           "nodeSubType": "junction",
-          "note": "Position to the left of the farthest two Dessgeegas"
+          "note": "Position to the left of the rightmost two Dessgeegas"
         },
         {
           "id": 8,
           "name": "Mickey Mouse Junction (Near Left Door After Multiviola)",
           "nodeType": "junction",
           "nodeSubType": "junction",
-          "note": "Right after the bottom left door, but after getting hit by the Multiviola nearby."
+          "note": "In front of the bottom left door, after the multiviola has moved."
         },
         {
           "id": 9,
@@ -5796,6 +5829,19 @@
           "dropRequires": ["h_heatProof"]
         }
       ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Mickey Mouse Viola Ice Clip",
+          "note": [
+            "Guide the bottom right Multiviola from the bottom of Mickey Mouse room all the way to the crumble blocks and use it to ice clip through.",
+            "The Multiviola will bounce around the bottom area 4 times before it is able to pass through the shot block.",
+            "The door to the left cannot be opened and the respawning shot blocks needs to be removed at the right time.",
+            "Avoid damage by freezing the Multiviola, or letting it go off camera while setting up for the next step.",
+            "The Ice Clip can jump through the crumble blocks and then break or clip again through the bomb blocks.",
+            "Or clip directly into the morph tunnel leading to the Missile location."
+          ]
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -5808,7 +5854,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 120},
+                    {"heatFrames": 135},
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 180,
@@ -5878,31 +5924,55 @@
                 {
                   "name": "Kill on Entry",
                   "notable": false,
-                  "requires": [ "canPrepareForNextRoom" ],
-                  "obstacles": [
-                    {
-                      "id": "E",
-                      "requires": [
-                        {"or": [
-                          {"and": [
-                            "Wave",
-                            "Plasma"
-                          ]},
-                          "ScrewAttack",
-                          {"canComeInCharged": {
-                            "fromNode": 1,
-                            "framesRemaining": 0,
-                            "shinesparkFrames": 77
-                          }},
-                          {"canComeInCharged": {
-                            "fromNode": 1,
-                            "framesRemaining": 180,
-                            "shinesparkFrames": 0
-                          }}
-                        ]}
-                      ]
-                    }
-                  ]
+                  "requires": [ 
+                    "canPrepareForNextRoom",
+                    {"or": [
+                      {"and": [
+                        "h_canNavigateHeatRooms",
+                        {"enemyKill": {
+                          "enemies": [["Multiviola"]],
+                          "explicitWeapons": [
+                            "PseudoScrew",
+                            "ScrewAttack",
+                            "Missile",
+                            "Super"
+                          ]
+                        }},
+                        {"heatFrames": 30}
+                      ]},
+                      {"and": [
+                        "h_canNavigateHeatRooms",
+                        {"enemyKill": {
+                          "enemies": [["Multiviola"]],
+                          "explicitWeapons": [
+                            "Charge+Ice",
+                            "Ice+Wave",
+                            "Ice+Spazer"
+                          ]
+                        }},
+                        {"heatFrames": 60}
+                      ]},
+                      {"enemyKill": {
+                        "enemies": [["Multiviola"]],
+                        "explicitWeapons": [
+                          "Plasma",
+                          "Charge+Spazer",
+                          "Charge+Wave"
+                        ]
+                      }},
+                      {"canComeInCharged": {
+                        "fromNode": 1,
+                        "framesRemaining": 180,
+                        "shinesparkFrames": 0
+                      }}
+                    ]}
+                  ],
+                  "note": [
+                    "The multiviola will immediately reach Samus at the door when entering the room.",
+                    "By entering the room in a jump and aiming down, there is just enough time to shoot the multiviola.",
+                    "Or by entering the room aiming diagonally down and firing a beam shot."
+                  ],
+                  "devNote": "You can kill the viola with a super without jumping but that would be a notable strat for being frame precise and its not worth separating that out."
                 },
                 {
                   "name": "Multiviola Already Dead",
@@ -5930,10 +6000,12 @@
                     {
                       "id": "A",
                       "requires": [
-                        "h_canUsePowerBombs"
+                        "h_canUsePowerBombs",
+                        {"heatFrames": 50}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Place the power bomb while passing through the shot block gap to save some time."
                 }
               ]
             },
@@ -5946,10 +6018,7 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     {"heatFrames": 200},
-                    {"resetRoom":{
-                      "nodes": [1, 2],
-                      "obstaclesToAvoid": ["A"]
-                    }}
+                    {"obstaclesNotCleared": ["A"]}
                   ],
                   "obstacles": [
                     {
@@ -5964,10 +6033,7 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     {"heatFrames": 200},
-                    {"resetRoom":{
-                      "nodes": [1, 2],
-                      "obstaclesToAvoid": ["A"]
-                    }}
+                    {"obstaclesNotCleared": ["A"]}
                   ],
                   "obstacles": [
                     {
@@ -5978,6 +6044,46 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "Mickey Mouse SpeedKeep onto Crumbles",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"obstaclesNotCleared": ["A"]},
+                    "canPrepareForNextRoom",
+                    "canSpeedKeepChain",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 2,
+                      "shinesparkFrames": 0,
+                      "unusableTiles": 1
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 1,
+                      "useFrames": 200
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        "canTrickyJump",
+                        "canCrumbleJump"
+                      ]}
+                    ]},
+                    {"heatFrames": 300}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Carry a SpeedKeep through the top door of Mickey Mouse to break the left side of the bomb blocks.",
+                    "This can be done with SpringBall or with a tricky crumble jump."
+                  ],
+                  "devNote": "You could jump into the room for the initial speedkeep and turn around with XRay twice, but this room is heated so that would be costly."
                 }
               ]
             }
@@ -6013,7 +6119,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 250},
+                    {"heatFrames": 200},
                     "SpaceJump"
                   ],
                   "obstacles": [
@@ -6021,7 +6127,7 @@
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ]
@@ -6033,14 +6139,14 @@
                     "h_canNavigateHeatRooms",
                     "HiJump",
                     "canCrumbleJump",
-                    {"heatFrames": 250}
+                    {"heatFrames": 200}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
@@ -6053,14 +6159,14 @@
                     "h_canNavigateHeatRooms",
                     "HiJump",
                     "h_canUseSpringBall",
-                    {"heatFrames": 250}
+                    {"heatFrames": 150}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
@@ -6093,7 +6199,7 @@
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
@@ -6118,7 +6224,7 @@
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
@@ -6128,11 +6234,18 @@
                   ]
                 },
                 {
-                  "name": "Mickey Mouse Crumble IBJ",
+                  "name": "Mickey Mouse Crumble Jump IBJ",
                   "notable": true,
                   "requires": [
+                    "h_canNavigateHeatRooms",
                     "h_canJumpIntoIBJ",
                     "canCrumbleJump",
+                    {"or": [
+                      "canTrickyJump",
+                      "canDoubleBombJump",
+                      "canBombAboveIBJ",
+                      {"ammo": {"type": "PowerBomb","count":1}}
+                    ]},
                     {"heatFrames": 500}
                   ],
                   "obstacles": [
@@ -6140,34 +6253,45 @@
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
                   "note": [
-                    "This one's pretty horrible.",
+                    "Jump and Mid-air morph off a crumble block to begin the IBJ.",
                     "The shot block respawns quickly so it's pretty unforgiving on the IBJ executions.",
-                    "On top of that, the IBJ is off a mid-air morph off a crumble block."
+                    "Conservatively placing bombs for the IBJ will not make it up in time, unless the block is broken while IBJing."
                   ]
                 },
                 {
                   "name": "Mickey Mouse Spring Ball IBJ",
                   "notable": false,
                   "requires": [
+                    "h_canNavigateHeatRooms",
                     "h_canJumpIntoIBJ",
                     "h_canUseSpringBall",
-                    {"heatFrames": 550}
+                    {"or": [
+                      "canTrickyJump",
+                      "canDoubleBombJump",
+                      "canBombAboveIBJ",
+                      {"ammo": {"type": "PowerBomb","count":1}}
+                    ]},
+                    {"heatFrames": 500}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
                         "h_canUsePowerBombs",
-                        {"heatFrames": 150}
+                        {"heatFrames": 120}
                       ]
                     }
                   ],
-                  "note": "Shoot the block before starting or in mid-air, then use spring ball to bounce on the crumb blocks and start an IBJ."
+                  "note": [
+                    "Shoot the block before starting or in mid-air, then use spring ball to bounce on the crumb blocks and start an IBJ.",
+                    "The shot block respawns quickly so it's pretty unforgiving on the IBJ executions.",
+                    "Conservatively placing bombs for the IBJ will not make it up in time, unless the block is broken while IBJing."
+                  ]
                 }
               ]
             },
@@ -6180,7 +6304,55 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "Morph",
-                {"heatFrames": 150}
+                    {"heatFrames": 150}
+                  ]
+                },
+                {
+                  "name": "Power Bomb All the Blocks for Later",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    {"heatFrames": 150}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": ["h_canUsePowerBombs"]
+                    }
+                  ]
+                },
+                {
+                  "name": "Power Bomb the Left Blocks for Later",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesNotCleared": ["A"]},
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    {"heatFrames": 150}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": ["h_canUsePowerBombs"]
+                    }
+                  ],
+                  "note": "Position the Power Bomb far enough left to only partially clear the bomb blocks.",
+                  "devNote": "This is possible when ice clipping with the multiviola."
+                },
+                {
+                  "name": "Bomb a Block for Later",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    {"heatFrames": 150}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": ["h_canUseMorphBombs"]
+                    }
                   ]
                 }
               ]
@@ -6189,42 +6361,26 @@
               "id": 5,
               "strats": [
                 {
+                  "name": "Some Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["B"]},
+                    {"obstaclesNotCleared": ["A"]}
+                  ]
+                },
+                {
                   "name": "Morph Bombs",
                   "notable": false,
-                  "requires": [],
+                  "requires": [{"obstaclesNotCleared": ["A"]}],
                   "obstacles": [
                     {
                       "id": "B",
                       "requires": [
-                        {"resetRoom":{
-                          "nodes": [1, 2],
-                          "obstaclesToAvoid": ["A"]
-                        }},
                         {"heatFrames": 100},
                         "h_canUseMorphBombs"
                       ]
                     }
                   ]
-                },
-                {
-                  "name": "Power Bombs",
-                  "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [
-                        {"resetRoom":{
-                          "nodes": [1, 2],
-                          "obstaclesToAvoid": ["A"]
-                        }},
-                        {"heatFrames": 300},
-                        "h_canUsePowerBombs"
-                      ]
-                    }
-                  ],
-                  "note": "This is done by positioning the Power Bomb far enough left to only partially clear the blocks.",
-                  "devNote": "Not sure if there's a way to get here and have the strat be relevant though?"
                 }
               ]
             },
@@ -6236,7 +6392,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 500},
+                    {"heatFrames": 400},
                     {"enemyDamage": {
                       "enemy": "Multiviola",
                       "type": "contact",
@@ -6254,14 +6410,17 @@
                       "requires": []
                     }
                   ],
-                  "note": "Considered killable with Power Beam without taking damage."
+                  "note": [
+                    "Considered killable with Power Beam without taking damage.",
+                    "Dodge the middle single Multiviola when it jumps up."
+                  ]
                 },
                 {
                   "name": "Screw Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 500}
+                    {"heatFrames": 450}
                   ],
                   "obstacles": [
                     {
@@ -6273,18 +6432,36 @@
                   ]
                 },
                 {
-                  "name": "Wave Plasma Kill",
+                  "name": "Strong Beam Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 500}
+                    {"heatFrames": 450}
                   ],
                   "obstacles": [
                     {
                       "id": "D",
                       "requires": [
-                        "Wave",
-                        "Plasma"
+                        {"or": [
+                          {"and": [
+                            "Wave",
+                            "Plasma"
+                          ]},
+                          {"and": [
+                            "Plasma",
+                            {"heatFrames": 300}
+                          ]},
+                          {"and": [
+                            "Wave",
+                            "Ice",
+                            "Spazer",
+                            {"heatFrames": 300}
+                          ]},
+                          {"and": [
+                            "Wave",
+                            {"heatFrames": 900}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -6327,6 +6504,21 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"or": [
+                      "h_canCrouchJumpDownGrab",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir",
+                      "HiJump",
+                      "SpaceJump",
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"heatFrames": 50}
+                      ]},
+                      {"and": [
+                        "h_canJumpIntoIBJ",
+                        {"heatFrames": 60}
+                      ]}
+                    ]},
                     {"heatFrames": 250}
                   ]
                 }
@@ -6348,34 +6540,6 @@
           "from": 6,
           "to": [
             {
-              "id": 1,
-              "strats": [
-                {
-                  "name": "Iframe Blue Suit Run",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"resetRoom":{
-                      "nodes": [2],
-                      "obstaclesToAvoid": ["F"]
-                    }},
-                    {"heatFrames":200},
-                    {"enemyDamage": {
-                      "enemy": "Dessgeega",
-                      "type": "contact",
-                      "hits": 1
-                    }},
-                    {"canShineCharge": {
-                      "usedTiles": 33,
-                      "shinesparkFrames": 0,
-                      "openEnd": 2
-                    }}
-                  ],
-                  "note": "Taking damage off a Dessgeega at the far right, coming in from the top, allows you to charge a blue suit and get through to the door. It doesn't fully clear any one obstacle though."
-                }
-              ]
-            },
-            {
               "id": 4,
               "strats": [
                 {
@@ -6393,13 +6557,22 @@
                     },
                     {
                       "id": "D",
-                      "requires": []
+                      "requires": [
+                        {"or": [
+                          {"obstaclesCleared": ["F"]},
+                          {"enemyDamage": {
+                            "enemy": "Multiviola",
+                            "type": "contact",
+                            "hits": 2
+                          }}
+                        ]}
+                      ]
                     }
                   ],
-                  "note": [
+                  "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down to be forced on top of the solid block.",
+                  "devNote": [
                     "It is considered free to kill the Multiviolas with Power Beam while heatproof, and heatproof is required for the CF clip.",
-                    "All of the bomb blocks will be destroyed while performing the Crystal Flash.",
-                    "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down."
+                    "All of the bomb blocks will be destroyed while performing the Crystal Flash."
                   ]
                 }
               ]
@@ -6421,18 +6594,19 @@
                   ]
                 },
                 {
-                  "name": "HeatProof Kill",
+                  "name": "Slow Kill",
                   "notable": false,
-                  "requires": ["h_heatProof"],
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 3000}
+                  ],
                   "obstacles": [
                     {
                       "id": "F",
                       "requires": [
                         {"enemyKill":{
-                          "enemies": [
-                            [ "Dessgeega", "Dessgeega" ]
-                          ],
-                          "excludedWeapons": [ "Bombs" ]
+                          "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                          "excludedWeapons": [ "Bombs", "PseudoScrew" ]
                         }}
                       ]
                     }
@@ -6440,7 +6614,7 @@
                   "devNote": "Morph Bombs excluded because there's no safe setup."
                 },
                 {
-                  "name": "Wave Plasma Kill",
+                  "name": "Beam Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
@@ -6450,48 +6624,18 @@
                     {
                       "id": "F",
                       "requires": [
-                        "Plasma",
-                        {"heatFrames": 250},
-                        "Wave"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Plasma Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 150}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "F",
-                      "requires": [
-                        "Plasma",
-                        {"heatFrames": 400}
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Power Bomb Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 150}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "F",
-                      "requires": [
-                        {"enemyKill":{
-                          "enemies": [
-                            [ "Dessgeega", "Dessgeega" ]
-                          ],
-                          "explicitWeapons": [ "PowerBomb" ]
-                        }},
-                        {"heatFrames": 350}
+                        {"or":[
+                          {"and": [
+                            "Plasma",
+                            {"heatFrames": 250}
+                          ]},
+                          {"and": [
+                            "Ice",
+                            "Wave",
+                            "Spazer",
+                            {"heatFrames": 600}
+                          ]}
+                        ]}
                       ]
                     }
                   ]
@@ -6512,21 +6656,99 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "Ammo Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 150}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "F",
+                      "requires": [
+                        {"or": [
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "Missile" ]
+                            }},
+                            {"heatFrames": 420}
+                          ]},
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "Super" ]
+                            }},
+                            {"heatFrames": 250}
+                          ]},
+                          {"and": [
+                            {"enemyKill":{
+                              "enemies": [[ "Dessgeega", "Dessgeega" ]],
+                              "explicitWeapons": [ "PowerBomb" ]
+                            }},
+                            {"heatFrames": 350}
+                          ]}
+                        ]}
+                      ]
+                    }
+                  ]
                 }
               ],
-              "note": "Options are to tank the damage or kill the Dessgeegas"
+              "devNote": "The Dessgeegas can be assumed to be fought from above, going 4->6->7."
+            },
+            {
+              "id": 8,
+              "strats": [
+                {
+                  "name": "Blue Suit Run",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"obstaclesCleared": ["F"]},
+                      {"enemyDamage": {
+                        "enemy": "Dessgeega",
+                        "type": "contact",
+                        "hits": 1
+                      }}
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 23,
+                      "shinesparkFrames": 0,
+                      "openEnd": 2
+                    }},
+                    {"heatFrames":200}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": []
+                    },
+                    {
+                      "id": "E",
+                      "requires": []
+                    }
+                  ],
+                  "note": "Taking damage off a Dessgeega at the far right, coming in from the top, allows you to charge a blue suit and get through to the door."
+                }
+              ]
             },
             {
               "id": 9,
               "strats": [
                 {
-                  "name": "Setup Ice Clip",
-                  "notable": false,
+                  "name": "Mickey Mouse Ice Clip Setup",
+                  "notable": true,
                   "requires": [
                     "h_heatProof",
-                    {"resetRoom":{
-                      "nodes": [1],
-                      "obstaclesToAvoid": ["E"]
+                    "canUseFrozenEnemies",
+                    {"obstaclesNotCleared": ["E"]},
+                    {"enemyDamage": {
+                      "enemy": "Multiviola",
+                      "type": "contact",
+                      "hits": 5
                     }}
                   ],
                   "obstacles": [
@@ -6539,7 +6761,14 @@
                             ["Dessgeega"],
                             ["Dessgeega"]
                           ],
-                          "excludedWeapons": ["Bombs"]
+                          "explicitWeapons": [
+                            "Plasma",
+                            "ScrewAttack",
+                            "Charge+Ice+Wave",
+                            "Ice+Wave+Spazer",
+                            "Missile",
+                            "Super"
+                          ]
                         }}
                       ]
                     },
@@ -6547,33 +6776,39 @@
                       "id": "F",
                       "requires": [
                         {"enemyKill":{
-                          "enemies": [
-                            [
-                              "Dessgeega","Dessgeega"
-                            ]
-                          ],
-                          "excludedWeapons": ["Bombs"]
+                          "enemies": [["Dessgeega","Dessgeega"]],
+                          "explicitWeapons": [
+                            "Plasma",
+                            "ScrewAttack",
+                            "Charge+Ice+Wave",
+                            "Ice+Wave+Spazer",
+                            "Missile",
+                            "Super"
+                          ]
                         }}
                       ]
                     },
                     {
                       "id": "D",
-                      "requires": [
-                        "Ice",
-                        {"enemyDamage": {
-                          "enemy": "Multiviola",
-                          "type": "contact",
-                          "hits": 1
-                        }}
-                      ],
-                      "note": [
-                        "Ice is required because it's needed for the clip anyway.",
-                        "It's relevant here because it two-shots Multiviolas.",
-                        "The one hit is here as a safety, and is likely required if the Dessgeegas below aren't there yet."
-                      ]
+                      "requires": []
                     }
                   ],
-                  "note": "This is not just getting up there, but also bringing the correct Multiviola with you."
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Guide the bottom-right MultiViola to the upper section of the room.",
+                    "Lure the Dessgeegas away to avoid killing the multiviola.",
+                    "Remove all enemies and possibly also the row of bomb blocks with a power bomb before attempting to guide the Multiviola.",
+                    "It will need to bounce each room segment multiple times before lining up to go through each shot block.",
+                    "Ice can be used to more safely get around the Multiviola as it is bouncing.",
+                    "However, opening the left side door will change the bounce locations and make the strat no longer possible.",
+                    "Instead the enemy can be allowed to go off camera and then Samus can prepare to run away as it comes back.",
+                    "Waiting in the next room segment is a safe way to wait for the Multiviola to bounce and still be able to break shot blocks."
+                  ],
+                  "devNote": [
+                    "This is not just getting up there, but also bringing the correct Multiviola with you.",
+                    "Five hits for leniency because it is hard to avoid damage even while freezing the multiviola.",
+                    "2.5min strat with plasma"
+                  ]
                 }
               ]
             }
@@ -6585,34 +6820,6 @@
             {
               "id": 8,
               "strats": [
-                {
-                  "name": "Speed Through",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"canShineCharge": {
-                      "usedTiles": 22,
-                      "shinesparkFrames": 0,
-                      "openEnd": 0
-                    }},
-                    {"heatFrames": 250},
-                    {"obstaclesCleared": ["F"]}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": []
-                    },
-                    {
-                      "id": "E",
-                      "requires": []
-                    }
-                  ],
-                  "note": [
-                    "If the Dessgeegas to the far right are killed, a short charge can get through.",
-                    "To avoid redundancy, they must be killed by travelling between 7 and 6."
-                  ]
-                },
                 {
                   "name": "Tank the Damage",
                   "notable": false,
@@ -6637,11 +6844,14 @@
                     {
                       "id": "C",
                       "requires": [
+                        "canDodgeWhileShooting",
                         {"enemyKill":{
                           "enemies": [
-                            [ "Dessgeega", "Dessgeega", "Dessgeega" ]
+                            ["Dessgeega"],
+                            ["Dessgeega"],
+                            ["Dessgeega"]
                           ],
-                          "excludedWeapons": [ "Bombs" ]
+                          "excludedWeapons": [ "Bombs", "PseudoScrew" ]
                         }}
                       ]
                     },
@@ -6651,7 +6861,8 @@
                         {"or":[
                           {"enemyKill":{
                             "enemies": [
-                              [ "Multiviola", "Multiviola" ]
+                              ["Multiviola"],
+                              ["Multiviola"]
                             ],
                             "excludedWeapons": [ "Bombs", "PowerBeam" ]
                           }},
@@ -6662,20 +6873,20 @@
                           }}
                         ]}
                       ],
-                      "note": "Pretty much any weapon but PowerBeam and Morph Bombs can kill the Multiviolas in time to not take a hit."
+                      "note": [
+                        "Some weapons are very slow and require use of the safe spot in the bottom right Multiviola cage.",
+                        "Pretty much any weapon but PowerBeam and Morph Bombs can kill the Multiviolas in time to not take a hit."
+                      ],
+                      "devNote": "Morph Bombs are excluded because there is no safe setup."
                     }
-                  ],
-                  "note": [
-                    "Some weapons are very slow and require use of the safe spot above node 6.",
-                    "This is why the Dessgeegas to the right must already be dead."
-                  ],
-                  "devNote": "Morph Bombs are excluded because there is no safe setup."
+                  ]
                 },
                 {
                   "name": "Wave Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["F"]},
                     {"heatFrames": 200}
                   ],
                   "obstacles": [
@@ -6695,6 +6906,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["F"]},
                     {"heatFrames": 200}
                   ],
                   "obstacles": [
@@ -6702,7 +6914,7 @@
                       "id": "C",
                       "requires": [
                         "Plasma",
-                        {"heatFrames": 400}
+                        {"heatFrames": 300}
                       ],
                       "additionalObstacles": ["E"]
                     }
@@ -6713,6 +6925,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["F"]},
                     {"heatFrames": 200}
                   ],
                   "obstacles": [
@@ -6725,7 +6938,7 @@
                           ],
                           "explicitWeapons": [ "Missile" ]
                         }},
-                        {"heatFrames": 400}
+                        {"heatFrames": 300}
                       ]
                     },
                     {
@@ -6746,6 +6959,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["F"]},
                     {"heatFrames": 200}
                   ],
                   "obstacles": [
@@ -6792,8 +7006,7 @@
                     }
                   ]
                 }
-              ],
-              "note": "Options are to tank the damage or kill the Dessgeegas and Multiviolas"
+              ]
             },
             {
               "id": 6,
@@ -6812,10 +7025,11 @@
                   ]
                 },
                 {
-                  "name": "Plasma Wave Kill",
+                  "name": "Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["C"]},
                     {"heatFrames": 100}
                   ],
                   "obstacles": [
@@ -6823,25 +7037,28 @@
                       "id": "F",
                       "requires": [
                         "Plasma",
-                        {"heatFrames": 300},
-                        "Wave"
+                        {"heatFrames": 300}
                       ]
                     }
                   ]
                 },
                 {
-                  "name": "Plasma Kill",
+                  "name": "Beam Combo Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["C"]},
                     {"heatFrames": 100}
                   ],
                   "obstacles": [
                     {
                       "id": "F",
                       "requires": [
-                        "Plasma",
-                        {"heatFrames": 500}
+                        "Charge",
+                        "Ice",
+                        "Wave",
+                        "Spazer",
+                        {"heatFrames": 450}
                       ]
                     }
                   ]
@@ -6851,6 +7068,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["C"]},
                     {"heatFrames": 100}
                   ],
                   "obstacles": [
@@ -6880,7 +7098,7 @@
                       "id": "F",
                       "requires": [
                         "ScrewAttack",
-                        {"heatFrames": 100}
+                        {"heatFrames": 60}
                       ]
                     }
                   ]
@@ -6890,6 +7108,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["C"]},
                     {"heatFrames": 100}
                   ],
                   "obstacles": [
@@ -6902,14 +7121,13 @@
                           ],
                           "explicitWeapons": [ "Missile" ]
                         }},
-                        {"heatFrames": 500}
+                        {"heatFrames": 300}
                       ]
                     }
                   ]
                 }
               ],
-              "note": "Options are to tank the damage or kill the Dessgeegas",
-              "devNote": "No heatproof strats because it's less damage to run to the safe spot above 6 and kill them from there"
+              "devNote": "No heatproof or slow kill strats because it's less damage to run to the safe spot above 6 and kill them from there"
             }
           ]
         },
@@ -6943,58 +7161,17 @@
                   ]
                 },
                 {
-                  "name": "Wave Plasma Kill",
+                  "name": "Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
                       "id": "C",
                       "requires": [
                         {"heatFrames": 200},
-                        "Plasma",
-                        "Wave"
-                      ],
-                      "additionalObstacles": ["E"]
-                    }
-                  ]
-                },
-                {
-                  "name": "Plasma Wave Kill Sparing Multiviolas",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"heatFrames": 400},
-                        "Plasma",
-                        "Wave"
-                      ]
-                    }
-                  ],
-                  "note": [
-                    "Sparing the Multiviolas is required to perform an ice clip further in.",
-                    "However, it requires going slower."
-                  ]
-                },
-                {
-                  "name": "Plasma Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"heatFrames": 400},
                         "Plasma"
                       ],
                       "additionalObstacles": ["E"]
@@ -7006,13 +7183,13 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
                       "id": "C",
                       "requires": [
-                        {"heatFrames": 600},
+                        {"heatFrames": 300},
                         "Plasma"
                       ]
                     }
@@ -7023,17 +7200,37 @@
                   ]
                 },
                 {
-                  "name": "Missiles Kill",
+                  "name": "Beam Combo Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
                       "id": "C",
                       "requires": [
-                        {"heatFrames": 400},
+                        "Charge",
+                        "Ice",
+                        "Wave",
+                        "Spazer",
+                        {"heatFrames": 900}
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Missiles Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 180}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "C",
+                      "requires": [
+                        {"heatFrames": 300},
                         {"enemyKill":{
                           "enemies": [
                             [
@@ -7052,13 +7249,13 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
                       "id": "C",
                       "requires": [
-                        {"heatFrames": 400},
+                        {"heatFrames": 360},
                         {"enemyKill":{
                           "enemies": [
                             [
@@ -7080,7 +7277,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
@@ -7105,7 +7302,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
@@ -7129,11 +7326,11 @@
                   ]
                 },
                 {
-                  "name": "Screw Kill Sparing Multiviolas",
+                  "name": "Screw Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
                   "obstacles": [
                     {
@@ -7144,11 +7341,49 @@
                       ]
                     }
                   ],
-                  "note": "You can't catch the Multiviolas to kill them with Screw without reaching node 6."
+                  "devNote": "You can't catch the Multiviolas to kill them with Screw without reaching node 6."
                 }
               ],
-              "note": "Options are to Speed Booster dash or spark through, tank the damage, kill the Dessgeegas and Multiviolas, or go slower to spare the Multiviolas",
-              "devNote": "No heatproof strats because it's less damage to run to the safe spot above 6 and lure everything there"
+              "devNote": "No heatproof or slow kill strats because it's less damage to run to the safe spot above 6 and lure everything there"
+            },
+            {
+              "id": 6,
+              "strats": [
+                {
+                  "name": "Plasma Hitbox Run-Through",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2,
+                      "shinesparkFrames": 0
+                    }},
+                    {"heatFrames": 145}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "E",
+                      "requires": []
+                    },
+                    {
+                      "id": "C",
+                      "requires": [
+                        "Plasma",
+                        "canHitbox"
+                      ]
+                    },
+                    {
+                      "id": "F",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Time Plasma shots so that Samus can run through the first two Dessgeegas and build Speedbooster echoes.",
+                    "Shooting into the floor can give more control over the enemy iframes."
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -7156,39 +7391,169 @@
           "from": 9,
           "to": [
             {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Mickey Mouse Multiviola Clip (Bomb Block Clip)",
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "canPixelPerfectIceClip",
+                    "canPartialFloorClip",
+                    "canTrickyJump",
+                    "canCrumbleJump",
+                    {"enemyDamage": {
+                      "enemy": "Multiviola",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"or": [
+                      "h_canCrouchJumpDownGrab",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir",
+                      "HiJump",
+                      "SpaceJump",
+                      "h_canJumpIntoIBJ"
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Ice Clip through the crumble blocks using a Multiviola from the bottom of the room and then Crumble Jump to clip through the bomb blocks.",
+                    "The ice clip can be setup by standing in a corner and firing forward when the Multiviola hits Samus, if it is moving downwards towards Samus.",
+                    "The Crumble Jump is done by aiming down (not immediately) after jumping, then changing Samus' hitbox once above the crumble blocks, and jumping again."
+                  ]
+                },
+                {
+                  "name": "Mickey Mouse Viola Clip (XRay Standup Bomb Block Clip)",
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "canXRayStandUp",
+                    "canNonTrivialIceClip",
+                    {"or": [
+                      "h_canCrouchJumpDownGrab",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir",
+                      "HiJump",
+                      "SpaceJump",
+                      "h_canJumpIntoIBJ"
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Freeze the Multiviola on the left side, just below the solid block.",
+                    "XRay standup and jump to clip up, then jump again to get on top of the bomb blocks."
+                  ]
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
-                  "name": "Mickey Mouse Multiviola Clip (Screw Attack)",
-                  "notable": false,
-                  "requires": ["canMultiviolaIceClip"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": ["ScrewAttack"]
-                    }
-                  ]
-                },
-                {
-                  "name": "Mickey Mouse Multiviola Clip (Morph Bomb)",
-                  "notable": false,
-                  "requires": ["canMultiviolaIceClip"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": ["h_canUseMorphBombs"]
-                    }
-                  ]
-                },
-                {
                   "name": "Mickey Mouse Multiviola Clip (Power Bomb)",
-                  "notable": false,
-                  "requires": ["canMultiviolaIceClip"],
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "canPixelPerfectIceClip",
+                    {"enemyDamage": {
+                      "enemy": "Multiviola",
+                      "type": "contact",
+                      "hits": 1
+                    }}
+                  ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": ["h_canUsePowerBombs"]
                     }
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Ice Clip through the crumble blocks using a Multiviola from the bottom of the room and then Crumble Jump to clip through the bomb blocks.",
+                    "The ice clip can be setup by standing in a corner and firing forward when the Multiviola hits Samus, if it is moving downwards towards Samus.",
+                    "Break the bomb blocks with a Power Bomb before bringing the Multiviola up for the clip."
+                  ]
+                },
+                {
+                  "name": "Mickey Mouse Viola Clip (XRay Standup and Morph)",
+                  "notable": true,
+                  "requires": [
+                    "canXRayStandUp",
+                    "canNonTrivialIceClip",
+                    "Morph"
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Freeze the Multiviola on the left side, just below the solid block.",
+                    "XRay standup and jump to clip up, then Morph to be in the morph tunnel."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Mickey Mouse Multiviola Clip (Screw Attack)",
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "canPixelPerfectIceClip",
+                    {"enemyDamage": {
+                      "enemy": "Multiviola",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    "ScrewAttack",
+                    {"obstaclesNotCleared": ["A"]}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": ["ScrewAttack"]
+                    }
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Ice Clip through the crumble blocks using a Multiviola from the bottom of the room and then Crumble Jump to clip through the bomb blocks.",
+                    "The ice clip can be setup by standing in a corner and firing forward when the Multiviola hits Samus, if it is moving downwards towards Samus.",
+                    "Jump and aim down to break the crumble blocks.",
+                    "Then quickly spinjump to break the bomb blocks with Screw Attack."
+                  ]
+                },
+                {
+                  "name": "Mickey Mouse Multiviola Clip (Morph Bombs)",
+                  "notable": true,
+                  "requires": [
+                    "h_heatProof",
+                    "canPixelPerfectIceClip",
+                    {"enemyDamage": {
+                      "enemy": "Multiviola",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"obstaclesNotCleared": ["A"]}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "B",
+                      "requires": [
+                        "h_canUseMorphBombs",
+                        {"or": [
+                          "h_canUseSpringBall",
+                          "can3HighMidAirMorph"
+                        ]}
+                      ]
+                    }
+                  ],
+                  "reusableRoomwideNotable": "Mickey Mouse Viola Ice Clip",
+                  "note": [
+                    "Ice Clip through the crumble blocks using a Multiviola from the bottom of the room and then Crumble Jump to clip through the bomb blocks.",
+                    "The ice clip can be setup by standing in a corner and firing forward when the Multiviola hits Samus, if it is moving downwards towards Samus.",
+                    "Very quickly jump and morph to place a bomb against the bomb blocks.",
+                    "Or break the crumble blocks and use SpringBall to jump again to place the bomb.",
+                    "Then jump again while the Multiviola is still frozen to clip through."
                   ]
                 }
               ]
@@ -8406,7 +8771,7 @@
                   ]
                 },
                 {
-                  "name": "HitBox the Kihunters",
+                  "name": "Hitbox the Kihunters",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
