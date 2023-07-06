@@ -8223,12 +8223,16 @@
                 "mustOpenDoorFirst": true,
                 "pathToDoor": [
                   {
-                    "destinationNode": 1,
+                    "destinationNode": 6,
                     "strats": ["Quick Kill"]
                   },
                   {
-                    "destinationNode": 3,
+                    "destinationNode": 7,
                     "strats": ["Base"]
+                  },
+                  {
+                    "destinationNode": 3,
+                    "strats": ["Kill While Running"]
                   }
                 ]
               },
@@ -8258,14 +8262,25 @@
                       {"and": [
                         {"enemyKill": {
                           "enemies": [["Alcoon"]],
-                          "explicitWeapons": ["Plasma", "Wave+Spazer","ScrewAttack", "Missile", "Super"]
+                          "explicitWeapons": [
+                            "Plasma",
+                            "Wave+Spazer",
+                            "ScrewAttack",
+                            "Missile",
+                            "Super"
+                          ]
                         }},
                         {"heatFrames": 420}
                       ]},
                       {"and": [
                         {"enemyKill": {
                           "enemies": [["Alcoon"]],
-                          "explicitWeapons": ["Spazer", "Wave", "PseudoScrew","PowerBomb"]
+                          "explicitWeapons": [
+                            "Spazer",
+                            "Wave",
+                            "PseudoScrew",
+                            "PowerBomb"
+                          ]
                         }},
                         {"heatFrames": 530}
                       ]},
@@ -8432,13 +8447,21 @@
                     {"or": [
                       {"enemyKill": {
                         "enemies": [["Alcoon"]],
-                        "explicitWeapons": ["Missile","Super", "Wave+Plasma"]
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "Wave+Plasma"
+                        ]
                       }},
                       {"and": [
                         "canPrepareForNextRoom",
                         "Charge",
                         "Wave",
                         "Spazer"
+                      ]},
+                      {"and": [
+                        "canPseudoScrew",
+                        {"heatFrames": 30}
                       ]}
                     ]},
                     {"or":[
@@ -8531,7 +8554,8 @@
                         "Missile",
                         "Super",
                         "Plasma",
-                        "ScrewAttack"
+                        "ScrewAttack",
+                        "PseudoScrew"
                       ]
                     }},
                     {"heatFrames": 190}
@@ -8721,35 +8745,89 @@
                       "canSpringBallJumpMidAir",
                       "SpaceJump"
                     ]},
-                    {"heatFrames": 400}
+                    {"heatFrames": 180}
                   ]
                 },
                 {
-                  "name": "IBJ",
+                  "name": "SpringBall Bomb Jump",
                   "notable": false,
                   "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canSpringBallBombJump",
+                    {"heatFrames": 240}
+                  ]
+                },
+                {
+                  "name": "Avoid Spawning Alcoon and IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
                     "h_canIBJ",
-                    "h_heatProof"
-                  ],
-                  "devNote": "FIXME This needs heatFrames."
+                    {"or": [
+                      {"and": [
+                        "canBombHorizontally",
+                        { "heatFrames": 840 }
+                      ]},
+                      {"and": [
+                         "h_canJumpIntoIBJ",
+                         "canDoubleBombJump",
+                         {"heatFrames": 290}
+                       ]},
+                      {"and": [
+                        "h_canJumpIntoIBJ",
+                        {"heatFrames": 480}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Kill Alcoon and IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_canIBJ",
+                    {"or": [
+                      {"enemyKill": {
+                        "enemies": [["Alcoon"]],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "Plasma",
+                          "Wave+Spazer",
+                          "PseudoScrew",
+                          "ScrewAttack"
+                        ]
+                      }},
+                      {"heatFrames": 270}
+                    ]},
+                    {"heatFrames": 50},
+                    {"or": [
+                      {"and": [
+                        "canDoubleBombJump",
+                        {"heatFrames": 500}
+                      ]},
+                      {"heatFrames": 860}
+                    ]}
+                  ]
                 },
                 {
                   "name": "Tricky Dash Jump",
                   "notable": false,
                   "requires": [
                     "canTrickyDashJump",
-                    "h_heatProof"
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 200}
                   ],
-                  "devNote": "FIXME This needs heatFrames."
+                  "note": "Jump from the bottom of the slope with about 6 tiles of run speed."
                 },
                 {
                   "name": "Frozen Alcoon",
                   "notable": false,
                   "requires": [
+                    "h_canNavigateHeatRooms",
                     "canUseFrozenEnemies",
-                    "h_heatProof"
-                  ],
-                  "devNote": "FIXME This needs heatFrames."
+                    {"heatFrames": 330}
+                  ]
                 }
               ]
             },
@@ -8757,11 +8835,78 @@
               "id": 3,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Kill While Running",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 300}
+                    "canDodgeWhileShooting",
+                    {"or": [
+                      {"enemyKill": {
+                        "enemies": [["Alcoon"]],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super", 
+                          "Wave+Plasma",
+                          "PseudoScrew",
+                          "ScrewAttack",
+                          "Charge+Wave+Spazer",
+                          "Shinespark"
+                        ]
+                      }},
+                      {"and": [
+                        "Plasma",
+                        "canHitbox"
+                      ]}
+                    ]},
+                    {"heatFrames": 120}
+                  ],
+                  "note": "Kill the Alcoon without stopping."
+                },
+                {
+                  "name": "Stop To Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"enemyKill": {
+                      "enemies": [["Alcoon", "Alcoon"]],
+                      "explicitWeapons": [
+                        "Missile",
+                        "Super",
+                        "Plasma",
+                        "Wave+Spazer"
+                      ]
+                    }},
+                    {"heatFrames": 240}
+                  ]
+                },
+                {
+                  "name": "Jump Over",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canCarefulJump",
+                    {"heatFrames": 240}
+                  ]
+                },
+                {
+                  "name": "Tank the Damage",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"enemyDamage": {
+                      "enemy": "Alcoon",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"heatFrames": 180}
+                  ]
+                },
+                {
+                  "name": "Slow Kill",
+                  "notable": false,
+                  "requires":[
+                    "h_heatProof",
+                    "canDodgeWhileShooting"
                   ]
                 }
               ]
@@ -8774,7 +8919,94 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 300}
+                    {"or":[
+                      "canWalljump",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      "SpaceJump"
+                    ]},
+                    {"heatFrames": 160}
+                  ]
+                },
+                {
+                  "name": "SpringBall Bomb Jump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canSpringBallBombJump",
+                    {"heatFrames": 220}
+                  ]
+                },
+                {
+                  "name": "Avoid Spawning Alcoon and IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_canIBJ",
+                    {"or": [
+                      {"and": [
+                        "canBombHorizontally",
+                        { "heatFrames": 820 }
+                      ]},
+                      {"and": [
+                         "h_canJumpIntoIBJ",
+                         "canDoubleBombJump",
+                         {"heatFrames": 270}
+                       ]},
+                      {"and": [
+                        "h_canJumpIntoIBJ",
+                        {"heatFrames": 460}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Kill Alcoon and IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_canIBJ",
+                    {"or": [
+                      {"enemyKill": {
+                        "enemies": [["Alcoon"]],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "Plasma",
+                          "Wave+Spazer",
+                          "PseudoScrew",
+                          "ScrewAttack"
+                        ]
+                      }},
+                      {"heatFrames": 270}
+                    ]},
+                    {"heatFrames": 50},
+                    {"or": [
+                      {"and": [
+                        "canDoubleBombJump",
+                        {"heatFrames": 480}
+                      ]},
+                      {"heatFrames": 840}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Tricky Dash Jump",
+                  "notable": false,
+                  "requires": [
+                    "canTrickyDashJump",
+                    "h_canNavigateHeatRooms",
+                    {"heatFrames": 180}
+                  ],
+                  "note": "Jump from the bottom of the slope with about 6 tiles of run speed."
+                },
+                {
+                  "name": "Frozen Alcoon",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canUseFrozenEnemies",
+                    {"heatFrames": 310}
                   ]
                 }
               ]
