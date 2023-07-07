@@ -9194,10 +9194,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"resetRoom":{
-                      "nodes":[1],
-                      "mustStayPut": true
-                    }},
+                    {"obstaclesNotCleared": ["A"]},
                     {"heatFrames": 140}
                   ]
                 }
@@ -9277,13 +9274,14 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 450},
+                    {"heatFrames": 400},
                     {"enemyDamage": {
                       "enemy": "Kihunter (red)",
                       "type": "contact",
                       "hits": 2
                     }}
-                  ]
+                  ],
+                  "note": "Wait for the first KiHunter to pass and then run through the remaining two."
                 },
                 {
                   "name": "HeatProof Kill",
@@ -9310,7 +9308,20 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "h_canPlasmaHitbox",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
+                  ]
+                },
+                {
+                  "name": "Jump Over Kihunters.",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canTrickyJump",
+                    {"heatFrames": 540}
+                  ],
+                  "note": [
+                    "Wait for the top one to pass by.",
+                    "Jump down when the lower two are by the left wall and jump over them when they swoop."
                   ]
                 },
                 {
@@ -9318,17 +9329,25 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 330}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 100},
-                        "ScrewAttack"
+                        "ScrewAttack",
+                        {"or": [
+                          {"heatFrames": 100},
+                          {"and": [
+                            "canCarefulJump",
+                            {"heatFrames": 50}
+                          ]},
+                          "canTrickyJump"
+                        ]}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "By moving quickly, the KiHunters will be in favourable positions.  Otherwise wait until it is safe to continue."
                 },
                 {
                   "name": "Full Combo Kill",
@@ -9341,17 +9360,25 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 200},
                         "Charge",
                         "Plasma",
                         "Ice",
-                        "Wave"
+                        "Wave",
+                        {"or": [
+                          {"heatFrames": 360},
+                          "canTrickyJump"
+                        ]},
+                        {"heatFrames": 120}
                       ]
                     }
+                  ], 
+                  "note": [
+                    "Shooting straight down can hit the KiHunter below.",
+                    "Jumping before shooting down can even double hit, instantly killing them."
                   ]
                 },
                 {
-                  "name": "Chargeless Full Combo Kill",
+                  "name": "Chargeless Wave Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
@@ -9361,72 +9388,78 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 400},
                         "Plasma",
-                        "Ice",
-                        "Wave"
+                        "Wave",
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"heatFrames": 30}
+                        ]},
+                        {"heatFrames": 390}
                       ]
                     }
-                  ]
-                },
-                {
-                  "name": "Wave Plasma Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        {"heatFrames": 600},
-                        "Plasma",
-                        "Wave"
-                      ]
-                    }
-                  ]
+                  "note": "The top KiHunter can be ignored."
                 },
                 {
                   "name": "Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 1000},
-                        "Plasma"
+                        "Plasma",
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"and": [
+                            "Charge",
+                            {"heatFrames": 1800}
+                          ]}
+                        ]},
+                        {"heatFrames": 900}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Jump to the previous level when the enemy gets close, or fight entirely from safety."
                 },
                 {
                   "name": "Supers Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 600},
                         {"enemyKill":{
-                          "enemies": [
-                            [
-                              "Kihunter (red)","Kihunter (red)","Kihunter (red)"
-                            ]
-                          ],
+                          "enemies": [["Kihunter (red)","Kihunter (red)"]],
                           "explicitWeapons": ["Super"]
-                        }}
+                        }},
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"and": [
+                            "canCarefulJump",
+                            {"enemyKill":{
+                              "enemies": [["Kihunter (red)"]],
+                              "explicitWeapons": ["Super"]
+                            }},
+                            {"heatFrames": 960}
+                          ]}
+                        ]},
+                        {"heatFrames": 270}
                       ]
                     }
-                  ]
+                  ],
+                  "note": [
+                    "Jump to the previous level when the enemy gets close, or fight entirely from safety.",
+                    "Two supers can hit per cycle when shooting from above."
+                  ],
+                  "devNote": "Without two supers per cycle, this requires heatproof."
                 },
                 {
                   "name": "Ice Wave Spazer Kill",
@@ -9439,13 +9472,14 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 1600},
+                        {"heatFrames": 810},
                         "Spazer",
                         "Ice",
                         "Wave"
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Shooting rapidly at an angle is faster than jumping and firing down."
                 }
               ]
             }
