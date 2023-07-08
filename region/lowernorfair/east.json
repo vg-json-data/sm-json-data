@@ -9793,10 +9793,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"resetRoom":{
-                      "nodes":[1],
-                      "mustStayPut": true
-                    }},
+                    {"obstaclesNotCleared": ["A"]},
                     {"heatFrames": 140}
                   ]
                 }
@@ -9851,7 +9848,11 @@
         {
           "id": "A",
           "name": "Three Musketeers",
-          "obstacleType": "enemies"
+          "obstacleType": "enemies",
+          "devNote": [
+            "The shot blocks are treated as broken when this obstacle is cleared.",
+            "For that reason the Musketeers are treated as cleared when travelling to the top door even if they may not be dead."
+          ]
         }
       ],
       "enemies": [
@@ -9862,6 +9863,12 @@
           "quantity": 3,
           "betweenNodes": [1,4],
           "dropRequires": ["h_heatProof"]
+        }
+      ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Dodge the Three Musketeers",
+          "note": "Read the movements of the Kihunters and jump over or roll under them as appropriate."
         }
       ],
       "links": [
@@ -9876,13 +9883,14 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 450},
+                    {"heatFrames": 400},
                     {"enemyDamage": {
                       "enemy": "Kihunter (red)",
                       "type": "contact",
                       "hits": 2
                     }}
-                  ]
+                  ],
+                  "note": "Wait for the first KiHunter to pass and then run through the remaining two."
                 },
                 {
                   "name": "HeatProof Kill",
@@ -9909,7 +9917,22 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "h_canPlasmaHitbox",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
+                  ]
+                },
+                {
+                  "name": "Dodge the Three Musketeers (Going Down)",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canTrickyJump",
+                    "Morph",
+                    {"heatFrames": 540}
+                  ],
+                  "reusableRoomwideNotable": "Dodge the Three Musketeers",
+                  "note": [
+                    "Wait for the top one to pass by.",
+                    "Jump down when the lower two are by the left wall and jump over them when they swoop."
                   ]
                 },
                 {
@@ -9917,17 +9940,25 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 330}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 100},
-                        "ScrewAttack"
+                        "ScrewAttack",
+                        {"or": [
+                          {"heatFrames": 100},
+                          {"and": [
+                            "canCarefulJump",
+                            {"heatFrames": 50}
+                          ]},
+                          "canTrickyJump"
+                        ]}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "By moving quickly, the KiHunters will be in favourable positions.  Otherwise wait until it is safe to continue."
                 },
                 {
                   "name": "Full Combo Kill",
@@ -9940,17 +9971,25 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 200},
                         "Charge",
                         "Plasma",
                         "Ice",
-                        "Wave"
+                        "Wave",
+                        {"or": [
+                          {"heatFrames": 360},
+                          "canTrickyJump"
+                        ]},
+                        {"heatFrames": 120}
                       ]
                     }
+                  ], 
+                  "note": [
+                    "Shooting straight down can hit the KiHunter below.",
+                    "Jumping before shooting down can even double hit, instantly killing them."
                   ]
                 },
                 {
-                  "name": "Chargeless Full Combo Kill",
+                  "name": "Chargeless Wave Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
@@ -9960,72 +9999,78 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 400},
                         "Plasma",
-                        "Ice",
-                        "Wave"
+                        "Wave",
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"heatFrames": 30}
+                        ]},
+                        {"heatFrames": 390}
                       ]
                     }
-                  ]
-                },
-                {
-                  "name": "Wave Plasma Kill",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        {"heatFrames": 600},
-                        "Plasma",
-                        "Wave"
-                      ]
-                    }
-                  ]
+                  "note": "The top KiHunter can be ignored."
                 },
                 {
                   "name": "Plasma Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 1000},
-                        "Plasma"
+                        "Plasma",
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"and": [
+                            "Charge",
+                            {"heatFrames": 1800}
+                          ]}
+                        ]},
+                        {"heatFrames": 900}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Jump to the previous level when the enemy gets close, or fight entirely from safety."
                 },
                 {
                   "name": "Supers Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 400}
+                    {"heatFrames": 420}
                   ],
                   "obstacles": [
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 600},
                         {"enemyKill":{
-                          "enemies": [
-                            [
-                              "Kihunter (red)","Kihunter (red)","Kihunter (red)"
-                            ]
-                          ],
+                          "enemies": [["Kihunter (red)","Kihunter (red)"]],
                           "explicitWeapons": ["Super"]
-                        }}
+                        }},
+                        {"or": [
+                          "canDodgeWhileShooting",
+                          {"and": [
+                            "canCarefulJump",
+                            {"enemyKill":{
+                              "enemies": [["Kihunter (red)"]],
+                              "explicitWeapons": ["Super"]
+                            }},
+                            {"heatFrames": 960}
+                          ]}
+                        ]},
+                        {"heatFrames": 270}
                       ]
                     }
-                  ]
+                  ],
+                  "note": [
+                    "Jump to the previous level when the enemy gets close, or fight entirely from safety.",
+                    "Two supers can hit per cycle when shooting from above."
+                  ],
+                  "devNote": "Without two supers per cycle, this requires heatproof."
                 },
                 {
                   "name": "Ice Wave Spazer Kill",
@@ -10038,13 +10083,14 @@
                     {
                       "id": "A",
                       "requires": [
-                        {"heatFrames": 1600},
+                        {"heatFrames": 810},
                         "Spazer",
                         "Ice",
                         "Wave"
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Shooting rapidly at an angle is faster than jumping and firing down."
                 }
               ]
             }
@@ -10064,6 +10110,57 @@
                     "Morph",
                     {"heatFrames": 660}
                   ]
+                },
+                {
+                  "name": "HiJump Speed Mockball",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canMockball",
+                    "HiJump",
+                    "SpeedBooster",
+                    "canCarefulJump",
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        {"acidFrames": 20}
+                      ]},
+                      {"and": [
+                        "canWalljump",
+                        {"adjacentRunway": {
+                          "fromNode": 2,
+                          "usedTiles": 3
+                        }},
+                        {"or": [
+                          "canInsaneWalljump",
+                          {"acidFrames": 30}
+                        ]}
+                      ]}
+                    ]},
+                    {"heatFrames": 310},
+                    {"acidFrames": 5}
+                  ],
+                  "note": [
+                    "Run into the acid to quickly jump over the first pillar.",
+                    "Build speed and jump over the second pillar to mockball through the tunnel without taking much acid damage."
+                  ]
+                },
+                {
+                  "name": "SpaceJump Weave",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    "Morph",
+                    "canTrickyJump",
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 4
+                    }},
+                    "canPrepareForNextRoom",
+                    {"heatFrames": 270}
+                  ],
+                  "note": "Enter the room while spacejumping and weave between the pillars."
                 }
               ]
             }
@@ -10081,9 +10178,9 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "Morph",
-                    {"heatFrames": 200}
+                    {"heatFrames": 180}
                   ],
-                  "note": "There's technically a bomb block to break, but it's impossible to reach this node without destroying it beforehand."
+                  "devNote": "There's technically a bomb block to break, but it's impossible to reach this node without destroying it beforehand."
                 }
               ]
             }
@@ -10096,6 +10193,97 @@
               "id": 1,
               "strats": [
                 {
+                  "name": "Kihunters Already Dead",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"obstaclesCleared": ["A"]},
+                    {"or":[
+                      "h_canCrouchJumpDownGrab",
+                      "canWalljump",
+                      "HiJump",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
+                      "SpaceJump",
+                      {"and": [
+                        "h_canIBJ",
+                        {"heatFrames": 1820}
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
+                      ]}
+                    ]},
+                    {"heatFrames": 390}
+                  ],
+                  "devNote": "SpringBallBombJump uses 3 power bombs total."
+                },
+                {
+                  "name": "Hitbox the Kihunters",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Plasma",
+                    "canHitbox",
+                    {"or":[
+                      "h_canCrouchJumpDownGrab",
+                      "canWalljump",
+                      "HiJump",
+                      "SpaceJump"
+                    ]},
+                    "canTrickyJump",
+                    {"heatFrames": 600}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": [
+                    "Wait for the Kihunters to move away from where Samus will jump up.",
+                    "This may mean Hitboxing through the middle KiHunter multiple times."
+                  ]
+                },
+                {
+                  "name": "Dodge the 3 Musketeers (Going Up)",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canTrickyJump",
+                    {"or":[
+                      {"and": [
+                        "canWallJumpInstantMorph",
+                        "canPreciseWalljump"
+                      ]},
+                      {"and":[
+                        "SpeedBooster",
+                        "HiJump",
+                        "canMidAirMorph"
+                      ]}
+                    ]},
+                    {"heatFrames": 540}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "reusableRoomwideNotable": "Dodge the Three Musketeers",
+                  "note": [
+                    "Read the movements of the Kihunters and jump over or roll under them as appropriate.",
+                    "Changing platforms is the hardest part: ",
+                    "jumping extra high and morphing works sometimes, other times jump short and roll under."
+                  ]
+                },
+                {
                   "name": "Tank the Damage",
                   "notable": false,
                   "requires": [
@@ -10104,16 +10292,69 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 300},
+                        {"enemyDamage": {
+                          "enemy": "Kihunter (red)",
+                          "type": "contact",
+                          "hits": 1
+                        }}
+                      ]},
+                      {"and": [
+                        "h_canJumpIntoIBJ",
+                        {"heatFrames": 300}
+                      ]},
                       "SpaceJump"
                     ]},
-                    {"heatFrames": 550},
+                    {"heatFrames": 570},
                     {"enemyDamage": {
                       "enemy": "Kihunter (red)",
                       "type": "contact",
                       "hits": 3
                     }}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
                   ]
+                },
+                {
+                  "name": "Partial Kihunter Dodge",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      "canWalljump",
+                      "HiJump"
+                    ]},
+                    "canTrickyJump",
+                    {"or": [
+                      {"and": [
+                        "canDamageBoost",
+                        "canHitbox",
+                        {"enemyDamage": {
+                          "enemy": "Kihunter (red)",
+                          "type": "contact",
+                          "hits": 1
+                        }}
+                      ]},
+                      {"enemyDamage": {
+                        "enemy": "Kihunter (red)",
+                        "type": "contact",
+                        "hits": 2
+                      }}
+                    ]}
+                  ],
+                  "obstacles": [
+                    {
+                      "id": "A",
+                      "requires": []
+                    }
+                  ],
+                  "note": "Jump over the first Kihunter and attempt to either use IFrames to pass through the top Kihunter, or dodge it if possible."
                 },
                 {
                   "name": "HeatProof Kill",
@@ -10126,7 +10367,14 @@
                       "HiJump",
                       "canSpringBallJumpMidAir",
                       "SpaceJump",
-                      "h_canIBJ"
+                      "h_canIBJ",
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]}
+                      ]}
                     ]}
                   ],
                   "obstacles": [
@@ -10137,22 +10385,53 @@
                       ]
                     }
                   ],
-                  "devNote": "FIXME The Kihunters could be used as frozen platforms."
+                  "note": [
+                    "Shoot them from below.",
+                    "It is possible for the KiHunters to fall through the gaps in the side, but is unlikely.",
+                    "Jumping may lower the camera position making it harder to shoot the KiHunters.",
+                    "But once it is lowered, jump to make them active and vulnerable to damage."
+                  ],
+                  "devNote": "SpringBallBombJump uses 3 powerbombs total."
                 },
                 {
                   "name": "Screw Kill",
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
+                    "ScrewAttack",
                     {"or":[
-                      "h_canCrouchJumpDownGrab",
                       "canWalljump",
+                      {"and": [
+                        "h_canCrouchJumpDownGrab",
+                        {"heatFrames": 120},
+                        {"or": [
+                          "canCarefulJump",
+                          {"enemyDamage": {
+                            "enemy": "Kihunter (red)",
+                            "type": "contact",
+                            "hits": 1
+                          }}
+                        ]}
+                      ]},
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120},
+                        {"enemyDamage": {
+                          "enemy": "Kihunter (red)",
+                          "type": "contact",
+                          "hits": 2
+                        }}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
-                        "h_heatProof"
+                        "h_heatProof",
+                        {"enemyDamage": {
+                          "enemy": "Kihunter (red)",
+                          "type": "contact",
+                          "hits": 2
+                        }}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10160,10 +10439,7 @@
                   "obstacles": [
                     {
                       "id": "A",
-                      "requires": [
-                        "ScrewAttack",
-                        {"heatFrames": 100}
-                      ]
+                      "requires": [{"heatFrames": 100}]
                     }
                   ]
                 },
@@ -10176,11 +10452,22 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
                         "h_heatProof"
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10192,11 +10479,18 @@
                         "Ice",
                         "Wave",
                         "Plasma",
-                        {"heatFrames": 450}
+                        {"or": [
+                           "Charge",
+                           {"heatFrames": 240}
+                         ]},
+                        {"heatFrames": 150}
                       ]
                     }
                   ],
-                  "devNote": "FIXME The Kihunters could be used as frozen platforms, and IBJ strats could be added with heat frames."
+                  "note": [
+                    "Firing upwards has a good chance of hitting multiple Kihunters.",
+                    "And charge shot double hits will instantly kill a Kihunter."
+                  ]
                 },
                 {
                   "name": "Wave Plasma Kill",
@@ -10207,11 +10501,22 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
                         "h_heatProof"
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10222,7 +10527,7 @@
                       "requires": [
                         "Wave",
                         "Plasma",
-                        {"heatFrames": 650}
+                        {"heatFrames": 540}
                       ]
                     }
                   ]
@@ -10236,11 +10541,22 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
                         "h_heatProof"
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10250,11 +10566,16 @@
                       "id": "A",
                       "requires": [
                         "Plasma",
-                        {"heatFrames": 1200}
+                        {"or": [
+                          "canCarefulJump",
+                          {"heatFrames": 100}
+                        ]},
+                        {"heatFrames": 960}
                       ]
                     }
                   ],
-                  "devNote": "FIXME The Kihunters could be used as frozen platforms, and IBJ strats could be added with heat frames."
+                  "note": "Fire up from below and try not to jump too high as that will put the camera in a bad position.",
+                  "devNote": "FIXME IBJ strats could be added with heat frames."
                 },
                 {
                   "name": "Supers Kill",
@@ -10265,11 +10586,22 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
                         "h_heatProof"
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10286,10 +10618,15 @@
                           ],
                           "explicitWeapons": [ "Super" ]
                         }},
-                        {"heatFrames": 1000}
+                        {"or": [
+                          "canCarefulJump",
+                          {"heatFrames": 210}
+                        ]},
+                        {"heatFrames": 900}
                       ]
                     }
-                  ]
+                  ],
+                  "note": "Fire up from below and try not to jump too high as that will put the camera in a bad position."
                 },
                 {
                   "name": "Ice Wave Spazer Kill",
@@ -10300,11 +10637,22 @@
                       "h_canCrouchJumpDownGrab",
                       "canWalljump",
                       "HiJump",
-                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        {"heatFrames": 120}
+                      ]},
                       "SpaceJump",
                       {"and":[
                         "h_canIBJ",
                         "h_heatProof"
+                      ]},
+                      {"and": [
+                        "h_canSpringBallBombJump",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": {"type": "PowerBomb","count": 2}}
+                        ]},
+                        {"heatFrames": 250}
                       ]}
                     ]},
                     {"heatFrames": 400}
@@ -10316,11 +10664,17 @@
                         "Ice",
                         "Wave",
                         "Spazer",
-                        {"heatFrames": 1300}
+                        {"or": [
+                          "Charge",
+                          "canCarefulJump",
+                          "h_heatProof"
+                        ]},
+                        {"heatFrames": 1120}
                       ]
                     }
                   ],
-                  "devNote": "FIXME The Kihunters could be used as frozen platforms, and IBJ strats could be added with heat frames."
+                  "note": "Fire up from below and try not to jump too high as that will out the camera in a bad position.",
+                  "devNote": "FIXME IBJ strats could be added with heat frames."
                 }
               ]
             },
@@ -10333,7 +10687,48 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "Morph",
-                    {"heatFrames": 650}
+                    {"heatFrames": 750},
+                    {"acidFrames": 16}
+                  ],
+                  "note": "Wait for the acid to go down before entering the Morph tunnel, and again once reaching the other side."
+                },
+                {
+                  "name": "Staggered Wall Jump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    "canStaggeredWalljump",
+                    {"heatFrames": 660}
+                  ],
+                  "note": "Walljump in place while the acid goes away."
+                },
+                {
+                  "name": "Space Jump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    "SpaceJump",
+                    {"or": [
+                      {"heatFrames": 660},
+                      {"and": [
+                        "canCarefulJump",
+                        {"acidFrames": 2},
+                        {"heatFrames": 600}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Gravity",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "Morph",
+                    "Gravity",
+                    {"acidFrames": 32},
+                    {"heatFrames": 510}
                   ]
                 }
               ]
@@ -10348,7 +10743,7 @@
                     "h_canNavigateHeatRooms",
                     "Morph",
                     "ScrewAttack",
-                    {"heatFrames": 250}
+                    {"heatFrames": 200}
                   ]
                 },
                 {
@@ -10357,7 +10752,7 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "h_canUseMorphBombs",
-                    {"heatFrames": 300}
+                    {"heatFrames": 250}
                   ]
                 },
                 {
@@ -10366,7 +10761,7 @@
                   "requires": [
                     "h_canNavigateHeatRooms",
                     "h_canUsePowerBombs",
-                    {"heatFrames": 250}
+                    {"heatFrames": 230}
                   ]
                 }
               ]
