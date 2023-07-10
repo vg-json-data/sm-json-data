@@ -253,15 +253,14 @@ Each twin door address will be an object with two properties:
 * _roomAddress:_ The in-game address of the twin door itself.
 
 ### Obstacles
-A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. Destroying an obstacle is done while executing a [strat](../strats.md).
-
-The main uses of obstacle are:
+A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. The main uses of obstacle are:
 * To allow proper ammo requirements when passing somewhere multiple times but only needing to break the obstacle once
 * To represent things that can be opened only from one direction, but then can be freely passed once opened (e.g. crumble blocks, green and blue gates)
 
-The requirements to destroy an obstacle are found in two places. If a situation encounters requirements in both places, they are considered cumulative:
-* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be destroyed. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
-* Most requirements will be placed on [a strat's obstacles property](../strats.md#obstacles).
+Clearing an obstacle is done by executing a [strat](../strats.md) that includes the obstacle in its `clearsObstacles` property. An
+`obstaclesCleared` requirement is used to represent that an obstacle must be already cleared in order to execute a strat. The requirements to destroy an obstacle can also be found in a couple other places which are deprecated (and will likely be removed in the future):
+* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be cleared. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
+* Requirements can be placed on [a strat's obstacles property](../strats.md#obstacles). These represent requirements on the strat for an obstacle to be cleared while executing the strat; if the obstacle is already cleared, then these requirements are not applicable.
 
 __Additional considerations__ 
 

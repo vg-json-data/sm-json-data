@@ -33,7 +33,9 @@ A `strat` can have the following properties:
   * _name:_ The name of the strat.
   * _notable:_ Indicates whether the strat is notable.
   * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
-  * _obstacles_ An array of objects, each representing an [obstacle](region/region-readme.md#obstacles) that must be destroyed (or bypassed) to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). Each such object has the following properties:
+  * _clearsObstacles:_ An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
+  * _obstacles_ An array of objects, each representing an [obstacle](region/region-readme.md#obstacles) that must be destroyed (or bypassed) to execute the strat, either by fulfilling requirements or by having destroyed it previously (without exiting the room). It is preferred to
+  use the `clearsObstacles` property (along with `obstaclesCleared` logical requirements) instead of this property. Each object under `obstacles` has the following properties:
     * _id:_ The in-room id of the obstacle
     * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to destroy the obstacle, if it isn't already destroyed. These requirements are in addition to any requirements already tied to the `obstacle`'s definition within the room.
     * _bypass:_ Some [logical requirements](logicalRequirements.md) that can be fulfilled to bypass the obstacle, if it isn't already destroyed. Voids both the `requires` property and the requirements tied to the `obstacle`'s definition within the room. Naturally, this does not destroy the obstacle.
