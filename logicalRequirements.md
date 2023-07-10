@@ -449,6 +449,26 @@ __Example:__
 ]}
 ```
 
+### Obstacle-related objects
+
+#### obstaclesCleared
+
+An `obstaclesCleared` object represents a requirement that all of the listed obstacles must be already cleared.
+
+__Example:__
+```json
+{"obstaclesCleared": ["A"]}
+```
+
+#### obstaclesNotCleared
+
+An `obstaclesNotCleared` object represents a requirement that none of the listed obstacles be already cleared.
+
+__Example:__
+```json
+{"obstaclesNotCleared": ["A"]}
+```
+
 ### Room Pathing Objects
 This section contains logical elements that are affected by Samus' pathing within a room.
 
