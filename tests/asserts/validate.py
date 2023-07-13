@@ -7,8 +7,12 @@ import json
 import re
 from pathlib import Path
 from jsonschema import validate, RefResolver
+from jsonschema import exceptions as JSONSchemaExceptions
 
 schemas = {}
+
+errors = []
+bail = False
 
 print("LOAD SCHEMAS")
 schemaDir = os.path.join(".", "schema")
@@ -32,7 +36,29 @@ for schemaFileName in os.listdir(schemaDir):
             schemaKey = match.group(2)
             if gameKey not in schemas:
                 schemas[gameKey] = {}
-            schemas[gameKey][schemaKey] = json.load(schemaFile)
+            try:
+                schemas[gameKey][schemaKey] = json.load(schemaFile)
+            except json.JSONDecodeError as e:
+                jsonFile.seek(0)
+                errorLine = ""
+                errorCol = 0
+                pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                match = re.match(pattern, str(e))
+                if match:
+                    line_num = int(match.group(1))
+                    for i,line in enumerate(jsonFile):
+                        if i == (line_num - 1):
+                            errorLine = line
+                        if i > line_num:
+                            break
+                    errorCol = int(match.group(2))
+                errors.append([
+                    f"🔴ERROR: Schema '{schemaFilename}' is malformed!",
+                    e,
+                    errorLine.replace("\n",""),
+                    ("-" * (errorCol - 3)) + "^"
+                ])
+                bail = True
 
 print("VALIDATE")
 
@@ -54,15 +80,50 @@ for region in os.listdir(os.path.join(".", "connection")):
                     "r",
                     encoding="utf-8"
                 ) as jsonFile:
-                    connectionJSON = json.load(jsonFile)
-                    result = validate(
-                        instance=connectionJSON,
-                        schema=schemas["m3"]["connection"],
-                        resolver=RefResolver(
-                            base_uri=schemaURI,
-                            referrer=schemas["m3"]["connection"]
-                        )
-                    )
+                    connectionJSON = None
+
+                    try:
+                        connectionJSON = json.load(jsonFile)
+                    except json.JSONDecodeError as e:
+                        jsonFile.seek(0)
+                        errorLine = ""
+                        errorCol = 0
+                        pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                        match = re.match(pattern, str(e))
+                        if match:
+                            line_num = int(match.group(1))
+                            for i,line in enumerate(jsonFile):
+                                if i == (line_num - 1):
+                                    errorLine = line
+                                if i > line_num:
+                                    break
+                            errorCol = int(match.group(2))
+                        errors.append([
+                            f"🔴ERROR: Connection data '{region}/{subregion}' is malformed!",
+                            e,
+                            errorLine.replace("\n",""),
+                            ("-" * (errorCol - 3)) + "^"
+                        ])
+                        bail = True
+
+                    if connectionJSON:
+                        try:
+                            result = validate(
+                                instance=connectionJSON,
+                                schema=schemas["m3"]["connection"],
+                                resolver=RefResolver(
+                                    base_uri=schemaURI,
+                                    referrer=schemas["m3"]["connection"]
+                                )
+                            )
+                        except JSONSchemaExceptions.ValidationError as e:
+                            errors.append([
+                                f"🔴ERROR: Connection data '{region}/{subregion}' doesn't validate!",
+                                e,
+                                "---"
+                            ])
+                            bail = True
+
                     if result:
                         print("    " + "INVALID")
                         pass
@@ -81,15 +142,50 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
                 schema = schemas["m3"]["enemies"]
             print("  " + os.path.join(r, filename))
             with open(filePath, "r", encoding="utf-8") as jsonFile:
-                enemiesJSON = json.load(jsonFile)
-                result = validate(
-                    instance=enemiesJSON,
-                    schema=schema,
-                    resolver=RefResolver(
-                        base_uri=schemaURI,
-                        referrer=schema
-                    )
-                )
+                enemiesJSON = None
+
+                try:
+                    enemiesJSON = json.load(jsonFile)
+                except json.JSONDecodeError as e:
+                    jsonFile.seek(0)
+                    errorLine = ""
+                    errorCol = 0
+                    pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                    match = re.match(pattern, str(e))
+                    if match:
+                        line_num = int(match.group(1))
+                        for i,line in enumerate(jsonFile):
+                            if i == (line_num - 1):
+                                errorLine = line
+                            if i > line_num:
+                                break
+                        errorCol = int(match.group(2))
+                    errors.append([
+                        f"🔴ERROR: Enemy data '{os.path.join(r,filename)}' is malformed!",
+                        e,
+                        errorLine.replace("\n",""),
+                        ("-" * (errorCol - 3)) + "^"
+                    ])
+                    bail = True
+
+                if enemiesJSON:
+                    try:
+                        result = validate(
+                            instance=enemiesJSON,
+                            schema=schema,
+                            resolver=RefResolver(
+                                base_uri=schemaURI,
+                                referrer=schema
+                            )
+                        )
+                    except JSONSchemaExceptions.ValidationError as e:
+                        errors.append([
+                            f"🔴ERROR: Enemy data '{os.path.join(r,filename)}' doesn't validate!",
+                            e,
+                            "---"
+                        ])
+                        bail = True
+
                 if result:
                     print("    " + "INVALID")
                     pass
@@ -113,15 +209,50 @@ for region in os.listdir(os.path.join(".", "region")):
                     "r",
                     encoding="utf-8"
                 ) as jsonFile:
-                    regionJSON = json.load(jsonFile)
-                    result = validate(
-                        instance=regionJSON,
-                        schema=schemas["m3"]["region"],
-                        resolver=RefResolver(
-                            base_uri=schemaURI,
-                            referrer=schemas["m3"]["region"]
-                        )
-                    )
+                    regionJSON = None
+
+                    try:
+                        regionJSON = json.load(jsonFile)
+                    except json.JSONDecodeError as e:
+                        jsonFile.seek(0)
+                        errorLine = ""
+                        errorCol = 0
+                        pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                        match = re.match(pattern, str(e))
+                        if match:
+                            line_num = int(match.group(1))
+                            for i,line in enumerate(jsonFile):
+                                if i == (line_num - 1):
+                                    errorLine = line
+                                if i > line_num:
+                                    break
+                            errorCol = int(match.group(2))
+                        errors.append([
+                            f"🔴ERROR: Region '{region}/{subregion}' is malformed!",
+                            e,
+                            errorLine.replace("\n",""),
+                            ("-" * (errorCol - 3)) + "^"
+                        ])
+                        bail = True
+
+                    if regionJSON:
+                        try:
+                            result = validate(
+                                instance=regionJSON,
+                                schema=schemas["m3"]["region"],
+                                resolver=RefResolver(
+                                    base_uri=schemaURI,
+                                    referrer=schemas["m3"]["region"]
+                                )
+                            )
+                        except JSONSchemaExceptions.ValidationError as e:
+                            errors.append([
+                                f"🔴ERROR: Region '{region}/{subregion}' doesn't validate!",
+                                e,
+                                "---"
+                            ])
+                            bail = True
+
                     if result:
                         print("    " + "INVALID")
                         pass
@@ -135,15 +266,50 @@ for r,d,f in os.walk(os.path.join(".", "weapons")):
             filePath = os.path.join(r, filename)
             print("  " + os.path.join(r, filename))
             with open(filePath, "r", encoding="utf-8") as jsonFile:
-                weaponsJSON = json.load(jsonFile)
-                result = validate(
-                    instance=weaponsJSON,
-                    schema=schemas["m3"]["weapons"],
-                    resolver=RefResolver(
-                        base_uri=schemaURI,
-                        referrer=schemas["m3"]["weapons"]
-                    )
-                )
+                weaponsJSON = None
+
+                try:
+                    weaponsJSON = json.load(jsonFile)
+                except json.JSONDecodeError as e:
+                    jsonFile.seek(0)
+                    errorLine = ""
+                    errorCol = 0
+                    pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                    match = re.match(pattern, str(e))
+                    if match:
+                        line_num = int(match.group(1))
+                        for i,line in enumerate(jsonFile):
+                            if i == (line_num - 1):
+                                errorLine = line
+                            if i > line_num:
+                                break
+                        errorCol = int(match.group(2))
+                    errors.append([
+                        f"🔴ERROR: Weapons data '{os.path.join(r,filename)}' is malformed!",
+                        e,
+                        errorLine.replace("\n",""),
+                        ("-" * (errorCol - 3)) + "^"
+                    ])
+                    bail = True
+
+                if weaponsJSON:
+                    try:
+                        result = validate(
+                            instance=weaponsJSON,
+                            schema=schemas["m3"]["weapons"],
+                            resolver=RefResolver(
+                                base_uri=schemaURI,
+                                referrer=schemas["m3"]["weapons"]
+                            )
+                        )
+                    except JSONSchemaExceptions.ValidationError as e:
+                        errors.append([
+                            f"🔴ERROR: Weapons data '{os.path.join(r,filename)}' doesn't validate!",
+                            e,
+                            "---"
+                        ])
+                        bail = True
+
                 if result:
                     print("    " + "INVALID")
                     pass
@@ -159,16 +325,58 @@ for rootType in [
     filePath = os.path.join(".", rootType + ".json")
     print("  " + filePath)
     with open(filePath, "r", encoding="utf-8") as jsonFile:
-        fileJSON = json.load(jsonFile)
-        result = validate(
-            instance=fileJSON,
-            schema=schemas["m3"][rootType],
-            resolver=RefResolver(
-                base_uri=schemaURI,
-                referrer=schemas["m3"][rootType]
-            )
-        )
+        fileJSON = None
+
+        try:
+            fileJSON = json.load(jsonFile)
+        except json.JSONDecodeError as e:
+            jsonFile.seek(0)
+            errorLine = ""
+            errorCol = 0
+            pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+            match = re.match(pattern, str(e))
+            if match:
+                line_num = int(match.group(1))
+                for i,line in enumerate(jsonFile):
+                    if i == (line_num - 1):
+                        errorLine = line
+                    if i > line_num:
+                        break
+                errorCol = int(match.group(2))
+            errors.append([
+                f"🔴ERROR: {rootType} data '{filePath}' is malformed!",
+                e,
+                errorLine.replace("\n",""),
+                ("-" * (errorCol - 3)) + "^"
+            ])
+            bail = True
+
+        if fileJSON:
+            try:
+                result = validate(
+                    instance=fileJSON,
+                    schema=schemas["m3"][rootType],
+                    resolver=RefResolver(
+                        base_uri=schemaURI,
+                        referrer=schemas["m3"][rootType]
+                    )
+                )
+            except JSONSchemaExceptions.ValidationError as e:
+                errors.append([
+                    f"🔴ERROR: {rootType} data '{filePath}' doesn't validate!",
+                    e,
+                    "---"
+                ])
+                bail = True
+
         if result:
             print("     " + "INVALID")
             pass
     print()
+
+if bail:
+    for errorSet in errors:
+        for error in errorSet:
+            print(error)
+    print("🔴Something fucked up! Bailing!")
+    exit(1)
