@@ -726,16 +726,6 @@
               ]
             },
             {
-              "name": "canSnailClip",
-              "requires": [
-                "canUseEnemies",
-                "canCeilingClip",
-                "Gravity"
-              ],
-              "note": "Manipulating a snail's position to setup and clip through a one-tile-thick ceiling.",
-              "devNote": "FIXME Currently requires Gravity because all known applications are underwater, but maybe there should be a helper for that instead?"
-            },
-            {
               "name": "canManipulateMellas",
               "requires": [ "canUseEnemies" ],
               "note": [
@@ -767,14 +757,6 @@
               ],
               "note": "Can use Ice Beam to freeze enemies to use as platforms or as wall jump supports, to reach higher areas",
               "extensionTechs": [
-                {
-                  "name": "canMochtroidIceClip",
-                  "requires": [
-                    "canCeilingClip",
-                    "canUseFrozenEnemies"
-                  ],
-                  "note": "Using a frozen Mochtroid to clip through a one-tile-thick ceiling."
-                },
                 {
                   "name": "canMochtroidIceClimb",
                   "requires": [ "canUseFrozenEnemies" ],
@@ -811,65 +793,12 @@
                   ],
                   "extensionTechs": [
                     {
-                      "name": "canNonTrivialIceClip",
-                      "requires": [
-                        "canCeilingClip",
-                        "canTrickyUseFrozenEnemies",
-                        {"or":[
-                          "canPixelPerfectIceClip",
-                          {"and":[
-                            "Morph",
-                            "canXRayStandUp"
-                          ]}
-                        ]}
-                      ],
-                      "note": [
-                        "Clipping through a one-tile-thick ceiling by using a frozen enemy. This requires either pixel perfect enemy positioning or the ability to force a standup with X-Ray.",
-                        "This is not required for Mochtroid ice clips, as they line up perfectly and are much easier to execute."
-                      ],
-                      "extensionTechs": [
-                        {
-                          "name": "canWallCrawlerIceClip",
-                          "requires": [ "canNonTrivialIceClip" ],
-                          "note": "Using a frozen wall crawling enemy (such as a Zeela or Geemer) to clip through a one-tile-thick ceiling."
-                        },
-                        {
-                          "name": "canPuyoIceClip",
-                          "requires": [ "canNonTrivialIceClip" ],
-                          "note": "Using a frozen Puyo to clip through a one-tile-thick ceiling."
-                        },
-                        {
-                          "name": "canBeetomIceClip",
-                          "requires": [ "canNonTrivialIceClip" ],
-                          "note": [
-                            "Using an attached Beetom to precisely freeze it in place to be used for a clip through a one-tile-thick ceiling.",
-                            "Freezing an attached Beetom works best when facing right and vertical speed is low."
-                          ]
-                        },
-                        {
-                          "name": "canMellaIceClip",
-                          "requires": [ "canNonTrivialIceClip" ],
-                          "note": "Using a frozen Mella to clip through a one-tile-thick ceiling."
-                        }
-                      ]
-                    },
-                    {
-                      "name": "canPixelPerfectIceClip",
-                      "requires": [
-                        "canCeilingClip",
-                        "canTrickyUseFrozenEnemies"
-                      ],
-                      "note": "Setting up an ice clip at exactly the right pixel, so the clip can work without the leniency allowed by an X-Ray standup"
-                    },
-                    {
                       "name": "canWallIceClip",
-                      "requires": [
-                        "canTrickyUseFrozenEnemies",
-                        "Wave"
-                      ],
+                      "requires": [ "canTrickyUseFrozenEnemies" ],
                       "note": [
                         "Collision will prioritize frozen enemies before walls which allows Samus to clip 1 pixel into a wall if an enemy is there.",
-                        "Enemies that fly through walls may be repeatedly frozen to advance 1 pixel at a time to eventually allow Samus to pass through a wall or touch a door transition."
+                        "This can be used to get Samus into position to X-Ray Climb.",
+                        "Additionally, enemies that fly through walls may be repeatedly frozen to advance 1 pixel at a time to eventually push Samus through a wall or touch a door transition."
                       ]
                     },
                     {
@@ -1314,7 +1243,27 @@
           "name": "canCeilingClip",
           "requires": [],
           "note": "Basic variant of jumping into a two block high space and performing the actions needed to clip up through a one-tile-thick ceiling.",
-          "devNote": "This often uses enemies, so is required for enemy clip enemies that are extensions of canUseEnemies."
+          "extensionTechs": [
+            {
+              "name": "canXRayCeilingClip",
+              "requires": [
+                "canCeilingClip",
+                "canUseEnemies"
+              ],
+              "note": [
+                "Setting up an enemy positioning to perform a ceiling clip. Jump and Morph onto the enemy, perform an X-Ray standup, and then jump through.",
+                "The enemy positioning will require approximately 1.5 to 2 tiles between the enemy and the ceiling. Just enough to unmorph while on top of it."
+              ],
+              "devNote": "This tech cannot require Morph and canXRayStandUp, because it's extension removes those requirements.",
+              "extensionTechs": [
+                {
+                  "name": "canPreciseCeilingClip",
+                  "requires": [ "canXRayCeilingClip" ],
+                  "note": "Setting up an enemy positioning to perform a very precise ceiling clip. The enemy positioning will require a 2-3 pixel precision range, several pixels lower than what is possible with an X-Ray standup."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "canPartialFloorClip",
