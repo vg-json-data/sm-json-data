@@ -323,21 +323,35 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             msg = f"🔴ERROR: Room Name not unique! {roomRef}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-                        if "nodes" in room:
-                            roomData = {
-                                "id": room["id"],
-                                "links": {
+
+                        roomData = {
+                            "id": room["id"],
+                            "links": {
+                                "from": {}
+                            },
+                            "nodes": {
+                                "froms": [],
+                                "tos": [],
+                                "spawnAts": [],
+                                "leaveCharged": {
                                     "from": {}
-                                },
-                                "nodes": {
-                                    "froms": [],
-                                    "tos": [],
-                                    "spawnAts": [],
-                                    "leaveCharged": {
-                                        "from": {}
-                                    }
                                 }
+                            },
+                            "obstacles": {
+                                "ids": []
                             }
+                        }
+
+                        if "obstacles" in room:
+                            for obstacle in room["obstacles"]:
+                                obstacleRef = f"🔴{roomRef}:{obstacle['id']}:{obstacle['name']}"
+                                if obstacle["id"] in roomData["obstacles"]["ids"]:
+                                    msg = f"ERROR: Obstacle ID not unique! {obstacleRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                else:
+                                    roomData["obstacles"]["ids"].append(obstacle["id"])
+                        if "nodes" in room:
                             showNodes = False
                             gModeObjects = []
                             if "links" in room:
