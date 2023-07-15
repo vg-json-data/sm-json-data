@@ -146,6 +146,19 @@ def process_keyvalue(k, v):
                     messages["counts"]["reds"] += 1
     return goodValue
 
+def search_for_path(fromNodes, sourceNode, targetNode):
+    foundPath = False
+    for tNode in fromNodes[str(sourceNode)]["to"]:
+        if (not foundPath) and \
+            (str(tNode) in roomData["links"]["from"]) and \
+            (str(targetNode) in roomData["links"]["from"][str(tNode)]["to"]):
+            foundPath = True
+            msg = f"🟢{stratRef}::{sourceNode}:{tNode}:{targetNode}"
+            print(msg)
+            # messages["greens"].append(msg)
+            # messages["counts"]["greens"] += 1
+    return foundPath
+
 def process_strats(src, paramData):
     '''
     Process strats
@@ -196,14 +209,10 @@ def process_strats(src, paramData):
                           ["strats"].append(strat)
             else:
                 foundPath = False
-                for tNode in roomData["links"]["from"][str(fromNode)]["to"]:
-                    if (not foundPath) and \
-                        (str(tNode) in roomData["links"]["from"]) and \
-                        (str(toNode) in roomData["links"]["from"][str(tNode)]["to"]):
-                        foundPath = True
-                        msg = f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}"
-                        # messages["greens"].append(msg)
-                        # messages["counts"]["greens"] += 1
+                fromNodes = roomData["links"]["from"]
+                sourceNode = fromNode
+                targetNode = toNode
+                foundPath = search_for_path(fromNodes, sourceNode, targetNode)
                 if not foundPath:
                     if str(room["id"]) in cheatSheetJSON and \
                         str(fromNode) in cheatSheetJSON[str(room["id"])] and \
@@ -433,6 +442,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         toNode = -1
                                                         if "destinationNode" in path:
                                                             toNode = path["destinationNode"]
+                                                            toNodeRef = f"{fromNodeRef}:{toNode}"
                                                             if fromNode not in roomData["nodes"]["leaveCharged"]["from"]:
                                                                 roomData["nodes"]["leaveCharged"]["from"][fromNode] = {
                                                                     "to": {}
@@ -443,6 +453,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 }
                                                         if toNode == -1:
                                                             msg = f"🔴ERROR: Destination node not defined:{fromNodeRef}"
+                                                            messages["reds"].append(msg)
+                                                            messages["counts"]["reds"] += 1
+                                                        if str(fromNode) in roomData["links"]["from"]:
+                                                            if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
+                                                                pass
+                                                            else:
+                                                                msg = f"🔴ERROR: Link Path:{toNodeRef} not found!"
+                                                                messages["reds"].append(msg)
+                                                                messages["counts"]["reds"] += 1
+                                                        else:
+                                                            msg = f"🔴ERROR: {fromNodeRef} not found!"
                                                             messages["reds"].append(msg)
                                                             messages["counts"]["reds"] += 1
                                                         if "strats" in path:
