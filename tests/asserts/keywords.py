@@ -158,9 +158,9 @@ def process_strats(src, paramData):
     bail = paramData["bail"]
 
     showNodes = True
-    toNodeRef = f"{fromNodeRef}:{toNode}"
+    toNodeRef = f"{fromNodeRef}:destinationNode[{toNode}]"
     for strat in src["strats"]:
-        stratRef = f"{toNodeRef}:{strat}"
+        stratRef = f"{toNodeRef}:stratName[{strat}]"
         if fromNode in roomData["links"]["from"]:
             if toNode in roomData["links"]["from"][fromNode]["to"]:
                 if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
@@ -310,7 +310,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         if not ret and not showArea:
                             showArea = True
                     for [roomIDX, room] in enumerate(regionJSON["rooms"]):
-                        roomRef = f"{room['id']}:{room['name']}"
+                        roomRef = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "") + f":{room['id']}:{room['name']}"
                         if room["id"] not in uniques["roomID"]:
                             uniques["roomID"].append(room["id"])
                         else:
@@ -375,12 +375,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
                                     roomData["nodes"]["spawnAts"].append(node["spawnAt"])
                                 if "canLeaveCharged" in node:
-                                    for leave in node["canLeaveCharged"]:
+                                    for [leaveID, leave] in enumerate(node["canLeaveCharged"]):
                                         if "initiateRemotely" in leave:
                                             remote = leave["initiateRemotely"]
                                             if "initiateAt" in remote:
                                                 fromNode = remote["initiateAt"]
-                                                fromNodeRef = f"{roomRef}:{fromNode}"
+                                                fromNodeRef = f"Node[{nodeRef}]:canLeaveCharged[{int(leaveID) + 1}]:initiateRemotelyAt[{fromNode}]"
                                                 if "pathToDoor" in remote:
                                                     for path in remote["pathToDoor"]:
                                                         toNode = -1
