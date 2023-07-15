@@ -359,6 +359,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "nodes": {
                                 "froms": [],
                                 "tos": [],
+                                "names": [],
                                 "spawnAts": [],
                                 "leaveCharged": {
                                     "from": {}
@@ -366,15 +367,18 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             },
                             "obstacles": {
                                 "ids": []
+                            },
+                            "enemies": {
+                                "ids": []
                             }
                         }
 
                         # Document Obstacles
                         if "obstacles" in room:
                             for obstacle in room["obstacles"]:
-                                obstacleRef = f"🔴{roomRef}:{obstacle['id']}:{obstacle['name']}"
+                                obstacleRef = f"{roomRef}:{obstacle['id']}:{obstacle['name']}"
                                 if obstacle["id"] in roomData["obstacles"]["ids"]:
-                                    msg = f"ERROR: Obstacle ID not unique! {obstacleRef}"
+                                    msg = f"🔴ERROR: Obstacle ID not unique! {obstacleRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
                                 else:
@@ -422,6 +426,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         messages["counts"]["reds"] += 1
                                     else:
                                         roomData["nodes"]["froms"].append(node["id"])
+                                    if node["name"] in roomData["nodes"]["names"]:
+                                        msg = f"🔴ERROR: Node Name not unique! {nodeRef}:{node['name']}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+                                    else:
+                                        roomData["nodes"]["names"].append(node["name"])
                                 if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
                                     roomData["nodes"]["spawnAts"].append(node["spawnAt"])
 
@@ -429,6 +439,13 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             if "enemies" in room:
                                 for enemy in room["enemies"]:
                                     # Unique IDs
+                                    if enemy["id"] not in roomData["enemies"]["ids"]:
+                                        roomData["enemies"]["ids"].append(enemy["id"])
+                                    else:
+                                        msg = f"🔴ERROR: Enemy ID not unique! {roomRef}:{enemy['id']}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+
                                     if "homeNodes" in enemy:
                                         for homeNode in enemy["homeNodes"]:
                                             homeNodeRef = f"Node[{roomRef}:{homeNode}]"
@@ -436,7 +453,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 msg = f"🔴ERROR: Invalid Home Node:{homeNodeRef}"
                                                 messages["reds"].append(msg)
                                                 messages["counts"]["reds"] += 1
-                                                print("Dead HOme Node!")
 
                             # Validate canLeaveCharged
                             # Validate leaveWithGMode
