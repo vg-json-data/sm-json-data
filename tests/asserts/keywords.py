@@ -425,6 +425,19 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
                                     roomData["nodes"]["spawnAts"].append(node["spawnAt"])
 
+                            # Validate "enemies"
+                            if "enemies" in room:
+                                for enemy in room["enemies"]:
+                                    # Unique IDs
+                                    if "homeNodes" in enemy:
+                                        for homeNode in enemy["homeNodes"]:
+                                            homeNodeRef = f"Node[{roomRef}:{homeNode}]"
+                                            if homeNode not in roomData["nodes"]["froms"]:
+                                                msg = f"🔴ERROR: Invalid Home Node:{homeNodeRef}"
+                                                messages["reds"].append(msg)
+                                                messages["counts"]["reds"] += 1
+                                                print("Dead HOme Node!")
+
                             # Validate canLeaveCharged
                             # Validate leaveWithGMode
                             for node in room["nodes"]:
