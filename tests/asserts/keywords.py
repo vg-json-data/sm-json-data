@@ -53,13 +53,14 @@ def process_keyvalue(k, v):
         # "nodeAddress",  # !!could check for unique
         # "roomAddress",  # !!could check for unique
         "mode",         # validated by schema
+        "jumpwayType",  # validated by schema
         "lockType",     # validated by schema
         "nodeType",     # validated by schema
         "nodeSubType",  # validated by schema
         "obstacleType", # validated by schema
-        "jumpwayType",  # validated by schema
         "physics",      # validated by schema
-        "utility"       # validated by schema
+        "utility",      # validated by schema
+        "resourceCapacity"  # validated by schema
     ]
     if k in badKeys or k in goodKeys:
         processValue = False
