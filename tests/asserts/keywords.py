@@ -161,27 +161,44 @@ def process_strats(src, paramData):
     toNodeRef = f"{fromNodeRef}:destinationNode[{toNode}]"
     for strat in src["strats"]:
         stratRef = f"{toNodeRef}:stratName[{strat}]"
-        if fromNode in roomData["links"]["from"]:
-            if toNode in roomData["links"]["from"][fromNode]["to"]:
-                if strat not in roomData["links"]["from"][fromNode]["to"][toNode]["strats"]:
+        if "name" in strat:
+            stratRef = f"{toNodeRef}:stratName[{strat['name']}]"
+        if str(fromNode) in roomData["links"]["from"]:
+            if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
+                if strat not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"] and \
+                    strat["name"] not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"]:
                     msg = f"🔴ERROR: Invalid strat:{stratRef}"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
                     # bail = True
                 else:
+                    if "obstacles" in strat:
+                        for obstacle in strat["obstacles"]:
+                            if obstacle["id"] not in roomData["obstacles"]["ids"]:
+                                msg = f"🔴ERROR: Obstacle not found:{stratRef}:{obstacle['id']}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
                     if showArea:
                         msg = ""
                         msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
                         messages["greens"].append(msg)
                         messages["counts"]["greens"] += 1
-                    roomData["nodes"][key] \
-                      ["from"][fromNode] \
-                      ["to"][toNode] \
-                      ["strats"].append(strat)
+                    if key == "linkStrats":
+                        roomData["links"] \
+                          ["from"][str(fromNode)] \
+                          ["to"][str(toNode)] \
+                          ["strats"].append(strat)
+                    else:
+                        roomData["nodes"][key] \
+                          ["from"][fromNode] \
+                          ["to"][toNode] \
+                          ["strats"].append(strat)
             else:
                 foundPath = False
-                for tNode in roomData["links"]["from"][fromNode]["to"]:
-                    if (not foundPath) and (toNode in roomData["links"]["from"][tNode]["to"]):
+                for tNode in roomData["links"]["from"][str(fromNode)]["to"]:
+                    if (not foundPath) and \
+                        (str(tNode) in roomData["links"]["from"]) and \
+                        (str(toNode) in roomData["links"]["from"][str(tNode)]["to"]):
                         foundPath = True
                         msg = f"🟢{stratRef}::{fromNode}:{tNode}:{toNode}"
                         # messages["greens"].append(msg)
@@ -342,6 +359,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             }
                         }
 
+                        # Document Obstacles
                         if "obstacles" in room:
                             for obstacle in room["obstacles"]:
                                 obstacleRef = f"🔴{roomRef}:{obstacle['id']}:{obstacle['name']}"
@@ -351,32 +369,40 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
                                 else:
                                     roomData["obstacles"]["ids"].append(obstacle["id"])
+                        # Document Nodes
+                        # Document Links
+                        # Document Link Strats
                         if "nodes" in room:
                             showNodes = False
                             gModeObjects = []
                             if "links" in room:
                                 for link in room["links"]:
                                     if "from" in link:
-                                        roomData["links"]["from"][link["from"]] = {
+                                        fromNode = link["from"]
+                                        fromNodeRef = f"Node[{roomRef}:{fromNode}]"
+                                        roomData["links"]["from"][str(fromNode)] = {
                                             "to": {}
                                         }
                                         for to in link["to"]:
-                                            if to["id"] not in roomData["nodes"]["tos"]:
-                                                roomData["nodes"]["tos"].append(to["id"])
+                                            toNode = to["id"]
+                                            if toNode not in roomData["nodes"]["tos"]:
+                                                roomData["nodes"]["tos"].append(toNode)
                                                 gModeTo = to
-                                                gModeTo["fromNode"] = link["from"]
+                                                gModeTo["fromNode"] = fromNode
                                                 gModeObjects.append(gModeTo)
                                             roomData["links"] \
-                                              ["from"][link["from"]] \
-                                              ["to"][to["id"]] = {
+                                              ["from"][str(fromNode)] \
+                                              ["to"][str(toNode)] = {
                                                 "strats": []
                                             }
                                             if "strats" in to:
                                                 for strat in to["strats"]:
                                                     roomData["links"] \
-                                                      ["from"][link["from"]] \
-                                                      ["to"][to["id"]] \
+                                                      ["from"][str(fromNode)] \
+                                                      ["to"][str(toNode)] \
                                                       ["strats"].append(strat["name"])
+
+                            # Validate Nodes
                             for node in room["nodes"]:
                                 if "id" in node:
                                     nodeRef = f"{roomRef}:{node['id']}"
@@ -388,6 +414,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         roomData["nodes"]["froms"].append(node["id"])
                                 if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
                                     roomData["nodes"]["spawnAts"].append(node["spawnAt"])
+
+                            # Validate canLeaveCharged
+                            # Validate leaveWithGMode
+                            for node in room["nodes"]:
+                                if "id" in node:
+                                    nodeRef = f"{roomRef}:{node['id']}"
                                 if "canLeaveCharged" in node:
                                     for [leaveID, leave] in enumerate(node["canLeaveCharged"]):
                                         if "initiateRemotely" in leave:
@@ -429,6 +461,27 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 if "leaveWithGMode" in node:
                                     for leaveG in node["leaveWithGMode"]:
                                         gModeObjects.append(leaveG)
+
+                            # Validate Links
+                            for link in room["links"]:
+                                if "from" in link:
+                                    fromNode = link["from"]
+                                    fromNodeRef = f"Node[{roomRef}:{fromNode}]"
+                                    for to in link["to"]:
+                                        toNode = to["id"]
+                                        paramData = {
+                                            "key": "linkStrats",
+                                            "fromNode": fromNode,
+                                            "fromNodeRef": fromNodeRef,
+                                            "roomData": roomData,
+                                            "roomIDX": roomIDX,
+                                            "toNode": toNode,
+                                            "bail": bail
+                                        }
+                                        paramData = process_strats(to, paramData)
+                                        showNodes = paramData["showNodes"]
+                                        bail = paramData["bail"]
+
                             for gModeObj in gModeObjects:
                                 if "strats" in gModeObj:
                                     parentNodeRef = ""
@@ -444,7 +497,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 if "comeInWithGMode" in req:
                                                     if "fromNodes" in req["comeInWithGMode"]:
                                                         for fromNode in req["comeInWithGMode"]["fromNodes"]:
-                                                            fromNodeRef = f"{stratRef}:{fromNode}"
+                                                            fromNodeRef = f"Node[{stratRef}:{fromNode}]"
                                                             if fromNode not in roomData["nodes"]["froms"]:
                                                                 msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
                                                                 messages["reds"].append(msg)
@@ -484,22 +537,34 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         with open(os.path.join(connectionPath, "inter.json"), "r", encoding="utf-8") as connectionFile:
                                             connections["inter"] = json.load(connectionFile)
                                         for sector in ["intra", "subarea"]:
-                                            sectorPath = os.path.join(".","connection", area.lower())
+                                            if subarea.lower() == "upper":
+                                                subarea = subsubarea
+                                                subsubarea = ""
+                                            if subarea.lower() == "lower":
+                                                area = "lowernorfair"
+                                                subarea = subsubarea
+                                                subsubarea = ""
+                                            sectorPath = os.path.join(".","connection", area.lower().replace(" station",""))
                                             filename = sector
                                             if sector == "subarea":
                                                 filename = subarea.lower()
-                                            with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
-                                                connections[sector] = json.load(connectionFile)
+                                                # if subsubarea != "":
+                                                #     filename = f"{filename}-{subsubarea.lower()}"
+                                                #     print(os.path.join(sectorPath,f"{filename}.json"))
+                                            if os.path.isfile(os.path.join(sectorPath, f"{filename}.json")):
+                                                with open(os.path.join(sectorPath, f"{filename}.json"), "r", encoding="utf-8") as connectionFile:
+                                                    connections[sector] = json.load(connectionFile)
                                         for sector in ["subarea", "intra", "inter"]:
-                                            for connection in connections[sector]["connections"]:
-                                                for [cNodeIDX, cNode] in enumerate(connection["nodes"]):
-                                                    if foundNode:
-                                                        break
-                                                    if cNode["roomid"] == room["id"]:
-                                                        if cNode["nodeid"] == node["id"]:
-                                                            oNode = connection["nodes"][0 if cNodeIDX == 1 else 1]
-                                                            otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
-                                                            foundNode = True
+                                            if "connections" in connections[sector]:
+                                                for connection in connections[sector]["connections"]:
+                                                    for [cNodeIDX, cNode] in enumerate(connection["nodes"]):
+                                                        if foundNode:
+                                                            break
+                                                        if cNode["roomid"] == room["id"]:
+                                                            if cNode["nodeid"] == node["id"]:
+                                                                oNode = connection["nodes"][0 if cNodeIDX == 1 else 1]
+                                                                otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
+                                                                foundNode = True
                                     if not foundNode:
                                         msg = f"🔴ERROR: Orphaned Node! {nodeRef}"
                                         messages["reds"].append(msg)
