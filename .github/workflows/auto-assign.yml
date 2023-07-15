@@ -1,0 +1,27 @@
+name: "Auto-Assign"
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  add_assignee_based_on_label:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      # Auto-Assign Assignee for label
+      #   Tests
+      #     miketrethewey
+      - name: "Auto-Assign Assignee for 'Tests' Label"
+        uses: actions/github-script@v6.4.1
+        with:
+          script: |
+            github.rest.issues.addAssignees({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              assignees: [ "miketrethewey" ]
+            })
+        if: |
+          contains(github.event.issue.labels.*.name, 'Tests')
