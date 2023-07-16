@@ -410,6 +410,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             },
                             "enemies": {
                                 "ids": []
+                            },
+                            "reusableStrats": {
+                                "names": []
                             }
                         }
 
@@ -423,6 +426,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
                                 else:
                                     roomData["obstacles"]["ids"].append(obstacle["id"])
+                        # Document Reusable Roomwide Strats
+                        if "reusableRoomwideNotable" in room:
+                            for strat in room["reusableRoomwideNotable"]:
+                                roomData["reusableStrats"]["names"].append(strat["name"])
                         # Document Nodes
                         # Document Links
                         # Document Link Strats
@@ -513,6 +520,21 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             if obstacleErrors:
                                 for obstacleError in obstacleErrors:
                                     msg = f"🔴ERROR: Invalid Obstacles ID:{roomRef}:{obstacleError}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
+                            # Validate Reusable Roomwide Strats
+                            reusableErrors = search_for_valid_keyvalue(
+                                [
+                                    "reusableRoomwideNotable"
+                                ],
+                                "room",
+                                roomData["reusableStrats"]["names"],
+                                room
+                            )
+                            if reusableErrors:
+                                for reusableError in reusableErrors:
+                                    msg = f"🔴ERROR: Invalid Reusable Strat Name:{roomRef}:{reusableError}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
 
