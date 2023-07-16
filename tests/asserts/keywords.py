@@ -5,6 +5,7 @@ Check for validity of keywords in files
 import json
 import os
 import re
+import subprocess
 import sys
 from flatten_json import flatten
 
@@ -792,12 +793,16 @@ if bail:
                 print("🔴ERROR🔴")
                 firstErr = False
             print(msg)
+    warnings = []
     for msg in messages["yellows"]:
         if "WARNING" in msg or "requires" in msg:
             if firstWarn:
-                print("🟡WARNING🟡")
+                warnings.append("🟡WARNING🟡")
                 firstWarn = False
-            print(msg)
+            warnings.append(msg)
+    if len(warnings):
+        subprocess.run("echo \"::warning title=Warning::Warning\"", shell=True)
+        # subprocess.run("echo -e \"::warning title=Warning::<< EOF" + "\n".join(warnings) + "\nEOF\"", shell=True)
     if foundErr:
         print("🔴Something fucked up! Bailing!")
         sys.exit(1)
