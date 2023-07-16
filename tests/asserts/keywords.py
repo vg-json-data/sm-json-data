@@ -801,7 +801,8 @@ if bail:
                 firstWarn = False
             warnings.append(msg)
     if len(warnings):
-        subprocess.run("echo \"::warning title=Warning::Warning\"", shell=True)
+        # subprocess.run("echo \"::warning title=Warning::Warning\"", shell=True)
+        subprocess.run("echo \"::warning title=Warning::" + "\n".join(warnings) + "\"", shell=True)
         # subprocess.run("echo -e \"::warning title=Warning::<< EOF" + "\n".join(warnings) + "\nEOF\"", shell=True)
     if foundErr:
         print("🔴Something fucked up! Bailing!")
