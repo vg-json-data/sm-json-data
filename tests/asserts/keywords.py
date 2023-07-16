@@ -786,6 +786,7 @@ if bail:
     firstErr = True
     firstWarn = True
     foundErr = False
+    foundWarn = False
     for msg in messages["reds"]:
         if "ERROR" in msg or "requires" in msg:
             foundErr = True
@@ -793,17 +794,15 @@ if bail:
                 print("🔴ERROR🔴")
                 firstErr = False
             print(msg)
-    warnings = []
     for msg in messages["yellows"]:
         if "WARNING" in msg or "requires" in msg:
+            foundWarn = True
             if firstWarn:
-                warnings.append("🟡WARNING🟡")
+                print("🟡WARNING🟡")
                 firstWarn = False
-            warnings.append(msg)
-    if len(warnings):
-        # subprocess.run("echo \"::warning title=Warning::Warning\"", shell=True)
-        subprocess.run("echo \"::warning title=Warning::" + "\n".join(warnings) + "\"", shell=True)
-        # subprocess.run("echo -e \"::warning title=Warning::<< EOF" + "\n".join(warnings) + "\nEOF\"", shell=True)
+            print(msg)
+    if foundWarn:
+        subprocess.run("echo \"::warning title=Warning::Check Log for Details...\"", shell=True)
     if foundErr:
         print("🔴Something fucked up! Bailing!")
         sys.exit(1)
