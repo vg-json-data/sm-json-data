@@ -82,7 +82,6 @@ def process_keyvalue(k, v):
             msg = f"🔴ERROR: {k}:{v} not unique!"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
-            # bail = True
 
     if processValue:
         isFloat = isinstance(v, float)
@@ -124,13 +123,11 @@ def process_keyvalue(k, v):
                                     msg = f"🔴ERROR: {k}:{last_enemy} doesn't have attack '{v}'"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-                                    # bail = True
                         last_enemy = ""
                     else:
                         msg = f"🔴ERROR: {last_enemy} not found!"
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
-                        # bail = True
             else:
                 if not isArea and \
                     not isEnemy and \
@@ -159,6 +156,23 @@ def search_for_path(fromNodes, sourceNode, targetNode):
             # messages["counts"]["greens"] += 1
     return foundPath
 
+def search_for_valid_keyvalue(keys, label, valids, data):
+    obstacleErrors = []
+    data = {
+        label: data
+    }
+    flattened_dict = [
+        flatten(d, '.') for d in [data]
+    ][0]
+    for [k, v] in flattened_dict.items():
+        if isinstance(v, str) and len(v):
+            for checkKey in keys:
+                if checkKey in k:
+                    if v not in valids:
+                        obstacleErrors.append((checkKey,k,v))
+
+    return obstacleErrors
+
 def process_strats(src, paramData):
     '''
     Process strats
@@ -184,14 +198,26 @@ def process_strats(src, paramData):
                     msg = f"🔴ERROR: Invalid strat:{stratRef}"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
-                    # bail = True
                 else:
                     if "obstacles" in strat:
                         for obstacle in strat["obstacles"]:
                             if obstacle["id"] not in roomData["obstacles"]["ids"]:
-                                msg = f"🔴ERROR: Obstacle not found:{stratRef}:{obstacle['id']}"
+                                msg = f"🔴ERROR: Invalid Obstacle ID:{stratRef}:{obstacle['id']}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            if "additionalObstacles" in obstacle:
+                                for addtlObstacle in obstacle["additionalObstacles"]:
+                                    if addtlObstacle not in roomData["obstacles"]["ids"]:
+                                        msg = f"🔴ERROR: Invalid Additional Obstacle ID:{stratRef}:{obstacle['id']}:{addtlObstacle}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+                    if "clearedObstacles" in strat:
+                        for obstacle in strat["clearedObstacles"]:
+                            if obstacle not in roomData["obstacles"]["ids"]:
+                                msg = f"🔴ERROR: Invalid Cleared Obstacle ID:{stratRef}:{obstacle}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
                     if showArea:
                         msg = ""
                         msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
@@ -228,12 +254,10 @@ def process_strats(src, paramData):
                         msg = f"🔴ERROR: Destination node path not found:{toNodeRef}"
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
-                        # bail = True
         else:
             msg = f"🔴ERROR: From node not found:{fromNodeRef}"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
-            # bail = True
 
     paramData = {
         "fromNode": fromNode,
@@ -453,6 +477,19 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 msg = f"🔴ERROR: Invalid Home Node:{homeNodeRef}"
                                                 messages["reds"].append(msg)
                                                 messages["counts"]["reds"] += 1
+
+                            # Validate Obstacles
+                            obstacleErrors = search_for_valid_keyvalue(
+                                ["obstaclesCleared", "obstaclesToAvoid"],
+                                "room",
+                                roomData["obstacles"]["ids"],
+                                room
+                            )
+                            if obstacleErrors:
+                                for obstacleError in obstacleErrors:
+                                    msg = f"🔴ERROR: Invalid Obstacles ID:{roomRef}:{obstacleError}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
 
                             # Validate canLeaveCharged
                             # Validate leaveWithGMode
