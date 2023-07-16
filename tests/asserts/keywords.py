@@ -165,11 +165,27 @@ def search_for_valid_keyvalue(keys, label, valids, data):
         flatten(d, '.') for d in [data]
     ][0]
     for [k, v] in flattened_dict.items():
-        if isinstance(v, str) and len(v):
+        if (isinstance(v, int)) or \
+            (isinstance(v, list) and len(v)) or \
+            (isinstance(v, str) and len(v)):
+            if isinstance(v, list):
+                print(v)
             for checkKey in keys:
-                if checkKey in k:
-                    if v not in valids:
-                        obstacleErrors.append((checkKey,k,v))
+                goodValue = False
+                if k.endswith(checkKey):
+                    goodValue = True
+                if checkKey.endswith("."):
+                    if checkKey in k:
+                        if k[k.rfind('.')+1:].isnumeric():
+                            goodValue = True
+                if goodValue:
+                    if isinstance(v, list):
+                        for ele in v:
+                            if ele not in valids:
+                                obstacleErrors.append((checkKey,k,v,ele))
+                    else:
+                        if v not in valids:
+                            obstacleErrors.append((checkKey,k,v))
 
     return obstacleErrors
 
@@ -462,9 +478,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             # Validate "enemies"
                             if "enemies" in room:
                                 for enemy in room["enemies"]:
+                                    enemyGroupRef = ""
                                     # Unique IDs
                                     if enemy["id"] not in roomData["enemies"]["ids"]:
                                         roomData["enemies"]["ids"].append(enemy["id"])
+                                        enemyGroupRef = f"{enemy['id']}:{enemy['groupName']}"
                                     else:
                                         msg = f"🔴ERROR: Enemy ID not unique! {roomRef}:{enemy['id']}"
                                         messages["reds"].append(msg)
@@ -474,7 +492,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         for homeNode in enemy["homeNodes"]:
                                             homeNodeRef = f"Node[{roomRef}:{homeNode}]"
                                             if homeNode not in roomData["nodes"]["froms"]:
-                                                msg = f"🔴ERROR: Invalid Home Node:{homeNodeRef}"
+                                                msg = f"🔴ERROR: Invalid Home Node:{enemyGroupRef}:{homeNodeRef}"
+                                                messages["reds"].append(msg)
+                                                messages["counts"]["reds"] += 1
+                                    if "betweenNodes" in enemy:
+                                        for betweenNode in enemy["betweenNodes"]:
+                                            betweenNodeRef = f"Node[{roomRef}:{betweenNode}]"
+                                            if betweenNode not in roomData["nodes"]["froms"]:
+                                                msg = f"🔴ERROR: Invalid Between Node:{enemyGroupRef}:{betweenNodeRef}"
                                                 messages["reds"].append(msg)
                                                 messages["counts"]["reds"] += 1
 
@@ -488,6 +513,27 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             if obstacleErrors:
                                 for obstacleError in obstacleErrors:
                                     msg = f"🔴ERROR: Invalid Obstacles ID:{roomRef}:{obstacleError}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
+                            # Validate Requires Nodes
+                            requiresErrors = search_for_valid_keyvalue(
+                                [
+                                    "fromNode",
+                                    "fromNodes.",
+                                    "inRoomPath.",
+                                    "resetRoom.nodes.",
+                                    "nodesToAvoid.",
+                                    "itemNotCollectedAtNode",
+                                    "entranceNodes."
+                                ],
+                                "room",
+                                roomData["nodes"]["froms"],
+                                room
+                            )
+                            if requiresErrors:
+                                for requiresError in requiresErrors:
+                                    msg = f"🔴ERROR: Invalid Node ID:{roomRef}:{requiresError}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
 
