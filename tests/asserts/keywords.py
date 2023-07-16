@@ -593,9 +593,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                             if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
                                                                 pass
                                                             else:
-                                                                msg = f"🔴ERROR: Link Path:{toNodeRef} not found!"
-                                                                messages["reds"].append(msg)
-                                                                messages["counts"]["reds"] += 1
+                                                                msg = f"🟡WARNING: Link Path:{toNodeRef} not found!"
+                                                                messages["yellows"].append(msg)
+                                                                messages["counts"]["yellows"] += 1
                                                         else:
                                                             msg = f"🔴ERROR: {fromNodeRef} not found!"
                                                             messages["reds"].append(msg)
@@ -783,6 +783,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
 if bail:
     firstErr = True
+    firstWarn = True
     foundErr = False
     for msg in messages["reds"]:
         if "ERROR" in msg or "requires" in msg:
@@ -790,6 +791,12 @@ if bail:
             if firstErr:
                 print("🔴ERROR🔴")
                 firstErr = False
+            print(msg)
+    for msg in messages["yellows"]:
+        if "WARNING" in msg or "requires" in msg:
+            if firstWarn:
+                print("🟡WARNING🟡")
+                firstWarn = False
             print(msg)
     if foundErr:
         print("🔴Something fucked up! Bailing!")
