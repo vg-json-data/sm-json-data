@@ -133,12 +133,12 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the acid frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different acid runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
-#### acidPhysicsFrames object
-A `acidPhysicsFrames` object represents Samus interacting with acid physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as both `acidFrames` and `heatFrames` without the reduction effects given by Gravity Suit.
+#### gravitylessAcidFrames object
+A `gravitylessAcidFrames` object represents Samus interacting with acid physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `acidFrames` without the reduction effects given by Gravity Suit.
 
 __Example:__
 ```json
-{"acidPhysicsFrames": 70}
+{"gravitylessAcidFrames": 70}
 ```
 
 #### draygonElectricityFrames object
@@ -189,6 +189,14 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
+#### gravitylessHeatFrames object
+A `gravitylessHeatFrames` object represents Samus in a heated environment with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `heatFrames` without the reduction effects given by Gravity Suit.
+
+__Example:__
+```json
+{"gravitylessHeatFrames": 70}
+```
+
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
 
@@ -209,12 +217,12 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
-#### lavaPhysicsFrames object
-A `lavaPhysicsFrames` object represents Samus interacting with lava physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as both `lavaFrames` and `heatFrames` without the reduction effects given by Gravity Suit.
+#### gravitylessLavaFrames object
+A `gravitylessLavaFrames` object represents Samus interacting with lava physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `lavaFrames` without the reduction effects given by Gravity Suit.
 
 __Example:__
 ```json
-{"lavaPhysicsFrames": 70}
+{"gravitylessLavaFrames": 70}
 ```
 
 #### samusEaterFrames object
