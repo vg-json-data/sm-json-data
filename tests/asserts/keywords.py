@@ -9,16 +9,16 @@ import subprocess
 import sys
 from flatten_json import flatten
 
-bail = False
-last_enemy = ""
-uniques = {
+bail = False            # throw an exit code
+last_enemy = ""         # helper for enemy validation
+uniques = {             # track used IDs and make sure that they're successively unique
     "groupName": [],
     "roomID": [],
     "roomName": [],
     "roomAddress": [],
     "nodeAddress": []
 }
-messages = {
+messages = {            # track messages and message counts
     "greens": [],
     "yellows": [],
     "reds": [],
@@ -36,38 +36,50 @@ def process_keyvalue(k, v):
     global last_enemy
     goodValue = True
     processValue = True
+
+    # keys to ignore because they can't have bad data or they've been manually verified
     goodKeys = [
-        "additionalObstacles",
-        "obstaclesCleared",
-        "obstaclesNotCleared",
         "subarea",
         "twinDoorAddresses"
     ]
+
+    # keys to ignore for documented reasons
+    manualKeys = [
+        "obstaclesCleared",
+        "obstaclesNotCleared"
+    ]
+
+    # keys to ignore for documented reasons
     badKeys = [
-        "$schema",      # immaterial
-        "description",  # immaterial
-        "devNote",      # immaterial
-        "note",         # immaterial
-        "name",         # !!could check for unique
-        "id",           # !!could check for unique
-        # "groupName",    # !!could check for unique
-        # "nodeAddress",  # !!could check for unique
-        # "roomAddress",  # !!could check for unique
-        "mobility",     # validated by schema
-        "mode",         # validated by schema
-        "jumpwayType",  # validated by schema
-        "lockType",     # validated by schema
-        "nodeType",     # validated by schema
-        "nodeSubType",  # validated by schema
-        "obstacleType", # validated by schema
-        "physics",      # validated by schema
-        "utility",      # validated by schema
+        "$schema",          # immaterial
+        "description",      # immaterial
+        "devNote",          # immaterial
+        "note",             # immaterial
+        "name",             # !!could check for unique
+        "id",               # !!could check for unique
+        # "groupName",        # !!could check for unique
+        # "nodeAddress",      # !!could check for unique
+        # "roomAddress",      # !!could check for unique
+        "mobility",         # validated by schema
+        "mode",             # validated by schema
+        "jumpwayType",      # validated by schema
+        "lockType",         # validated by schema
+        "nodeType",         # validated by schema
+        "nodeSubType",      # validated by schema
+        "obstacleType",     # validated by schema
+        "physics",          # validated by schema
+        "utility",          # validated by schema
         "resourceCapacity"  # validated by schema
     ]
+
+    # check if it's a key we want to check
     if k in badKeys or k in goodKeys:
         processValue = False
     else:
         for checkKey in badKeys:
+            if checkKey in k:
+                processValue = False
+        for checkKey in manualKeys:
             if checkKey in k:
                 processValue = False
         for checkKey in goodKeys:
@@ -76,6 +88,7 @@ def process_keyvalue(k, v):
 
     isSkip = False
     kCheck = k.split(".")[-1]
+    # check uniques
     if kCheck in uniques and "twinDoorAddresses" not in k:
         if v not in uniques[kCheck]:
             uniques[kCheck].append(v)
@@ -85,7 +98,9 @@ def process_keyvalue(k, v):
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
 
+    # let's do this thing
     if processValue:
+        # helpers for data type
         isFloat = isinstance(v, float)
         isInt = isinstance(v, int)
         isList = isinstance(v, list)
@@ -96,6 +111,7 @@ def process_keyvalue(k, v):
             not isEmptyList and \
             not isNumeric and \
             not isSkip:
+            # helpers for value type
             isArea = v \
                 .replace("Ceres Station", "Ceres") \
                 .replace(" ", "") \
@@ -107,10 +123,13 @@ def process_keyvalue(k, v):
             isTech = v in keywords["techs"]
             isWeapon = v in keywords["weapons"]
             isValue = v in keywords["values"]
+
+            # process enemy
             if (isEnemy or last_enemy != "") and ".enemy" in k and ".enemyKill" not in k:
                 if ".type" not in k:
                     last_enemy = v
                 elif ".type" in k:
+                    # validate enemy name
                     if last_enemy in keywords["enemies"]["enemyByName"]:
                         enemyID = keywords["enemies"]["enemyByName"][last_enemy]
                         if enemyID in enemies:
@@ -118,6 +137,7 @@ def process_keyvalue(k, v):
                                 attackExists = False
                                 for attack in enemies[enemyID]["attacks"]:
                                     if "name" in attack:
+                                        # validate attack name
                                         if attack["name"] == v:
                                             attackExists = True
                                 goodValue = attackExists
@@ -131,6 +151,7 @@ def process_keyvalue(k, v):
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
             else:
+                # if it doesn't match a known value type
                 if not isArea and \
                     not isEnemy and \
                     not isHelper and \
@@ -145,6 +166,7 @@ def process_keyvalue(k, v):
                     messages["counts"]["reds"] += 1
     return goodValue
 
+# try to navigate a path between nodes if no direct path
 def search_for_path(fromNodes, sourceNode, targetNode):
     foundPath = False
     for tNode in fromNodes[str(sourceNode)]["to"]:
@@ -158,8 +180,12 @@ def search_for_path(fromNodes, sourceNode, targetNode):
             # messages["counts"]["greens"] += 1
     return foundPath
 
+# give list of keys to check
+# give label for output message
+# give list of valid values
+# give data object
 def search_for_valid_keyvalue(keys, label, valids, data):
-    obstacleErrors = []
+    keyvalueErrors = []
     data = {
         label: data
     }
@@ -184,13 +210,14 @@ def search_for_valid_keyvalue(keys, label, valids, data):
                     if isinstance(v, list):
                         for ele in v:
                             if ele not in valids:
-                                obstacleErrors.append((checkKey,k,v,ele))
+                                keyvalueErrors.append((checkKey,k,v,ele))
                     else:
                         if v not in valids:
-                            obstacleErrors.append((checkKey,k,v))
+                            keyvalueErrors.append((checkKey,k,v))
 
-    return obstacleErrors
+    return keyvalueErrors
 
+# process a list of strats
 def process_strats(src, paramData):
     '''
     Process strats
@@ -205,32 +232,44 @@ def process_strats(src, paramData):
 
     showNodes = True
     toNodeRef = f"{fromNodeRef}:destinationNode[{toNode}]"
+
+    # cycle through strats
     for strat in src["strats"]:
         stratRef = f"{toNodeRef}:stratName[{strat}]"
         if "name" in strat:
             stratRef = f"{toNodeRef}:stratName[{strat['name']}]"
+        # if fromNode is valid
         if str(fromNode) in roomData["links"]["from"]:
+            # if direct path to toNode from fromNode exists
             if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
+                # if the strat referenced doesn't exist on this node
                 if strat not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"] and \
                     strat["name"] not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"]:
                     msg = f"🔴ERROR: Invalid strat:{stratRef}"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
                 else:
+                    # valid strat
+                    # if it's got obstacles
                     if "obstacles" in strat:
                         for obstacle in strat["obstacles"]:
+                            # make sure the obstacle exists in the room
                             if obstacle["id"] not in roomData["obstacles"]["ids"]:
                                 msg = f"🔴ERROR: Invalid Obstacle ID:{stratRef}:{obstacle['id']}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            # check additionalObstacles too
                             if "additionalObstacles" in obstacle:
                                 for addtlObstacle in obstacle["additionalObstacles"]:
+                                    # make sure it exists in the room
                                     if addtlObstacle not in roomData["obstacles"]["ids"]:
                                         msg = f"🔴ERROR: Invalid Additional Obstacle ID:{stratRef}:{obstacle['id']}:{addtlObstacle}"
                                         messages["reds"].append(msg)
                                         messages["counts"]["reds"] += 1
+                    # check cleared obstacles too
                     if "clearedObstacles" in strat:
                         for obstacle in strat["clearedObstacles"]:
+                            # make sure it exists in the room
                             if obstacle not in roomData["obstacles"]["ids"]:
                                 msg = f"🔴ERROR: Invalid Cleared Obstacle ID:{stratRef}:{obstacle}"
                                 messages["reds"].append(msg)
@@ -238,7 +277,9 @@ def process_strats(src, paramData):
 
                     if showArea:
                         msg = ""
-                        msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
+                        area = roomData["area"]
+                        subarea = roomData["subarea"]
+                        msg += f"🟢{roomData['fullarea']}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
                         messages["greens"].append(msg)
                         messages["counts"]["greens"] += 1
                     if key == "linkStrats":
@@ -252,12 +293,15 @@ def process_strats(src, paramData):
                           ["to"][toNode] \
                           ["strats"].append(strat)
             else:
+                # no direct path to toNode from fromNode exists
                 foundPath = False
                 fromNodes = roomData["links"]["from"]
                 sourceNode = fromNode
                 targetNode = toNode
+                # try to search for path
                 foundPath = search_for_path(fromNodes, sourceNode, targetNode)
                 if not foundPath:
+                    # still couldn't find a path
                     if str(room["id"]) in cheatSheetJSON and \
                         str(fromNode) in cheatSheetJSON[str(room["id"])] and \
                         str(toNode) in cheatSheetJSON[str(room["id"])][str(fromNode)]:
@@ -321,6 +365,7 @@ for enemiesPath in enemiesPaths:
                 if "id" in enemy:
                     enemies[enemy["id"]] = enemy
 
+# validate enemies, helpers, tech, weapons
 for jsonPath in [
     os.path.join(".","enemies","main.json"),
     os.path.join(".","enemies","bosses","main.json"),
@@ -367,19 +412,27 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     flatten(d, '.') for d in [regionJSON]
                 ][0]
                 # print(flattened_dict)
+                # check rooms
                 if "rooms" in regionJSON:
+                    # get data about this region by getting from first room
                     room = regionJSON["rooms"][0]
                     area = room["area"]
                     subarea = room["subarea"]
                     subsubarea = room["subsubarea"] if "subsubarea" in room else ""
                     showArea = False
-                    print(f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or ""))
+                    fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "")
+                    print(fullarea)
+
+                    # do a naive pass on all data in this region
                     for [k, v] in flattened_dict.items():
                         ret = process_keyvalue(k, v)
                         if not ret and not showArea:
                             showArea = True
+
+                    # cycle through rooms
                     for [roomIDX, room] in enumerate(regionJSON["rooms"]):
-                        roomRef = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "") + f":{room['id']}:{room['name']}"
+                        roomRef = f"{fullarea}:{room['id']}:{room['name']}"
+                        # check for uniqueness
                         if room["id"] not in uniques["roomID"]:
                             uniques["roomID"].append(room["id"])
                         else:
@@ -393,8 +446,13 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
+                        # build an outline for this room
                         roomData = {
                             "id": room["id"],
+                            "area": area,
+                            "subarea": subarea,
+                            "subsubarea": subsubarea,
+                            "fullarea": fullarea,
                             "links": {
                                 "from": {}
                             },
@@ -513,9 +571,16 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                 messages["counts"]["reds"] += 1
 
                             # Validate Obstacles
+                            # check these keys
+                            # check against obstacle IDs
+                            # pass the whole room object
                             obstacleErrors = search_for_valid_keyvalue(
-                                ["obstaclesCleared", "obstaclesToAvoid"],
-                                "room",
+                                [
+                                    "obstaclesCleared",
+                                    "obstaclesNotCleared",
+                                    "obstaclesToAvoid",
+                                ],
+                                f"{roomData['fullarea']}/room",
                                 roomData["obstacles"]["ids"],
                                 room
                             )
@@ -526,6 +591,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
 
                             # Validate Reusable Roomwide Strats
+                            # check these keys
+                            # check against reusable strat names
+                            # pass the whole room object
                             reusableErrors = search_for_valid_keyvalue(
                                 [
                                     "reusableRoomwideNotable"
@@ -541,6 +609,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
 
                             # Validate Requires Nodes
+                            # check these keys
+                            # check against node IDs that have links leading from
+                            # pass the whole room object
                             requiresErrors = search_for_valid_keyvalue(
                                 [
                                     "fromNode",
@@ -548,8 +619,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     "inRoomPath.",
                                     "resetRoom.nodes.",
                                     "nodesToAvoid.",
-                                    "itemNotCollectedAtNode",
-                                    "entranceNodes."
+                                    "itemNotCollectedAtNode"
                                 ],
                                 "room",
                                 roomData["nodes"]["froms"],
@@ -561,47 +631,92 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
 
+                            # Validate Entrance Nodes
+                            # gather entrance nodes
+                            entranceNodes = []
+                            for node in room["nodes"]:
+                                if node["id"] in roomData["nodes"]["froms"]:
+                                    if node["nodeType"] in ["door", "entrance"]:
+                                        entranceNodes.append(node["id"])
+                            # check these keys
+                            # check against entrance node IDs
+                            # pass the whole room object
+                            entranceErrors = search_for_valid_keyvalue(
+                                [
+                                    "entranceNodes."
+                                ],
+                                "room",
+                                entranceNodes,
+                                room
+                            )
+                            if entranceErrors:
+                                for entranceError in entranceErrors:
+                                    msg = f"🔴ERROR: Invalid Entrance Node ID:{roomRef}:{entranceError}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
+
                             # Validate canLeaveCharged
                             # Validate leaveWithGMode
                             for node in room["nodes"]:
                                 if "id" in node:
                                     nodeRef = f"{roomRef}:{node['id']}"
+                                # node.canLeaveCharged[x]
                                 if "canLeaveCharged" in node:
                                     for [leaveID, leave] in enumerate(node["canLeaveCharged"]):
+                                        # node.canLeaveCharged[x].initiateRemotely
                                         if "initiateRemotely" in leave:
                                             remote = leave["initiateRemotely"]
+                                            # node.canLeaveCharged[x].initiateRemotely.initiateAt
                                             if "initiateAt" in remote:
                                                 fromNode = remote["initiateAt"]
                                                 fromNodeRef = f"Node[{nodeRef}]:canLeaveCharged[{int(leaveID) + 1}]:initiateRemotelyAt[{fromNode}]"
+                                                toNodeRef = f"From{fromNodeRef}"
+                                                # node.canLeaveCharged[x].initiateRemotely.pathToDoor[x]
                                                 if "pathToDoor" in remote:
                                                     for path in remote["pathToDoor"]:
                                                         toNode = -1
+                                                        # node.canLeaveCharged[x].initiateRemotely.pathToDoor[x].destinationNode
                                                         if "destinationNode" in path:
                                                             toNode = path["destinationNode"]
                                                             toNodeRef = f"{fromNodeRef}:{toNode}"
+                                                            # Document fromNode
                                                             if fromNode not in roomData["nodes"]["leaveCharged"]["from"]:
                                                                 roomData["nodes"]["leaveCharged"]["from"][fromNode] = {
                                                                     "to": {}
                                                                 }
+                                                            # Document toNode
                                                             if toNode not in roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"]:
                                                                 roomData["nodes"]["leaveCharged"]["from"][fromNode]["to"][toNode] = {
                                                                     "strats": []
                                                                 }
+
+                                                        # toNode not defined
                                                         if toNode == -1:
                                                             msg = f"🔴ERROR: Destination node not defined:{fromNodeRef}"
                                                             messages["reds"].append(msg)
                                                             messages["counts"]["reds"] += 1
+
+                                                        # Found fromNode but not toNode
+                                                        # Could be a false positive
                                                         if str(fromNode) in roomData["links"]["from"]:
-                                                            if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
-                                                                pass
-                                                            else:
-                                                                msg = f"🟡WARNING: Link Path:{toNodeRef} not found!"
-                                                                messages["yellows"].append(msg)
-                                                                messages["counts"]["yellows"] += 1
+                                                            if str(toNode) not in roomData["links"]["from"][str(fromNode)]["to"]:
+                                                                foundPath = False
+                                                                fromNodes = roomData["links"]["from"]
+                                                                sourceNode = fromNode
+                                                                targetNode = toNode
+                                                                # try to search for path
+                                                                foundPath = search_for_path(fromNodes, sourceNode, targetNode)
+                                                                if not foundPath:
+                                                                    msg = f"🔴ERROR: Destination node path not found:{toNodeRef}"
+                                                                    messages["reds"].append(msg)
+                                                                    messages["counts"]["reds"] += 1
                                                         else:
                                                             msg = f"🔴ERROR: {fromNodeRef} not found!"
                                                             messages["reds"].append(msg)
                                                             messages["counts"]["reds"] += 1
+
+                                                        # process strats in this path
                                                         if "strats" in path:
                                                             paramData = {
                                                                 "key": "leaveCharged",
@@ -616,6 +731,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                             showNodes = paramData["showNodes"]
                                                             bail = paramData["bail"]
 
+                                # Collect GMode objects
                                 if "leaveWithGMode" in node:
                                     for leaveG in node["leaveWithGMode"]:
                                         gModeObjects.append(leaveG)
@@ -640,6 +756,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         showNodes = paramData["showNodes"]
                                         bail = paramData["bail"]
 
+                            # Validate GMode objects
                             for gModeObj in gModeObjects:
                                 if "strats" in gModeObj:
                                     parentNodeRef = ""
@@ -662,11 +779,13 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 messages["counts"]["reds"] += 1
                                                             else:
                                                                 msg = ""
-                                                                msg += f"🟢rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
+                                                                msg += f"🟢{area}/{subarea}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
                                                                 messages["greens"].append(msg)
                                                                 messages["counts"]["greens"] += 1
+                            # Validate Nodes
                             for node in room["nodes"]:
                                 orphaned = False
+                                # If there's no link, call it orphaned
                                 if node["nodeType"] != "door" and \
                                     node["id"] not in roomData["nodes"]["tos"]:
                                     nodeRef = f"{roomRef}:{node['id']}:{node['name']}"
@@ -681,6 +800,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         messages["reds"].append(msg)
                                         messages["counts"]["reds"] += 1
 
+                                # If it's orphaned, try to find a connection
                                 if orphaned:
                                     connections = {
                                         "inter": {},
@@ -735,6 +855,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             if showNodes:
                                 # print(json.dumps(roomData, indent=2))
                                 pass
+
+                    # See if error got resolved with manual checks
                     if showArea:
                         usedGroups = []
                         for clr in ["green", "yellow", "red"]:
