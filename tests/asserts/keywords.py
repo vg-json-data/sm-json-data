@@ -53,6 +53,7 @@ def process_keyvalue(k, v):
         # "groupName",    # !!could check for unique
         # "nodeAddress",  # !!could check for unique
         # "roomAddress",  # !!could check for unique
+        "mobility",     # validated by schema
         "mode",         # validated by schema
         "jumpwayType",  # validated by schema
         "lockType",     # validated by schema
