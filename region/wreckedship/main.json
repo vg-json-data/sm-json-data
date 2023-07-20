@@ -221,16 +221,11 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [
-                    {"resetRoom": {
-                      "nodes": [1, 2, 3, 4, 5, 6],
-                      "obstaclesToAvoid": ["B"]
-                    }}
-                  ]
+                  "requires": [ {"obstaclesNotCleared": ["B"]} ]
                 }
               ],
               "openEnd": 0,
-              "devNote": "It's technically possible to reset at 7 and keep the top layer of obstacle B intact by clipping through the blocks, but do we really need to represent that?"
+              "devNote": "It is technically possible to reset at 7 and keep the top layer of obstacle B intact by clipping through the blocks"
             }
           ],
           "locks": [
@@ -606,13 +601,14 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["h_canBombThings"]
-                    }
-                  ]
+                  "requires": [
+                    "Morph",
+                    {"or": [
+                      "h_canBombThings",
+                      {"obstaclesCleared": ["A"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Speedball",
@@ -637,12 +633,7 @@
                       }}
                     ]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Temporary Blue Bounce",
@@ -657,12 +648,7 @@
                       "unusableTiles": 1
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 }
               ]
             }
@@ -675,71 +661,64 @@
               "id": 9,
               "strats": [
                 {
+                  "name": "Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["B"]}
+                  ],
+                  "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
+                },
+                {
                   "name": "Morph Bombs",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": ["h_canUseMorphBombs"]
-                    }
-                  ]
+                  "requires": [
+                    "Morph",
+                    "h_canUseMorphBombs"
+                  ],
+                  "clearsObstacles": ["B"]
                 },
                 {
                   "name": "Shoot the Blocks",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "note": "Crouch+jump morph from the stairs or run and jump with no movement assists.",
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [
-                        {
-                          "or": [
-                            "Wave",
-                            "Spazer"
-                          ]
-                        }
-                      ]
-                    }
+                  "requires": [
+                    "Morph",
+                    {"or": [
+                      "Wave",
+                      "Spazer"
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"],
+                  "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
+                },
+                {
+                  "name": "Power Bomb",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "h_canUsePowerBombs"
+                  ],
+                  "clearsObstacles": ["A","B"],
+                  "note": [
+                    "Only one Power Bomb is needed because it is possible to mid-air Morph into the Morph tunnel.",
+                    "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists.",
+                    "A single Power Bomb also breaks the Bomb Blocks going to the door to the right."
                   ]
                 },
                 {
                   "name": "Partial Covern Ice Clip",
                   "notable": true,
-                  "requires": [ "Morph" ],
-                  "note": "Crouch+jump morph from the stairs or run and jump with no movement assists.",
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [
-                        {
-                          "and": [
-                            "canUseFrozenEnemies",
-                            "canCeilingClip",
-                            { "not": "f_DefeatedPhantoon" },
-                            "canRiskPermanentLossOfAccess"
-                          ]
-                        }
-                      ],
-                      "note": "Use the Covern to partial ceiling clip so your beam can reach the obstacle shot block."
-                    }
-                  ]
-                },
-                {
-                  "name": "Power Bombs",
-                  "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": ["h_canUsePowerBombs"],
-                      "additionalObstacles": ["A"]
-                    }
+                  "requires": [
+                    "Morph",
+                    "canUseFrozenEnemies",
+                    "canCeilingClip",
+                    { "not": "f_DefeatedPhantoon" },
+                    "canRiskPermanentLossOfAccess"
                   ],
+                  "clearsObstacles": ["B"],
                   "note": [
-                    "It's possible to mid-air morph into the morph tunnel.",
-                    "This is why no PBs are needed if the obstacle is already broken."
+                    "Use the Covern to partial ceiling clip so your beam can reach the shot block of the ceiling at the end of the Morph tunnel to the left.",
+                    "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
                   ]
                 }
               ]
@@ -753,40 +732,42 @@
               "id": 9,
               "strats": [
                 {
+                  "name": "Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["C"]}
+                  ]
+                },
+                {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [ "h_canBombThings" ]
-                    }
-                  ]
+                  "requires": [
+                    "Morph",
+                    "h_canBombThings"
+                  ],
+                  "clearsObstacles": ["C"]
                 },
                 {
                   "name": "Temporary Blue Bounce (Phantoon Dead)",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        "f_DefeatedPhantoon",
-                        "canXRayTurnaround",
-                        "canSpringBallBounce",
-                        {"or": [
-                          "HiJump",
-                          "canChainTemporaryBlue"
-                        ]},
-                        {"canShineCharge": {
-                          "usedTiles": 20,
-                          "openEnd": 1,
-                          "shinesparkFrames": 0,
-                          "steepDownTiles": 4
-                        }}
-                      ]
-                    }
+                  "requires": [
+                    "Morph",
+                    "f_DefeatedPhantoon",
+                    "canXRayTurnaround",
+                    "canSpringBallBounce",
+                    {"or": [
+                      "HiJump",
+                      "canChainTemporaryBlue"
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 20,
+                      "openEnd": 1,
+                      "shinesparkFrames": 0,
+                      "steepDownTiles": 4
+                    }}
                   ],
+                  "clearsObstacles": ["C"],
                   "note": [
                     "Run towards the conveyor to more easily build the ShineCharge, and for an easier bounce into the morph tunnel.",
                     "Neutral bounce into the Morph tunnel, and SpringBall bounce to continue all the way through."
@@ -796,23 +777,19 @@
                 {
                   "name": "Chain Temporary Blue Bounce (Phantoon Alive)",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        "canChainTemporaryBlue",
-                        "canXRayTurnaround",
-                        "canSpringBallBounce",
-                        {"canShineCharge": {
-                          "usedTiles": 16,
-                          "openEnd": 1,
-                          "shinesparkFrames": 0,
-                          "steepDownTiles": 4
-                        }}
-                      ]
-                    }
+                  "requires": [
+                    "Morph",
+                    "canChainTemporaryBlue",
+                    "canXRayTurnaround",
+                    "canSpringBallBounce",
+                    {"canShineCharge": {
+                      "usedTiles": 16,
+                      "openEnd": 1,
+                      "shinesparkFrames": 0,
+                      "steepDownTiles": 4
+                    }}
                   ],
+                  "clearsObstacles": ["C"],
                   "note": "Neutral bounce into the Morph tunnel, and SpringBall bounce to continue all the way through.",
                   "devNote": "Defeating Phantoon makes this strat easier."
                 },
@@ -831,7 +808,8 @@
                       "shinesparkFrames": 0,
                       "steepUpTiles": 4
                     }}
-                  ]
+                  ],
+                  "clearsObstacles": ["C"]
                 },
                 {
                   "name": "SpeedBall Out (Phantoon Alive)",
@@ -846,7 +824,8 @@
                       "shinesparkFrames": 0,
                       "steepUpTiles": 3
                     }}
-                  ]
+                  ],
+                  "clearsObstacles": ["C"]
                 }
               ]
             }
@@ -909,27 +888,30 @@
               "id": 6,
               "strats": [
                 {
-                  "name": "Morph Bombs",
+                  "name": "Blocks Already Broken",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["h_canUseMorphBombs"]
-                    }
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
                   ]
+                },
+                {
+                  "name": "Bombs",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "h_canUseMorphBombs"
+                  ],
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Power Bombs",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": ["h_canUsePowerBombs"],
-                      "additionalObstacles": ["B"]
-                    }
-                  ]
+                  "requires": [
+                    "Morph",
+                    "h_canUsePowerBombs"
+                  ],
+                  "clearsObstacles": ["A","B"]
                 },
                 {
                   "name": "Speedball",
@@ -944,12 +926,7 @@
                       "unusableTiles": 10
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Temporary Blue Bounce",
@@ -965,12 +942,7 @@
                       "unusableTiles": 1
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "G-mode Moprh Overload PLMs",
@@ -993,12 +965,7 @@
                   "name": "Base",
                   "notable": false,
                   "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": []
-                    }
-                  ],
+                  "clearsObstacles": ["B"],
                   "note": "From this direction, the shot blocks are fully breakable with Power Beam"
                 }
               ]
@@ -1007,52 +974,50 @@
               "id": 8,
               "strats": [
                 {
-                  "name": "Morph Bombs",
+                  "name": "Blocks Already Broken",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [ "h_canUseMorphBombs" ]
-                    }
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["C"]}
                   ]
+                },
+                {
+                  "name": "Bombs",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "h_canUseMorphBombs"
+                  ],
+                  "clearsObstacles": ["C"]
                 },
                 {
                   "name": "Power Bombs",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [ "h_canUsePowerBombs" ],
-                      "additionalObstacles": ["A", "B"]
-                    }
+                  "requires": [
+                    "Morph",
+                    "h_canUsePowerBombs"
                   ],
+                  "clearsObstacles": ["A","B","C"],
                   "note": [
-                    "It is possible to use a single power bomb to break the bomb blocks going left to the item, right to the door, and shot blocks going down.",
+                    "It is possible to use a single Power Bomb to break the bomb blocks going left to the item, right to the door, and shot blocks going down.",
                     "Place the power bomb against the right wall at the top of the stairs between the three obstacles."
                   ]
                 },
                 {
                   "name": "Temporary Blue",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        "canTemporaryBlue",
-                        "canLateralMidAirMorph",
-                        {"canComeInCharged": {
-                          "fromNode": 5,
-                          "inRoomPath": [5,9],
-                          "framesRemaining": 180,
-                          "shinesparkFrames": 0,
-                          "unusableTiles": 1
-                        }}
-                      ]
-                    }
-                  ]
+                  "requires": [
+                    "canTemporaryBlue",
+                    "canLateralMidAirMorph",
+                    {"canComeInCharged": {
+                      "fromNode": 5,
+                      "inRoomPath": [5,9],
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0,
+                      "unusableTiles": 1
+                    }}
+                  ],
+                  "clearsObstacles": ["C"]
                 },
                 {
                   "name": "G-mode Overload PLMs",
@@ -2718,7 +2683,7 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Chozo Statue Already Broken",
                   "notable": false,
                   "requires": [
                     {"canShineCharge": {
@@ -2726,13 +2691,20 @@
                       "shinesparkFrames": 40,
                       "openEnd": 2
                     }}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
                   ]
+                },
+                {
+                  "name": "Power Bomb the Chozo Statue",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 40,
+                      "openEnd": 2
+                    }},
+                    "h_canUsePowerBombs"
+                  ],
+                  "clearsObstacles": ["A"]
                 }
               ]
             }
@@ -2761,13 +2733,13 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
-                  ]
+                  "requires": [ {"obstaclesCleared": ["A"]} ]
+                },
+                {
+                  "name": "Power Bomb the Chozo Statue",
+                  "notable": false,
+                  "requires": [ "h_canUsePowerBombs" ],
+                  "clearsObstacles": ["A"]
                 }
               ]
             }
@@ -4107,12 +4079,7 @@
                       "artificialMorph": true
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 }
               ]
             }
