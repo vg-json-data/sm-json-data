@@ -233,6 +233,14 @@ __Example:__
 {"samusEaterFrames": 160}
 ```
 
+#### metroidFrames object
+A `metroidFrames` object represents the need for Samus to spend time (measured in frames) grappled by a Metroid. When captured, the Metroid deals 3 damage every 4 frames. This is halved by Varia (3 damage every 8 frames), and halved again by Gravity Suit (3 damage every 16 frames).
+
+__Example:__
+```json
+{"metroidFrames": 260}
+```
+
 #### spikeHits object
 A `spikeHits` object represents the need for Samus to intentionally take a number of hits from spikes. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per spike hit is 60 with Power Suit, 30 with Varia, and 15 with Gravity Suit.
 
