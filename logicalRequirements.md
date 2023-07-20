@@ -24,6 +24,9 @@ __Example:__
 ]}
 ```
 
+Requirements are applied in the order in which they are listed; this can matter in cases where "refill",
+"ammoDrain", or "energyAtMost" requirements are involved with other resource usage requirements.
+
 #### or object
 An `or` object is fulfilled if at least one of the logical elements it contains is fulfilled
 
@@ -72,10 +75,6 @@ __Example:__
   "count": 75
 }}
 ```
-
-__Additional considerations__
-
-Whenever an `ammoDrain` object is part of a strat, it should be applied after all other ammo costs.
 
 #### enemyKill object
 An `enemyKill` object communicates the need to kill a given set of enemies, and is satisfied by having the necessary items to use one of the valid [weapons](weapons/weapons-readme.md) that will kill each of the enemies (as well as enough ammo, if applicable).
@@ -263,7 +262,7 @@ __Example:__
 
 #### resourceCapacity object
 A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
-* _type:_ The type ofresource. Can have the following values:
+* _type:_ The type of resource. Can have the following values:
   * Missile
   * Super
   * PowerBomb
@@ -279,6 +278,22 @@ __Example:__
     { "type": "PowerBomb", "count": 11},
     { "type": "RegularEnergy", "count":899}
 ]}
+```
+
+#### refill object
+A `refill` object is always fulfilled and represents a process that refills certain resource types to their current maximum capacity. Possible uses could include a farm, recharge station, or Crystal Flash. The
+refilled resource types are listed as an array having the following possible values:
+
+* Missile
+* Super
+* PowerBomb
+* RegularEnergy
+* ReserveEnergy
+* Energy (shorthand for RegularEnergy + ReserveEnergy)
+
+__Example:__
+```json
+{"refill": ["Energy", "Missile"]}
 ```
 
 ### Momentum-Based Objects
