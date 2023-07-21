@@ -69,7 +69,8 @@ def process_keyvalue(k, v):
         "obstacleType",     # validated by schema
         "physics",          # validated by schema
         "utility",          # validated by schema
-        "resourceCapacity"  # validated by schema
+        "resourceCapacity", # validated by schema
+        "refill",           # validated by schema
     ]
 
     # check if it's a key we want to check
