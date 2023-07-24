@@ -8,7 +8,14 @@
         {
           "name": "canBePatient",
           "requires": [],
-          "note": "Executing a strat that requires waiting or doing the same thing over and over again for over 3 minutes, even with good execution."
+          "note": "Executing a strat that requires waiting or doing the same thing over and over again for a substantial amount of time, potentially more than 1.5 minutes, even with good execution.",
+          "extensionTechs": [
+            {
+                "name": "canBeVeryPatient",
+                "requires": ["canBePatient"],
+                "note": "Executing a strat that requires waiting or doing the same thing over and over again for a long time, potentially more than 3 minutes, even with good execution."
+            }
+          ]
         },
         {
           "name": "canPrepareForNextRoom",
@@ -353,6 +360,23 @@
                 "Using Grapple to propel Samus upwards, then continuously morphing/unmorphing/jumping in mid-air to climb upwards.",
                 "This is much more lenient with HiJump."
               ]
+            },
+            {
+              "name": "canBombGrappleJump",
+              "requires": [
+                "canUseGrapple",
+                "canMidAirMorph",
+                "Bombs",
+                "canUseEnemies",
+                "canTrickyJump"
+              ],
+              "note": [
+                "Simultaneously use Grapple Beam to kill an enemy and detonate a bomb on Samus to gain the ability to jump for one frame.",
+                "By jumping first and performing this trick in the air, Samus gets a second jump.",
+                "This is most useful underwater to reach higher ledges.",
+                "This trick is effectively double frame perfect and kills the enemy requiring either a room reset, or a respawning enemy."
+              ],
+              "devNote": "Bombs is a leniency as the trick has a high chance of failure."
             }
           ]
         }
@@ -1109,38 +1133,27 @@
               "name": "canXRayClimb",
               "requires": [ "canXRayStandUp" ],
               "note": [
-                "All-purpose tech for X-Ray climbing by repeatedly using X-Ray's forced standup trick to climb up through walls.",
-                "This tech is uncoupled from different setups that place Samus in a position to do this and only refers to the actual climbing portion."
+                "Repeatedly using X-Ray's forced standup trick to climb up through in-bound walls.",
+                "This requires Samus to be partially clipped into the wall to begin climbing, which is often set up by getting stuck in a closing door.",
+                "The simplest setup is getting stuck in a right facing door in order to climb the left wall of a room.",
+                "To do this, enter this room from the room to the left with a stationary spinjump moving away to touch the transition with momentum that will get you stuck in the destination door.",
+                "X-Ray climbs can also be setup by allowing solid blocks to reform on Samus, or by clipping into a wall by some other means."
               ],
               "extensionTechs": [
                 {
-                  "name": "canRightFacingDoorXRayClimb",
-                  "requires": [
-                    "canXRayClimb",
-                    "canStationarySpinJump"
-                  ],
+                  "name": "canRightSideDoorStuck",
+                  "requires": [ "canStationarySpinJump" ],
                   "note": [
-                    "Enter the partner door (which faces left in the adjacent room) with a stationary spinjump moving away to touch the transition with momentum that will get you stuck in the destination door.",
-                    "That destination door is right-facing in the room where the X-Ray climb happens.",
-                    "Then use the X-Ray's forced standup trick to climb up through in-bound walls."
-                  ]
-                },
-                {
-                  "name": "canLeftFacingDoorXRayClimb",
-                  "requires": [
-                    "canXRayClimb",
-                    "canStationarySpinJump"
-                  ],
-                  "note": [
-                    "Though using the same techs, the setup is a bit different for left-facing doors.",
-                    "It requires a dashing stationary spinjump into a doorcheck, then holding down as Samus arrives in the other room.",
-                    "Then use normal X-Ray climbing."
+                    "Getting stuck in a right side (left facing) door.",
+                    "Starting from the room to the right, perform a dashing stationary spinjump into a doorcheck.",
+                    "Then,  as Samus arrives in the desired room, hold down to automatically fall forward into the closing door.",
+                    "This requires the doorway in the room to the right to not be underwater. This is typically used to start an X-Ray Climb."
                   ],
                   "extensionTechs": [
                     {
-                      "name": "canSubmergedLeftFacingDoorXRayClimb",
+                      "name": "canRightSideDoorStuckFromWater",
                       "requires": [
-                        "canLeftFacingDoorXRayClimb",
+                        "canRightSideDoorStuck",
                         "canTrickyJump"
                       ],
                       "note": [
@@ -1189,7 +1202,8 @@
               "requires": [ "canEnterRMode" ],
               "note": [
                 "Ability to enter G-mode starting with low reserve energy.",
-                "Have 4 or fewer energy in reserves (set to Auto), take damage while going through a door, use X-Ray while entering the next room, and release X-Ray before reserves have finished filling (a 4-frame window when starting with 4 reserve energy)."
+                "Have 4 or fewer energy in reserves (set to Auto), take damage while going through a door, use X-Ray while entering the next room, and release X-Ray before reserves have finished filling (a 4-frame window when starting with 4 reserve energy).",
+                "This can be used for many things, including overloading PLMs to move through solid tiles, setting up a deep doorstuck, and triggering Artificial Morph if canArtificialMorph is enabled."
               ],
               "extensionTechs": [
                 {
@@ -1342,6 +1356,14 @@
             "Most enemes become inactive while off camera, and most projectiles cease to exist.",
             "This can be done by jumping in place; changing Samus' hitbox with aim down will scroll the camera lower.",
             "By running back and forth the camera will scroll horizontally; Moonwalk can be used to camera scroll without travelling as far."
+          ]
+        },
+        {
+          "name": "canPauseAbuse",
+          "requires": [],
+          "note": [
+            "The ability to pause in order to avoid death while reaching 0 energy.",
+            "Energy must be obtained before the unpause fade-in finishes."
           ]
         }
       ]
