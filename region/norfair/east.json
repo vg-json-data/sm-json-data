@@ -3200,22 +3200,37 @@
           "groupName": "Norfair Reserve Dragons",
           "enemyName": "Dragon",
           "quantity": 3,
-          "homeNodes": [ 4 ],
+          "betweenNodes": [ 1, 4 ],
           "dropRequires": [
             "h_heatProof",
             {"or": [
-              "Gravity",
+              "h_lavaProof",
               "Grapple"
             ]}
           ]
         },
         {
           "id": "e2",
-          "groupName": "Norfair Reserve Sovas",
+          "groupName": "Norfair Reserve Missile Sova",
           "enemyName": "Sova",
-          "quantity": 3,
+          "quantity": 1,
           "homeNodes": [ 4 ],
           "dropRequires": ["h_heatProof"]
+        },
+        {
+          "id": "e3",
+          "groupName": "Norfair Reserve Right Sovas",
+          "enemyName": "Sova",
+          "quantity": 2,
+          "betweenNodes": [ 1, 4 ],
+          "dropRequires": ["h_heatProof"]
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Lava Dragons",
+          "obstacleType": "enemies"
         }
       ],
       "links": [
@@ -3230,9 +3245,119 @@
                   "notable": false,
                   "requires": [
                     "h_heatProof",
+                    {"or": [
+                      "h_lavaProof",
+                      "canCarefulJump"
+                    ]},
                     "Plasma",
                     {"refill": ["Energy", "Missile"]}
                   ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "SpaceJump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    {"or": [
+                      {"heatFrames": 220},
+                      {"and": [
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 2,
+                          "physics": ["normal"]
+                        }},
+                        {"heatFrames": 140}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Space Screw Dragon Kill",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    "ScrewAttack",
+                    "canTrickyJump",
+                    {"heatFrames": 199}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "note": "Clear the Dragons while moving towards the items with Space Jump and Screw Attack to make for a faster exit later."
+                },
+                {
+                  "name": "ShineSpark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "framesRemaining": 15,
+                      "fromNode": 1,
+                      "shinesparkFrames": 38,
+                      "excessShinesparkFrames": 1
+                    }},
+                    {"heatFrames": 160}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "h_lavaProof",
+                    {"or": [
+                      "h_heatProof",
+                      {"and": [
+                        {"obstaclesCleared": ["A"]},
+                        {"heatFrames": 100}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Lava Proof",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_lavaProof",
+                    {"or":[
+                      {"and":[
+                        {"enemyKill": {
+                          "enemies": [
+                            ["Dragon", "Dragon"],
+                            ["Dragon"]
+                          ],
+                          "explicitWeapons": ["Missile"]
+                        }},
+                        {"heatFrames": 280}
+                      ]},
+                      {"and":[
+                        {"enemyKill": {
+                          "enemies": [
+                            ["Dragon", "Dragon"],
+                            ["Dragon"]
+                          ],
+                          "explicitWeapons": [
+                            "Super",
+                            "Plasma",
+                            "ScrewAttack"
+                          ]
+                        }},
+                        {"heatFrames": 230}
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
                 }
               ]
             },
@@ -3244,7 +3369,51 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateHeatRooms",
-                    {"heatFrames": 300}
+                    {"or": [
+                      "canTrickyJump",
+                      {"and": [
+                        {"obstaclesCleared": ["A"]},
+                        {"heatFrames": 60}
+                      ]}
+                    ]},
+                    {"heatFrames": 230}
+                  ]
+                },
+                {
+                  "name": "SpaceJump",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "SpaceJump",
+                    {"heatFrames": 180}
+                  ]
+                },
+                {
+                  "name": "Kill the Dragons",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    {"or": [
+                      {"ammo": {"type": "Super", "count": 3}},
+                      "Plasma",
+                      "Ice"
+                    ]},
+                    {"heatFrames": 570}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "devNote": "Ice can move through the room more quickly but must speed time refreezing the dragons."
+                },
+                {
+                  "name": "Avoid Dragon Fireballs",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "canDodgeWhileShooting",
+                    {"heatFrames": 840}
+                  ],
+                  "note": [
+                    "Clear the Sovas while standing in a safe spot from the Dragon Fireballs.",
+                    "Bring each Dragon on screen one at a time so that there are fewer projectiles to avoid."
                   ]
                 }
               ]
@@ -3272,6 +3441,60 @@
         {
           "from": 3,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "h_lavaProof",
+                    {"or": [
+                      "h_heatProof",
+                      {"and": [
+                        {"obstaclesCleared": ["A"]},
+                        {"heatFrames": 130}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Lava Proof",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateHeatRooms",
+                    "h_lavaProof",
+                    {"or":[
+                      {"and":[
+                        {"enemyKill": {
+                          "enemies": [
+                            ["Dragon", "Dragon"],
+                            ["Dragon"]
+                          ],
+                          "explicitWeapons": ["Missile"]
+                        }},
+                        {"heatFrames": 310}
+                      ]},
+                      {"and":[
+                        {"enemyKill": {
+                          "enemies": [
+                            ["Dragon", "Dragon"],
+                            ["Dragon"]
+                          ],
+                          "explicitWeapons": [
+                            "Super",
+                            "Plasma",
+                            "ScrewAttack"
+                          ]
+                        }},
+                        {"heatFrames": 260}
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
+                }
+              ]
+            },
             {
               "id": 4,
               "strats": [
