@@ -1353,6 +1353,11 @@
           "id": "B",
           "name": "Crumble Block",
           "obstacleType": "inanimate"
+        },
+        {
+          "id": "C",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "inanimate"
         }
       ],
       "enemies": [
@@ -1466,10 +1471,45 @@
                     "f_ZebesAwake",
                     {"comeInWithGMode": {
                       "fromNodes": [1],
-                      "mode": "any",
+                      "mode": "direct",
                       "artificialMorph": true
                     }},
-                    {"ammo": {"type": "PowerBomb","count": 1}}
+                    {"ammo": {"type": "PowerBomb","count": 1}},
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump"
+                    ]},
+                    {"or": [
+                      "SpringBall",
+                      "Morph",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "direct",
+                        "artificialMorph": true
+                      }}
+                    ]},
+                    {"or": [
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "direct",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
                   ],
                   "note": [
                     "Overload PLMs with a single Power Bomb by hitting the item at the right end of the room.",
@@ -1481,13 +1521,82 @@
                   "notable": true,
                   "requires": [
                     {"itemNotCollectedAtNode": 4},
+                    { "not": "f_ZebesAwake" },
                     "canRiskPermanentLossOfAccess",
                     {"comeInWithGMode": {
                       "fromNodes": [1],
-                      "mode": "any",
+                      "mode": "direct",
                       "artificialMorph": true
                     }},
-                    {"ammo": {"type": "PowerBomb","count": 1}}
+                    {"ammo": {"type": "PowerBomb","count": 1}},
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump"
+                    ]},
+                    {"or": [
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "direct",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+                  "note": [
+                    "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+                    "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake.",
+                    "Overload PLMs with a single Power Bomb by hitting the item at the right end of the room.",
+                    "This can be done with a single precisely placed Power Bomb. There should be 4 empty tiles between Samus and the left of the blocks when the bomb is placed."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph Touch the Item",
+                  "notable": false,
+                  "requires": [
+                    {"itemNotCollectedAtNode": 4},
+                    "canRiskPermanentLossOfAccess",
+                    "f_ZebesAwake",
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphMovement",
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
+                  ],
+                  "note": [
+                    "Overload PLMs with a single Power Bomb by hitting the item at the right end of the room.",
+                    "This can be done with a single precisely placed Power Bomb. There should be 4 empty tiles between Samus and the left of the blocks when the bomb is placed."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph Touch the Item with Flashing Lights",
+                  "notable": true,
+                  "requires": [
+                    {"itemNotCollectedAtNode": 4},
+                    "canRiskPermanentLossOfAccess",
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphMovement",
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
                   "note": [
@@ -1522,10 +1631,20 @@
                   ]
                 },
                 {
-                  "name": "Ceiling E-Tank IBJ",
+                  "name": "IBJ",
                   "notable": false,
                   "requires": ["h_canBombAboveIBJ"],
                   "devNote": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
+                },
+                {
+                  "name": "IBJ with Power Bomb",
+                  "notable": false,
+                  "requires": [
+                    "h_canIBJ",
+                    "h_canUsePowerBombs"
+                  ],
+                  "clearsObstacles": ["C"],
+                  "devNote": "Use a Power Bomb while performing an IBJ to break the shot block while part way up."
                 },
                 {
                   "name": "Ceiling E-Tank Jump Into IBJ",
@@ -1610,9 +1729,21 @@
                     {"or": [
                       "SpringBall",
                       "Bombs",
-                      {"enemyDamage": {"enemy": "Geemer", "type": "contact", "hits": 1}}
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
                     ]}
-                  ]
+                  ],
+                  "devNote": "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here."
                 },
                 {
                   "name": "G-Mode Morph with Power Bomb",
@@ -1624,9 +1755,25 @@
                       "fromNodes": [1],
                       "mode": "any",
                       "artificialMorph": true
-                    }}
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
                   ],
-                  "clearsObstacles": ["B"]
+                  "clearsObstacles": ["B","C"]
                 },
                 {
                   "name": "G-Mode Morph with Flashing Lights",
@@ -1636,7 +1783,27 @@
                       "fromNodes": [1],
                       "mode": "any",
                       "artificialMorph": true
-                    }}
+                    }},
+                    {"or": [
+                      {"and": [
+                        { "not": "f_ZebesAwake" },
+                        "canRiskPermanentLossOfAccess"
+                      ]},
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
                   "note": [
@@ -1653,9 +1820,29 @@
                       "fromNodes": [1],
                       "mode": "any",
                       "artificialMorph": true
-                    }}
+                    }},
+                    {"or": [
+                      {"and": [
+                        { "not": "f_ZebesAwake" },
+                        "canRiskPermanentLossOfAccess"
+                      ]},
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
                   ],
-                  "clearsObstacles": ["A","B"],
+                  "clearsObstacles": ["B","C"],
                   "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
                   "note": [
                     "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
@@ -1728,6 +1915,17 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [ "Morph" ]
+                },
+                {
+                  "name": "Broken Power Bomb Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["C"]
                 }
               ]
             },
@@ -1751,7 +1949,10 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     {"or": [
                       "canConsecutiveWalljump",
                       "h_canFly"
@@ -1761,7 +1962,7 @@
                       "ScrewAttack"
                     ]}
                   ],
-                  "clearsObstacles": ["A","B"],
+                  "clearsObstacles": ["A","B","C"],
                   "note": "Base strat when entering the room from below.",
                   "devNote": "canWallJumpInstantMorph is not needed here, as the precision is very low."
                 },
@@ -1769,7 +1970,10 @@
                   "name": "Power Bomb and Bombs",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     "h_canUseMorphBombs",
                     {"or": [
                       "h_canFly",
@@ -1779,28 +1983,34 @@
                       ]}
                     ]}
                   ],
-                  "clearsObstacles": ["A","B"],
+                  "clearsObstacles": ["A","B","C"],
                   "note": "Placing the bomb against the bomb block at the top of the shaft can be somewhat tricky."
                 },
                 {
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 43,
                       "openEnd": 2
                     }}
                   ],
-                  "clearsObstacles": ["A","B"],
+                  "clearsObstacles": ["A","B","C"],
                   "devNote": "The runway here is 31 tiles before breaking the Power Bomb blocks, but becomes longer after."
                 },
                 {
                   "name": "Walljump Up Shaft and Shinespark",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     "canShinechargeMovementComplex",
                     "canFastWalljumpClimb",
                     {"canShineCharge": {
@@ -1809,7 +2019,7 @@
                       "openEnd": 2
                     }}
                   ],
-                  "clearsObstacles": ["A","B"],
+                  "clearsObstacles": ["A","B","C"],
                   "note": [
                     "Breaking the Power Bomb blocks exactly wide enough makes it easier to quickly enter the one-tile gap.",
                     "Aligning the Power Bomb with the left side of the ceiling fixture that sticks down will position the explosion correctly for this."
