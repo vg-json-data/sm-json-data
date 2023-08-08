@@ -98,6 +98,19 @@
           "nodeSubType": "visible",
           "nodeItem": "Missile",
           "nodeAddress": "0x7C533"
+        },
+        {
+          "id": 4,
+          "name": "Pseudo Plasma Spark Room Water Level Junction",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "G-Mode Grab Item and Return",
+          "obstacleType": "abstract"
         }
       ],
       "enemies": [
@@ -128,7 +141,49 @@
           "from": 1,
           "to": [
             {
-              "id": 2,
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Choot Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    {"or": [
+                      "h_canArtificialMorphIBJ",
+                      "h_canArtificialMorphSpringBallBombJump"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "devNote": [
+                    "This link doesn't accomplish anything, other than enabling Samus to return with Artificial Morph.",
+                    "Samus does not obtain the item until returning and exiting G-Mode, so all the requirements must be here."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 4,
               "strats": [
                 {
                   "name": "Base",
@@ -146,9 +201,107 @@
               "id": 1,
               "strats": [
                 {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    {"canComeInCharged": {
+                      "fromNode": 2,
+                      "framesRemaining": 5,
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 18
+                    }}
+                  ],
+                  "note": "Spark diagonally from the right side of the doorway.",
+                  "devNote": [
+                    "It is possible to spark through the doorway, but diagonal sparks are not supported.",
+                    "There is no gravity version, as Gravity + Speedbooster is enough to get up."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Speed Jump to the Top",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 9,
+                      "maxHeight": 9,
+                      "maxLeftPosition": -38.5,
+                      "minRightPosition": -7
+                    }},
+                    "SpeedBooster",
+                    "canTrickyJump"
+                  ],
+                  "note": [
+                    "Using SpeedBooster in the room below and the full length of the runway (starting with Samus hanging over the edge as far as possible), run and jump precisely to make it through without bonking the door frame.",
+                    "Break spin before the transition to expand Samus' hitbox and trigger the transition earlier, retaining more speed and also making it easier to avoid bonking.",
+                    "Hold left through the transition to initiate a turn-around while entering the room.",
+                    "Land on the small platform at the top of the room."
+                  ],
+                  "devNote": "This strat is applicable only with the Post Crocomire Jump Room."
+                },
+                {
+                  "name": "Cross Room Jump - Tricky Dash Jump to the Top",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 9,
+                      "maxHeight": 10,
+                      "maxLeftPosition": -33.5,
+                      "minRightPosition": -7
+                    }},
+                    "SpeedBooster",
+                    "canTrickyDashJump"
+                  ],
+                  "note": [
+                    "Using SpeedBooster in the room below, start running at a precise position to be able to jump during a spike in the speed-to-jumpHeight chart.",
+                    "Break spin before the transition to expand Samus' hitbox and trigger the transition early, retaining more speed and also making it easier to avoid bonking.",
+                    "Hold left through the transition to initiate a turn-around while entering the room.",
+                    "Land on the small platform at the top of the room."
+                  ],
+                  "devNote": "This strat is applicable with Crocomire's Room and the Post Crocomire Jump Room."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    {"or": [
+                      "h_canArtificialMorphIBJ",
+                      "h_canArtificialMorphSpringBallBombJump"
+                    ]}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "h_canFly",
+                      "SpeedBooster",
+                      "h_canCrouchJumpDownGrab",
+                      "canSpringBallJumpMidAir",
+                      "canGravityJump"
+                    ]}
+                  ]
                 },
                 {
                   "name": "Suitless Jump Assist",
@@ -163,18 +316,345 @@
                   "name": "Suitless Frozen Skultera",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "h_canNavigateUnderwater",
                     "canUseFrozenEnemies",
                     {"or": [
-                      "canWalljump",
-                      "canSpaceJumpWaterBounce"
+                      "canTrickyUseFrozenEnemies",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      "Gravity",
+                      "h_canCrouchJumpDownGrab"
                     ]}
+                  ],
+                  "note": "The fish can safely be damaged from the door until they are ready to be used as platforms."
+                },
+                {
+                  "name": "Underwater Walljump",
+                  "notable": false,
+                  "requires": ["canUnderwaterWalljump"]
+                },
+                {
+                  "name": "Suitless Shinespark to the Ledge",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canShinechargeMovement",
+                    {"canComeInCharged": {
+                      "fromNode": 2,
+                      "framesRemaining": 50,
+                      "shinesparkFrames": 14,
+                      "excessShinesparkFrames": 4
+                    }}
+                  ],
+                  "note": "Spark vertically by the first plant on the right to hit the floating island.",
+                  "devNote": [
+                    "It is possible to spark diagonally from the door and hit the island, requiring fewer frames remaining, but it's starting position is somewhat precise and uses a bit more energy.",
+                    "There is no gravity version, as Gravity + Speedbooster is enough to get up."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Standing Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 6,
+                      "maxHeight": 6,
+                      "maxLeftPosition": 1,
+                      "minRightPosition": 2
+                    }}
+                  ],
+                  "note": [
+                    "Standing on the platform in the room below, jump up and press right against the door frame through the transition."
+                  ],
+                  "devNote": [
+                    "This strat only works for platforms that are 6 tiles below the door transition (which is the closest distance that occurs in the vanilla game).",
+                    "A crouch jump can be used but is not required.",
+                    "A spin jump also works but requires a precise down grab."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Space Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "doorFrameBelow",
+                      "fromNode": 2
+                    }},
+                    "SpaceJump"
+                  ],
+                  "note": [
+                    "Use Space Jump to enter with rightward momentum and moderate vertical speed.",
+                    "This can be done by using Space Jump at an appropriate height and pressing against the right side of the door frame while entering the transition."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - HiJump Spin Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 8,
+                      "maxHeight": 9,
+                      "maxLeftPosition": 1,
+                      "minRightPosition": 2
+                    }},
+                    "HiJump"
+                  ],
+                  "note": [
+                    "Spin jump from the platform in the room below, pressing right against the door frame through the transition."
+                  ],
+                  "devNote": [
+                    "For a platform 9 tiles below the door transition, a standing jump also works (instead of a spin jump)."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - HiJump Crouch Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 10,
+                      "maxHeight": 10,
+                      "maxLeftPosition": 1,
+                      "minRightPosition": 2
+                    }},
+                    "HiJump",
+                    "canCrouchJump"
+                  ],
+                  "note": [
+                    "Standing on the platform in the room below, crouch jump up and press right against the door frame through the transition."
+                  ],
+                  "devNote": [
+                    "This strat only works for platforms that are 10 tiles below the door transition (Crocomire's Room).",
+                    "It could be done for a platform 9 tiles below the door transition, but this would require a momentum-conserving turn-around; it is easier to just do a standing jump or spin jump in that case instead of crouch jumping."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - HiJump Spin Jump Turnaround",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 7,
+                      "maxHeight": 7,
+                      "maxLeftPosition": 1,
+                      "minRightPosition": 2
+                    }},
+                    "HiJump",
+                    "canMomentumConservingTurnaround"
+                  ],
+                  "note": [
+                    "Spin jump from the platform in the room below, pressing right against the door frame through the transition.",
+                    "Perform a momentum-conserving turn-around to make it around the corner of the ledge above."
+                  ],
+                  "devNote": [
+                    "This strat is for platforms that are exactly 7 tiles below the door transition.",
+                    "For platforms that are 8 or 9 tiles below, no turn-around is needed."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - HiJump Running Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"or": [
+                      {"adjacentJumpway": {
+                        "jumpwayType": "platformBelow",
+                        "fromNode": 2,
+                        "minHeight": 7,
+                        "maxHeight": 7,
+                        "maxLeftPosition": -6.5,
+                        "minRightPosition": -1.5
+                      }},
+                      {"adjacentJumpway": {
+                        "jumpwayType": "platformBelow",
+                        "fromNode": 2,
+                        "minHeight": 7,
+                        "maxHeight": 7,
+                        "maxLeftPosition": -2.5,
+                        "minRightPosition": 0.5
+                      }}
+                    ]},
+                    "HiJump"
+                  ],
+                  "note": [
+                    "Run left-to-right and spin jump from the platform in the room below, passing through the transition without bonking the door."
+                  ],
+                  "devNote": [
+                    "This is applicable using the Power Bomb block platform in PCJR or the normal platform in Tourian Escape Room 2."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Spring Ball Jump Above",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 7,
+                      "maxHeight": 7,
+                      "maxLeftPosition": 1,
+                      "minRightPosition": 1
+                    }},
+                    "canSpringBallJumpMidAir"
+                  ],
+                  "note": [
+                    "Standing on the platform in the room below, jump up (crouch jump makes it easier) and press right against the door frame through the transition.",
+                    "After the transition, perform a spring ball jump mid-air to reach the ledge."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Spring Ball Jump Below",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"or": [
+                      {"adjacentJumpway": {
+                        "jumpwayType": "platformBelow",
+                        "fromNode": 2,
+                        "minHeight": 9,
+                        "maxHeight": 10,
+                        "maxLeftPosition": 1,
+                        "minRightPosition": 1
+                      }},
+                      {"and": [
+                        {"adjacentJumpway": {
+                          "jumpwayType": "platformBelow",
+                          "fromNode": 2,
+                          "minHeight": 8,
+                          "maxHeight": 8,
+                          "maxLeftPosition": 1,
+                          "minRightPosition": 1
+                        }},
+                        "can3HighMidAirMorph"
+                      ]}
+                    ]},
+                    "canSpringBallJumpMidAir"
+                  ],
+                  "note": [
+                    "Standing on the platform in the room below, perform a spring ball jump mid-air a few tiles below the transition.",
+                    "Hold right through the transition, and do not bonk the door frame."
+                  ],
+                  "devNote": "For height 8 specifically, it is challenging to morph soon enough to spring ball jump as low as necessary."
+                },
+                {
+                  "name": "Cross Room Jump - Speed Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "platformBelow",
+                      "fromNode": 2,
+                      "minHeight": 9,
+                      "maxHeight": 10,
+                      "maxLeftPosition": -34.5,
+                      "minRightPosition": -7
+                    }},
+                    "SpeedBooster"
+                  ],
+                  "note": [
+                    "Using SpeedBooster in the room below, run and jump, pressing against the right side of the door frame through the transition.",
+                    "You may need to use less runway than is available, to avoid getting too much vertical speed."
+                  ],
+                  "devNote": [
+                    "This strat is applicable in Crocomire's Room and the Post Crocomire Jump Room.",
+                    "Sufficient vertical speed could be obtained with fewer tiles, but it would require jumping further to the right (i.e., increasing minRightPosition) which would not work in PCJR unless the PB blocks are broken;",
+                    "since there doesn't yet appear to be any application, we don't add a separate case for that."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Low Wall Jump",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "doorFrameBelow",
+                      "fromNode": 2,
+                      "minHeight": 3
+                    }},
+                    "canPreciseWalljump"
+                  ],
+                  "note": [
+                    "Do a wall jump from the right side of the door frame, three tiles below the door transition.",
+                    "Turn back around to the right before the transition, while maintaining spin."
+                  ],
+                  "devNote": [
+                    "This strat requires a door frame with a three-tile-high surface usable for wall jumping (not including the door transition tiles).",
+                    "Many door frames only have a two-tile-high surface."
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump - Low Wall Jump Turnaround",
+                  "notable": false,
+                  "requires": [
+                    "canCrossRoomJumpIntoWater",
+                    {"adjacentJumpway": {
+                      "jumpwayType": "doorFrameBelow",
+                      "fromNode": 2,
+                      "minHeight": 2,
+                      "maxHeight": 2
+                    }},
+                    {"or": [
+                      "canInsaneWalljump",
+                      {"and": [
+                        "canPreciseWalljump",
+                        "canMomentumConservingTurnaround"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Do a low spin jump and press against the right side of the door frame.",
+                    "Wall jump as low as possible, jumping as soon as possible after moving away from the wall.",
+                    "Immediately turn back to the right and try to press against the door frame again before the transition, while maintaining spin.",
+                    "After the transition, typically a momentum-conserving turnaround is needed to avoid bonking."
+                  ],
+                  "devNote": [
+                    "This strat is for cases where the door frame below has only a two-tile-high surface available for wall-jumping.",
+                    "If a third tile is available, the jump can be done more easily."
                   ]
                 }
               ]
             },
             {
               "id": 3,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [],
+                  "note": "Wait for the fish to swim left where they can safely be killed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Return",
+                  "notable": false,
+                  "requires": [ {"obstaclesCleared": ["A"]} ],
+                  "devNote": "Samus does not obtain the item until returning and exiting G-Mode, so all the requirements are on the matching strat that clears the obstacle."
+                }
+              ]
+            },
+            {
+              "id": 2,
               "strats": [
                 {
                   "name": "Base",
@@ -186,8 +666,49 @@
           ]
         },
         {
-          "from": 3,
+          "from": 4,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "Gravity",
+                      "HiJump",
+                      "canSpringBallJumpMidAir"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Crouch Jump Down Grab Escape",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "h_canCrouchJumpDownGrab",
+                    "canTrickyJump"
+                  ],
+                  "note": "Crouch jump + down grab only works as a way out of the water on the right side."
+                },
+                {
+                  "name": "Wall Jump Escape",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canPreciseWalljump"
+                  ],
+                  "note": "Perform a precise wall jump as the water is lowering.  Climbing up the right side of the room is slightly easier."
+                },
+                {
+                  "name": "Space Jump Bounce",
+                  "notable": false,
+                  "requires": [ "canSpaceJumpWaterBounce" ],
+                  "note": "Kill the Choot, then space jump across the water and onto the center platform - it is slightly lower than the sides."
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -278,6 +799,21 @@
                 }
               ]
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Menu",
+                  "notable": false,
+                  "requires": [
+                    "canBeVeryPatient",
+                    "canManipulateMellas"
+                  ],
+                  "devNote": "FIXME Add details on how this works and check if it actually requires canBeVeryPatient."
+                }
+              ]
+            }
           ]
         },
         {
@@ -308,7 +844,7 @@
               "shinesparkFrames": 30,
               "openEnd": 2,
               "initiateRemotely": {
-                "initiateAt": 1,
+                "initiateAt": 3,
                 "mustOpenDoorFirst": false,
                 "pathToDoor": [
                   {
@@ -346,7 +882,31 @@
               ],
               "devNote": "mustOpenDoorFirst is false because the door can be shot before initiating the spark."
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Menu",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
+        },
+        {
+          "id": 3,
+          "name": "Northwest Maridia Bug Room Central Junction",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
+        }
+      ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Right Door Menus",
+          "obstacleType": "enemies"
         }
       ],
       "enemies": [
@@ -387,17 +947,55 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "G-Mode Morph",
                   "notable": false,
                   "requires": [
-                    "Morph",
-                    "h_canNavigateUnderwater"
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        "h_canArtificialMorphIBJ",
+                        "Gravity"
+                      ]}
+                    ]}
+                  ],
+                  "note": "The off screen portion can be simple with Spring Ball or two short IBJs."
+                },
+                {
+                  "name": "G-Mode Morph Blind Bomb Boost",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "canOffScreenMovement",
+                    "h_canArtificialMorphBombHorizontally",
+                    {"or": [
+                      "Bombs",
+                      {"ammo": { "type": "PowerBomb", "count": 2 }}
+                    ]}
+                  ],
+                  "note": [
+                    "Use one bomb to get to the off-screen region. After going a full screen to the right, when Samus is partially visible in the left wall, bomb to the middle platform on the right.",
+                    "Bomb again to the right, note that these small platforms are one tile left of the ones that are on camera. Exit G-Mode and get to the right door."
                   ]
                 }
-              ],
-              "devNote": [
-                "It's not clear whether the risk of falling into the water pits should count as water navigation.",
-                "We went with yes for now, mostly because dealing with the Menus at the same time is not trivial."
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": []
+                }
               ]
             }
           ]
@@ -409,15 +1007,106 @@
               "id": 1,
               "strats": [
                 {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "canOffScreenMovement",
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "SpringBall",
+                      "Gravity"
+                    ]}
+                  ],
+                  "devNote": [
+                    "Spring Ball and Gravity wouldn't be required with some risky off-screen horizontal bomb jumps.",
+                    "This strat is only useful for avoiding a wall jump. A simpler variant exits G-Mode after the morph tunnel."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Kill the Menus",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      {"and":[
+                        "canDodgeWhileShooting",
+                        {"enemyKill":{ "enemies": [ [ "Menu", "Menu" ] ] }}
+                      ]},
+                      {"enemyKill":{
+                        "enemies": [ [ "Menu", "Menu" ] ],
+                        "explicitWeapons": [
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Wave",
+                          "Spazer",
+                          "Plasma",
+                          "Missile",
+                          "Super"
+                        ]
+                      }},
+                      {"and":[
+                        "canPrepareForNextRoom",
+                        {"enemyKill":{
+                          "enemies": [ [ "Menu", "Menu" ] ],
+                          "explicitWeapons": [ "PseudoScrew" ]
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Tank the Menus",
+                  "notable": false,
+                  "requires": [ {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 1 }} ],
+                  "clearsObstacles": ["A"]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
                   "name": "Base",
                   "notable": false,
                   "requires": [
                     "Morph",
-                    "h_canNavigateUnderwater",
                     {"or":[
                       "h_canBombThings",
                       "h_canUseSpringBall"
-                    ]}
+                    ]},
+                    {"obstaclesCleared": ["A"]}
+                  ]
+                },
+                {
+                  "name": "Maridia Bug Room MidAir Morph with Gravity",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "Gravity",
+                    "canTrickyJump",
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "note": [
+                    "With Gravity, it's possible to move forward and mid-air morph into the morph passage.",
+                    "The momentum can push Samus into the tunnel, no need to press forward while in mid-air."
+                  ]
+                },
+                {
+                  "name": "Maridia Bug Room Suitless MidAir Morph",
+                  "notable": false,
+                  "requires": [
+                    "h_canTwoTileJumpMorph",
+                    {"obstaclesCleared": ["A"]}
                   ]
                 },
                 {
@@ -426,38 +1115,118 @@
                   "requires": [
                     "Morph",
                     "h_canNavigateUnderwater",
-                    "canTrickyUseFrozenEnemies"
+                    "canTrickyUseFrozenEnemies",
+                    "canNeutralDamageBoost",
+                    {"enemyDamage": {
+                      "enemy": "Menu",
+                      "type": "contact",
+                      "hits": 2
+                    }}
                   ],
                   "note": [
-                    "Freeze one of the bugs (called Menus) in a position where you can use it to get into the morph passage.",
-                    "That allows passage without having to gain height while being morphed."
+                    "Freeze one of the Menus (bugs) in a position where you can use it to get into the morph passage.",
+                    "One of the easier methods is with a damage boost. Stand in the water, take a hit for positioning, and freeze the bug near but left of Samus.",
+                    "Then morph on top and damage boost into the morph tunnel as it unfreezes."
                   ]
                 },
                 {
-                  "name": "Maridia Bug Room Suitless MidAir Morph",
+                  "name": "G-Mode Morph",
                   "notable": false,
                   "requires": [
-                    "h_canNavigateUnderwater",
-                    "h_canTwoTileJumpMorph"
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        {"or": [
+                          "Bombs",
+                          {"ammo": { "type": "PowerBomb", "count": 3 }}
+                        ]},
+                        {"or": [
+                          "canBombHorizontally",
+                          "Gravity"
+                        ]}
+                      ]}
+                    ]}
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 3,
+          "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      "HiJump",
+                      "SpaceJump",
+                      "canTrickyDashJump",
+                      "canTrickyUseFrozenEnemies",
+                      "canPreciseWalljump"
+                    ]}
+                  ],
+                  "devNote": "The menus don't really matter with these strats."
                 },
                 {
-                  "name": "Maridia Bug Room MidAir Morph with Gravity",
-                  "notable": true,
+                  "name": "Kill the Menus",
+                  "notable": false,
                   "requires": [
-                    "Morph",
-                    "Gravity"
+                    {"or":[
+                      "h_canIBJ",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir"
+                    ]},
+                    {"or":[
+                      {"enemyKill":{
+                        "enemies": [ [ "Menu", "Menu", "Menu" ] ],
+                        "explicitWeapons": [
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Wave",
+                          "Spazer",
+                          "Plasma",
+                          "Missile",
+                          "Super"
+                        ]
+                      }},
+                      {"and":[
+                        {"enemyKill":{ "enemies": [ [ "Menu", "Menu", "Menu" ] ] }},
+                        {"or":[
+                          {"and":[
+                            "canDodgeWhileShooting",
+                            "canTrickyJump"
+                          ]},
+                          {"and":[
+                            "canDodgeWhileShooting",
+                            {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 1 }}
+                          ]},
+                          {"enemyDamage": { "enemy": "Menu", "type": "contact", "hits": 2 }}
+                        ]}
+                      ]}
+                    ]}
                   ],
-                  "note": [
-                    "With Gravity, it's possible to move forward and mid-air morph into the morph passage.",
-                    "The momentum can push Samus into the tunnel, no need to press forward while in mid-air."
-                  ],
-                  "devNote": "FIXME This probably needs to be behind a tech as well?"
+                  "devNote": "The Menus are relatively hard to dodge, and would end up with the same requirements as killing them with the Power Beam."
                 }
-              ],
-              "devNote": [
-                "It's not clear whether the risk of falling into the water pits should count as water navigation.",
-                "We went with yes for now, mostly because dealing with the Menus at the same time is not trivial."
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [ "Morph" ]
+                }
               ]
             }
           ]
@@ -493,6 +1262,17 @@
                 }
               ],
               "openEnd": 1
+            }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zeb",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
             }
           ]
         },
@@ -548,6 +1328,18 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Zeb Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
@@ -598,16 +1390,32 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or":[
+                      "canWalljump",
+                      "HiJump",
+                      "h_canFly",
+                      "canSpringBallJumpMidAir",
+                      {"and":[
+                        "canCarefulJump",
+                        "h_canCrouchJumpDownGrab"
+                      ]}
+                    ]}
+                  ],
+                  "note": "Getting out with only Gravity and no wall jump requires a tight Crouch Jump and Down Grab while above the water."
                 },
                 {
                   "name": "Suitless Springball Jump",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canSpringBallJumpMidAir"
+                    "canSpringBallJumpMidAir",
+                    "canCrouchJump",
+                    "canTrickyJump"
                   ],
-                  "note": "Max height springball jump"
+                  "note": "This is a max height springball jump.",
+                  "devNote": "FIXME add a slightly easier variant that damage boosts off of the Choot."
                 },
                 {
                   "name": "Suitless HiJump",
@@ -686,7 +1494,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "devNote": "FIXME Check if G-Mode can be set up through the Toilet."
         },
         {
           "id": 2,
@@ -698,7 +1507,10 @@
           "runways": [
             {
               "name": "Base Runway - Plasma Spark Room Bottom Right Door (to Butterfly Room)",
-              "length": 33,
+              "length": 42,
+              "startingDownTiles": 2,
+              "gentleDownTiles": 2,
+              "steepUpTiles": 3,
               "strats": [
                 {
                   "name": "Base",
@@ -827,12 +1639,106 @@
               ]
             },
             {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "h_canArtificialMorphSpringBallBombJump",
+                      "h_canArtificialMorphBombHorizontally"
+                    ]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 5,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    {"or": [
+                      "HiJump",
+                      "canWalljump",
+                      "SpaceJump",
+                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "h_canIBJ",
+                        {"or": [
+                          "canBombHorizontally",
+                          "Gravity"
+                        ]}
+                      ]},
+                      {"and": [
+                        "canSpringBallBombJump",
+                        "Morph",
+                        {"or": [
+                          "Bombs",
+                          {"ammo": { "type": "PowerBomb", "count": 3 }}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 120,
+                      "shinesparkFrames": 37,
+                      "excessShinesparkFrames": 10
+                    }},
+                    {"or": [
+                      {"enemyDamage": { "enemy": "Choot", "type": "contact", "hits": 1 }},
+                      {"enemyKill":{
+                        "enemies": [ [ "Choot" ] ],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "ScrewAttack",
+                          "PseudoScrew",
+                          "Plasma",
+                          "Charge+Wave",
+                          "Charge+Spazer"
+                        ]
+                      }}
+                    ]}
+                  ],
+                  "note": "Spark vertically to avoid hitting the right ledge."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "h_canArtificialMorphIBJ",
+                        "h_canArtificialMorphBombHorizontally"
+                      ]},
+                      {"and": [
+                        "h_canArtificialMorphSpringBallBombJump",
+                        {"ammo": { "type": "PowerBomb", "count": 3 }}
+                      ]}
+                    ]}
+                  ]
                 }
               ]
             }
@@ -874,6 +1780,60 @@
                     "HiJump",
                     "canUseFrozenEnemies",
                     "h_canCrouchJumpDownGrab"
+                  ]
+                },
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canWaterShineCharge",
+                    "canShinechargeMovementComplex",
+                    {"or": [
+                      {"canShineCharge": {
+                        "usedTiles": 33,
+                        "shinesparkFrames": 90,
+                        "excessShinesparkFrames": 50,
+                        "openEnd": 2
+                      }},
+                      {"and": [
+                        {"canShineCharge": {
+                          "usedTiles": 33,
+                          "shinesparkFrames": 90,
+                          "excessShinesparkFrames": 57,
+                          "openEnd": 2
+                        }},
+                        {"or": [
+                          "canWalljump",
+                          "HiJump",
+                          "canSpringBallJumpMidAir",
+                          "h_canFly"
+                        ]}
+                      ]}
+                    ]},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 45
+                    }}
+                  ],
+                  "note": [
+                    "Start the dash as close to the door transition as possible to help avoid getting hit by the first Owtch. Store the shine charge while high up on the left slope.",
+                    "Spark up while on the right side of the platform. To avoid the Owtch on the platform, it may help to jump on the left side of the platform then jump again and spark midair above the right side."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
                   ]
                 }
               ]
@@ -917,6 +1877,103 @@
                     "2. Freeze it about a half-tile from the right wall and very quickly stationary spin jump and quickly walljump mash to get up before it thaws.",
                     "This may be easier by jumping away from the wall, towards the fish, to gain height faster."
                   ]
+                },
+                {
+                  "name": "G-Mode Deep Stuck X-Ray Climb",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "direct",
+                      "artificialMorph": false
+                    }},
+                    "canXRayClimb"
+                  ],
+                  "note": "Climb up 2 screens."
+                },
+                {
+                  "name": "Shinespark Deep Stuck X-Ray Climb",
+                  "notable": false,
+                  "requires": [
+                    {"canComeInCharged": {
+                      "fromNode": 2,
+                      "shinesparkFrames": 1,
+                      "excessShinesparkFrames": 1,
+                      "framesRemaining": 1
+                    }},
+                    "canShinesparkDeepStuck",
+                    "canXRayClimb"
+                  ],
+                  "note": "Climb up 2 screens."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
+                }
+              ],
+              "devNote": [
+                "It is possible to X-ray climb higher, into a normally inaccessible area behind the door to Kassiuz Room.",
+                "This doesn't appear to be useful: the door transition there, which appears to lead back to the normal part of Plasma Spark Room, instead transitions to the same room as the bottom right door (to Butterfly Room)."
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canWaterShineCharge",
+                    "canShinechargeMovementComplex",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 90,
+                      "excessShinesparkFrames": 11,
+                      "openEnd": 2
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 45
+                    }}
+                  ],
+                  "note": [
+                    "Start the dash as close to the door transition as possible to help avoid getting hit by the first Owtch. Store the shine charge while high up on the left slope.",
+                    "Spark up while on the right side of the platform. To avoid the Owtch on the platform, it may help to jump on the left side of the platform then jump again and spark midair above the right side."
+                  ],
+                  "devNote": [
+                    "The excess frames are only low enough to get to the top right overhang, as it is free to jump to 5.",
+                    "With other items or wall jumps and lower energy, it is possible to first spark to 1, as it has more excess frames."
+                  ]
                 }
               ]
             }
@@ -936,12 +1993,220 @@
               ]
             },
             {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Choot Farm",
+                  "notable": false,
+                  "requires": [
+                    "canBePatient",
+                    {"resetRoom": {
+                      "nodes": [3],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "canConsecutiveWalljump" ]
+                  "requires": [
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Frozen Choot",
+                  "notable": false,
+                  "requires": [
+                    "canTrickyUseFrozenEnemies",
+                    "HiJump",
+                    {"or": [
+                      "canWalljump",
+                      {"and": [
+                        "canTrickyDashJump",
+                        "canSpringBallJumpMidAir"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    {"or": [
+                      {"and": [
+                        "canMidairShinespark",
+                        {"canComeInCharged": {
+                          "fromNode": 3,
+                          "framesRemaining": 120,
+                          "shinesparkFrames": 30,
+                          "excessShinesparkFrames": 3
+                        }}
+                      ]},
+                      {"canComeInCharged": {
+                        "fromNode": 3,
+                        "framesRemaining": 120,
+                        "shinesparkFrames": 43,
+                        "excessShinesparkFrames": 3
+                      }}
+                    ]}
+                  ],
+                  "note": [
+                    "Shinespark from the left side of the water, or the very edge of the land.",
+                    "It helps to face right before Shinesparking."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]},
+                    {"enemyDamage": {
+                      "enemy": "Choot",
+                      "type": "contact",
+                      "hits": 1
+                    }}
+                  ]
+                },
+                {
+                  "name": "Screw Kill",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump"
+                    ]},
+                    {"or": [
+                      {"enemyKill":{
+                        "enemies": [ [ "Choot" ] ],
+                        "explicitWeapons": ["ScrewAttack"]
+                      }},
+                      {"and": [
+                        {"or": [
+                          "SpaceJump",
+                          {"and": [
+                            "canConsecutiveWalljump",
+                            "canWalljumpWithCharge"
+                          ]}
+                        ]},
+                        {"enemyKill":{
+                          "enemies": [ [ "Choot" ] ],
+                          "explicitWeapons": ["PseudoScrew"]
+                        }}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Carefully Kill Choot",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]},
+                    {"or": [
+                      "canTrickyJump",
+                      {"and": [
+                        "canCarefulJump",
+                        {"enemyKill":{
+                          "enemies": [ [ "Choot" ] ],
+                          "explicitWeapons": [
+                            "Missile",
+                            "Super"
+                          ]
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Shoot the Choot either before landing or from the safety of the ledge edge.",
+                    "If bomb jumping, there is a timing for rolling under the Choot."
+                  ]
+                },
+                {
+                  "name": "Kill Choot and Reclimb",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]},
+                    {"or": [
+                      {"enemyKill":{
+                        "enemies": [ [ "Choot" ] ],
+                        "explicitWeapons": [
+                          "Wave",
+                          "Spazer",
+                          "PowerBomb"
+                        ]
+                      }},
+                      {"and": [
+                        "canBeVeryPatient",
+                        {"enemyKill":{"enemies": [ [ "Choot" ] ]}}
+                      ]}
+                    ]}
+                  ],
+                  "note": "To avoid damage, the Choot can be killed and then Samus can climb back up again.",
+                  "devNote": "Missile kill strats could fit here with a reclimb or by landing on the ledge, with the same requirements."
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canCarefulJump",
+                    {"canComeInCharged": {
+                      "fromNode": 3,
+                      "framesRemaining": 145,
+                      "shinesparkFrames": 49
+                    }}
+                  ],
+                  "note": [
+                    "Shinespark from the tile to the right of the Choot.",
+                    "It helps to face right before Shinesparking."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ"
+                  ]
                 }
               ]
             }
@@ -964,23 +2229,36 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "canConsecutiveWalljump",
-                    {"or": [
-                      "canPreciseWalljump",
-                      "ScrewAttack",
-                      "h_canUsePowerBombs",
-                      {"enemyDamage": {
-                        "enemy": "Choot",
-                        "type": "contact",
-                        "hits": 1
-                      }}
-                    ]}
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark",
+                    {"canComeInCharged": {
+                      "fromNode": 4,
+                      "framesRemaining": 45,
+                      "shinesparkFrames": 13
+                    }}
+                  ],
+                  "note": [
+                    "A diagonal spark may take damage from the Choot",
+                    "It helps to face right before Shinesparking."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [4],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ"
                   ]
                 }
-              ]
+              ],
+              "devNote": "This link is only for shinesparking. All other strats should go 4 -> 3 -> 5."
             }
           ]
         },
@@ -1041,14 +2319,126 @@
               ],
               "openEnd": 1
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      "Gravity",
+                      "canPrepareForNextRoom",
+                      {"and":[
+                        "canSuitlessMaridia",
+                        {"or":[
+                          "h_canCrouchJumpDownGrab",
+                          "canWalljump",
+                          "canUseFrozenEnemies",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Zoa",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
           "name": "Bug Sand Hole Sand Exit (to Plasma Beach Quicksand Room)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a624"
+          "nodeAddress": "0x001a624",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canWalljump",
+                      "h_canCrouchJumpDownGrab",
+                      "Gravity",
+                      "HiJump"
+                    ]},
+                    "h_canNavigateUnderwater",
+                    {"or": [
+                      "Gravity",
+                      "HiJump",
+                      "SpaceJump",
+                      "canUseFrozenEnemies",
+                      "canTrickyJump",
+                      {"enemyKill":{ "enemies": [ [ "Yapping Maw", "Yapping Maw" ] ] }}
+                    ]},
+                    {"or": [
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": false
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [3],
+                        "mode": "any",
+                        "artificialMorph": false
+                      }}
+                    ]}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canWalljump",
+                      "h_canCrouchJumpDownGrab",
+                      "Gravity",
+                      "HiJump"
+                    ]},
+                    "h_canNavigateUnderwater",
+                    {"or": [
+                      "Gravity",
+                      "HiJump",
+                      "SpaceJump",
+                      "canUseFrozenEnemies",
+                      "canTrickyJump",
+                      {"enemyKill":{ "enemies": [ [ "Yapping Maw", "Yapping Maw" ] ] }}
+                    ]},
+                    {"or": [
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [3],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }}
+                    ]}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 3,
@@ -1070,7 +2460,41 @@
               ],
               "openEnd": 1
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": [
+                    {"or":[
+                      "Gravity",
+                      "canPrepareForNextRoom",
+                      {"and":[
+                        "canSuitlessMaridia",
+                        {"or":[
+                          "h_canCrouchJumpDownGrab",
+                          "canWalljump",
+                          "canUseFrozenEnemies",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Zoa",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         }
       ],
       "enemies": [
@@ -1144,9 +2568,13 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "canPlayInSand"
+                    {"or": [
+                      "canPlayInSand",
+                      "h_canUseSpringBall",
+                      "SpaceJump"
+                    ]}
                   ],
-                  "note": "Kill the Zoa while avoiding the Yapping Maw, then cross the sand."
+                  "note": "Kill the Zoa while avoiding the Yapping Maw, then cross the sand. Spring ball can be used to help cross the sand."
                 },
                 {
                   "name": "Bug Sand Hole Suitless Frozen Bridge (L to R)",
@@ -1172,9 +2600,7 @@
                       "h_canCrouchJumpDownGrab"
                     ]},
                     {"enemyKill":{
-                      "enemies": [
-                        [ "Yapping Maw", "Yapping Maw" ]
-                      ]
+                      "enemies": [ [ "Yapping Maw", "Yapping Maw" ] ]
                     }}
                   ]
                 },
@@ -1183,7 +2609,7 @@
                   "notable": true,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canCarefulJump",
+                    "canTrickyJump",
                     "canPlayInSand",
                     {"or":[
                       "canWalljump",
@@ -1208,7 +2634,7 @@
                       "canWalljump",
                       "h_canCrouchJumpDownGrab"
                     ]},
-                    "canDamageBoost",
+                    "canHorizontalDamageBoost",
                     {"enemyDamage": {
                       "enemy": "Zoa",
                       "type": "contact",
@@ -1227,11 +2653,21 @@
                   "notable": false,
                   "requires": [
                     "SpaceJump",
-                    "canPrepareForNextRoom",
                     {"adjacentRunway": {
                       "fromNode": 1,
                       "usedTiles": 0.5
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "canCarefulJump",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "note": [
                     "Enter the room able to Space Jump",
@@ -1252,7 +2688,17 @@
                     {"adjacentRunway": {
                       "fromNode": 1,
                       "usedTiles": 4.5
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Bug Sand Hole Speedy Jump Morph",
                   "note": [
@@ -1264,13 +2710,23 @@
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "canPrepareForNextRoom",
                     "canMidairShinespark",
                     {"canComeInCharged": {
                       "framesRemaining": 10,
                       "fromNode": 1,
                       "shinesparkFrames": 20
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "canCarefulJump",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "note": "Enter with a high shinespark through the door then shoot the opposite door and fall into it.",
                   "devNote": "Representing the need to enter in a high spark with canPrepareForNextRoom and framesRemaining."
@@ -1300,9 +2756,13 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "canPlayInSand"
+                    {"or": [
+                      "canPlayInSand",
+                      "h_canUseSpringBall",
+                      "SpaceJump"
+                    ]}
                   ],
-                  "note": "Kill the Zoa while avoiding the Yapping Maw, then cross the sand."
+                  "note": "Kill the Zoa while avoiding the Yapping Maw, then cross the sand. Spring ball can be used to help cross the sand."
                 },
                 {
                   "name": "Bug Sand Hole Suitless Frozen Bridge (R to L)",
@@ -1339,7 +2799,7 @@
                   "notable": true,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canCarefulJump",
+                    "canTrickyJump",
                     "canPlayInSand",
                     {"or":[
                       "canWalljump",
@@ -1364,7 +2824,7 @@
                       "canWalljump",
                       "h_canCrouchJumpDownGrab"
                     ]},
-                    "canDamageBoost",
+                    "canHorizontalDamageBoost",
                     {"enemyDamage": {
                       "enemy": "Zoa",
                       "type": "contact",
@@ -1383,11 +2843,21 @@
                   "notable": false,
                   "requires": [
                     "SpaceJump",
-                    "canPrepareForNextRoom",
                     {"adjacentRunway": {
                       "fromNode": 3,
                       "usedTiles": 0.5
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "canCarefulJump",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "note": [
                     "Enter the room able to Space Jump",
@@ -1408,7 +2878,17 @@
                     {"adjacentRunway": {
                       "fromNode": 3,
                       "usedTiles": 4.5
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "reusableRoomwideNotable": "Bug Sand Hole Speedy Jump Morph",
                   "note": [
@@ -1420,13 +2900,23 @@
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "canPrepareForNextRoom",
                     "canMidairShinespark",
                     {"canComeInCharged": {
                       "framesRemaining": 10,
                       "fromNode": 3,
                       "shinesparkFrames": 20
-                    }}
+                    }},
+                    {"or": [
+                      "canPrepareForNextRoom",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "canCarefulJump",
+                        {"or": [
+                          "canWalljump",
+                          "h_canCrouchJumpDownGrab"
+                        ]}
+                      ]}
+                    ]}
                   ],
                   "note": "Enter with a high shinespark through the door then shoot the opposite door and fall into it.",
                   "devNote": "Representing the need to enter in a high spark with canPrepareForNextRoom and framesRemaining."
@@ -1461,14 +2951,57 @@
           "id": 1,
           "name": "Plasma Beach Quicksand Room Top Sand Entrance (from Bug Sand Hole)",
           "nodeType": "entrance",
-          "nodeSubType": "sandpit"
+          "nodeSubType": "sandpit",
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Bull",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
           "name": "Plasma Beach Quicksand Room Bottom Sand Exit (to Butterfly Room)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a8a0"
+          "nodeAddress": "0x001a8a0",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "enemies": [
@@ -1528,7 +3061,27 @@
               ],
               "openEnd": 1
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Zoa",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
@@ -1551,6 +3104,26 @@
               "openEnd": 1
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Zoa",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          },
           "locks": [
             {
               "name": "Butterfly Room Grey Lock (to West Cactus Alley)",
@@ -1569,6 +3142,7 @@
                   "requires": [
                     "h_canNavigateUnderwater",
                     "canWallIceClip",
+                    "Wave",
                     {"enemyDamage": {
                       "enemy": "Zoa",
                       "type": "contact",
@@ -1642,6 +3216,18 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Zoa Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -1840,6 +3426,18 @@
                   ]
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Zoa Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -1902,6 +3500,17 @@
               ],
               "openEnd": 1
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
         },
         {
@@ -1924,7 +3533,27 @@
               ],
               "openEnd": 1
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Puyo",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         }
       ],
       "enemies": [
@@ -1961,6 +3590,22 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Choot and Puyo Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1, 2],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -2064,7 +3709,135 @@
           "name": "Maridia Elevator to Crateria",
           "nodeType": "door",
           "nodeSubType": "elevator",
-          "nodeAddress": "0x001a594"
+          "nodeAddress": "0x001a594",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1,2],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    {"or": [
+                      "canUseFrozenEnemies",
+                      {"and": [
+                        "canPreciseWalljump",
+                        "canStaggeredWalljump"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "G-Mode Kill Rippers",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1,2],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    {"or": [
+                      {"and": [
+                        {"enemyKill":{ "enemies": [ [ "Ripper", "Ripper", "Ripper" ] ] }},
+                        {"or": [
+                          "canWalljump",
+                          "SpaceJump"
+                        ]}
+                      ]},
+                      {"and": [
+                        {"enemyKill":{
+                          "enemies": [ [ "Ripper", "Ripper" ], [ "Ripper" ] ],
+                          "explicitWeapons": [ "PowerBomb", "Super" ]
+                        }},
+                        "h_canIBJ"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB, Spring Ball",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    "h_canArtificialMorphSpringBallBombJump",
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with two Power Bombs, or one carefully placed Power Bomb and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, use Spring Ball to avoid the first Ripper, then place the Power Bomb at least two tiles above the next. This can be achieved with a Staggered IBJ or a Spring Ball Bomb Boost.",
+                    "Then climb the right side of the shaft and dodge the top Ripper."
+                  ],
+                  "devNote": "canSpringBallBombJump can be bypassed with SpringBall and other requirements, but that tech is being assumed at this level (Bombs and SpringBall are already required)."
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "Gravity",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]},
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with three Power Bombs, or one carefully placed Power Bomb, Gravity, and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, IBJ from the water to avoid the first Ripper, then place the Power Bomb at least two tiles above the next. This can be achieved with a Staggered IBJ.",
+                    "Then climb the right side of the shaft and similarly dodge the top Ripper."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with two Power Bombs, or one carefully placed Power Bomb and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, place it at least two tiles above the first Ripper. This can be achieved with a Staggered IBJ or a Spring Ball Bomb Boost.",
+                    "Then climb the right side of the shaft and dodge the top Ripper."
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "enemies": [
@@ -2107,7 +3880,55 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    {"or": [
+                      "HiJump",
+                      "h_canFly",
+                      "canWalljump",
+                      "h_canCrouchJumpDownGrab",
+                      "canSpringBallJumpMidAir"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 5,
+                      "shinesparkFrames": 21,
+                      "excessShinesparkFrames": 10
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Ripper",
+                      "type": "contact",
+                      "hits": 1
+                    }}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "h_canArtificialMorphIBJ",
+                        {"or": [
+                          "Gravity",
+                          "SpringBall",
+                          {"ammo": { "type": "PowerBomb", "count": 1 }},
+                          {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                        ]}
+                      ]},
+                      "h_canArtificialMorphSpringBallBombJump"
+                    ]}
+                  ]
                 }
               ]
             },
@@ -2118,6 +3939,7 @@
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
+                    "canMidairShinespark",
                     {"or": [
                       "HiJump",
                       "canWalljump"
@@ -2125,10 +3947,64 @@
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 60,
-                      "shinesparkFrames": 45
+                      "shinesparkFrames": 45,
+                      "excessShinesparkFrames": 11
                     }}
                   ],
                   "note": "Use Hijump or one walljump on the left before a diagonal spark."
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB, Spring Ball",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    "h_canArtificialMorphSpringBallBombJump",
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with two Power Bombs, or one carefully placed Power Bomb and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, use Spring Ball to avoid the first Ripper, then place the Power Bomb at least two tiles above the next. This can be achieved with a Staggered IBJ or a Spring Ball Bomb Boost.",
+                    "Then climb the right side of the shaft and dodge the top Ripper."
+                  ],
+                  "devNote": "canSpringBallBombJump can be bypassed with SpringBall and other requirements, but that's being assumed with Bombs and SpringBall at this level."
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "Gravity",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]},
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with three Power Bombs, or one carefully placed Power Bomb, Gravity, and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, IBJ from the water to avoid the first Ripper, then place the Power Bomb at least two tiles above the next. This can be achieved with a Staggered IBJ.",
+                    "Then climb the right side of the shaft and similarly dodge the top Ripper."
+                  ]
                 }
               ],
               "note": "Only the the direct shinespark. Other strats should go 1 -> 2 -> 3."
@@ -2165,15 +4041,46 @@
                       {"and":[
                         "HiJump",
                         "canWalljump"
-                      ]}
+                      ]},
+                      "SpaceJump"
                     ]},
                     {"enemyKill":{
-                      "enemies": [
-                        [
-                          "Ripper", "Ripper", "Ripper"
-                        ]
-                      ]
+                      "enemies": [ [ "Ripper", "Ripper", "Ripper" ] ]
                     }}
+                  ]
+                },
+                {
+                  "name": "Kill Rippers Then IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canIBJ",
+                    {"or": [
+                      {"and": [
+                        {"enemyKill":{
+                          "enemies": [ [ "Ripper", "Ripper", "Ripper" ] ],
+                          "explicitWeapons": [ "PowerBomb" ]
+                        }},
+                        {"or": [
+                          "HiJump",
+                          "canCarefulJump"
+                        ]}
+                      ]},
+                      {"enemyKill":{
+                        "enemies": [ [ "Ripper", "Ripper" ], [ "Ripper" ] ],
+                        "explicitWeapons": [ "PowerBomb" ]
+                      }},
+                      {"and": [
+                        {"enemyKill":{
+                          "enemies": [ [ "Ripper", "Ripper", "Ripper" ] ],
+                          "explicitWeapons": [ "Super" ]
+                        }},
+                        "HiJump"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Only the lowest three Rippers that are above the right door need to be killed. The highest of the three can barely be reached with a Super and HiJump.",
+                    "Or a PB placed slightly higher than a standard max jump, done by jumping from the door ledge, from an IBJ while avoiding the Ripper, or using 2 PBs."
                   ]
                 },
                 {
@@ -2191,9 +4098,33 @@
                   "requires": [
                     {"canComeInCharged": {
                       "fromNode": 2,
-                      "framesRemaining": 40,
-                      "shinesparkFrames": 35
+                      "framesRemaining": 20,
+                      "shinesparkFrames": 36,
+                      "excessShinesparkFrames": 10
                     }}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph IBJ, PB",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "h_canArtificialMorphStaggeredIBJ",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Ripper", "type": "contact", "hits": 1 }}
+                    ]}
+                  ],
+                  "note": [
+                    "The Rippers can be killed with two Power Bombs, or one carefully placed Power Bomb and a careful dodge of the top-most Ripper.",
+                    "With a single Power Bomb, place it at least two tiles above the first Ripper. This can be achieved with a Staggered IBJ or a Spring Ball Bomb Boost.",
+                    "Then climb the right side of the shaft and dodge the top Ripper."
                   ]
                 }
               ]
@@ -2323,7 +4254,27 @@
               "usableComingIn": false,
               "openEnd": 1
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Puyo",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
@@ -2369,12 +4320,82 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Puyo Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "PowerBomb"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [
+                    {"or": [
+                      "canWalljump",
+                      "h_canFly",
+                      {"and": [
+                        "HiJump",
+                        {"or": [
+                          "canSpringBallJumpMidAir",
+                          "canUseFrozenEnemies"
+                        ]}
+                      ]},
+                      {"and": [
+                        "canSpringBallJumpMidAir",
+                        "canTrickyJump",
+                        "canCrouchJump"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    {"canComeInCharged": {
+                      "fromNode": 2,
+                      "framesRemaining": 20,
+                      "shinesparkFrames": 58,
+                      "excessShinesparkFrames": 6
+                    }}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "SpringBall",
+                      {"ammo": {"type": "PowerBomb","count": 2}},
+                      {"and": [
+                        "h_canArtificialMorphStaggeredIBJ",
+                        "canBeVeryPatient"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "IBJ up the climb. This is a lot easier with PBs or Spring Ball to help kill the enemies.",
+                    "With PBs, use one on entry to deal with the Puyos, then IBJ up the right side and use another to kill the middle Choot.",
+                    "Otherwise, Kill the Puyos then the bottom Choot with Bombs, falling off when necessary, then climb the left side of the room."
+                  ]
                 }
               ]
             }
@@ -2440,7 +4461,30 @@
               "usableComingIn": false,
               "openEnd": 0
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": [ "canBePatient" ],
+                  "note": "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Puyo",
+                "type": "contact",
+                "hits": 1
+              }}
+            ],
+            "note": "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
+          }
         },
         {
           "id": 2,
@@ -2475,7 +4519,30 @@
               "usableComingIn": false,
               "openEnd": 0
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": [ "canBeVeryPatient" ],
+                  "note": "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              "canBeVeryPatient",
+              {"enemyDamage": {
+                "enemy": "Puyo",
+                "type": "contact",
+                "hits": 1
+              }}
+            ],
+            "note": "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
+          }
         }
       ],
       "enemies": [
@@ -2491,6 +4558,22 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Puyo Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "PowerBomb"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -2560,7 +4643,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [{"obstaclesCleared": ["A"]}],
+                  "requires": [ {"obstaclesCleared": ["A"]} ],
                   "note": "To avoid redundant requirements, obstacle must be destroyed by going to 2->3->1."
                 }
               ],
@@ -2620,6 +4703,24 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Space Pirate Farm",
+                  "notable": false,
+                  "requires": [
+                    "SpaceJump",
+                    "ScrewAttack",
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -2640,7 +4741,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["SpaceJump"]
+                  "requires": [ "SpaceJump" ]
                 },
                 {
                   "name": "Insane Walljump",
@@ -2729,9 +4830,7 @@
                   "failures": [
                     {
                       "name": "Fail Bomb Jump",
-                      "cost": [
-                        { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "hits": 1, "type": "laser" } }
-                      ]
+                      "cost": [ { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "hits": 1, "type": "laser" } } ]
                     }
                   ],
                   "note": "Let the wall pirate jump to the otherside of the room.  Shooting the standing pirate (with anything) will prevent it from attacking."
@@ -2742,38 +4841,32 @@
                   "requires": [
                     "canCarefulJump",
                     "canShinechargeMovementComplex",
-                      {"canShineCharge": {
-                        "usedTiles": 21,
-                        "shinesparkFrames": 30,
-                        "excessShinesparkFrames": 7,
+                    {"canShineCharge": {
+                      "usedTiles": 21,
+                      "shinesparkFrames": 30,
+                      "excessShinesparkFrames": 7,
+                      "openEnd": 0
+                    }},
+                    "canUseSpeedEchoes",
+                    {"or": [
+                      { "canShineCharge": {
+                        "usedTiles": 19,
+                        "shinesparkFrames": 2,
+                        "excessShinesparkFrames": 2,
                         "openEnd": 0
-                      }}
+                      }},
+                      {"and": [
+                        { "canShineCharge": {
+                          "usedTiles": 21,
+                          "shinesparkFrames": 3,
+                          "excessShinesparkFrames": 3,
+                          "openEnd": 0
+                        }},
+                        { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "type": "laser", "hits": 1 } }
+                      ]}
+                    ]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        "canUseSpeedEchoes",
-                        {"or": [
-                          { "canShineCharge": {
-                            "usedTiles": 19,
-                            "shinesparkFrames": 2,
-                            "excessShinesparkFrames": 2,
-                            "openEnd": 0
-                          }},
-                          {"and": [
-                            { "canShineCharge": {
-                              "usedTiles": 21,
-                              "shinesparkFrames": 3,
-                              "excessShinesparkFrames": 3,
-                              "openEnd": 0
-                            }},
-                            { "enemyDamage": { "enemy": "Pink Space Pirate (standing)", "type": "laser", "hits": 1 } }
-                          ]}
-                         ]}
-                      ]
-                    }
-                  ],
+                  "clearsObstacles": ["A"],
                   "failures": [
                     {
                       "name": "Miss Shortcharge",
@@ -2823,37 +4916,27 @@
                 {
                   "name": "Simple Weapons",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        {"or":[
-                          "Plasma",
-                          "ScrewAttack"
-                        ]}
-                      ]
-                    }
-                  ]
+                  "requires": [
+                    {"or":[
+                      "Plasma",
+                      "ScrewAttack"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Plasma Room Pseudo Screw",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        "Charge",
-                        {"enemyDamage": {
-                          "enemy": "Pink Space Pirate (standing)",
-                          "type": "contact",
-                          "hits": 4
-                        }}
-                      ]
-                    }
+                  "requires": [
+                    "canPseudoScrew",
+                    {"enemyDamage": {
+                      "enemy": "Pink Space Pirate (standing)",
+                      "type": "contact",
+                      "hits": 4
+                    }}
                   ],
-                  "note": "The 4 standing pirates take 2 Pseudo Screws to kill each, so Samus must take 4 hits.  No damage is taken when the enemy dies."
+                  "clearsObstacles": ["A"],
+                  "note": "The 4 standing pirates take 2 Pseudo Screws to kill each, so Samus must take 4 hits. No damage is taken when the enemy dies."
                 }
               ]
             }
@@ -2911,12 +4994,15 @@
                   "name": "Frozen Wall Pirate Plasma Escape",
                   "notable": false,
                   "requires": [
-                    "canUseFrozenEnemies",
+                    "canTrickyUseFrozenEnemies",
                     "canPreciseWalljump"
                   ],
                   "note": [
                     "It's possible to climb up with just ice by freezing the wall space pirates (who can be frozen and killed without Plasma).",
-                    "Clearing the grey door lock would require killing the frozen pirate after using it to climb."
+                    "Clearing the grey door lock would require killing the frozen pirate after using it to climb.",
+                    "To do this most easily, freeze the Pirate as high as possible on the left wall.",
+                    "Bait the pirate to jump across the room early so that it stays high on the wall, or bring it on camera by jumping below the platform if the wall pirate gets too low.",
+                    "After reaching the top, it can help to reset the camera by moving to the right on the center platform and then back left."
                   ]
                 },
                 {

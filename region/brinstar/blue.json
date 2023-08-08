@@ -49,6 +49,27 @@
               ]
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Sidehopper",
+                  "notable": false,
+                  "requires": [ "f_ZebesAwake" ]
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Sidehopper",
+                "type": "contact",
+                "hits": 1
+              }},
+              "f_ZebesAwake"
+            ]
+          },
           "locks": [
             {
               "name": "Morph Ball Room Grey Lock (to Green Hill Zone)",
@@ -71,7 +92,39 @@
           "name": "Blue Brinstar Elevator to Crateria",
           "nodeType": "door",
           "nodeSubType": "elevator",
-          "nodeAddress": "0x0018eb6"
+          "nodeAddress": "0x0018eb6",
+          "canLeaveCharged": [
+            {
+              "framesRemaining": 130,
+              "usedTiles": 30,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [ "canShinechargeMovement" ]
+                }
+              ],
+              "openEnd": 0
+            }
+          ],
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "Carry G-Mode Up the Elevator",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "artificialMorph": false,
+                      "mode": "any"
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 3,
@@ -115,7 +168,11 @@
           "nodeType": "item",
           "nodeSubType": "visible",
           "nodeItem": "Morph",
-          "nodeAddress": "0x786DE"
+          "nodeAddress": "0x786DE",
+          "devNote": [
+            "This item is technically no longer spawned after Zebes is awake, which would require canRiskPermanentLossOfAccess.",
+            "The logic here is not modeling that, as that bug is likely not going to be kept by anyone that utilizes this data."
+          ]
         },
         {
           "id": 5,
@@ -132,7 +189,12 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["f_ZebesAwake"]
+                  "requires": [
+                    {"or": [
+                      "f_ZebesAwake",
+                      "h_AllItemsSpawned"
+                    ]}
+                  ]
                 }
               ],
               "note": "Item doesn't appear before Zebes is awakened."
@@ -161,6 +223,11 @@
           "id": "C",
           "name": "Sidehopper trio",
           "obstacleType": "enemies"
+        },
+        {
+          "id": "D",
+          "name": "At the Power Bomb Item While in Artificial Morph",
+          "obstacleType": "abstract"
         }
       ],
       "enemies": [
@@ -178,149 +245,237 @@
           "from": 1,
           "to": [
             {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Room Entry Speedball",
+                  "notable": false,
+                  "requires": [
+                    "canMockball",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "shinesparkFrames": 0,
+                      "fromNode": 1,
+                      "unusableTiles": 1
+                    }}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "devNote": "This is a direct link because clearing the hoppers is unnecessary."
+                },
+                {
+                  "name": "G-Mode Morph Overload PLMs Zebes Asleep",
+                  "notable": false,
+                  "requires": [
+                    { "not": "f_ZebesAwake" },
+                    "canRiskPermanentLossOfAccess",
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ],
+                  "clearsObstacles": ["D"],
+                  "note": "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door."
+                },
+                {
+                  "name": "G-Mode Overload PLMs Indirect",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "indirect",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"enemyDamage": {
+                        "enemy": "Sidehopper",
+                        "type": "contact",
+                        "hits": 2
+                      }},
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"and": [
+                        "Morph",
+                        {"or":[
+                          {"and": [
+                            "Plasma",
+                            "Charge"
+                          ]},
+                          "ScrewAttack"
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["D"],
+                  "note": [
+                    "Either kill the Sidehoppers immediately on entry by placing a Power Bomb while rolling off the stair or tank their hits.",
+                    "If Samus has Morph Ball, it is also possible to kill the Sidehoppers upon room entry with Screw Attack or a powerful beam.",
+                    "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door.",
+                    "Roll under the last Sidehopper and through the bomb blocks."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph Overload PLMs Direct",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"enemyDamage": {
+                        "enemy": "Sidehopper",
+                        "type": "contact",
+                        "hits": 3
+                      }},
+                      {"and": [
+                        {"enemyDamage": {
+                          "enemy": "Sidehopper",
+                          "type": "contact",
+                          "hits": 1
+                        }},
+                        {"ammo": { "type": "PowerBomb", "count": 1 }}
+                      ]},
+                      {"and": [
+                        "Morph",
+                        "ScrewAttack",
+                        "canTrickyJump"
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["D"],
+                  "note": [
+                    "Tank the Sidehopper hits or kill them after a single hit by quickly placing a Power Bomb.",
+                    "It is also possible to kill the Sidehoppers with a very fast Screw Attack, if Samus has Morph Ball.",
+                    "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door.",
+                    "Roll under the last Sidehopper and through the bomb blocks."
+                  ]
+                }
+              ]
+            },
+            {
               "id": 6,
               "strats": [
                 {
                   "name": "Run Through",
                   "notable": false,
                   "requires": [
-                    {"enemyDamage": {
-                      "enemy": "Sidehopper",
-                      "type": "contact",
-                      "hits": 1
-                    }}
+                    {"or": [
+                      {"enemyDamage": {
+                        "enemy": "Sidehopper",
+                        "type": "contact",
+                        "hits": 1
+                      }},
+                      {"obstaclesCleared": ["C"]}
+                    ]}
                   ]
                 },
                 {
                   "name": "Power Beam Sidehopper Kill",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"enemyDamage": {
-                          "enemy": "Sidehopper",
-                          "type": "contact",
-                          "hits": 6
-                        }}
-                      ]
-                    }
-                  ]
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Sidehopper",
+                      "type": "contact",
+                      "hits": 6
+                    }}
+                  ],
+                  "clearsObstacles": ["C"]
                 },
                 {
                   "name": "Quick Sidehopper Kill",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"enemyDamage": {
-                          "enemy": "Sidehopper",
-                          "type": "contact",
-                          "hits": 1
-                        }},
-                        {"or":[
-                          {"enemyKill":{
-                            "enemies": [
-                              ["Sidehopper", "Sidehopper"],
-                              ["Sidehopper"]
-                            ],
-                            "explicitWeapons": [
-                              "Missile",
-                              "Super",
-                              "PowerBomb",
-                              "ScrewAttack",
-                              "Plasma"
-                            ]
-                          }}
-                        ]}
-                      ]
-                    }
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Sidehopper",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"or":[
+                      {"enemyKill":{
+                        "enemies": [
+                          ["Sidehopper", "Sidehopper"],
+                          ["Sidehopper"]
+                        ],
+                        "explicitWeapons": [
+                          "Missile",
+                          "Super",
+                          "PowerBomb",
+                          "ScrewAttack",
+                          "Plasma"
+                        ]
+                      }}
+                    ]}
                   ],
+                  "clearsObstacles": ["C"],
                   "note": [
-                    "For the PB (and screw) kill, this strat assumes you don't know you're entering the room beforehand.",
-                    "If you know, it's possible to PB kill the first two Sidehoppers damage-free by morphing before entering.",
-                    "For Screw, just entering with a spinjump would work."
+                    "For the Power Bomb and Screw Attack kills, this strat assumes you don't know you're entering the room beforehand.",
+                    "If you know, it's possible to Power Bomb kill the first two Sidehoppers damage-free by morphing before entering.",
+                    "For Screw, just entering with a spin jump would work."
                   ]
                 },
                 {
                   "name": "Kill on Entry",
                   "notable": false,
-                  "requires": [ "canPrepareForNextRoom" ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"or":[
-                          {"and": [
-                            "Plasma",
-                            "Charge"
-                          ]},
-                          "ScrewAttack",
-                          {"and": [
-                            "h_canUsePowerBombs",
-                            {"enemyKill":{
-                              "enemies": [
-                                ["Sidehopper"]
-                              ],
-                              "explicitWeapons": [
-                                "Missile",
-                                "Super",
-                                "PowerBomb"
-                              ]
-                            }}
-                          ]},
-                          {"canComeInCharged": {
-                            "fromNode": 1,
-                            "framesRemaining": 0,
-                            "shinesparkFrames": 40,
-                            "excessShinesparkFrames": 9
-                           }}
-                        ]}
-                      ]
-                    }
+                  "requires": [
+                    "canPrepareForNextRoom",
+                    {"or":[
+                      {"and": [
+                        "Plasma",
+                        "Charge"
+                      ]},
+                      "ScrewAttack",
+                      {"and": [
+                        "h_canUsePowerBombs",
+                        {"enemyKill":{
+                          "enemies": [ ["Sidehopper"] ],
+                          "explicitWeapons": [
+                            "Missile",
+                            "Super",
+                            "PowerBomb"
+                          ]
+                        }}
+                      ]},
+                      {"canComeInCharged": {
+                        "fromNode": 1,
+                        "framesRemaining": 0,
+                        "shinesparkFrames": 40,
+                        "excessShinesparkFrames": 9
+                      }}
+                    ]}
                   ],
+                  "clearsObstacles": ["C"],
                   "note": [
                     "Enter the room ready to kill the hoppers before they can hit Samus.",
                     "with a charge plasma shot ready, or in a shinespark, screw attack spin jump, or a morph, ready to lay a power bomb."
                   ]
                 },
                 {
-                  "name": "PB Sidehopper Kill with Bomb Blocks",
+                  "name": "Power Bomb Sidehopper Kill and Bomb Blocks",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"enemyDamage": {
-                          "enemy": "Sidehopper",
-                          "type": "contact",
-                          "hits": 1
-                        }},
-                        {"or":[
-                          "canMockball",
-                          {"enemyDamage": {
-                            "enemy": "Sidehopper",
-                            "type": "contact",
-                            "hits": 1
-                          }}
-                        ]},
-                        {"enemyKill":{
-                          "enemies": [
-                            ["Sidehopper", "Sidehopper"],
-                            ["Sidehopper"]
-                          ],
-                          "explicitWeapons": [
-                            "PowerBomb"
-                          ]
-                        }}
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Sidehopper",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"or":[
+                      "canMockball",
+                      {"enemyDamage": {
+                        "enemy": "Sidehopper",
+                        "type": "contact",
+                        "hits": 1
+                      }}
+                    ]},
+                    {"enemyKill":{
+                      "enemies": [
+                        ["Sidehopper", "Sidehopper"],
+                        ["Sidehopper"]
                       ],
-                      "additionalObstacles": ["A"]
-                    }
+                      "explicitWeapons": [ "PowerBomb" ]
+                    }}
                   ],
+                  "clearsObstacles": ["A","C"],
                   "note": [
                     "This strat assumes you don't know you're entering the room beforehand. Otherwise, it's possible to kill the first two Sidehoppers without taking damage.",
                     "It's possible to take out obstacle A alongside the third Sidehopper, but there's a risk of taking an additional hit (negated by mockball)."
@@ -329,23 +484,28 @@
                 {
                   "name": "Medium Sidehopper Kill",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": [
-                        {"enemyDamage": {
-                          "enemy": "Sidehopper",
-                          "type": "contact",
-                          "hits": 3
-                        }},
-                        {"or":[
-                          "Spazer",
-                          "Wave"
-                        ]}
-                      ]
-                    }
-                  ]
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Sidehopper",
+                      "type": "contact",
+                      "hits": 3
+                    }},
+                    {"or":[
+                      "Spazer",
+                      "Wave"
+                    ]}
+                  ],
+                  "clearsObstacles": ["C"]
+                },
+                {
+                  "name": "Free Passage",
+                  "notable": false,
+                  "requires": [
+                    { "not": "f_ZebesAwake" },
+                    "canRiskPermanentLossOfAccess"
+                  ],
+                  "clearsObstacles": ["C"],
+                  "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
                 }
               ],
               "note": "Requires either tanking one hit, or killing the Sidehoppers"
@@ -387,6 +547,26 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Power Bomb the Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    "h_canArtificialMorphMovement"
+                  ],
+                  "clearsObstacles": ["B"],
+                  "note": "Place the Power Bomb, then exit g-mode before the bomb goes off."
                 }
               ]
             }
@@ -432,13 +612,13 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
-                  ]
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["B"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"]
                 }
               ]
             }
@@ -453,13 +633,33 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
-                  ]
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["B"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Power Bomb Blocks While in Artificial Morph from the Left",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["D"]},
+                    {"ammo": { "type": "PowerBomb", "count": 1 }},
+                    {"or": [
+                      "SpringBall",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      "Bombs"
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"],
+                  "note": "Place the Power Bomb, then exit g-mode before the bomb goes off."
                 }
               ]
             },
@@ -467,40 +667,35 @@
               "id": 6,
               "strats": [
                 {
+                  "name": "Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
+                  ]
+                },
+                {
                   "name": "Bomb the Blocks",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canBombThings" ]
-                    }
-                  ]
+                  "requires": [ "h_canBombThings" ],
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Morph Ball Room Speedball (Right to Left)",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "B",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    },
-                    {
-                      "id": "A",
-                      "requires": [
-                        {"canShineCharge": {
-                          "usedTiles": 21,
-                          "shinesparkFrames": 0,
-                          "openEnd": 1
-                        }},
-                        "canMockball"
-                      ]
-                    }
+                  "requires": [
+                    {"obstaclesCleared": ["B"]},
+                    {"canShineCharge": {
+                      "usedTiles": 21,
+                      "shinesparkFrames": 0,
+                      "openEnd": 1
+                    }},
+                    "canMockball"
                   ],
+                  "clearsObstacles": ["A"],
                   "note": [
-                    "It's a short charge into a speedball to break the bomb blocks.",
-                    "Obstacle B needs to be destroyed to have enough running room."
+                    "It's a short charge into a speedball to break the Bomb Blocks.",
+                    "The Power Bomb Blocks need to be destroyed to have enough running room."
                   ]
                 }
               ]
@@ -516,14 +711,7 @@
                 {
                   "name": "Laugh at Dead Sidehoppers",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": ["never"]
-                    }
-                  ],
-                  "devNote": "This strat is there to override all other strats' requirement if the Sidehoppers are already dead."
+                  "requires": [ {"obstaclesCleared": ["C"]} ]
                 },
                 {
                   "name": "Tank the damage",
@@ -543,14 +731,19 @@
                     "Morph",
                     {"obstaclesCleared": ["A"]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "C",
-                      "requires": []
-                    }
-                  ],
+                  "clearsObstacles": ["C"],
                   "note": "If the bomb blocks are broken, the SideHoppers can be killed safely from behind with Power Beam.",
                   "devNote": "Obstacle can be broken by going to 5 and back."
+                },
+                {
+                  "name": "Free Passage",
+                  "notable": false,
+                  "requires": [
+                    { "not": "f_ZebesAwake" },
+                    "canRiskPermanentLossOfAccess"
+                  ],
+                  "clearsObstacles": ["C"],
+                  "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
                 }
               ]
             },
@@ -558,36 +751,32 @@
               "id": 5,
               "strats": [
                 {
+                  "name": "Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"obstaclesCleared": ["A"]}
+                  ]
+                },
+                {
                   "name": "Bomb the Blocks",
                   "notable": false,
-                  "requires": ["Morph"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canBombThings" ]
-                    }
-                  ]
+                  "requires": [ "h_canBombThings" ],
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Morph Ball Room Speedball (Left to Right)",
                   "notable": false,
                   "requires": [
-                    "Morph",
-                    {"obstaclesCleared": ["C"]}
+                    "canMockball",
+                    {"obstaclesCleared": ["C"]},
+                    {"canShineCharge": {
+                      "usedTiles": 18,
+                      "shinesparkFrames": 0,
+                      "openEnd": 0
+                    }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [
-                        {"canShineCharge": {
-                          "usedTiles": 18,
-                          "shinesparkFrames": 0,
-                          "openEnd": 0
-                        }},
-                        "canMockball"
-                      ]
-                    }
-                  ],
+                  "clearsObstacles": ["A"],
                   "note": [
                     "It's a short charge into a speedball to break the bomb blocks.",
                     "The Sidehoppers need to be destroyed beforehand to clear the running space."
@@ -629,7 +818,31 @@
               "usableComingIn": false,
               "openEnd": 0
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Geemer",
+                  "notable": false,
+                  "requires": [ "f_ZebesAwake" ],
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Geemer (blue)",
+                "type": "contact",
+                "hits": 1
+              }},
+              "f_ZebesAwake",
+              {"ammo": { "type": "Super", "count": 1 }}
+            ],
+            "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."
+          }
         },
         {
           "id": 2,
@@ -653,6 +866,30 @@
               "openEnd": 0
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Geemer",
+                  "notable": false,
+                  "requires": [ "f_ZebesAwake" ],
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Geemer (blue)",
+                "type": "contact",
+                "hits": 1
+              }},
+              "f_ZebesAwake",
+              {"ammo": { "type": "Super", "count": 1 }}
+            ],
+            "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."
+          },
           "locks": [
             {
               "name": "Construction Zone Red Lock (to Ceiling E-Tank)",
@@ -686,6 +923,21 @@
                 }
               ],
               "openEnd": 0
+            }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Geemer",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "f_ZebesAwake"
+                  ],
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                }
+              ]
             }
           ]
         },
@@ -752,7 +1004,7 @@
                   "name": "Construction Room X-Ray Climb",
                   "notable": false,
                   "requires": [
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     { "resetRoom": {
                       "nodes": [3],
                       "mustStayPut": true
@@ -762,6 +1014,18 @@
                       "usedTiles": 0.5,
                       "overrideRunwayRequirements": true,
                       "useFrames": 200
+                    }}
+                  ],
+                  "note": "This is a short climb of only a few tiles."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
                     }}
                   ]
                 }
@@ -801,6 +1065,23 @@
                   "requires": [ "Morph" ]
                 }
               ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Geemer Farm",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"resetRoom": {
+                      "nodes": [1, 2],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile"]}
+                  ]
+                }
+              ]  
             }
           ]
         }
@@ -951,7 +1232,28 @@
                 }
               ]
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Geemer",
+                  "notable": false,
+                  "requires": [ "f_ZebesAwake" ]
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Geemer (blue)",
+                "type": "contact",
+                "hits": 1
+              }},
+              "f_ZebesAwake"
+            ]
+          }
         },
         {
           "id": 2,
@@ -973,6 +1275,55 @@
               ],
               "openEnd": 0
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Geemer - Break the Crumble Blocks",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"or": [
+                      "h_canDestroyBombWalls",
+                      {"obstaclesCleared": ["A"]}
+                    ]},
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
+                  ],
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                },
+                {
+                  "name": "Get Hit By Geemer - Break the Power Bomb Blocks",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"or": [
+                      "h_canDestroyBombWalls",
+                      {"obstaclesCleared": ["A"]}
+                    ]},
+                    "h_canUsePowerBombs",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 43,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                },
+                {
+                  "name": "Get Hit By Geemer - Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"obstaclesCleared": ["A","B"]}
+                  ],
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                }
+              ]
+            }
           ]
         },
         {
@@ -990,6 +1341,20 @@
           "nodeSubType": "visible",
           "nodeItem": "Missile",
           "nodeAddress": "0x78798"
+        },
+        {
+          "id": 5,
+          "name": "G-Mode Morph Junction (Bottom)",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "note": "Represents being in the room with G-Mode, to the right of the two Geemers, with morph or artificial morph."
+        },
+        {
+          "id": 6,
+          "name": "G-Mode Morph Junction Direct (Bottom)",
+          "nodeType": "junction",
+          "nodeSubType": "junction",
+          "note": "Represents being in the room with G-Mode, to the right of the two Geemers, with morph or artificial morph, in direct G-Mode."
         }
       ],
       "obstacles": [
@@ -1002,6 +1367,16 @@
           "id": "B",
           "name": "Crumble Block",
           "obstacleType": "inanimate"
+        },
+        {
+          "id": "C",
+          "name": "Power Bomb Blocks",
+          "obstacleType": "inanimate"
+        },
+        {
+          "id": "D",
+          "name": "Touch the Item while Remaining in G-Mode Morph",
+          "obstacleType": "abstract"
         }
       ],
       "enemies": [
@@ -1030,10 +1405,36 @@
           "spawn": [ "f_ZebesAwake" ]
         }
       ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+          "note": [
+            "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+            "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
+          ]
+        }
+      ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Geemer, Skree, and Reo Farm",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile"]}
+                  ]
+                }
+              ]  
+            },
             {
               "id": 3,
               "strats": [
@@ -1057,10 +1458,20 @@
                   ]
                 },
                 {
-                  "name": "Ceiling E-Tank IBJ",
+                  "name": "IBJ",
                   "notable": false,
                   "requires": ["h_canBombAboveIBJ"],
                   "devNote": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
+                },
+                {
+                  "name": "IBJ with Power Bomb",
+                  "notable": false,
+                  "requires": [
+                    "h_canIBJ",
+                    "h_canUsePowerBombs"
+                  ],
+                  "clearsObstacles": ["C"],
+                  "devNote": "Use a Power Bomb while performing an IBJ to break the shot block while part way up."
                 },
                 {
                   "name": "Ceiling E-Tank Jump Into IBJ",
@@ -1072,17 +1483,24 @@
                   "note": "An alternate strat to canBombAboveIBJ. Shoot the block, jump into an IBJ, then do a quick double bomb jump to make it in time."
                 },
                 {
-                  "name": "Ceiling E-Tank Dboost",
-                  "notable": false,
+                  "name": "Blue Brinstar E-Tank Ceiling Damage Boost",
+                  "notable": true,
                   "requires": [
                     "f_ZebesAwake",
-                    "canDamageBoost",
+                    "canNeutralDamageBoost",
                     {"enemyDamage": {
-                      "enemy": "Reo",
+                      "enemy": "Geemer (blue)",
                       "hits": 1,
                       "type": "contact"
                     }}
-                  ]
+                  ],
+                  "note": [
+                    "Have Samus shoot the shot block revealing the item and then quickly get hit by an enemy at the peak of her jump in order to reach the item.",
+                    "No directional inputs should be held while getting hit by the enemy in order to have a neutral boost and reach the item.",
+                    "This is traditionally done with the swooping Reo; after a few failed tries, it may help to reset the room to reposition it.",
+                    "The global Geemer may be easier to use, although it takes longer to get there; jump as it starts moving horizontally again while it is 3 tiles away from the item."
+                  ],
+                  "devNote": "Although the Reo is traditionally used for the boost, the Geemer does less damage and should still put this in logic with low energy."
                 },
                 {
                   "name": "Ceiling E-Tank Speed Jump",
@@ -1091,9 +1509,19 @@
                   "note": "Does not require a shinespark. You can shoot the block, then just run and jump."
                 },
                 {
-                  "name": "Ceiling E-Tank PB Boost",
+                  "name": "Ceiling E-Tank Unmorph Bomb Boost",
                   "notable": false,
-                  "requires": ["canUnmorphBombBoost"]
+                  "requires": [
+                    "canCrouchJump",
+                    "canMidAirMorph",
+                    "canJumpIntoIBJ",
+                    "canUnmorphBombBoost"
+                  ],
+                  "note": [
+                    "Reveal the item and then setup to jump into an IBJ.",
+                    "As Samus starts falling, unmorph to extend Samus' hitbox high enough to reach the item after bouncing on the bomb."
+                  ],
+                  "devNote": "It is a JumpIntoIBJ that bounces on a single bomb or Power Bomb."
                 },
                 {
                   "name":"Taco Tank in Blue Brinstar Energy Tank Room",
@@ -1116,6 +1544,141 @@
                   "requires": [ "Morph" ]
                 }
               ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }}
+                    ]}
+                  ],
+                  "devNote": [
+                    "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here, as farming for immobile is likely easier.",
+                    "An immobile strat only takes one hit on entry, skipping the Geemer hit, which is modeled by going 1->6->5."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph with Flashing Lights",
+                  "notable": true,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        { "not": "f_ZebesAwake" },
+                        "canRiskPermanentLossOfAccess"
+                      ]},
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+                  "note": [
+                    "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+                    "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
+                  ],
+                  "devNote": [
+                    "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here, as farming for immobile is likely easier.",
+                    "An immobile strat only takes one hit on entry, skipping the Geemer hit, which is modeled by going 1->6->5."
+                  ]
+                }
+              ]  
+            },
+            {
+              "id": 6,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "direct",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
+                  ],
+                  "devNote": "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here."
+                },
+                {
+                  "name": "G-Mode Morph with Flashing Lights",
+                  "notable": true,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        { "not": "f_ZebesAwake" },
+                        "canRiskPermanentLossOfAccess"
+                      ]},
+                      "SpringBall",
+                      "Bombs",
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Geemer (blue)",
+                        "hits": 1,
+                        "type": "contact"
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "direct",
+                        "artificialMorph": true,
+                        "mobility": "immobile"
+                      }}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+                  "note": [
+                    "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+                    "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
+                  ]
+                }
+              ]  
             }
           ]
         },
@@ -1128,17 +1691,29 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Morph" ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canDestroyBombWalls" ]
-                    },
-                    {
-                      "id": "B",
-                      "requires": []
-                    }
-                  ]
+                  "requires": [
+                    "Morph",
+                    {"or": [
+                      "h_canDestroyBombWalls",
+                      {"obstaclesCleared": ["A"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A","B"]
+                },
+                {
+                  "name": "Temporary Blue",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "canTemporaryBlue",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 2,
+                      "shinesparkFrames": 0,
+                      "unusableTiles": 1
+                    }}
+                  ],
+                  "clearsObstacles": ["A","B"]
                 }
               ]
             }
@@ -1169,6 +1744,24 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [ "Morph" ]
+                },
+                {
+                  "name": "Broken Power Bomb Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["C"]
+                },
+                {
+                  "name": "Artificial Morph Remotely Collect the Item",
+                  "notable": false,
+                  "requires": [ {"obstaclesCleared": ["D"]} ],
+                  "note": "After touching the item, roll back to the left before exiting G-Mode and remotely collect it.",
+                  "devNote": "This does not include canRiskPermanentLossOfAccess, because the only reason to do this strat is if the item is there."
                 }
               ]
             },
@@ -1176,8 +1769,8 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Go Back Up",
-                  "notable": false,
+                  "name": "Blue Brin E-Tank Return Through Crumble Blocks",
+                  "notable": true,
                   "requires": [
                     "Morph",
                     {"or": [
@@ -1186,69 +1779,204 @@
                     ]},
                     {"obstaclesCleared": ["A", "B"]}
                   ],
-                  "note": "The Crumble Block does not respawn, so it's possible to go back up without breaking the PB blocks."
+                  "note": "The Crumble Block does not respawn, so it's possible to grab the items and go back up without breaking the Power Bomb blocks."
                 },
                 {
-                  "name": "Break the PB Blocks",
+                  "name": "Base",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     {"or": [
                       "canConsecutiveWalljump",
                       "h_canFly"
+                    ]},
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      "ScrewAttack"
                     ]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canDestroyBombWalls" ]
-                    }
+                  "clearsObstacles": ["A","B","C"],
+                  "note": "Base strat when entering the room from below.",
+                  "devNote": "canWallJumpInstantMorph is not needed here, as the precision is very low."
+                },
+                {
+                  "name": "Power Bomb and Bombs",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
+                    "h_canUseMorphBombs",
+                    {"or": [
+                      "h_canFly",
+                      {"and": [
+                        "canConsecutiveWalljump",
+                        "canWallJumpInstantMorph"
+                      ]}
+                    ]}
                   ],
-                  "note": "Base strat when entering the room from below."
+                  "clearsObstacles": ["A","B","C"],
+                  "note": "Placing the bomb against the bomb block at the top of the shaft can be somewhat tricky."
                 },
                 {
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 43,
                       "openEnd": 2
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ],
-                  "devNote": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
+                  "clearsObstacles": ["A","B","C"],
+                  "devNote": "The runway here is 31 tiles before breaking the Power Bomb blocks, but becomes longer after."
                 },
                 {
                   "name": "Walljump Up Shaft and Shinespark",
                   "notable": false,
                   "requires": [
-                    "h_canUsePowerBombs",
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]},
                     "canShinechargeMovementComplex",
-                    "canConsecutiveWalljump",
+                    "canFastWalljumpClimb",
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 17,
                       "openEnd": 2
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
+                  "clearsObstacles": ["A","B","C"],
+                  "note": [
+                    "Breaking the Power Bomb blocks exactly wide enough makes it easier to quickly enter the one-tile gap.",
+                    "Aligning the Power Bomb with the left side of the ceiling fixture that sticks down will position the explosion correctly for this."
+                  ],
+                  "devNote": "The runway here is 31 tiles before breaking the Power Bomb blocks, but becomes longer after."
+                },
+                {
+                  "name": "G-Mode Morph Touch the Item to Overload PLMs",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["D"]},
+                    "canRiskPermanentLossOfAccess",
+                    "h_canArtificialMorphMovement",
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump"
+                    ]}
+                  ],
+                  "note": "After overloading the PLMs by touching the item, go through the crumble and bomb blocks to the top door.",
+                  "devNote": "The setup for this strat is where the obstacle is cleared."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 5,
+          "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "G-Mode Morph IBJ",
+                  "notable": false,
+                  "requires": [
+                    "h_canArtificialMorphIBJ",
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump",
+                      "canOffScreenMovement"
+                    ]}
+                  ],
+                  "note": "Overload PLMs by repeatidly bombing the Power Bomb blocks or the side of the crumble block, then enter through the crumble block.",
+                  "devNote": "The off screen movement is just during an IBJ, and only if wall jumps are disabled. But the IBJ is long and Samus is covered for most of it."
+                }
+              ]  
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": []
+                },
+                {
+                  "name": "G-Mode Morph with Power Bomb",
+                  "notable": false,
+                  "requires": [ {"ammo": {"type": "PowerBomb","count": 1}} ],
+                  "clearsObstacles": ["B","C"],
+                  "note": "The blocks will not break if PLMs are already overloaded. Exiting G-Mode before the Power Bomb explodes will ensure they break."
+                }
+              ]  
+            }
+          ]
+        },
+        {
+          "from": 6,
+          "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Power Bomb the Item",
+                  "notable": false,
+                  "requires": [
+                    {"itemNotCollectedAtNode": 4},
+                    "canRiskPermanentLossOfAccess",
+                    {"ammo": {"type": "PowerBomb","count": 1}},
+                    "h_canArtificialMorphMovement",
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "SpaceJump"
+                    ]}
                   ],
                   "note": [
-                    "Breaking the power bomb blocks exactly wide enough makes it easier to quickly enter the one-tile gap.",
-                    "Aligning the power bomb with the left side of the ceiling fixture that sticks down will position the explosion correctly for this."
+                    "Overload PLMs with a single Power Bomb by hitting the item at the right end of the room.",
+                    "This can be done with a single precisely placed Power Bomb. There should be 4 empty tiles between Samus and the left of the blocks when the bomb is placed."
+                  ]
+                }
+              ]  
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Remotely Collect the Item",
+                  "notable": false,
+                  "requires": [
+                    {"itemNotCollectedAtNode": 4},
+                    "h_canArtificialMorphMovement"
                   ],
-                  "devNote": "The runway here is 31 tiles before breaking the PB blocks, but becomes longer after"
+                  "clearsObstacles": ["D"],
+                  "note": [
+                    "Touch the item to either roll back to the left before exiting G-Mode and remotely collect it,",
+                    "or to overload PLMs and go up through the crumble block and bomb block."
+                  ],
+                  "devNote": [
+                    "This will force Samus to pick up the item, so it can only be done once.",
+                    "This does not include canRiskPermanentLossOfAccess if Samus only uses this to return to the left with the item."
+                  ]
+                }
+              ]  
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": []
                 }
               ]
             }
@@ -1410,7 +2138,7 @@
                   "name": "Careful Jump",
                   "notable": false,
                   "requires": [ "canCarefulJump" ],
-                  "note": "It is possible to open the doorway and jump through it without going into the water below."
+                  "note": "Shoot open the door and jump through it without going into the water below."
                 }
               ]
             }
@@ -1425,11 +2153,30 @@
                 {
                   "name": "Base",
                   "notable": false,
+                  "requires": [ "Gravity" ]
+                },
+                {
+                  "name": "Space Jump",
+                  "notable": false,
                   "requires": [
+                    "SpaceJump",
                     {"or":[
-                      "Gravity",
-                      "SpaceJump"
+                      "canWalljump",
+                      "canPrepareForNextRoom",
+                      {"and":[
+                        "canSpaceJumpWaterEscape",
+                        "HiJump"
+                      ]}
                     ]}
+                  ],
+                  "devNote": "Space Jump with HiJump alone is enough if the door can be opened."
+                },
+                {
+                  "name": "Spring Ball Jump",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canSpringBallJumpMidAir"
                   ]
                 },
                 {
@@ -1456,25 +2203,58 @@
                     {"or":[
                       "canTrickyJump",
                       "canMoonwalk",
-                      "canXrayTurnaround",
+                      "canXRayTurnaround",
                       "Morph"
-                     ]}
+                    ]}
                   ],
-                  "note": "It's not even necessary to jump through the door, the in-room doorsill gives enough running room to make it up."
-                },
-                {
-                  "name": "Boulder Room SpringWall",
-                  "notable": false,
-                  "requires": ["canSpringwall"]
+                  "note": "It's not even necessary to jump through the door, the in-room doorsill gives enough running room to make it up.",
+                  "devNote": "FIXME This assumes the door can be opened, which may not be possible."
                 },
                 {
                   "name": "Boulder Room Naked Walljump",
                   "notable": false,
-                  "requires": ["canInsaneWalljump"],
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canInsaneWalljump"
+                  ],
                   "note": [
                     "It's a delayed walljump while the water is low, followed by a tight walljump off the bridge.",
                     "This strat is easily bypassed by jumping through the door, or if the door can be opened."
                   ]
+                },
+                {
+                  "name": "G-Mode Direct Doorsill Jump",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "direct",
+                      "artificialMorph": false
+                    }},
+                    "canPreciseWalljump",
+                    "canCarefulJump",
+                    {"or":[
+                      "canTrickyJump",
+                      "canMoonwalk",
+                      "canXRayTurnaround",
+                      "Morph"
+                    ]}
+                  ],
+                  "note": "In direct g-mode, the door will not close, and the in-room doorsill gives enough running room to make it up to the invisible ledge."
+                },
+                {
+                  "name": "G-Mode Morph Spring Ball IBJ",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canArtificialMorphJumpIntoIBJ",
+                    "canBombHorizontally"
+                  ],
+                  "note": "Starting an IBJ from spring ball with no other items is not very precise, it just takes a bit of an odd timing."
                 }
               ]
             }

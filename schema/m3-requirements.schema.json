@@ -100,6 +100,26 @@
               }
             }
           },
+          "refill": {
+            "$id": "#/definitions/logicalRequirement/items/properties/refill",
+            "type": "array",
+            "title": "Refill",
+            "description": "Always fulfilled, with an effect of fully refilling the listed resource types.",
+            "items": {
+              "$id": "#/definitions/logicalRequirement/items/properties/refill/items",
+              "type": "string",
+              "title": "Resource Type",
+              "description": "The name of a resource type that becomes fully refilled",
+              "enum": [
+                "Missile",
+                "Super",
+                "PowerBomb",
+                "RegularEnergy",
+                "ReserveEnergy",
+                "Energy"
+              ]
+            }
+          },
           "enemyKill": {
             "$id": "#/definitions/logicalRequirement/items/properties/enemyKill",
             "type": "object",
@@ -171,6 +191,13 @@
             "title": "Acid Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in acid."
           },
+          "gravitylessAcidFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/gravitylessAcidFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Gravityless Acid Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in acid, with Gravity Suit turned off, even if available."
+          },
           "draygonElectricityFrames": {
             "$id": "#/definitions/logicalRequirement/items/properties/draygonElectricityFrames",
             "type": "integer",
@@ -218,6 +245,13 @@
             "title": "Heat Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in a heat room."
           },
+          "gravitylessHeatFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/gravitylessHeatFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Gravityless Heat Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in a heated environment, with Gravity Suit turned off, even if available."
+          },
           "hibashiHits": {
             "$id": "#/definitions/logicalRequirement/items/properties/hibashiHits",
             "type": "integer",
@@ -232,12 +266,12 @@
             "title": "Lava Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in lava."
           },
-          "lavaPhysicsFrames": {
-            "$id": "#/definitions/logicalRequirement/items/properties/lavaPhysicsFrames",
+          "gravitylessLavaFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/gravitylessLavaFrames",
             "type": "integer",
             "minimum": 1,
-            "title": "Lava Physics Frames",
-            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in lava, with Gravity Suit turned off if available."
+            "title": "Gravityless Lava Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in lava, with Gravity Suit turned off, even if available."
           },
           "samusEaterFrames": {
             "$id": "#/definitions/logicalRequirement/items/properties/samusEaterFrames",
@@ -245,6 +279,13 @@
             "minimum": 1,
             "title": "Samus Eater Frames",
             "description": "Fulfilled by spending an amount of energy that correlates to the number of frames captured by a Samus Eater."
+          },
+          "metroidFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/metroidFrames",
+            "type": "integer",
+            "minimum": 1,
+            "title": "Metroid Frames",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames drained by a Metroid."
           },
           "energyAtMost": {
             "$id": "#/definitions/logicalRequirement/items/properties/energyAtMost",
@@ -327,7 +368,6 @@
                 }
               }
             }
-
           },
           "adjacentRunway": {
             "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway",
@@ -391,6 +431,55 @@
               }
             }
           },
+          "adjacentJumpway": {
+            "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway",
+            "type": "object",
+            "title": "Adjacent Jumpway",
+            "description": "Fulfilled by the adjacent room having a jumpway with specified characteristics.",
+            "required": [
+              "fromNode",
+              "jumpwayType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "fromNode": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/fromNode",
+                "type": "integer",
+                "title": "From Node",
+                "description": "The in-room ID of the node through which Samus must enter."
+              },
+              "jumpwayType": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/jumpwayType",
+                "$ref": "m3-region.schema.json#/properties/rooms/items/properties/nodes/items/properties/jumpways/items/properties/jumpwayType",
+                "title": "Jumpway Type",
+                "description": "Type of jumpway required in the adjacent room."
+              },
+              "minHeight": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minHeight",
+                "type": "number",
+                "title": "Minimum Height",
+                "description": "Minimum height of jumpway that will satisfy the requirement."  
+              },
+              "maxHeight": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxHeight",
+                "type": "number",
+                "title": "Maximum Height",
+                "description": "Maximum height of jumpway that will satisfy the requirement."  
+              },
+              "maxLeftPosition": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxLeftPosition",
+                "type": "number",
+                "title": "Maximum Left Position",
+                "description": "Maximum value of the jumpway leftPosition that will satisfy the requirement."
+              },
+              "minRightPosition": {
+                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minRightPosition",
+                "type": "number",
+                "title": "Minimum Right Position",
+                "description": "Minimum value of the jumpway rightPosition that will satisfy the requirement."
+              }
+            }
+          },
           "canComeInCharged": {
             "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged",
             "type": "object",
@@ -442,6 +531,13 @@
                 "minimum": 0,
                 "title": "Excess Shinespark Frames",
                 "description": "The shinespark duration (in frames) that is not required to complete the objective of the shinespark.  Subtracting this from the shinesparkFrames defines the lower limit of the shinespark energy cost."
+              },
+              "unusableTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/unusableTiles",
+                "type": "number",
+                "minimum": 0,
+                "title": "Unusable Tiles",
+                "description": "The number of contiguous tiles that are part of the runway but cannot be used to charge this shinespark."
               }
             }
           },
@@ -669,6 +765,18 @@
                 "type": "boolean",
                 "title": "Artificial Morph",
                 "description": "Whether we must come in with artificial morph (also satisfied by having Morph collected)"
+              },
+              "mobility": {
+                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/mobility",
+                "type": "string",
+                "enum": [
+                  "mobile",
+                  "immobile",
+                  "any"
+                ],
+                "default": "any",
+                "title": "Mobility",
+                "description": "Whether Samus must come in mobile, immobile, or either."
               }
             }
           },

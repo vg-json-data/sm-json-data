@@ -15,17 +15,19 @@ keywords = {
   "weapons": []
 }
 
-def dig_for_techs(this_tech):
+def dig_for_children(child_type, this_child):
     """
     Recursively find extensionTechs
     """
-    if "name" in this_tech:
-        keywords["techs"].append(this_tech["name"])
-        # print(this_tech["name"])
-        if "extensionTechs" in this_tech:
-            for ext_tech in this_tech["extensionTechs"]:
+    if child_type in ["helper"]:
+        child_type = child_type + "s"
+    if "name" in this_child:
+        keywords[child_type].append(this_child["name"])
+        # print(this_child["name"])
+        if ("extension" + child_type[:1].upper() + child_type[1:]) in this_child:
+            for ext_child in this_child["extensionTechs"]:
                 # print(" " + extTech["name"])
-                dig_for_techs(ext_tech)
+                dig_for_children(child_type, ext_child)
 
 # areas
 regionPath = os.path.join(
@@ -55,15 +57,6 @@ for enemiesPath in enemiesPaths:
                     keywords["enemies"]["enemyById"][enemy["id"]] = enemy["name"]
                     keywords["enemies"]["enemyByName"][enemy["name"]] = enemy["id"]
 
-# helpers
-helpersPath = os.path.join(".", "helpers.json")
-with open(helpersPath, encoding="utf-8") as helpersFile:
-    helpersJSON = json.load(helpersFile)
-    if "helpers" in helpersJSON:
-        for helper in helpersJSON["helpers"]:
-            if "name" in helper:
-                keywords["helpers"].append(helper["name"])
-
 # items & flags
 itemsPath = os.path.join(".", "items.json")
 with open(itemsPath, encoding="utf-8") as itemsFile:
@@ -82,19 +75,22 @@ with open(itemsPath, encoding="utf-8") as itemsFile:
         elif "Flags" in k:
             keywords["flags"].extend(v)
 
-# tech
-techPath = os.path.join(".", "tech.json")
-with open(techPath, encoding="utf-8") as techFile:
-    techJSON = json.load(techFile)
-    if "techs" in techJSON:
-        for tech in techJSON["techs"]:
-            if "name" in tech:
-                dig_for_techs(tech)
-    if "techCategories" in techJSON:
-        for techCat in techJSON["techCategories"]:
-            if "techs" in techCat:
-                for tech in techCat["techs"]:
-                    dig_for_techs(tech)
+# helpers, tech
+for docType in ["helper", "tech"]:
+    docPath = os.path.join(".", docType + ".json")
+    if docType in ["helper"]:
+        docPath = docPath.replace(docType + ".json", docType + "s.json")
+    with open(docPath, encoding="utf-8") as docFile:
+        docJSON = json.load(docFile)
+        if (docType + "s") in docJSON:
+            for child in docJSON[docType + "s"]:
+                if "name" in child:
+                    dig_for_children(docType + "s", child)
+        if (docType + "Categories") in docJSON:
+            for docCat in docJSON[(docType + "Categories")]:
+                if (docType + "s") in docCat:
+                    for child in docCat[(docType + "s")]:
+                        dig_for_children(docType + "s", child)
 
 # print(json.dumps(techNames, indent=2))
 

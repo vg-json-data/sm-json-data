@@ -31,7 +31,28 @@
               ],
               "openEnd": 0
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Sciser",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"ammo": { "type": "Super", "count": 1 }},
+              {"enemyDamage": {
+                "enemy": "Sciser",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
@@ -68,6 +89,26 @@
               ]
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Sciser",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Sciser",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          },
           "locks": [
             {
               "name": "Crab Shaft Green Lock (to Aqueduct)",
@@ -89,6 +130,17 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x001a4bc",
           "doorEnvironments": [{"physics": "water"}],
+          "gModeImmobile": {
+            "requires": [
+              {"ammo": { "type": "Super", "count": 1 }},
+              {"enemyDamage": {
+                "enemy": "Sciser",
+                "type": "contact",
+                "hits": 1
+              }}
+            ],
+            "devNote": "Requires entering on either side of the doorway, but not in the center."
+          },
           "devNote": "No spawnAt and no junction below, because the door can be entered with just a crouch jump"
         }
       ],
@@ -108,10 +160,32 @@
           "homeNodes": [ 3 ]
         }
       ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Crab Shaft Ice Only Crab Climb",
+          "note": "Climb the frozen crabs Suitless without the help of SpringBall jumps or HiJump."
+        }
+      ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Sciser Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "PowerBomb"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -133,7 +207,8 @@
                     {"or": [
                       "HiJump",
                       "canWalljump",
-                      "h_canFly"
+                      "h_canFly",
+                      "canUseFrozenEnemies"
                     ]}
                   ]
                 },
@@ -151,20 +226,44 @@
                   "name": "Shinespark",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "h_canNavigateUnderwater",
                     {"canComeInCharged": {
                       "fromNode": 1,
                       "framesRemaining": 60,
                       "shinesparkFrames": 40
-                    }}
-                  ]
+                    }},
+                    {"or": [
+                      "canCrouchJump",
+                      "Gravity",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canTrickyUseFrozenEnemies",
+                        {"ammo": { "type": "Super", "count": 1 }}
+                      ]}
+                    ]}
+                  ],
+                  "devNote": "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room."
                 },
                 {
                   "name": "Crab Shaft Crab Climb",
-                  "notable": false,
+                  "notable": true,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "canTrickyUseFrozenEnemies"
+                    "h_canNavigateUnderwater",
+                    "canTrickyUseFrozenEnemies",
+                    "canCarefulJump",
+                    {"or": [
+                      "canCrouchJump",
+                      "Gravity",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      {"ammo": { "type": "Super", "count": 1 }}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Crab Shaft Ice Only Crab Climb",
+                  "note": [
+                    "Freeze a crab multiple times to climb the upper Crab Shaft.",
+                    "It may be easier to climb the left shaft by knocking the crab off the wall, or by bringing up a crab from the lower area."
                   ]
                 },
                 {
@@ -174,8 +273,7 @@
                     "canSuitlessMaridia",
                     "HiJump",
                     "canUseFrozenEnemies"
-                  ],
-                  "note": "Differs from crab climb in that the crabs only serve as one-time stepping stone between platforms."
+                  ]
                 },
                 {
                   "name": "Frozen SpringBall",
@@ -184,8 +282,7 @@
                     "canSuitlessMaridia",
                     "canSpringBallJumpMidAir",
                     "canUseFrozenEnemies"
-                  ],
-                  "note": "Differs from crab climb in that the crabs only serve as one-time stepping stone between platforms."
+                  ]
                 },
                 {
                   "name": "Dual Jump Assist",
@@ -225,7 +322,17 @@
                       "usedTiles": 13,
                       "inRoomPath": [ 1, 3 ],
                       "physics": ["air"]
-                    }}
+                    }},
+                    {"or": [
+                      "canCrouchJump",
+                      "Gravity",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canTrickyUseFrozenEnemies",
+                        {"ammo": { "type": "Super", "count": 1 }}
+                      ]}
+                    ]}
                   ],
                   "note": "Requires at least 13 tiles in the adjacent room."
                 },
@@ -248,6 +355,53 @@
                     "Requires running a very precise distance of approximately 7.5 tiles in the adjacent room, to hit a peak in the speed / height relationship.",
                     "The spring ball jump is used after landing near the top, to get to the platform below the door."
                   ]
+                },
+                {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    "canStutterWaterShineCharge",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 2,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 80
+                    }},
+                    "canShinechargeMovementComplex",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 39,
+                      "openEnd": 2
+                    }},
+                    {"or": [
+                      "canCrouchJump",
+                      "Gravity",
+                      "HiJump",
+                      "canSpringBallJumpMidAir",
+                      {"and": [
+                        "canTrickyUseFrozenEnemies",
+                        {"ammo": { "type": "Super", "count": 1 }}
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "After storing the shinecharge, spin jump back to the left and spark aligned against the right side of the left shaft.",
+                    "At the top of the room, hold right in order to land on the platform below the door."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
                 }
               ]
             }
@@ -265,13 +419,31 @@
                   "requires": ["Gravity"]
                 },
                 {
-                  "name": "Jump Assist",
+                  "name": "Suitless HiJump",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
+                    "HiJump",
                     {"or": [
+                      "h_canCrouchJumpDownGrab",
                       "canSpringBallJumpMidAir",
-                      "HiJump"
+                      "canUseFrozenEnemies"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Suitless SpringBall",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canSpringBallJumpMidAir",
+                    {"or": [
+                      {"and": [
+                        "canCrouchJump",
+                        "canTrickyJump"
+                      ]},
+                      "HiJump",
+                      "canUseFrozenEnemies"
                     ]}
                   ]
                 },
@@ -280,23 +452,20 @@
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "Super",
-                    {"ammo": {
-                      "type": "Super",
-                      "count": 1
-                    }},
-                    "canTrickyUseFrozenEnemies"
+                    "canTrickyUseFrozenEnemies",
+                    {"ammo": {"type": "Super","count": 1}}
                   ],
                   "note": "Involves a Super to freeze a crab in midair."
                 },
                 {
                   "name": "Crab Shaft Bottom Frozen Crab Steps",
-                  "notable": false,
+                  "notable": true,
                   "requires": [
                     "canSuitlessMaridia",
                     "canTrickyUseFrozenEnemies",
                     "canCrouchJump"
                   ],
+                  "reusableRoomwideNotable": "Crab Shaft Ice Only Crab Climb",
                   "note": [
                     "Freeze a crab below the opening, and another one at the ceiling on the lip of the entrance.",
                     "Stand on a frozen crab and crouch jump to the one on the ceiling.",
@@ -305,16 +474,33 @@
                 },
                 {
                   "name": "Crab Shaft Bottom Repetitive Walljumps",
-                  "notable": false,
+                  "notable": true,
                   "requires": [
                     "canSunkenTileWideWallClimb",
                     "canUseFrozenEnemies",
                     "canStationarySpinJump"
                   ],
+                  "reusableRoomwideNotable": "Crab Shaft Ice Only Crab Climb",
                   "note": [
                     "Similar to naked watering hole escape.",
                     "Freeze a crab under the gap above, do a stationary spinjump facing right, then walljump until you're up.",
                     "Another frozen crab can help complete the way up."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Sciser Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [2],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "PowerBomb"]}
                   ]
                 }
               ]
@@ -442,6 +628,18 @@
               ],
               "openEnd": 1
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Yard",
+                  "notable": false,
+                  "requires": [ "h_canUsePowerBombs" ],
+                  "devNote": "FIXME There is currently no way to represent coming in from the top and bringing a Snail with Samus."
+                }
+              ]
+            }
           ]
         },
         {
@@ -454,7 +652,7 @@
           "runways": [
             {
               "name": "Base Runway - Aqueduct Bottom Left Door (to Save)",
-              "length": 33,
+              "length": 45,
               "strats": [
                 {
                   "name": "Base",
@@ -465,6 +663,26 @@
               "openEnd": 1
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Yard",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Yard",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          },
           "locks": [
             {
               "name": "Aqueduct Save Red Lock (to Save)",
@@ -527,7 +745,28 @@
                 }
               ]
             }
-          ]
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Yard",
+                  "notable": false,
+                  "requires": [],
+                  "devNote": "Requires no items or tech if you step on a Snail - canUseEnemies is necessary for G-Mode Setup."
+                }
+              ]
+            }
+          ],
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Yard",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 6,
@@ -536,7 +775,17 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x001a72c",
           "doorEnvironments": [{"physics": "water"}],
-          "spawnAt": 9
+          "spawnAt": 9,
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Yard",
+                "type": "contact",
+                "hits": 1
+              }}
+            ],
+            "devNote": "Requires entry on either side of the doorway, but not the center."
+          }
         },
         {
           "id": 7,
@@ -593,6 +842,28 @@
           "homeNodes": [ 4 ]
         }
       ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Aqueduct Bootless Suitless Snail Climb",
+          "note": "Snail Climb without movement items by better coordinating the movements of both the snail and Samus."
+        },
+        {
+          "name": "Aqueduct Snail Clip",
+          "note": [
+            "Jump on the Snail when it is at a precise location, and then crouch jump through the ceiling and jump again, without moving between jumps.",
+            "The Snail's positioning is very precise, but it is more lenient with Morph and an X-Ray Turn Around. X-Ray can also be useful for helping position the Snail.",
+            "This clip can be used to get to the middle left door and the items in the top right of the room."
+          ]
+        },
+        {
+          "name": "Aqueduct G-Mode Overload PLMs - PB the Items",
+          "note": [
+            "PLMs can be overloaded in direct G-Mode with a single Power Bomb if both items are still there and 2 PBs if only one item is.",
+            "There is a row of tiles that works, just above and to the left of the right door.",
+            "The row is one tile higher than the horizontal pipe that is part of the door frame, spanning from the left to one tile away from the right wall."
+          ]
+        }
+      ],
       "links": [
         {
           "from": 1,
@@ -603,13 +874,64 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires":[ "h_canUsePowerBombs" ]
-                    }
-                  ]
+                  "requires": [
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "G-Mode Morph PB",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"ammo": { "type": "PowerBomb", "count": 1 }}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "note": "Place a PB then exit G-Mode."
+                }
+              ]
+            },
+            {
+              "id": 7,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Overload PLMs - Bomb the PB Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Bombs",
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump",
+                        "canSpringBallJumpMidAir",
+                        "canSnailClimb"
+                      ]},
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump",
+                        "canConsecutiveWalljump",
+                        "canPreciseWalljump",
+                        "canSnailClimb"
+                      ]}
+                    ]}
+                  ],
+                  "note": "Bomb the PB blocks below to overload PLMs, then go up through the crumble blocks to escape, then climb through the Speed blocks."
                 }
               ]
             },
@@ -618,10 +940,10 @@
               "strats": [
                 {
                   "name": "Aqueduct Left-Side X-Ray Climb (Upper)",
-                  "notable": false,
+                  "notable": true,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     {"resetRoom":{
                       "nodes": [1],
                       "mustStayPut": true
@@ -632,7 +954,43 @@
                       "overrideRunwayRequirements": true,
                       "useFrames": 200
                     }}
+                  ],
+                  "note": [
+                    "Climb up 1 screen.",
+                    "Aim to end this XRay climb when Samus is visually near but not above the top of the left side door.",
+                    "Fall out of the wall by turning to the right, from a crouch if possible.",
+                    "This XRay climb has a window of 4 crouches, but with a way to break bomb blocks it can be ended earlier."
                   ]
+                },
+                {
+                  "name": "G-Mode Morph Overload PLMs - Bomb the PB Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Bombs",
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump",
+                        "canSpringBallJumpMidAir"
+                      ]},
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump",
+                        "canConsecutiveWalljump",
+                        "canPreciseWalljump"
+                      ]}
+                    ]}
+                  ],
+                  "note": "Bomb the PB blocks below to overload PLMs, then go up through the crumble blocks to escape."
                 }
               ]
             }
@@ -647,20 +1005,33 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
-                  ]
-                },
-                {
-                  "name": "Snail Clip",
-                  "notable": false,
                   "requires": [
                     "Gravity",
-                    "canSnailClip"
+                    {"or": [
+                      "canWalljump",
+                      "h_canFly",
+                      "SpeedBooster",
+                      "canSpringBallJumpMidAir",
+                      "canUseEnemies"
+                    ]},
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Snail Clip to the Left Middle Door",
+                  "notable": true,
+                  "requires": [
+                    "h_canNonTrivialCeilingClip",
+                    "Gravity"
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct Snail Clip",
+                  "note": [
+                    "Jump on the Snail when it is at a precise location, and then crouch jump through the ceiling and jump again, without moving between jumps.",
+                    "The Snail's positioning is very precise, but it is more lenient with Morph and an X-Ray Turn Around. X-Ray can also be useful for helping position the Snail."
                   ]
                 },
                 {
@@ -668,7 +1039,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     {"resetRoom":{
                       "nodes": [2],
                       "mustStayPut": true
@@ -679,7 +1050,8 @@
                       "overrideRunwayRequirements": true,
                       "useFrames": 200
                     }}
-                  ]
+                  ],
+                  "note": "Climb up 1 screen."
                 },
                 {
                   "name": "Suitless Jump Assist",
@@ -687,27 +1059,102 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "canSpringBallJumpMidAir"
+                    "canSpringBallJumpMidAir",
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
-                  "name": "Suitless Snail Climb",
+                  "name": "Suitless Sunken Dual Wall Climb",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canSnailClimb"
+                    "HiJump",
+                    "canConsecutiveWalljump",
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": [ "h_canUsePowerBombs" ]
-                    }
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Snail Jump",
+                  "notable": false,
+                  "requires": [
+                    "canUseEnemies",
+                    {"or": [
+                      "Gravity",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump"
+                      ]}
+                    ]},
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "devNote": "HJBless SpringBall jumps require less obvious snail positioning."
+                },
+                {
+                  "name": "Aqueduct Bootless Suitless Snail Climb (Crab Shaft Door)",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb",
+                    {"or": [
+                      {"obstaclesCleared": ["A"]},
+                      "h_canUsePowerBombs"
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "reusableRoomwideNotable": "Aqueduct Bootless Suitless Snail Climb",
+                  "note": [
+                    "Stop the snail when it is on the lower part of the overhang (hug the snail to gain extra jump height).",
+                    "Climb it by waiting until it is just about to become active to jump."
+                  ]
+                },
+                {
+                  "name": "G-Mode Overload PLMs with Grapple",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    "Grapple",
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb"
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "h_canArtificialMorphIBJ",
+                        "Gravity"
+                      ]},
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"and": [
+                        "Bombs",
+                        "HiJump",
+                        "SpringBall",
+                        "canSnailClimb"
+                      ]}
+                    ]}
                   ]
                 }
               ]
@@ -729,7 +1176,24 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "canWalljump",
+                      "h_canFly",
+                      "SpeedBooster",
+                      "Grapple",
+                      {"and": [
+                        "HiJump",
+                        "canSpringBallJumpMidAir"
+                      ]},
+                      {"and": [
+                        "HiJump",
+                        "canUseEnemies"
+                      ]}
+                    ]}
+                  ],
+                  "devNote": "A very precise CrouchJumpDownGrab, or springball jumping to the snail is closer to canSnailClimb."
                 },
                 {
                   "name": "Grapple Jump",
@@ -743,8 +1207,48 @@
                   "name": "Snail Climb",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "canSnailClimb",
+                    "h_canUseSpringBall",
+                    {"or": [
+                      "Gravity",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Aqueduct Bootless Suitless Snail Climb (Right Door)",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
                     "canSnailClimb"
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct Bootless Suitless Snail Climb",
+                  "note": [
+                    "Stop the snail when it is on the lower part of the overhang (hug the snail to gain extra jump height).",
+                    "Climb it by waiting until it is just about to become active to jump."
+                  ]
+                },
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canWaterShineCharge",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 37,
+                      "excessShinesparkFrames": 3,
+                      "openEnd": 2
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 45
+                    }}
                   ]
                 }
               ]
@@ -760,9 +1264,166 @@
                     {"canShineCharge": {
                       "usedTiles": 33,
                       "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 7,
                       "openEnd": 2
                     }}
                   ]
+                },
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canWaterShineCharge",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 7,
+                      "openEnd": 2
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 45
+                    }}
+                  ]
+                },
+                {
+                  "name": "G-Mode Overload PLMs with Grapple",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    "Grapple",
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb",
+                    {"or":[
+                      "Gravity",
+                      "h_canMaxHeightSpringBallJump",
+                      {"and":[
+                        "HiJump",
+                        {"or":[
+                          "canCrouchJump",
+                          "canDownGrab"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph Overload PLMs - Bomb the Speed Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
+                },
+                {
+                  "name": "G-Mode Overload PLMs - Bomb the Speed Blocks",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    "h_canUseMorphBombs",
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb",
+                    {"or":[
+                      "Gravity",
+                      "h_canMaxHeightSpringBallJump",
+                      {"and":[
+                        "HiJump",
+                        {"or":[
+                          "canCrouchJump",
+                          "canDownGrab"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "G-Mode Overload PLMs - PB the Items (To the Items)",
+                  "notable": true,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "direct",
+                      "artificialMorph": false
+                    }},
+                    {"or":[
+                      {"itemNotCollectedAtNode": 7},
+                      {"itemNotCollectedAtNode": 8}
+                    ]},
+                    "Morph",
+                    {"ammo": { "type": "PowerBomb", "count": 2 }},
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb",
+                    {"or":[
+                      "Gravity",
+                      "h_canMaxHeightSpringBallJump",
+                      {"and":[
+                        "HiJump",
+                        {"or":[
+                          "canCrouchJump",
+                          "canDownGrab"
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct G-Mode Overload PLMs - PB the Items",
+                  "note": [
+                    "PLMs can be overloaded in direct G-Mode with a single Power Bomb if both items are still there and 2 PBs if only one item is.",
+                    "There is a row of tiles that works, just above and to the left of the right door.",
+                    "The row is one tile higher than the horizontal pipe that is part of the door frame, spanning from the left to one tile away from the right wall."
+                  ],
+                  "devNote": "This does not include canRiskPermanentLossOfAccess, as it is only worth doing this strat if the items are there."
+                },
+                {
+                  "name": "G-Mode Morph Overload PLMs - PB the Items (To the Items)",
+                  "notable": true,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2,5,6],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or":[
+                      {"itemNotCollectedAtNode": 7},
+                      {"itemNotCollectedAtNode": 8}
+                    ]},
+                    "SpringBall",
+                    {"ammo": { "type": "PowerBomb", "count": 2 }},
+                    "h_canNavigateUnderwater",
+                    "canSnailClimb",
+                    {"or":[
+                      "Gravity",
+                      {"and":[
+                        "HiJump",
+                        {"or":[
+                          "canCrouchJump",
+                          "canDownGrab"
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct G-Mode Overload PLMs - PB the Items",
+                  "note": [
+                    "PLMs can be overloaded in direct G-Mode with a single Power Bomb if both items are still there and 2 PBs if only one item is.",
+                    "There is a row of tiles that works, just above and to the left of the right door.",
+                    "The row is one tile higher than the horizontal pipe that is part of the door frame, spanning from the left to one tile away from the right wall."
+                  ],
+                  "devNote": "This does not include canRiskPermanentLossOfAccess, as it is only worth doing this strat if the items are there."
                 }
               ],
               "note": "This direct link is just for the shinespark"
@@ -775,7 +1436,11 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
-                    "canConsecutiveWalljump"
+                    {"or": [
+                      "SpaceJump",
+                      "Grapple",
+                      "canConsecutiveWalljump"
+                    ]}
                   ]
                 },
                 {
@@ -790,8 +1455,63 @@
                   "name": "Snail Climb",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
+                    "canSnailClimb",
+                    "h_canUseSpringBall",
+                    {"or": [
+                      "Gravity",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump"
+                      ]}
+                    ]}
+                  ],
+                  "note": "Watch out for snails coming from above, or aggressive snails from below, who will either block or attack Samus."
+                },
+                {
+                  "name": "Aqueduct Bootless Suitless Snail Climb (Top Door)",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
                     "canSnailClimb"
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct Bootless Suitless Snail Climb",
+                  "note": [
+                    "Stop the snail when it is on the lower part of the overhang (hug the snail to gain extra jump height).",
+                    "Climb it by waiting until it is just about to become active to jump.",
+                    "Watch out for snails coming from above, or aggressive snails from below, who will either block or attack Samus."
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 37,
+                      "excessShinesparkFrames": 3,
+                      "openEnd": 2
+                    }}
+                  ]
+                },
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canWaterShineCharge",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 37,
+                      "excessShinesparkFrames": 3,
+                      "openEnd": 2
+                    }},
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 0.5,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 45
+                    }}
                   ]
                 }
               ]
@@ -882,11 +1602,9 @@
                     {"or": [
                       {"and": [
                         "HiJump",
-                        {"or": [
-                          "h_canUseSpringBall",
-                          "canPlayInSand"
-                        ]}
+                        "h_canUseSpringBall"
                       ]},
+                      "canPlayInSand",
                       {"and": [
                         "canShinechargeMovementComplex",
                         {"canComeInCharged": {
@@ -899,25 +1617,6 @@
                       ]}
                     ]}
                   ]
-                },
-                {
-                  "name": "Aqueduct Snail Walk",
-                  "notable": true,
-                  "requires": [
-                    "h_canNavigateUnderwater",
-                    {"enemyDamage": {
-                      "enemy": "Yard",
-                      "type": "contact",
-                      "hits": 1
-                    }}
-                  ],
-                  "note": [
-                    "Ride a snail across the sand leading to East Aqueduct Quicksand Room.",
-                    "First enrage the lowest snail and allow it to hit Samus so it turns around.",
-                    "Then let it reach the sand before climbing on top.",
-                    "Stand on the front half of the snail and it will move forward a small amount",
-                    "The Yard will be hard to see, but there is a pixel that sticks out of the sand whenever it moves."
-                  ]
                 }
               ]
             }
@@ -926,6 +1625,43 @@
         {
           "from": 5,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [5],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        {"ammo": {"type": "PowerBomb","count": 1}},
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump",
+                          "canUseEnemies"
+                        ]}
+                      ]},
+                      {"and": [
+                        "Bombs",
+                        "HiJump",
+                        "SpringBall",
+                        "canSnailClimb"
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -940,11 +1676,16 @@
               "id": 7,
               "strats": [
                 {
-                  "name": "Snail Clip",
-                  "notable": false,
+                  "name": "Snail Clip to the Items",
+                  "notable": true,
                   "requires": [
-                    "Gravity",
-                    "canSnailClip"
+                    "h_canNonTrivialCeilingClip",
+                    "Gravity"
+                  ],
+                  "reusableRoomwideNotable": "Aqueduct Snail Clip",
+                  "note": [
+                    "Jump on the Snail when it is at a precise location, and then crouch jump through the ceiling and jump again, without moving between jumps.",
+                    "The Snail's positioning is very precise, but it is more lenient with Morph and an X-Ray Turn Around. X-Ray can also be useful for helping position the Snail."
                   ]
                 },
                 {
@@ -968,19 +1709,32 @@
                   "name": "Aqueduct Right-Side X-Ray Climb",
                   "notable": false,
                   "requires": [
-                    "canLeftFacingDoorXRayClimb",
+                    "h_canRightDoorXRayClimb",
                     { "resetRoom": {
                       "nodes": [5],
                       "mustStayPut": true
                     }},
-                    {"adjacentRunway": {
-                      "fromNode": 5,
-                      "usedTiles": 0.5,
-                      "overrideRunwayRequirements": true,
-                      "physics": ["normal"],
-                      "useFrames": 200
-                    }}
-                  ]
+                    {"or": [
+                      {"adjacentRunway": {
+                        "fromNode": 5,
+                        "usedTiles": 0.5,
+                        "overrideRunwayRequirements": true,
+                        "physics": ["normal"],
+                        "useFrames": 200
+                      }},
+                      {"and": [
+                        "h_canRightDoorXRayClimbFromWater",
+                        {"adjacentRunway": {
+                          "fromNode": 5,
+                          "usedTiles": 0.5,
+                          "overrideRunwayRequirements": true,
+                          "physics": ["water"],
+                          "useFrames": 200
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": "Climb up 1 screen."
                 }
               ]
             }
@@ -989,6 +1743,32 @@
         {
           "from": 6,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [6],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"ammo": {"type": "PowerBomb","count": 1}},
+                      {"and": [
+                        "Bombs",
+                        {"or": [
+                          "Gravity",
+                          "SpringBall"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 9,
               "strats": [
@@ -1062,6 +1842,23 @@
                     "canSuitlessMaridia",
                     "h_canBombThings"
                   ]
+                },
+                {
+                  "name": "Aqueduct Snail Stuck Moonfall",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canEnemyStuckMoonfall",
+                    "canBePatient",
+                    {"enemyDamage": {"enemy": "Yard", "type": "contact", "hits": 1}}
+                  ],
+                  "note": [
+                    "Use two snails to perform an 'Enemy Stuck Moonfall' to bypass the bomb blocks above the middle left door of Aqueduct.",
+                    "Position one snail on the above door shell, and the second above the corner of pipe below",
+                    "Samus will clip through the lower snail, taking damage, then continue through a segment of pipe where the crumble blocks can be reached.",
+                    "Facing both snails during the moonfall while positioning Samus for the clip can be precise",
+                    "Depending on the exact heights of the snails, it may be necessary to pose change while clipping."
+                  ]
                 }
               ]
             },
@@ -1074,6 +1871,73 @@
                   "requires": []
                 }
               ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Grapple",
+                  "notable": false,
+                  "requires": [ "Grapple" ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"canComeInCharged": {
+                      "fromNode": 6,
+                      "framesRemaining": 35,
+                      "shinesparkFrames": 78,
+                      "excessShinesparkFrames": 16,
+                      "inRoomPath": [6,9]
+                    }}
+                  ]
+                },
+                {
+                  "name": "Suitless Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    {"canComeInCharged": {
+                      "fromNode": 6,
+                      "framesRemaining": 55,
+                      "shinesparkFrames": 99,
+                      "excessShinesparkFrames": 29,
+                      "inRoomPath": [6,9]
+                    }}
+                  ]
+                },
+                {
+                  "name": "Flatley Jump",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canFlatleyJump",
+                    "HiJump"
+                  ]
+                },
+                {
+                  "name": "Air Ball",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canLateralMidAirMorph",
+                    "canCarefulJump"
+                  ]
+                },
+                {
+                  "name": "Stationary Lateral Midair Spring Ball",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canStationaryLateralMidAirMorph",
+                    "canSpringBallJumpMidAir",
+                    "canResetFallSpeed"
+                  ]
+                }
+              ],
+              "devNote": "This link is only for strats that can't go from 9 -> 2 -> 5."
             },
             {
               "id": 6,
@@ -1176,6 +2040,29 @@
                 }
               ]
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {"or": [
+                      {"and": [
+                        "h_canCrouchJumpDownGrab",
+                        "canCarefulJump"
+                      ]},
+                      "HiJump",
+                      "Gravity",
+                      "canSpringBallJumpMidAir"
+                    ]}
+                  ]
+                }
+              ]
+            }
           ]
         }
       ],
@@ -1218,15 +2105,10 @@
       ],
       "reusableRoomwideNotable": [
         {
-          "name": "Botwoon Hallway Puyo Ice Clip",
-          "note": "Herding the rightmost puyo into the ice clip position. It will become uncooperative after a few tries"
-        },
-        {
-          "name": "Botwoon Hallway Suitless Crystal Flash Clip",
+          "name": "Botwoon Hallway Mochtroid Ice Clip",
           "note": [
-            "Find the crumble blocks and crystal flash mid-air, just below them.",
-            "Hold down as the CF ends to break the non-respawning crumble blocks.",
-            "This is for the much harder version, without Gravity and Morph Bombs."
+            "Crouch under the crumble blocks while aiming upward, using both angle buttons then freeze the Mochtroid while it is on Samus.",
+            "Jump onto the Mochtroid by quickly pressing down after jumping, when on it, press up to stand then jump through the ceiling."
           ]
         }
       ],
@@ -1234,6 +2116,33 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Mochtroid Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"or": [
+                      "canDodgeWhileShooting",
+                      "Wave",
+                      "Spazer",
+                      "Plasma",
+                      "Grapple",
+                      {"and": [
+                        "ScrewAttack",
+                        "Gravity"
+                      ]}
+                    ]},
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -1246,51 +2155,46 @@
                   ]
                 },
                 {
-                  "name": "Botwoon Hallway Puyo Ice Clip (Left to Right)",
+                  "name": "Botwoon Hallway Mochtroid Clip (Left to Right)",
                   "notable": true,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canPuyoIceClip"
+                    "canCeilingClip",
+                    "canUseFrozenEnemies"
                   ],
-                  "reusableRoomwideNotable": "Botwoon Hallway Puyo Ice Clip"
-                },
-                {
-                  "name": "Botwoon Mochtroid Clip (Left to Right)",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateUnderwater",
-                    "canMochtroidIceClip"
-                  ],
-                  "note": "With no jump assists, use a frozen Mochtroid as a platform to get to the ledge above the door."
-                },
-                {
-                  "name": "Botwoon CF Clip (Left to Right)",
-                  "notable": false,
-                  "requires": [
-                    "h_canCrystalFlashClip",
-                    "Gravity",
-                    "Bombs"
-                  ],
+                  "reusableRoomwideNotable": "Botwoon Hallway Mochtroid Ice Clip",
                   "note": [
-                    "Find the crumble blocks and crystal flash mid-air, just below them.",
-                    "They are on the far right of the ceiling of the bottom right pathway.",
-                    "Hold down as the CF ends to break the non-respawning crumble blocks.",
-                    "The vertical positioning can be setup using Gravity and Morph Bombs."
+                    "Crouch under the crumble blocks while aiming upward, using both angle buttons then freeze the Mochtroid while it is on Samus.",
+                    "Jump onto the Mochtroid by quickly pressing down after jumping, when on it, press up to stand then jump through the ceiling.",
+                    "With no jump assists, use a frozen Mochtroid as a platform to get to the ledge above the door."
                   ]
                 },
                 {
-                  "name": "Botwoon Hallway Suitless CF Clip (Left to Right)",
-                  "notable": true,
+                  "name": "CF Clip with Bombs (Left to Right)",
+                  "notable": false,
                   "requires": [
-                    "h_canCrystalFlashClip",
-                    "canSuitlessMaridia"
+                    "h_canBombIntoCrystalFlashClip",
+                    "Gravity"
                   ],
-                  "reusableRoomwideNotable": "Botwoon Hallway Suitless Crystal Flash Clip",
                   "note": [
                     "Find the crumble blocks and crystal flash mid-air, just below them.",
                     "They are on the far right of the ceiling of the bottom right pathway.",
                     "Hold down as the CF ends to break the non-respawning crumble blocks.",
-                    "This is for the much harder version, without Gravity and Morph Bombs."
+                    "The vertical positioning can be setup using Gravity and Bombs."
+                  ]
+                },
+                {
+                  "name": "Suitless CF Clip (Left to Right)",
+                  "notable": false,
+                  "requires": [
+                    "h_canJumpIntoCrystalFlashClip",
+                    "canSuitlessMaridia"
+                  ],
+                  "note": [
+                    "Find the crumble blocks and crystal flash mid-air, just below them.",
+                    "They are on the far right of the ceiling of the bottom right pathway.",
+                    "Hold down as the CF ends to break the non-respawning crumble blocks.",
+                    "This is for the much harder version, without Gravity and Bombs."
                   ]
                 }
               ]
@@ -1312,20 +2216,12 @@
                   ]
                 },
                 {
-                  "name": "Botwoon Hallway Puyo Ice Clip (Right to Left)",
+                  "name": "Botwoon Hallway Mochtroid Clip (Right to Left)",
                   "notable": true,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canPuyoIceClip"
-                  ],
-                  "reusableRoomwideNotable": "Botwoon Hallway Puyo Ice Clip"
-                },
-                {
-                  "name": "Botwoon Mochtroid Clip (Right to Left)",
-                  "notable": false,
-                  "requires": [
-                    "h_canNavigateUnderwater",
-                    "canMochtroidIceClip",
+                    "canCeilingClip",
+                    "canUseFrozenEnemies",
                     {"or": [
                       {"and": [
                         "h_canCrouchJumpDownGrab",
@@ -1336,36 +2232,39 @@
                       "canSpringBallJumpMidAir"
                     ]}
                   ],
-                  "note": "With no jump assists, a precise crouch jump and down grab is required to get to the Mochtroid." 
-                },
-                {
-                  "name": "Botwoon CF Clip (Right to Left)",
-                  "notable": false,
-                  "requires": [
-                    "h_canCrystalFlashClip",
-                    "Gravity",
-                    "Bombs"
-                  ],
+                  "reusableRoomwideNotable": "Botwoon Hallway Mochtroid Ice Clip",
                   "note": [
-                    "Find the crumble blocks and crystal flash mid-air, just below them.",
-                    "They are on the far left of the ceiling of the middle left pathway.",
-                    "Hold down as the CF ends to break the non-respawning crumble blocks.",
-                    "The vertical positioning can be setup using Gravity and Morph Bombs."
+                    "Crouch under the crumble blocks while aiming upward, using both angle buttons then freeze the Mochtroid while it is on Samus.",
+                    "Jump onto the Mochtroid by quickly pressing down after jumping, when on it, press up to stand then jump through the ceiling.",
+                    "With no jump assists, use a frozen Mochtroid as a platform to get to the ledge above the door."
                   ]
                 },
                 {
-                  "name": "Botwoon Hallway Suitless CF Clip (Right to Left)",
-                  "notable": true,
+                  "name": "CF Clip with Bombs (Right to Left)",
+                  "notable": false,
                   "requires": [
-                    "h_canCrystalFlashClip",
-                    "canSuitlessMaridia"
+                    "h_canBombIntoCrystalFlashClip",
+                    "Gravity"
                   ],
-                  "reusableRoomwideNotable": "Botwoon Hallway Suitless Crystal Flash Clip",
                   "note": [
                     "Find the crumble blocks and crystal flash mid-air, just below them.",
                     "They are on the far left of the ceiling of the middle left pathway.",
                     "Hold down as the CF ends to break the non-respawning crumble blocks.",
-                    "This is for the much harder version, without Gravity and Morph Bombs."
+                    "The vertical positioning can be setup using Gravity and Bombs."
+                  ]
+                },
+                {
+                  "name": "Suitless CF Clip (Right to Left)",
+                  "notable": false,
+                  "requires": [
+                    "h_canJumpIntoCrystalFlashClip",
+                    "canSuitlessMaridia"
+                  ],
+                  "note": [
+                    "Find the crumble blocks and crystal flash mid-air, just below them.",
+                    "They are on the far left of the ceiling of the middle left pathway.",
+                    "Hold down as the CF ends to break the non-respawning crumble blocks.",
+                    "This is for the much harder version, without Gravity and Bombs."
                   ]
                 }
               ]
@@ -1489,7 +2388,7 @@
           "nodeSubType": "boss",
           "locks": [
             {
-              "name": "Back-Side Botwoon Fight: Charge, Wave, Gravity",
+              "name": "Back-Side Botwoon Fight",
               "lockType": "bossFight",
               "unlockStrats": [
                 {
@@ -1518,6 +2417,91 @@
                   "note": [
                     "Even when suitless, it's possible to stand far enough that the acid attack doesn't spawn.",
                     "Botwoon still gets hit. So there's a safe way to take no damage."
+                  ]
+                },
+                {
+                  "name": "Back-Side Botwoon Microwave",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "Charge",
+                    "Plasma",
+                    "canXRayWaitForIFrames"
+                  ],
+                  "reusableRoomwideNotable": "Back-Side Botwoon Magic Pixel Beam Fight",
+                  "note": [
+                    "Stand on the appropriate pixel for shooting diagonally through the wall and use the microwave trick to defeat Botwoon.",
+                    "Using angle up, it is where Samus' front foot is on the seam in the floor.",
+                    "There is not proper spacing for landing an angle down shot and xraying.",
+                    "Waiting for Botwoon to peak their head through the wall works too but is less safe."
+                  ]
+                },
+                {
+                  "name": "Back-Side Botwoon Magic Pixel",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {
+                      "enemyKill": {
+                        "enemies": [ [ "Reverse Botwoon 1" ], [ "Reverse Botwoon 2" ] ],
+                        "explicitWeapons": [ 
+                          "Charge+Plasma", 
+                          "Charge+Ice+Spazer"
+                       ]
+                      }
+                    }
+                  ],
+                  "reusableRoomwideNotable": "Back-Side Botwoon Magic Pixel Beam Fight",
+                  "note": [
+                    "A charge beam shot will pass right through the dividing wall if fired from the correct 2pixel window.",
+                    "Using angle down the spot is where Samus' front toe touches the wall.",
+                    "Using angle up, it is where Samus' front foot is on the seam in the floor."
+                  ]
+                },
+                {
+                  "name": "Back-Side Botwoon Plasma Shield Microwave",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "Charge",
+                    "Plasma",
+                    "canXRayWaitForIFrames",
+                    {"ammo": {"type": "PowerBomb","count": 2}}
+                  ],
+                  "note": [
+                    "Wait for Botwoon to spawn then use a Plasma Special Beam Attack.",
+                    "Use XRay to slow time and watch for a particle to overlap Botwoons head, then proceed to Microwave."
+                  ],
+                  "devNote": "Killing in 1 SBA takes some luck."
+                },
+                {
+                  "name": "Back-Side Botwoon Plasma Shield Fight",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    {
+                      "enemyKill": {
+                        "enemies": [ [ "Reverse Botwoon 1" ], ["Reverse Botwoon 2"] ],
+                        "explicitWeapons": [ "Plasma Shield" ]
+                      }
+                    }
+                  ],
+                  "note": "Stand near the dividing wall and unleash the Plasma Special Beam Attack!"
+                },
+                {
+                  "name": "Back-Side Botwoon Super Only Fight",
+                  "notable": true,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canBeVeryPatient",
+                    {"enemyKill": {
+                      "enemies": [ [ "Reverse Botwoon 1" ], [ "Reverse Botwoon 2" ] ],
+                      "explicitWeapons": [ "Super" ]
+                    }}
+                  ],
+                  "note": [
+                    "Wait for the one pattern (bottom->right) where Botwoon's head passes through the dividing barrier briefly and fire a Super Missile.",
+                    "This takes a long time, averaging one super per minute."
                   ]
                 }
               ]
@@ -1567,7 +2551,23 @@
           "groupName": "Botwoon 2",
           "enemyName": "Botwoon 2",
           "quantity": 1,
+          "homeNodes": [ 5 ],
+          "stopSpawn": [ "f_DefeatedBotwoon" ]
+        },
+        {
+          "id": "e3",
+          "groupName": "Reverse Botwoon 1",
+          "enemyName": "Reverse Botwoon 1",
+          "quantity": 1,
           "homeNodes": [ 4 ],
+          "stopSpawn": [ "f_DefeatedBotwoon" ]
+        },
+        {
+          "id": "e4",
+          "groupName": "Reverse Botwoon 2",
+          "enemyName": "Reverse Botwoon 2",
+          "quantity": 1,
+          "homeNodes": [4],
           "stopSpawn": [ "f_DefeatedBotwoon" ]
         }
       ],
@@ -1575,6 +2575,14 @@
         {
           "name": "Back-Side Botwoon Fight with Charge and Wave",
           "note": "Use Charge and Wave to kill Botwoon from the right, through the wall."
+        },
+        {
+          "name": "Back-Side Botwoon Magic Pixel Beam Fight",
+          "note": [
+            "Stand on a particular two pixels to the right of the dividing wall and fight Botwoon using charge beam shots.",
+            "Using angle down the spot is where Samus' front toe touches the wall.",
+            "Using angle up, it is where Samus' front foot is on the seam in the floor."
+          ]
         }
       ],
       "links": [
@@ -1641,6 +2649,10 @@
                         [ "Botwoon 1" ]
                       ]
                     }}
+                  ],
+                  "note": [
+                    "Fight Botwoon without Gravity suit.",
+                    "The left corner can be used to avoid most attacks and may be worth using even in the opening of the fight for safety."
                   ]
                 }
               ]
@@ -1744,6 +2756,17 @@
                 }
               ]
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Puyo",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
         },
         {
@@ -1751,14 +2774,16 @@
           "name": "Botwoon E-Tank Left Sand Pit (to Botwoon Quicksand Left)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a858"
+          "nodeAddress": "0x001a858",
+          "devNote": "FIXME Add leaveWithGMode strats. These can't currently be represented in the logic."
         },
         {
           "id": 3,
           "name": "Botwoon E-Tank Right Sand Pit (to Botwoon Quicksand Right)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a864"
+          "nodeAddress": "0x001a864",
+          "devNote": "FIXME Add leaveWithGMode strats. These can't currently be represented in the logic."
         },
         {
           "id": 4,
@@ -1780,6 +2805,18 @@
                 }
               ],
               "openEnd": 1
+            }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": [],
+                  "note": "Lure the Zoas. Jump so that they start moving horizontally while higher, use spin jumps to move horizontally faster while keeping them on screen."
+                }
+              ]
             }
           ]
         },
@@ -1803,6 +2840,11 @@
           "id": "A",
           "name": "Speed Blocks",
           "obstacleType": "inanimate"
+        },
+        {
+          "id": "B",
+          "name": "G-Mode Grab Item and Leave Before Exiting G-Mode",
+          "obstacleType": "abstract"
         }
       ],
       "enemies": [
@@ -1851,15 +2893,27 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Puyo Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "PowerBomb"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["h_canNavigateUnderwater"]
+                  "requires": []
                 }
               ],
-              "devNote": "There's nothing difficult about getting here suitless, but it does run a heavy risk of leading the player into suitless Maridia situations"
+              "devNote": "There's nothing difficult about getting here suitless, but it does run a heavy risk of leading the player into suitless Maridia situations."
             },
             {
               "id": 3,
@@ -1870,11 +2924,28 @@
                   "requires": ["h_canNavigateUnderwater"]
                 }
               ],
-              "devNote": "There's nothing difficult about getting here suitless, but it does run a heavy risk of leading the player into suitless Maridia situations"
+              "devNote": "There's nothing difficult about getting here suitless, but it does run a heavy risk of leading the player into suitless Maridia situations."
             },
             {
               "id": 4,
               "strats": [
+                {
+                  "name": "Speed Blocks Already Broken Suitless",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "HiJump",
+                    {"or": [
+                      "h_canUseSpringBall",
+                      "canPlayInSand"
+                    ]},
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "devNote": [
+                    "Gravity can run across the sand with speed again.",
+                    "FIXME: This is possible without HiJump by breaking spin before landing, then quickly jumping again. Useful in other places as well, like Aqueduct."
+                  ]
+                },
                 {
                   "name": "Base",
                   "notable": false,
@@ -1888,12 +2959,7 @@
                       "steepDownTiles": 1
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires":[]
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
                   "name": "Suitless Spark",
@@ -1907,26 +2973,20 @@
                       "excessShinesparkFrames": 43
                     }}
                   ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
+                  "clearsObstacles": ["A"]
                 },
                 {
-                  "name": "Speed Blocks Cleared",
+                  "name": "G-Mode Overload PLMs",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "HiJump",
-                    {"or": [
-                      "h_canUseSpringBall",
-                      "canPlayInSand"
-                    ]},
-                    {"obstaclesCleared": ["A"]}
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    "canSuitlessMaridia"
                   ],
-                  "devNote": "Gravity can run across the sand with speed again."
+                  "note": "Overload PLMs by touching the sand, then move through the speed blocks. Avoiding the sand pits is easier without Gravity or HiJump."
                 }
               ],
               "devNote": "Direct link passing below. Passage above should go 1 -> 5 -> 4."
@@ -1960,7 +3020,28 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "Morph",
-                    "canUseFrozenEnemies"
+                    "canTrickyUseFrozenEnemies"
+                  ]
+                },
+                {
+                  "name": "Cross Room Jump Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "canCrossRoomJumpIntoWater",
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"adjacentRunway": {
+                      "fromNode": 1,
+                      "usedTiles": 1,
+                      "physics": ["air"]
+                    }},
+                    {"canComeInCharged": {
+                      "framesRemaining": 22,
+                      "fromNode": 1,
+                      "shinesparkFrames": 55,
+                      "unusableTiles": 1
+                    }}
                   ]
                 },
                 {
@@ -1995,6 +3076,78 @@
                     }}
                   ],
                   "note": "Needs a runway of approximately 7.5 tiles in the adjacent room, to get enough height. This is a peak of height with speed booster, no hjb, while underwater."
+                },
+                {
+                  "name": "G-Mode Morph Direct",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ",
+                        "canDodgeWhileShooting"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]},
+                        {"or": [
+                          "canTrickyJump",
+                          {"ammo": {"type": "PowerBomb","count": 1}}
+                        ]}
+                      ]}
+                    ]},
+                    {"obstaclesCleared": ["B"]}
+                  ],
+                  "note": "Be careful not to touch or bomb the sand in order to grab the item before PLMs are overloaded."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]},
+                        {"or": [
+                          "canTrickyJump",
+                          {"ammo": {"type": "PowerBomb","count": 1}}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Botwoon Energy Tank Room Puyo Bomb-Grapple-Jump",
+                  "notable": true,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canBombGrappleJump",
+                    "canCrouchJump"
+                  ],
+                  "note": [
+                    "Lure a Puyo close to the sand and use it to Bomb-Grapple-Jump up to the Morph Ball maze.",
+                    "It helps to predict the jump pattern of the enemy."
+                  ]
                 }
               ]
             }
@@ -2014,58 +3167,6 @@
             {
               "id": 1,
               "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    "Gravity",
-                    {"or": [
-                      {"canComeInCharged": {
-                        "fromNode": 4,
-                        "framesRemaining": 180,
-                        "shinesparkFrames": 0
-                      }},
-                      {"canComeInCharged": {
-                        "fromNode": 4,
-                        "framesRemaining": 80,
-                        "shinesparkFrames": 115,
-                        "excessShinesparkFrames": 12
-                      }},
-                      {"canShineCharge": {
-                        "usedTiles": 22,
-                        "gentleDownTiles": 4,
-                        "openEnd": 1,
-                        "shinesparkFrames": 0
-                      }}
-                    ]}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ]
-                },
-                {
-                  "name": "Suitless Spark",
-                  "notable": false,
-                  "requires": [
-                    "canSuitlessMaridia",
-                    {"canComeInCharged": {
-                      "fromNode": 4,
-                      "framesRemaining": 160,
-                      "shinesparkFrames": 147,
-                      "excessShinesparkFrames": 15
-                    }}
-                  ],
-                  "obstacles": [
-                    {
-                      "id": "A",
-                      "requires": []
-                    }
-                  ],
-                  "note": "Coming in with zero momentum, all it takes is one non-hjb full height jump forward, then activate."
-                },
                 {
                   "name": "Speed Blocks Already Broken With Gravity",
                   "notable": false,
@@ -2091,9 +3192,179 @@
                     ]},
                     {"obstaclesCleared": ["A"]}
                   ]
+                },
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      {"canComeInCharged": {
+                        "fromNode": 4,
+                        "framesRemaining": 180,
+                        "shinesparkFrames": 0
+                      }},
+                      {"canComeInCharged": {
+                        "fromNode": 4,
+                        "framesRemaining": 80,
+                        "shinesparkFrames": 115,
+                        "excessShinesparkFrames": 12
+                      }},
+                      {"canShineCharge": {
+                        "usedTiles": 22,
+                        "gentleDownTiles": 4,
+                        "openEnd": 1,
+                        "shinesparkFrames": 0
+                      }}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Suitless Spark",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    {"canComeInCharged": {
+                      "fromNode": 4,
+                      "framesRemaining": 160,
+                      "shinesparkFrames": 147,
+                      "excessShinesparkFrames": 15
+                    }}
+                  ],
+                  "clearsObstacles": ["A"],
+                  "note": "Coming in with zero momentum, all it takes is one non-hjb full height jump forward, then activate."
+                },
+                {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "canWaterShineCharge",
+                        {"canComeInCharged": {
+                          "fromNode": 4,
+                          "framesRemaining": 180,
+                          "shinesparkFrames": 0
+                        }}
+                      ]},
+                      {"and": [
+                        "canStutterWaterShineCharge",
+                        {"adjacentRunway": {
+                          "fromNode": 4,
+                          "usedTiles": 1.5,
+                          "physics": ["normal"],
+                          "overrideRunwayRequirements": true,
+                          "useFrames": 80
+                        }}
+                      ]}
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 0,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "G-Mode Overload PLMs",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "canTrickyJump",
+                      {"and": [
+                        "Gravity",
+                        "SpaceJump"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Overload PLMs by touching the sand, then move through the speed blocks.",
+                    "Shoot the Puyo while crouching to increase accuracy.",
+                    "Avoiding the right pit is much easier without Gravity or HiJump.",
+                    "Standing on the edge and spin jumping to the left is much easier than a running jump.",
+                    "While on the left side of this platform, the Puyo to the left will start moving; carefully kill it."
+                  ]
                 }
               ],
-              "devNote": "Direct link passing below. Passage above should go 4 -> 5 -> 1."
+              "devNote": "Direct link passing below. Passage above should go 4 -> 6 -> 5 -> 1."
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Zoa Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Direct",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [4],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]},
+                    {"obstaclesCleared": ["B"]}
+                  ],
+                  "note": [
+                    "Be careful not to touch or bomb the sand in order to grab the item before PLMs are overloaded.",
+                    "With bombs, kill the Zoas and they will stop spawning."
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "note": "With bombs, kill the Zoas and they will stop spawning."
+                }
+              ]
             },
             {
               "id": 6,
@@ -2101,9 +3372,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [
-                    "Gravity"
-                  ]
+                  "requires": [ "Gravity" ]
                 },
                 {
                   "name": "Suitless Jump Assist",
@@ -2125,6 +3394,61 @@
                   ]
                 },
                 {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    {"or": [
+                      {"and": [
+                        "canWaterShineCharge",
+                        {"canComeInCharged": {
+                          "fromNode": 4,
+                          "framesRemaining": 180,
+                          "shinesparkFrames": 0
+                        }}
+                      ]},
+                      {"and": [
+                        "canStutterWaterShineCharge",
+                        {"adjacentRunway": {
+                          "fromNode": 4,
+                          "usedTiles": 1.5,
+                          "physics": ["normal"],
+                          "overrideRunwayRequirements": true,
+                          "useFrames": 80
+                        }}
+                      ]}
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2,
+                      "shinesparkFrames": 8
+                    }}
+                  ],
+                  "note": "Shinespark diagonally over the zoa pit or run through the speed blocks and shinespark after turning around."
+                },
+                {
+                  "name": "Cross Room Jump Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "canCrossRoomJumpIntoWater",
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"adjacentRunway": {
+                      "fromNode": 4,
+                      "usedTiles": 1,
+                      "physics": ["air"]
+                    }},
+                    {"canComeInCharged": {
+                      "framesRemaining": 20,
+                      "fromNode": 4,
+                      "shinesparkFrames": 46,
+                      "excessShinesparkFrames": 3,
+                      "unusableTiles": 1
+                    }}
+                  ]
+                },
+                {
                   "name": "Cross Room Jump with Speedbooster",
                   "notable": false,
                   "requires": [
@@ -2138,6 +3462,16 @@
                     }}
                   ],
                   "note": "Requires approximately 7.5 tiles in the adjacent room, as this is a peak in jump speed."
+                },
+                {
+                  "name": "Bomb Grapple Jump",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "h_canCrouchJumpDownGrab",
+                    "canBombGrappleJump"
+                  ],
+                  "note": "Use the respawning Zoas to double jump up to the Morph Ball maze."
                 }
               ]
             }
@@ -2152,7 +3486,26 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": [ "Morph" ]
+                  "requires": [ "Morph" ],
+                  "note": "If the Puyos are alive, lure the first to the right, then roll out of the hole, unmorph and fight them. Crouching while shooting may increase accuracy.",
+                  "devNote": "FIXME This probably shouldnt be free if the Puyos are still alive."
+                },
+                {
+                  "name": "G-Mode Morph Exit Tunnel Before Leaving G-Mode",
+                  "notable": false,
+                  "requires": [ {"obstaclesCleared": ["B"]} ],
+                  "note": "If the Puyos are alive, lure the first to the right, then roll out of the hole, unmorph and fight them. Crouching while shooting may increase accuracy.",
+                  "devNote": "FIXME This probably shouldnt be free if the Puyos are still alive."
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Exit Tunnel Before Leaving G-Mode",
+                  "notable": false,
+                  "requires": [ {"obstaclesCleared": ["B"]} ]
                 }
               ]
             },
@@ -2160,16 +3513,30 @@
               "id": 6,
               "strats": [
                 {
-                  "name": "Midair Morph",
+                  "name": "Base",
                   "notable": false,
                   "requires": [
-                    "h_canNavigateUnderwater",
+                    "Morph",
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        "Gravity",
+                        {"or": [
+                          "h_canUseMorphBombs",
+                          {"ammo": { "type": "PowerBomb", "count": 3 }}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Suitless Midair Morph",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
                     "Morph"
                   ],
-                  "note": [
-                    "With Gravity, this means taking it off to mid-air morph. That doesn't count as true suitless Maridia.",
-                    "There are otherways to do this than a mid-air morph, but they have more requirements than this strat which isn't even notable."
-                  ]
+                  "note": "With Gravity, this means taking it off to mid-air morph."
                 }
               ]
             }
@@ -2192,16 +3559,30 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "Midair Morph",
+                  "name": "Base",
                   "notable": false,
                   "requires": [
-                    "h_canNavigateUnderwater",
+                    "Morph",
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        "Gravity",
+                        {"or": [
+                          "h_canUseMorphBombs",
+                          {"ammo": { "type": "PowerBomb", "count": 3 }}
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Suitless Midair Morph",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
                     "Morph"
                   ],
-                  "note": [
-                    "With Gravity, this means taking it off to mid-air morph. That doesn't count as true suitless Maridia.",
-                    "There are otherways to do this than a mid-air morph, but they have more requirements than this strat which isn't even notable."
-                  ]
+                  "note": "With Gravity, this means taking it off to mid-air morph."
                 }
               ]
             }
@@ -2241,6 +3622,18 @@
               "openEnd": 1
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
           "locks": [
             {
               "name": "Halfie Climb Grey Lock (to East Cactus Alley)",
@@ -2258,7 +3651,7 @@
                   "notable": true,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     "canGrappleClip",
                     {"resetRoom":{
                       "nodes": [2],
@@ -2303,6 +3696,18 @@
                 }
               ],
               "openEnd": 0
+            }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
             }
           ]
         },
@@ -2363,6 +3768,18 @@
               "usableComingIn": false,
               "openEnd": 1
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
         }
       ],
@@ -2397,6 +3814,35 @@
               ]
             },
             {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
@@ -2405,7 +3851,14 @@
                   "requires": [
                     "Gravity",
                     {"or": [
-                      "HiJump",
+                      "SpaceJump",
+                      {"and": [
+                        "HiJump",
+                        {"or": [
+                          "canSpringBallJumpMidAir",
+                          "canWalljump"
+                        ]}
+                      ]},
                       "canConsecutiveWalljump"
                     ]}
                   ]
@@ -2422,19 +3875,19 @@
                   ]
                 },
                 {
-                  "name": "Mochtroid Climb",
+                  "name": "Grapple",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "canMochtroidIceClimb"
+                    "h_canNavigateUnderwater",
+                    "Grapple"
                   ]
                 },
                 {
-                  "name": "Suitless Grapple",
+                  "name": "Mochtroid Climb",
                   "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "Grapple"
+                    "h_canNavigateUnderwater",
+                    "canMochtroidIceClimb"
                   ]
                 },
                 {
@@ -2502,6 +3955,20 @@
                     "Only requires a runway of approximately 1 tile in the adjacent room.",
                     "Take two Mochtroid hits or use a double bomb jump."
                   ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ],
+                  "note": "To avoid the Mochtroids, it is possible to place bombs near them while in the Morph Tunnel below to the right."
                 }
               ]
             }
@@ -2519,10 +3986,14 @@
                   "requires": [
                     "Gravity",
                     {"or": [
+                      "h_canFly",
                       "canWalljump",
                       {"and": [
                         "HiJump",
-                        "SpeedBooster"
+                        {"or": [
+                          "canSpringBallJumpMidAir",
+                          "SpeedBooster"
+                        ]}
                       ]}
                     ]}
                   ]
@@ -2539,11 +4010,43 @@
                   ]
                 },
                 {
+                  "name": "Grapple",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "Grapple"
+                  ]
+                },
+                {
+                  "name": "Mochtroid Climb",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canMochtroidIceClimb",
+                    {"or": [
+                      "Gravity",
+                      "canDodgeWhileShooting",
+                      {"enemyDamage": {
+                        "enemy": "Mochtroid",
+                        "hits": 2,
+                        "type": "contact"
+                      }},
+                      "Wave",
+                      "Spazer",
+                      "Plasma",
+                      {"and": [
+                        "canPrepareForNextRoom",
+                        "Charge"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
                   "name": "Halfie Climb X-Ray Climb",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     {"resetRoom":{
                       "nodes": [2],
                       "mustStayPut": true
@@ -2554,23 +4057,8 @@
                       "overrideRunwayRequirements": true,
                       "useFrames": 200
                     }}
-                  ]
-                },
-                {
-                  "name": "Mochtroid Climb",
-                  "notable": false,
-                  "requires": [
-                    "canSuitlessMaridia",
-                    "canMochtroidIceClimb"
-                  ]
-                },
-                {
-                  "name": "Suitless Grapple",
-                  "notable": false,
-                  "requires": [
-                    "canSuitlessMaridia",
-                    "Grapple"
-                  ]
+                  ],
+                  "note": "Climb up 1 screen."
                 },
                 {
                   "name": "Cross Room Jump",
@@ -2600,6 +4088,68 @@
                     }}
                   ],
                   "note": "Only requires a runway of approximately 0.5 tiles in the adjacent room."
+                },
+                {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "canWaterShineCharge",
+                        {"canComeInCharged": {
+                          "fromNode": 2,
+                          "framesRemaining": 180,
+                          "shinesparkFrames": 0
+                        }}
+                      ]},
+                      {"and": [
+                        "canStutterWaterShineCharge",
+                        {"adjacentRunway": {
+                          "fromNode": 2,
+                          "usedTiles": 2,
+                          "physics": ["normal"],
+                          "overrideRunwayRequirements": true,
+                          "useFrames": 80
+                        }}
+                      ]}
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 20,
+                      "excessShinesparkFrames": 3,
+                      "openEnd": 2
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Mochtroid Farm",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"or": [
+                      "SpaceJump",
+                      "Grapple",
+                      "canConsecutiveWalljump"
+                    ]},
+                    {"or": [
+                      "canDodgeWhileShooting",
+                      "ScrewAttack",
+                      "Wave",
+                      "Spazer",
+                      "Plasma",
+                      "Grapple"
+                    ]},
+                    {"resetRoom": {
+                      "nodes": [1, 2, 4],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
                 }
               ]
             },
@@ -2627,6 +4177,30 @@
                      ]}
                   ],
                   "devNote": "Run away from the oums and reclimb after each to avoid needing to jump over them."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
                 }
               ]
             },
@@ -2640,7 +4214,8 @@
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 30,
-                      "shinesparkFrames": 45
+                      "shinesparkFrames": 39,
+                      "excessShinesparkFrames": 4
                     }}
                   ]
                 },
@@ -2706,9 +4281,55 @@
                     "Requires a runway of approximately 1.5 tiles in the adjacent room.",
                     "There is just enough room to wall jump after breaking the water."
                   ]
+                },
+                {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "canWaterShineCharge",
+                        {"canComeInCharged": {
+                          "fromNode": 2,
+                          "framesRemaining": 180,
+                          "shinesparkFrames": 0
+                        }}
+                      ]},
+                      {"and": [
+                        "canStutterWaterShineCharge",
+                        {"adjacentRunway": {
+                          "fromNode": 2,
+                          "usedTiles": 2,
+                          "physics": ["normal"],
+                          "overrideRunwayRequirements": true,
+                          "useFrames": 80
+                        }}
+                      ]}
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 39,
+                      "excessShinesparkFrames": 4,
+                      "openEnd": 2
+                    }}
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ],
+                  "note": "To avoid the Mochtroids, it is possible to place bombs near them while in the Morph Tunnel to the right."
                 }
               ],
-              "note": "This link is only for the shinespark or cross room jump. Other strats should go 2 -> 1 -> 4."
+              "devNote": "This link is only for the shinespark, mochtroid climbing or cross room jump. Other strats should go 2 -> 1 -> 4."
             }
           ]
         },
@@ -2794,6 +4415,30 @@
                     "Wait for the Oums to roll on their own to a place where they can be climbed.",
                     "Do not stand on the Oums when they begin to attack."
                   ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
                 }
               ]
             },
@@ -2830,6 +4475,19 @@
                     "This is an alternative to wall jumping."
                   ],
                   "devNote": "Jumping into a diagonal spark saves a little energy from both the jump and hitting the slightly lower ceiling by the door."
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
                 }
               ],
               "devNote": "This link is only for the shinespark. Other strats should go 3 -> 2 -> 1 -> 4."
@@ -2846,6 +4504,35 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [4],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphIBJ"
+                      ]},
+                      {"and": [
+                        "SpringBall",
+                        {"or": [
+                          "Gravity",
+                          "HiJump"
+                        ]}
+                      ]}
+                    ]}
+                  ]
                 }
               ]
             }
@@ -2923,6 +4610,18 @@
                   "requires": []
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Refill",
+                  "notable": false,
+                  "requires": [
+                    "h_useMissileRefillStation"
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -2958,6 +4657,18 @@
               ],
               "openEnd": 1
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
           ]
         },
         {
@@ -2981,6 +4692,18 @@
               "openEnd": 1
             }
           ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ],
           "locks": [
             {
               "name": "Colosseum Green Lock (to Previous Room)",
@@ -2990,6 +4713,48 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [ "h_canOpenGreenDoors" ]
+                }
+              ],
+              "bypassStrats": [
+                {
+                  "name": "Colosseum Gravity Grapple Clip",
+                  "notable": true,
+                  "requires": [
+                    "Gravity",
+                    "canGrappleClip",
+                    "canCeilingClip",
+                    "canUseFrozenEnemies"
+                  ],
+                  "reusableRoomwideNotable": "Colosseum Green Door Grapple Clip",
+                  "note": [
+                    "Crouch and freeze a Mochtroid to clip into the space behind the grapple blocks.",
+                    "Jump and tap grapple while aiming diagonally to be pushed into the wall just the right amount.",
+                    "Samus should be one tile below the grapple blocks and fully in the wall.",
+                    "Too short a tap and the next grapple will not work, too long and Samus will be stuck in the wall.",
+                    "Grapple diagonally again to be pushed into the transition."
+                  ]
+                },
+                {
+                  "name": "Colosseum Suitless Grapple Clip",
+                  "notable": true,
+                  "requires": [
+                    "canGrappleClip",
+                    "h_canNonTrivialCeilingClip",
+                    "canTrickyUseFrozenEnemies"
+                  ],
+                  "reusableRoomwideNotable": "Colosseum Green Door Grapple Clip",
+                  "note": [
+                    "Freeze a Mochtroid either pixel perfectly or with Morph+XRay to clip into the space behind the grapple blocks.",
+                    "Jump and tap grapple while aiming diagonally to be pushed into the wall just the right amount.",
+                    "Samus should be one tile below the grapple blocks and fully in the wall.",
+                    "Too short a tap and the next grapple will not work, too long and Samus will be stuck in the wall.",
+                    "Grapple diagonally again to be pushed into the transition."
+                  ],
+                  "devNote": [
+                    "FIXME: Investigate how TAS clips behind the grapple blocks from above.",
+                    "1) with a bomb to make the grapple go to jank 2) by clipping a pixel into the grapple blocks on the left",
+                    "Both ways swing up through the top blocks by being closer than collision detects."
+                  ]
                 }
               ]
             }
@@ -3015,6 +4780,18 @@
               ],
               "usableComingIn": false,
               "openEnd": 1
+            }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "knockback": false,
+              "strats": [
+                {
+                  "name": "Get Hit By Mochtroid",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
             }
           ],
           "locks": [
@@ -3043,18 +4820,51 @@
       ],
       "reusableRoomwideNotable": [
         {
-          "name": "Colosseum Suitless Grapple Only",
-          "note": "Cross the Colosseum with Grapple. Even if this is turned off it can be expected to go from the bottom right to top right door."
+          "name": "Colosseum with no Equipment",
+          "note": [
+            "Cross the Colosseum by using the spikes as platforms to stay out of the water.",
+            "Requires some very difficult jumps and excellent control over spike damage knockback."
+          ]
         },
         {
-          "name": "Colosseum Spike Platforming",
-          "note": "Cross the Colosseum by using the spikes as platforms to stay out of the water.  Requires knowing where the spike platforms are and how to use them efficiently."
+          "name": "Colosseum Mochtroid Ice Climb",
+          "note": [
+            "Cross the Colosseum by using the Mochtroids as frozen platforms.",
+            "Some Mochtroids need to be led into the water either from the previous section of room or from jumping high in the current section.",
+            "Mochtroids are most stable to climb when they are against a wall."
+          ]
+        },
+        {
+          "name": "Colosseum Green Door Grapple Clip",
+          "note": [
+            "Use a Mochtroid to clip into the space behind the grapple blocks.",
+            "Then use Grapple on the blocks to be pushed a precise amount into the wall above the door.",
+            "From there, use grapple again to be pushed diagonally down into the transition behind the Green shell."
+          ]
         }
       ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Mochtroid Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    "SpaceJump",
+                    "ScrewAttack",
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -3083,7 +4893,7 @@
                 {
                   "name": "Space Jump",
                   "notable": false,
-                  "requires": ["SpaceJump"],
+                  "requires": [ "SpaceJump" ],
                   "devNote": "No water involved here, so no need for Gravity or canSuitlessMaridia."
                 },
                 {
@@ -3101,60 +4911,113 @@
                   ]
                 },
                 {
-                  "name": "Colosseum Grapple Only (Left to Right)",
-                  "notable": true,
+                  "name": "IBJ",
+                  "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "Grapple",
-                    "canCarefulJump",
-                    "canPlayInSand",
+                    "Gravity",
                     {"or": [
                       {"and": [
-                        "canDamageBoost",
-                        {"spikeHits": 1},
-                        "canIframeSpikeJump"
+                        "canPlayInSand",
+                        "canSandIBJ"
                       ]},
                       {"and": [
-                        {"spikeHits": 2},
-                        "canIframeSpikeJump"
-                      ]},
+                        "h_canUseSpringBall",
+                        "canJumpIntoIBJ"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "SpringBall Jump",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "HiJump",
+                    "canPlayInSand",
+                    "canSpringBallJumpMidAir"
+                  ]
+                },
+                {
+                  "name": "Suitless Grapple Only",
+                  "notable": false,
+                  "requires": [
+                    "canSuitlessMaridia",
+                    "canCarefulJump",
+                    {"or": [
                       "canPreciseGrapple",
                       "canGrappleJump"
                     ]}
                   ],
-                  "reusableRoomwideNotable": "Colosseum Suitless Grapple Only",
                   "note": [
-                    "Use Grapple Beam to cross the Colosseum.",
-                    "The first two room segments can be safely grappled across from in the water.",
-                    "The third room segment grapple is tricky, and it may be easier to use the spikes as platforms instead."
-                  ],
-                  "devNote": "Play In Sand is not required, but it can prevent softlocks and sand is associated with the room."
+                    "Use Grapple Beam to cross the Colosseum. The first two room segments can be safely grappled across from in the water.",
+                    "The third room segment grapple is tricky. It is possible to use the spikes as platforms instead."
+                  ]
                 },
                 {
-                  "name": "Colosseum Spike Platforming (Left to Right)",
+                  "name": "Colosseum Spike Platforming with Move Assist (Left to Right)",
                   "notable": true,
                   "requires": [
                     "canWalljump",
                     "Morph",
-                    "canTrickyJump",
+                    "canCarefulJump",
                     "canIframeSpikeJump",
-                    {"spikeHits": 3},
                     {"or": [
-                      "canDamageBoost",
-                      {"spikeHits": 1}
+                      "Grapple",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "canPlayInSand",
+                        "HiJump",
+                        "canNeutralDamageBoost",
+                        "canSpringBallJumpMidAir",
+                        {"spikeHits": 2}
+                      ]},
+                      {"and": [
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 2,
+                          "physics": ["normal"]
+                        }},
+                        "h_canUseSpringBall",
+                        "canMockball",
+                        {"spikeHits": 2}
+                      ]}
+                    ]},
+                    {"spikeHits": 1},
+                    {"or": [
+                      {"spikeHits": 1},
+                      "canHorizontalDamageBoost"
                     ]}
                   ],
-                  "reusableRoomwideNotable": "Colosseum Spike Platforming",
                   "note": [
-                    "Stay out of the water, and by extension the sand, of Colosseum by using the spikes as platforms.",
-                    "Use the property of getting a small boost when taking a spike hit in Morph Ball to land on a spike and jump to the next platform.",
-                    "Requires knowing the position of every spike in the room.",
-                    "The first jump onto spikes is very difficult.  Having speed helps."
+                    "Use the spikes, which are not in the water, to jump from platform to platform as a way to cross the Colosseum.",
+                    "Requires knowing the position of every spike in the room, and hitting the spikes while morphed can help.",
+                    "The first jump is particularly tough.  A springball rolling jump, SpringBallJump from the sand with HiJump, or Grapple can be used to get past it."
                   ]
                 },
                 {
-                  "name": "Colosseum Mochtroid Climb (Left to Right)",
-                  "notable": false,
+                  "name": "Colosseum with no Equipment (Left to Right)",
+                  "notable": true,
+                  "requires": [
+                    "canWalljump",
+                    "canTrickyJump",
+                    "canHorizontalDamageBoost",
+                    "canIframeSpikeJump",
+                    {"spikeHits": 3},
+                    {"or": [
+                      "Morph",
+                      {"spikeHits": 2}
+                    ]}
+                  ],
+                  "reusableRoomwideNotable": "Colosseum with no Equipment",
+                  "note": [
+                    "Land on each set of spikes as a way to jump to the next safe platform.",
+                    "The first jump can be done with a very precise damage boost to bounce forward off the spike, or using morph."
+                  ],
+                  "devNote": "Positioning on the spikes is harder to control without morph."
+                },
+                {
+                  "name": "Colosseum Mochtroid Ice Climb (Left to Right)",
+                  "notable": true,
                   "requires": [
                     "h_canNavigateUnderwater",
                     "canMochtroidIceClimb",
@@ -3170,6 +5033,7 @@
                       "canTrickyJump"
                     ]}
                   ],
+                  "reusableRoomwideNotable": "Colosseum Mochtroid Ice Climb",
                   "note": [
                     "Climb a mochtroid with ice using the wall to help guide them.",
                     "It is very easy to take damage if not careful."
@@ -3308,6 +5172,72 @@
                     }}
                   ],
                   "note": "Only requires a runway of approximately one tile in the adjacent room."
+                },
+                {
+                  "name": "X-Ray Climb",
+                  "notable": false,
+                  "requires": [
+                    "h_canRightDoorXRayClimb",
+                    {"or": [
+                      {"adjacentRunway": {
+                        "fromNode": 2,
+                        "usedTiles": 0.5,
+                        "overrideRunwayRequirements": true,
+                        "physics": ["normal"],
+                        "useFrames": 200
+                      }},
+                      {"and": [
+                        "h_canRightDoorXRayClimbFromWater",
+                        {"adjacentRunway": {
+                          "fromNode": 2,
+                          "usedTiles": 0.5,
+                          "overrideRunwayRequirements": true,
+                          "physics": ["water"],
+                          "useFrames": 200
+                        }}
+                      ]}
+                    ]},
+                    {"or": [
+                      "Ice",
+                      "Wave",
+                      "Spazer",
+                      "Plasma",
+                      "Grapple",
+                      {"ammo": { "type": "Missile", "count": 1}},
+                      {"ammo": { "type": "Super", "count": 1}},
+                      {"enemyDamage": {
+                        "enemy": "Mochtroid",
+                        "type": "contact",
+                        "hits": 1
+                      }}
+                    ]}
+                  ],
+                  "note": [
+                    "Immediately when entering the room, turn around to the left while using X-ray and kill the Mochtroid, to prevent or minimize damage.",
+                    "Climb up 1 screen."
+                  ]
+                },
+                {
+                  "name": "Underwater Walljump",
+                  "notable": false,
+                  "requires": [
+                    "canUnderwaterWalljump",
+                    "canSpaceJumpWaterBounce"
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ],
+                  "note": "Place bombs without moving horizontally, such that multiple hit the Mochtroid immediately as it attaches without being boosted into the doorway or sand."
                 }
               ]
             }
@@ -3353,8 +5283,27 @@
                   ]
                 },
                 {
-                  "name": "Colosseum Grapple Only (Right to Left)",
-                  "notable": true,
+                  "name": "IBJ",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canPlayInSand",
+                    "canSandIBJ"
+                  ]
+                },
+                {
+                  "name": "SpringBall Jump",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "HiJump",
+                    "canPlayInSand",
+                    "canSpringBallJumpMidAir"
+                  ]
+                },
+                {
+                  "name": "Suitless Grapple Only",
+                  "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "Grapple",
@@ -3362,23 +5311,23 @@
                       "canPlayInSand",
                       "canPreciseGrapple"
                     ]}
-                  ],
-                  "reusableRoomwideNotable": "Colosseum Suitless Grapple Only"
+                  ]
                 },
                 {
-                  "name": "Colosseum Spike Platforming (Right to Left)",
+                  "name": "Colosseum with no Equipment (Right to Left)",
                   "notable": true,
                   "requires": [
                     "canPreciseWalljump",
                     "canTrickyJump",
                     "canIframeSpikeJump",
                     {"spikeHits": 3},
+                    "canNeutralDamageBoost",
                     {"or": [
-                      "canDamageBoost",
+                      "canHorizontalDamageBoost",
                       {"spikeHits": 1}
                     ]}
                   ],
-                  "reusableRoomwideNotable": "Colosseum Spike Platforming",
+                  "reusableRoomwideNotable": "Colosseum with no Equipment",
                   "note": [
                     "Stay out of the water, and by extension the sand, of Colosseum by using the spikes as platforms.",
                     "Landing on spikes aiming down with no other direction pressed can help contol the knockback.",
@@ -3387,8 +5336,8 @@
                   ]
                 },
                 {
-                  "name": "Colosseum Mochtroid Climb (Right to Left)",
-                  "notable": false,
+                  "name": "Colosseum Mochtroid Ice Climb (Right to Left)",
+                  "notable": true,
                   "requires": [
                     {"or": [
                       "Gravity",
@@ -3406,6 +5355,7 @@
                       "hits": 2
                     }}
                   ],
+                  "reusableRoomwideNotable": "Colosseum Mochtroid Ice Climb",
                   "note": "Jump out of the sand to lure down mochtroids to freeze.  Or bring them from the previous section of room.",
                   "devNote": [
                     "Mochtroid damage is pretty hard to avoid, but can be.",
@@ -3622,6 +5572,18 @@
                   "requires": []
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Refill",
+                  "notable": false,
+                  "requires": [
+                    "h_useEnergyRefillStation"
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -3724,15 +5686,10 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": ["canSuitlessMaridia"]
+                  "requires": [ "h_canNavigateUnderwater" ]
                 }
               ],
-              "note": "Since this involves water and failure involves more water, it won't be expected without gravity suit unless suitless is expected"
+              "note": "Since this involves water and failure involves more water, it won't be expected without gravity suit unless suitless is expected."
             }
           ]
         },
@@ -3771,7 +5728,8 @@
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 40,
-                      "shinesparkFrames": 40
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 8
                     }}
                   ]
                 },
@@ -3783,7 +5741,8 @@
                     {"canComeInCharged": {
                       "fromNode": 2,
                       "framesRemaining": 60,
-                      "shinesparkFrames": 40
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 8
                     }}
                   ],
                   "note": "It takes a bit more time to set up the spark when suitless."
@@ -3793,7 +5752,7 @@
                   "notable": false,
                   "requires": [
                     "h_canNavigateUnderwater",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     {"resetRoom":{
                       "nodes": [2],
                       "mustStayPut": true
@@ -3804,7 +5763,8 @@
                       "overrideRunwayRequirements": true,
                       "useFrames": 200
                     }}
-                  ]
+                  ],
+                  "note": "Climb up 2 screens."
                 },
                 {
                   "name": "Suitless Jump Assist",
@@ -3813,6 +5773,26 @@
                     "canSuitlessMaridia",
                     "HiJump",
                     "canSpringBallJumpMidAir"
+                  ]
+                },
+                {
+                  "name": "Suitless Water Shinecharge",
+                  "notable": false,
+                  "requires": [
+                    "canStutterWaterShineCharge",
+                    {"adjacentRunway": {
+                      "fromNode": 2,
+                      "usedTiles": 2,
+                      "physics": ["normal"],
+                      "overrideRunwayRequirements": true,
+                      "useFrames": 80
+                    }},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "shinesparkFrames": 40,
+                      "excessShinesparkFrames": 8,
+                      "openEnd": 2
+                    }}
                   ]
                 },
                 {
@@ -3858,6 +5838,19 @@
                     "Requires a runway of approximately 7.5 tiles in the adjacent room.",
                     "A momentum conserving turnaround is easier than a midair wiggle."
                   ]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
                 }
               ]
             }
@@ -3872,15 +5865,9 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": ["Gravity"]
-                },
-                {
-                  "name": "Suitless",
-                  "notable": false,
-                  "requires": ["canSuitlessMaridia"]
+                  "requires": [ "h_canNavigateUnderwater" ]
                 }
-              ],
-              "note": "Since this involves water and failure involves more water, it shouldn't be expected without gravity suit unless suitless is expected"
+              ]
             }
           ]
         }
@@ -3932,6 +5919,17 @@
               ]
             }
           ],
+          "gModeImmobile": {
+            "requires": [
+              { "not": "f_DefeatedDraygon" },
+              "canRiskPermanentLossOfAccess",
+              {"enemyDamage": {
+                "enemy": "Draygon",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          },
           "locks": [
             {
               "name": "Draygon Left Grey Lock (to Space Jump)",
@@ -4133,6 +6131,35 @@
                     }}
                   ],
                   "note": "Requires an air ball and a runway of at least 1.5 tiles in the adjacent room"
+                },
+                {
+                  "name": "G-Mode Morph (Draygon Defeated)",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "f_DefeatedDraygon",
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ]
+                },
+                {
+                  "name": "G-Mode Morph (Draygon Alive)",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true,
+                      "mobility": "mobile"
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ"
+                  ],
+                  "note": "There is enough time to IBJ to the top door before Draygon appears."
                 }
               ],
               "devNote": "All other strats should go 1 -> 3 -> 2."
@@ -4211,7 +6238,11 @@
                   "requires": [
                     "Gravity",
                     "HiJump",
-                    "SpeedBooster"
+                    "SpeedBooster",
+                    {"or":[
+                      "canWalljump",
+                      "canTrickyDashJump"
+                    ]}
                   ]
                 },
                 {
@@ -4275,13 +6306,15 @@
                   "note": "Takes more time to setup than suited. but you can spark from a bit farther out because of the water physics."
                 },
                 {
-                  "name": "Draygon Grapple Jump",
-                  "notable": false,
+                  "name": "Draygon Turret Grapple Jump",
+                  "notable": true,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canDraygonTurretGrappleJump",
+                    "canGrappleJump",
+                    {"draygonElectricityFrames": 60},
                     "h_canBreakOneDraygonTurret"
-                  ]
+                  ],
+                  "note": "Performing a grapple jump off of a Draygon turret. Usually done by bouncing off the wall for momentum."
                 }
               ]
             }
@@ -4450,6 +6483,34 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Single Cacatac Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Super"]}
+                  ]
+                },
+                {
+                  "name": "Cacatac Farm",
+                  "notable": false,
+                  "requires": [
+                    "HiJump",
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -4474,10 +6535,10 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
-                    "canDamageBoost",
+                    "canHorizontalDamageBoost",
                     { "enemyDamage": { "enemy": "Cacatac", "hits": 1, "type": "spike" } }
                   ],
-                  "note": "Damage boost up to the higher ledge using a Cacatac spike.  Spikes only exist on camera so follow a vertically fired spike up to the correct height."
+                  "note": "Damage boost up to the higher ledge using a Cacatac spike. Spikes only exist on camera so follow a vertically fired spike up to the correct height."
                 },
                 {
                   "name": "Suitless HiJump plus Assist",
@@ -4506,7 +6567,7 @@
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
-                    "canRightFacingDoorXRayClimb",
+                    "h_canLeftDoorXRayClimb",
                     {"resetRoom":{
                      "nodes": [1],
                      "mustStayPut": true
@@ -4517,7 +6578,8 @@
                      "overrideRunwayRequirements": true,
                      "useFrames": 200
                    }}
-                  ]
+                  ],
+                  "note": "Climb up a little less than 1 screen."
                 },
                 {
                   "name": "Cross Room Jump",
@@ -4559,6 +6621,15 @@
                       "excessShinesparkFrames": 0
                     }}
                   ]
+                },
+                {
+                  "name": "Underwater Walljumps",
+                  "notable": false,
+                  "requires": ["canUnderwaterWalljump"],
+                  "note": [
+                    "It can be difficult to land on the ledge when the waterline is low.",
+                    "It may be necessary to time the walljump attempts by watching the water level, or by stalling with additional walljumps as the water rises."
+                  ]
                 }
               ]
             }
@@ -4576,6 +6647,22 @@
                   "requires": []
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Cacatac Farm",
+                  "notable": false,
+                  "requires": [
+                    {"resetRoom": {
+                      "nodes": [2],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Super"]}
+                  ]
+                }
+              ]              
             }
           ]
         }
@@ -4692,6 +6779,12 @@
           "name": "East Cactus Alley Junction (Top Right)",
           "nodeType": "junction",
           "nodeSubType": "junction"
+        },
+        {
+          "id": 5,
+          "name": "East Cactus Alley Junction (Bottom Middle)",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
         }
       ],
       "enemies": [
@@ -4704,16 +6797,59 @@
         },
         {
           "id": "e2",
-          "groupName": "East Cactus Alley Right Cacatacs",
+          "groupName": "East Cactus Alley Bottom Cacatacs",
           "enemyName": "Cacatac",
-          "quantity": 3,
-          "betweenNodes": [3, 4]
+          "quantity": 2,
+          "homeNodes": [5]
+        },
+        {
+          "id": "e3",
+          "groupName": "East Cactus Alley Top Cacatacs",
+          "enemyName": "Cacatac",
+          "quantity": 2,
+          "homeNodes": [4]
         }
       ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Cacatac Farm",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        {"or": [
+                          "SpaceJump",
+                          {"and": [
+                            "canPreciseWalljump",
+                            "canConsecutiveWalljump"
+                          ]},
+                          {"and": [
+                            "HiJump",
+                            "canWalljump"
+                          ]}
+                        ]}
+                      ]},
+                      {"and": [
+                        "canSpaceJumpWaterBounce",
+                        "canWalljump"
+                      ]}
+                    ]},
+                    {"resetRoom": {
+                      "nodes": [1],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Super"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -4724,12 +6860,126 @@
                   "note": "Doesn't require anything, but getting out does."
                 }
               ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "G-Mode Morph Diagonal IBJ",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    {"or": [
+                      "h_canArtificialMorphDiagonalBombJump",
+                      {"and": [
+                        "h_canArtificialMorphHBJ",
+                        "h_canArtificialMorphJumpIntoIBJ"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Hug the right wall after killing the first Cacatac in order to avoid its invisible, stationary projectiles.",
+                    "After getting to the small island platform, diagonal IBJ up while avoiding the top Cacatac.",
+                    "Alternatively HBJ to the next platform and Spring Ball from the right edge of this platform into an IBJ above the spikes."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "h_canNavigateUnderwater",
+                    {"or": [
+                      "Bombs",
+                      {"ammo": { "type": "PowerBomb", "count": 1 }},
+                      {"enemyDamage": { "enemy": "Cacatac", "hits": 1, "type": "contact" }}
+                    ]},
+                    {"or": [
+                      "SpringBall",
+                      {"and": [
+                        "Gravity",
+                        "Bombs"
+                      ]},
+                      {"and": [
+                        "Gravity",
+                        "h_canArtificialMorphBombHorizontally",
+                        {"ammo": { "type": "PowerBomb", "count": 1 }}
+                      ]}
+                    ]}
+                  ],
+                  "note": "Hug the right wall after killing the first Cacatac in order to avoid its invisible, stationary projectiles."
+                }
+              ]
             }
           ]
         },
         {
           "from": 2,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "East Cac Alley G-Mode Morph, IBJ, HBJ",
+                  "notable": true,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [2],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    "h_canArtificialMorphIBJ",
+                    "h_canArtificialMorphHBJ"
+                  ],
+                  "note": "This requires multiple HBJ to get over spike pits. The first one, by the right door, must be started at the top of an IBJ."
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Cacatac Farm",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "Gravity",
+                        {"or": [
+                          "SpaceJump",
+                          "canWalljump"
+                        ]}
+                      ]},
+                      {"and": [
+                        "HiJump",
+                        "canSpaceJumpWaterBounce",
+                        "canWalljump"                        
+                      ]}
+                    ]},
+                    {"resetRoom": {
+                      "nodes": [2],
+                      "mustStayPut": false
+                    }},
+                    {"refill": ["Energy", "Super"]}
+                  ]
+                }
+              ]
+            },
             {
               "id": 4,
               "strats": [
@@ -4773,7 +7023,13 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "HiJump",
-                    "SpaceJump"
+                    {"or": [
+                      "canSpaceJumpWaterEscape",
+                      {"and": [
+                        "canSpaceJumpWaterBounce",
+                        "canWalljump"
+                      ]}
+                    ]}
                   ],
                   "note": [
                     "Use SpaceJump to break out of the water.",
@@ -4900,6 +7156,40 @@
                     "Requires a runway of approximately 7.5 tiles in the adjacent room, to hit a peak of the speed vs height graph.",
                     "Spring ball can be used with the speed to get all the way to 3, but it's tricky"
                   ]
+                },
+                {
+                  "name": "X-Ray Climb Space Jump",
+                  "notable": false,
+                  "requires": [
+                    "h_canRightDoorXRayClimb",
+                    {"or": [
+                      {"adjacentRunway": {
+                        "fromNode": 2,
+                        "usedTiles": 0.5,
+                        "overrideRunwayRequirements": true,
+                        "physics": ["normal"],
+                        "useFrames": 200
+                      }},
+                      {"and": [
+                        "h_canRightDoorXRayClimbFromWater",
+                        {"adjacentRunway": {
+                          "fromNode": 2,
+                          "usedTiles": 0.5,
+                          "overrideRunwayRequirements": true,
+                          "physics": ["water"],
+                          "useFrames": 200
+                        }}
+                      ]}
+                    ]},
+                    "SpaceJump"
+                  ],
+                  "note": [
+                    "X-ray climb until Samus is above the water surface.",
+                    "To avoid falling out, be careful not to turn left except while holding X-ray.",
+                    "From a standing position facing left, hold left and immediately jump, then use Space Jump to reach the ledge.",
+                    "Alternatively, from a standing position facing right, do a turn-around spin jump, waiting to jump until part way through the turn-around animation (otherwise Samus will bonk inside the wall)",
+                    "It is also possible to climb lower, with Samus' feet still in the water; in this case, the turn-around animation is slower, providing a larger window to jump, though in this case either a wall jump or a Space Jump water escape may be needed."
+                  ]
                 }
               ]
             }
@@ -5019,32 +7309,14 @@
               ]
             },
             {
-              "id": 4,
+              "id": 5,
               "strats": [
                 {
-                  "name": "Base",
+                  "name": "Suitless",
                   "notable": false,
                   "requires": [
-                    "Gravity",
-                    "Morph",
-                    {"or": [
-                      "SpaceJump",
-                      "canTrickyJump",
-                      "canSuitlessMaridia",
-                      "h_canHBJ",
-                      {"spikeHits": 1}
-                    ]},
-                    {"or":[
-                      "SpaceJump",
-                      "canWalljump",
-                      "canSpringBallJumpMidAir",
-                      "h_canDiagonalBombJump",
-                      {"and":[
-                        "h_canJumpIntoIBJ",
-                        "canIframeSpikeJump",
-                        {"spikeHits": 1}
-                      ]}
-                    ]}
+                    "canSuitlessMaridia",
+                    "Morph"
                   ],
                   "note" : [
                     "This requires taking off Gravity to do a mid-air morph.",
@@ -5053,17 +7325,23 @@
                   ]
                 },
                 {
-                  "name": "Cacatac Alley Springball Spike Boost",
-                  "notable": true,
+                  "name": "Gravity",
+                  "notable": false,
                   "requires": [
-                    "canSuitlessMaridia",
-                    "canCarefulJump",
-                    "canSpringBallJumpMidAir",
-                    "canLateralMidAirMorph",
-                    "canDamageBoost",
-                    { "enemyDamage": { "enemy": "Cacatac", "hits": 2, "type": "spike" } }
+                    "Gravity",
+                    "Morph",
+                    {"or": [
+                      "SpaceJump",
+                      "canTrickyJump",
+                      "h_canHBJ",
+                      {"spikeHits": 1}
+                    ]}
                   ],
-                  "note": "When the Cacatac on the ground fires a spike, perform a  springball Jump to break the waterline and then hit the spike for extra height."
+                  "note" : [
+                    "This requires taking off Gravity to do a mid-air morph.",
+                    "And possibly removing Gravity to jump over spikes, But a tricky jump would work too.",
+                    "There is a way to get across without taking any damage from spikes or Cacatacs, although it's a bit tricky."
+                  ]
                 }
               ]
             }
@@ -5082,6 +7360,21 @@
                 }
               ]
             },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 5,
+          "to": [
             {
               "id": 3,
               "strats": [
@@ -5121,7 +7414,7 @@
                   "requires": [
                     "Gravity",
                     "Morph",
-                    "canDamageBoost",
+                    "canHorizontalDamageBoost",
                     "canIframeSpikeJump",
                     { "enemyDamage": { "enemy": "Cacatac", "hits": 1, "type": "contact" } }
                   ],
@@ -5161,9 +7454,12 @@
                     "canSuitlessMaridia",
                     "canSpringBallJumpMidAir",
                     {"or": [
-                      "SpaceJump",
                       "HiJump",
                       "canCarefulJump",
+                      {"and": [
+                        "canSpaceJumpWaterBounce",
+                        "canWalljump"
+                      ]},
                       {"and": [
                         "h_canIBJ",
                         "canBombJumpWaterEscape"
@@ -5172,6 +7468,51 @@
                     ]}
                   ],
                   "note": "It is possible to jump over all of the spikes."
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    {"or":[
+                      "SpaceJump",
+                      "canWalljump",
+                      "canSpringBallJumpMidAir",
+                      "h_canDiagonalBombJump",
+                      {"and":[
+                        "h_canJumpIntoIBJ",
+                        "canIframeSpikeJump",
+                        {"spikeHits": 1}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Cacatac Alley Springball Spike Boost",
+                  "notable": true,
+                  "requires": [
+                    "HiJump",
+                    "canSuitlessMaridia",
+                    "canCarefulJump",
+                    "canSpringBallJumpMidAir",
+                    "canLateralMidAirMorph",
+                    "canNeutralDamageBoost",
+                    { "enemyDamage": { "enemy": "Cacatac", "hits": 2, "type": "spike" } }
+                  ],
+                  "note": "When the Cacatac on the ground fires a spike, perform a  springball Jump to break the waterline and then hit the spike for extra height."
+                },
+                {
+                  "name": "Underwater Walljump",
+                  "notable": false,
+                  "requires": [
+                    "canUnderwaterWalljump",
+                    "canSpaceJumpWaterBounce"
+                  ]
                 }
               ]
             }
@@ -5193,27 +7534,127 @@
           "id": 1,
           "name": "Botwoon Quicksand Top Left Sand Entrance (from E-Tank Left)",
           "nodeType": "entrance",
-          "nodeSubType": "sandpit"
+          "nodeSubType": "sandpit",
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Bull",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
           "name": "Botwoon Quicksand Bottom Left Sand Exit (to Below E-Tank Left)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a8ac"
+          "nodeAddress": "0x001a8ac",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [3],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }}
+                    ]}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 3,
           "name": "Botwoon Quicksand Top Right Sand Entrance (from E-Tank Right)",
           "nodeType": "entrance",
-          "nodeSubType": "sandpit"
+          "nodeSubType": "sandpit",
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Bull",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 4,
           "name": "Botwoon Quicksand Bottom Right Sand Exit (to Below E-Tank Right)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a8b8"
+          "nodeAddress": "0x001a8b8",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"comeInWithGMode": {
+                        "fromNodes": [1],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }},
+                      {"comeInWithGMode": {
+                        "fromNodes": [3],
+                        "mode": "any",
+                        "artificialMorph": true
+                      }}
+                    ]}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 5,
@@ -5354,6 +7795,18 @@
                 }
               ]
             }
+          ],
+          "leaveWithGModeSetup": [
+            {
+              "strats": [
+                {
+                  "name": "Get Hit By Zoa",
+                  "notable": false,
+                  "requires": [],
+                  "note": "Lure the Zoas. Jump so that they start moving horizontally higher, use spin jumps to move horizontally faster while keeping them on screen."
+                }
+              ]
+            }
           ]
         },
         {
@@ -5428,6 +7881,18 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Zoa Farm",
+                  "notable": false,
+                  "requires": [
+                    {"refill": ["Energy", "Missile", "Super"]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -5447,6 +7912,17 @@
                     "h_canNavigateUnderwater",
                     "canTrickyUseFrozenEnemies",
                     "canPlayInSand"
+                  ]
+                },
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
                   ]
                 }
               ],
@@ -5507,6 +7983,17 @@
                     "canTrickyUseFrozenEnemies",
                     "canPlayInSand"
                   ]
+                },
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [3],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
                 }
               ],
               "devNote": "This link refers specifically to crossing on frozen enemies."
@@ -5553,14 +8040,57 @@
           "name": "West Aqueduct Quicksand Room Top Sand Entrance (From Aqueduct Left)",
           "nodeType": "entrance",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6d8"
+          "nodeAddress": "0x001a6d8",
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Bull",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
           "name": "West Aqueduct Quicksand Room Bottom Sand Exit (to West Sand Hole)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6e4"
+          "nodeAddress": "0x001a6e4",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "enemies": [
@@ -5605,14 +8135,57 @@
           "name": "East Aqueduct Quicksand Room Top Sand Entrance (from Aqueduct Right)",
           "nodeType": "entrance",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6f0"
+          "nodeAddress": "0x001a6f0",
+          "gModeImmobile": {
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Bull",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          }
         },
         {
           "id": 2,
           "name": "East Aqueduct Quicksand Room Bottom Sand Exit (to East Sand Hole)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6fc"
+          "nodeAddress": "0x001a6fc",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "enemies": [
@@ -5664,7 +8237,41 @@
           "name": "East Sand Hole Bottom Sand Exit (to East Sand Hall)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6cc"
+          "nodeAddress": "0x001a6cc",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 3,
@@ -5739,6 +8346,25 @@
                     ]}
                   ],
                   "note": "It's possible to get out of the sand suitless and without hjb after falling from the chute, by hugging the left side and moving quickly."
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "canPlayInSand",
+                    "canSunkenTileWideWallClimb",
+                    "canShinechargeMovement",
+                    {"or": [
+                      "canMidairShinespark",
+                      "canCarefulJump"
+                    ]},
+                    {"canComeInCharged": {
+                      "framesRemaining": 105,
+                      "fromNode": 1,
+                      "shinesparkFrames": 11
+                    }}
+                  ],
+                  "note": "Jump out of the sand before Shinesparking."
                 }
               ]
             },
@@ -5753,7 +8379,7 @@
                     "Morph",
                     {"or": [
                       "SpaceJump",
-                      "canWalljump"
+                      "canWallJumpInstantMorph"
                     ]}
                   ]
                 },
@@ -5765,6 +8391,8 @@
                     "Morph",
                     "canPlayInSand",
                     {"or": [
+                      "canWalljump",
+                      "canGravityJump",
                       "HiJump",
                       "canSpringBallJumpMidAir",
                       {"and": [
@@ -5804,6 +8432,16 @@
                   "note": "Perform a double springball jump with the first jump being a bounce on the sand."
                 },
                 {
+                  "name": "East Sand Hole Underwater Walljumps",
+                  "notable": true,
+                  "requires": [
+                    "Morph",
+                    "canPlayInSand",
+                    "canUnderwaterWalljump"
+                  ],
+                  "note": "Jump off the sand and use Underwater Walljumps to enter the maze leading to the Power Bomb location."
+                },
+                {
                   "name": "East Sand Hole Sandfall Bounce to Power Bombs",
                   "notable": true,
                   "requires": [
@@ -5817,6 +8455,57 @@
                     "This requires a very precise spinjump into the sandfall which also exits the sandfall, after being pushed down, with more height than a regular jump.",
                     "It is very easy to fall into the sand and be unable to escape."
                   ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "Morph",
+                    "canPlayInSand",
+                    "canMidairShinespark",
+                    "canShinechargeMovement",
+                    {"or": [
+                      {"and": [
+                        "canPrepareForNextRoom",
+                        {"canComeInCharged": {
+                          "framesRemaining": 70,
+                          "fromNode": 1,
+                          "shinesparkFrames": 18
+                        }}
+                      ]},
+                      {"and": [
+                        "canTrickyJump",
+                        {"canComeInCharged": {
+                          "framesRemaining": 140,
+                          "fromNode": 1,
+                          "shinesparkFrames": 20
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": "The shinespark must be performed near the upper ledge, and not inside the sandfall."
+                },
+                {
+                  "name": "G-Mode Morph Through Crumbles",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    "Gravity",
+                    {"or":[
+                      "h_canArtificialMorphIBJ",
+                      {"and":[
+                        "h_canArtificialMorphSpringBallBombJump",
+                        "h_canArtificialMorphSpringBallBombJump"
+                      ]}
+                    ]}
+                  ],
+                  "note": "IBJ or Spring Ball Bomb Jump through two sets of Crumble Blocks.",
+                  "devNote": "FIXME Add a morphless double spring ball jump."
                 }
               ]
             }
@@ -5880,7 +8569,41 @@
           "name": "West Sand Hole Bottom Sand Exit (to West Sand Hall)",
           "nodeType": "exit",
           "nodeSubType": "sandpit",
-          "nodeAddress": "0x001a6b4"
+          "nodeAddress": "0x001a6b4",
+          "leaveWithGMode": [
+            {
+              "leavesWithArtificialMorph": false,
+              "strats": [
+                {
+                  "name": "G-Mode",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }}
+                  ]
+                }
+              ]
+            },
+            {
+              "leavesWithArtificialMorph": true,
+              "strats": [
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": 3,
@@ -6021,6 +8744,85 @@
                     "Bouncing on the sand as springball can reach the above maze by altering Samus' fall height, like by bouncing under the solid ledge before trying to jump up."
                   ],
                   "devNote": "Jumping through the sandfall is failable enough to require canPlayInSand"
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "requires": [
+                    "h_canNavigateUnderwater",
+                    "canPlayInSand",
+                    "canShinechargeMovement",
+                    {"or": [
+                      {"and": [
+                        {"or": [
+                          "canResetFallSpeed",
+                          {"and": [
+                            "canPrepareForNextRoom",
+                            "h_canUsePowerBombs"
+                          ]}
+                        ]},
+                        {"canComeInCharged": {
+                          "framesRemaining": 150,
+                          "fromNode": 1,
+                          "shinesparkFrames": 24,
+                          "excessShinesparkFrames": 5
+                        }}
+                      ]},
+                      {"and": [
+                        "canHeroShot",
+                        "canTrickyJump",
+                        "canShinechargeMovementComplex",
+                        {"canComeInCharged": {
+                          "framesRemaining": 160,
+                          "fromNode": 1,
+                          "shinesparkFrames": 25,
+                          "excessShinesparkFrames": 4
+                        }}
+                      ]},
+                      {"and": [
+                        "Wave",
+                        {"canComeInCharged": {
+                          "framesRemaining": 85,
+                          "fromNode": 1,
+                          "shinesparkFrames": 24,
+                          "excessShinesparkFrames": 5
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Break the shot block before reaching the sand and then shinespark up.",
+                    "Samus cannot shinespark after unmorphing until she touches the sand and this can be used to shoot upwards without sparking.",
+                    "A diagonal ShineSpark will most likely not have any horizontal movement when performed from the sand."
+                  ]
+                },
+                {
+                  "name": "G-Mode Through Crumbles from the Left",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": false
+                    }},
+                    "Morph",
+                    {"or": [
+                      "Gravity",
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "HiJump",
+                        "h_canCrouchJumpDownGrab"
+                      ]},
+                      {"and": [
+                        "canSuitlessMaridia",
+                        "h_canMaxHeightSpringBallJump"
+                      ]}
+                    ]}
+                  ],
+                  "note": [
+                    "Get to the left side of the room while avoiding the hole in the ground, jump up through the Morph tunnel.",
+                    "Jump up to the ledge with either Gravity, HiJump and a Crouch Jump Down Grab, or a maximum height Spring Ball Jump."
+                  ]
                 }
               ]
             }
@@ -6089,12 +8891,7 @@
                 {
                   "name": "West Sand Hole MidAir Morph",
                   "notable": false,
-                  "requires": [
-                    {"or": [
-                      "can3HighMidAirMorph",
-                      "h_canTwoTileJumpMorph"
-                    ]}
-                  ]
+                  "requires": ["h_canThreeTileJumpMorph"]
                 }
               ]
             },
@@ -6154,7 +8951,7 @@
                 {
                   "name": "Xray Turnaround",
                   "notable": false,
-                  "requires": [ "canXrayTurnaround" ]
+                  "requires": [ "canXRayTurnaround" ]
                 }
               ]
             },
@@ -6210,7 +9007,7 @@
                     "Morph",
                     "Gravity",
                     {"or": [
-                      "canWalljump",
+                      "canWallJumpInstantMorph",
                       "canCarefulJump"
                     ]}
                   ],
@@ -6223,40 +9020,43 @@
                     "Gravity",
                     "h_canUseSpringBall",
                     {"or": [
-                      "h_canBombThings",
+                      {"and": [
+                        "canJumpIntoIBJ",
+                        "h_canBombThings"
+                      ]},
+                      {"and": [
+                        "canSpringBallBombJump",
+                        "h_canBombThings"
+                      ]},
                       "HiJump"
                     ]}
                   ],
                   "note": "Springball bounce on top of the crumble blocks.  Use either a bomb or HiJump to gain a little bit of extra height.",
-                  "devNote": "FIXME: Jumping onto a single bomb should be a tech.  Its like canJumpIntoIBJ except not an IBJ and works with powerbombs."
+                  "devNote": "The tech requirement is `catching yourself on an aerial bomb` which is what canJumpIntoIBJ adds to canIBJ.  Only one bomb or powerbomb is needed."
                 },
                 {
-                  "name": "West Sand Hole MidAir Morph (Bootless Suitless)",
-                  "notable": true,
-                  "requires": [
-                    "canSuitlessMaridia",
-                    "canPreciseWalljump",
-                    "Morph",
-                    "canSpaceJumpWaterBounce"
-                  ],
-                  "note": "Use space jump to break free of the water then walljump and morph to get up to the morph tunnel."
-                },
-                {
-                  "name": "Suitless HiJump",
+                  "name": "Suitless Mid Air Morph",
                   "notable": false,
                   "requires": [
                     "canSuitlessMaridia",
                     "Morph",
-                    "HiJump",
                     {"or": [
-                      "canPreciseWalljump",
                       {"and": [
-                        "canSpaceJumpWaterBounce",
-                        "canWalljump"
+                        "HiJump",
+                        "canPreciseWalljump",
+                        "canWallJumpInstantMorph"
                       ]},
-                      "canSpaceJumpWaterEscape"
+                      {"and": [
+                        "HiJump",
+                        "canSpaceJumpWaterEscape"
+                      ]},
+                      {"and": [
+                        "canPreciseWalljump",
+                        "canSpaceJumpWaterBounce"
+                      ]}
                     ]}
-                  ]
+                  ],
+                  "note": "Escape the water with either HiJump or SpaceJump, then carefully jump and morph into the tunnel."
                 },
                 {
                   "name": "Spring Ball Jump",

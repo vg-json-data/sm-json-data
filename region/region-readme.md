@@ -97,7 +97,7 @@ The `yields` property is an array of game flags that are activated when interact
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
 * _name:_ A name, unique across the entire model, that identifies the runway
 * _length:_ The number of tiles in the runway
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
+* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
@@ -117,6 +117,38 @@ Runways on both sides of a door are meant to be combined when determining how mu
 * If slope tiles are part of the calculations, up and down tiles must be reversed in the destination room, since runway slope tiles are always defined how they are encountered when running towards the door.
 * Because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
 * Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
+
+#### jumpways
+Represents an array of jumpways connected to a door. A jumpway is a wall or platform which Samus can use to carry momentum into the next room. Unlike runways, jumpways do not need to be directly connected to a door, and it is not possible to use a jumpway to run into the neighboring room. Naturally, a jumpway can only be used if interaction with the connected door is possible (no active locks, and interaction requirements fulfilled). Jumpways have the following properties:
+
+* _name:_ A name, which only needs to be unique for the given node.
+* _jumpwayType:_ One of two possible types: "doorFrameBelow" or "platformBelow".
+  * "doorFrameBelow" applies to a vertical door leading upwards and represents the door frame below the door, which can be used, for example, to perform a wall jump up through the doorway.
+  * "platformBelow" applies to a vertical door leading upwards and represents a platform below the door, which can be used to jump up through the doorway.
+* _height:_ For "doorFrameBelow" jumpways, this represents the vertical length, in number of tiles, of the door frame surface that is usable for wall jumping (not including door transition tiles themselves). For "platformBelow", it represents the number of tiles between the door transition and the part of the platform where the jump would occur (not including the door transition tiles or platform tiles themselves). A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
+* _leftPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest left tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+* _rightPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest right tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+* _requires:_ Logical requirements for this jumpway to be used.
+
+__Example:__
+```json
+"jumpways": [
+  {
+    "name": "Door frame",
+    "jumpwayType": "doorFrameBelow",
+    "height": 3,
+    "requires": [{"heatFrames": 120}]
+  },
+  {
+    "name": "Platform",
+    "jumpwayType": "platformBelow",
+    "height": 9,
+    "leftPosition": -3.5,
+    "rightPosition": 3.5,
+    "requires": [{"heatFrames": 120}]
+  }
+]
+```
 
 #### canLeaveCharged
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
@@ -221,15 +253,14 @@ Each twin door address will be an object with two properties:
 * _roomAddress:_ The in-game address of the twin door itself.
 
 ### Obstacles
-A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. Destroying an obstacle is done while executing a [strat](../strats.md).
-
-The main uses of obstacle are:
+A room can have an array of obstacles. Obstacles are barriers that can be destroyed or opened up to make a section of a room passable, and which stay destroyed or open until the room is reset. The main uses of obstacle are:
 * To allow proper ammo requirements when passing somewhere multiple times but only needing to break the obstacle once
 * To represent things that can be opened only from one direction, but then can be freely passed once opened (e.g. crumble blocks, green and blue gates)
 
-The requirements to destroy an obstacle are found in two places. If a situation encounters requirements in both places, they are considered cumulative:
-* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be destroyed. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
-* Most requirements will be placed on [a strat's obstacles property](../strats.md#obstacles).
+Clearing an obstacle is done by executing a [strat](../strats.md) that includes the obstacle in its `clearsObstacles` property. An
+`obstaclesCleared` requirement is used to represent that an obstacle must be already cleared in order to execute a strat. The requirements to destroy an obstacle can also be found in a couple other places which are deprecated (and will likely be removed in the future):
+* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be cleared. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
+* Requirements can be placed on [a strat's obstacles property](../strats.md#obstacles). These represent requirements on the strat for an obstacle to be cleared while executing the strat; if the obstacle is already cleared, then these requirements are not applicable.
 
 __Additional considerations__ 
 

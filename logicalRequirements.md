@@ -24,6 +24,9 @@ __Example:__
 ]}
 ```
 
+Requirements are applied in the order in which they are listed; this can matter in cases where "refill",
+"ammoDrain", or "energyAtMost" requirements are involved with other resource usage requirements.
+
 #### or object
 An `or` object is fulfilled if at least one of the logical elements it contains is fulfilled
 
@@ -72,10 +75,6 @@ __Example:__
   "count": 75
 }}
 ```
-
-__Additional considerations__
-
-Whenever an `ammoDrain` object is part of a strat, it should be applied after all other ammo costs.
 
 #### enemyKill object
 An `enemyKill` object communicates the need to kill a given set of enemies, and is satisfied by having the necessary items to use one of the valid [weapons](weapons/weapons-readme.md) that will kill each of the enemies (as well as enough ammo, if applicable).
@@ -133,6 +132,14 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the acid frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different acid runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
+#### gravitylessAcidFrames object
+A `gravitylessAcidFrames` object represents Samus interacting with acid physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `acidFrames` without the reduction effects given by Gravity Suit.
+
+__Example:__
+```json
+{"gravitylessAcidFrames": 70}
+```
+
 #### draygonElectricityFrames object
 A `draygonElectricityFrames` object represents the need for Samus to spend time (measured in frames) grappled to a broken turret in Draygon's room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for electricity is 1 damage per frame, halved by Varia (1 damage every 2 frames), and halved again by Gravity Suit (1 damage every 4 frames).
 
@@ -181,6 +188,14 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
+#### gravitylessHeatFrames object
+A `gravitylessHeatFrames` object represents Samus in a heated environment with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `heatFrames` without the reduction effects given by Gravity Suit.
+
+__Example:__
+```json
+{"gravitylessHeatFrames": 70}
+```
+
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
 
@@ -201,12 +216,12 @@ __Additional considerations__
 
 Much like the other logical elements that represent environmental frame damage, the lava frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different lava runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
 
-#### lavaPhysicsFrames object
-A `lavaPhysicsFrames` object works exactly like a `lavaFrames` object, except that Samus needs to be working with lava physics during that period of time. This means Gravity Suit will be manually turned off for this duration, even if it's available.
+#### gravitylessLavaFrames object
+A `gravitylessLavaFrames` object represents Samus interacting with lava physics with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `lavaFrames` without the reduction effects given by Gravity Suit.
 
 __Example:__
 ```json
-{"lavaPhysicsFrames": 70}
+{"gravitylessLavaFrames": 70}
 ```
 
 #### samusEaterFrames object
@@ -215,6 +230,14 @@ A `samusEaterFrames` object represents the need for Samus to take damage from th
 __Example:__
 ```json
 {"samusEaterFrames": 160}
+```
+
+#### metroidFrames object
+A `metroidFrames` object represents the need for Samus to spend time (measured in frames) grappled by a Metroid. When captured, the Metroid deals 3 damage every 4 frames. This is halved by Varia (3 damage every 8 frames), and halved again by Gravity Suit (3 damage every 16 frames).
+
+__Example:__
+```json
+{"metroidFrames": 260}
 ```
 
 #### spikeHits object
@@ -239,7 +262,7 @@ __Example:__
 
 #### resourceCapacity object
 A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
-* _type:_ The type ofresource. Can have the following values:
+* _type:_ The type of resource. Can have the following values:
   * Missile
   * Super
   * PowerBomb
@@ -255,6 +278,22 @@ __Example:__
     { "type": "PowerBomb", "count": 11},
     { "type": "RegularEnergy", "count":899}
 ]}
+```
+
+#### refill object
+A `refill` object is always fulfilled and represents a process that refills certain resource types to their current maximum capacity. Possible uses could include a farm, recharge station, or Crystal Flash. The
+refilled resource types are listed as an array having the following possible values:
+
+* Missile
+* Super
+* PowerBomb
+* RegularEnergy
+* ReserveEnergy
+* Energy (shorthand for RegularEnergy + ReserveEnergy)
+
+__Example:__
+```json
+{"refill": ["Energy", "Missile"]}
 ```
 
 ### Momentum-Based Objects
@@ -285,13 +324,41 @@ __Additional considerations__
 
 Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
+#### adjacentJumpway object
+An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. Currently supported jumpway types involve jumping up through a vertical doorway. The object has the following properties:
+* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
+* _jumpwayType:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.
+* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition (in tiles, not including the transition tiles). Likewise, for a platform  jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
+* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
+* _maxLeftPosition:_ Maximum value of "leftPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+* _minRightPosition:_ Minimum value of "rightPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+
+Please refer to the section about jumpways in [the Region documentation](region/region-readme.md) for a more detailed explanation of jumpways. 
+
+__Example:__
+```json
+{"adjacentJumpway": {
+  "jumpwayType": "platformBelow",
+  "fromNode": 2,
+  "minHeight": 9,
+  "maxHeight": 9,
+  "maxLeftPosition": -38.5,
+  "minRightPosition": -7
+}}
+```
+
+__Additional considerations__
+
+Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
+
 #### canComeInCharged object
-A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an ajacent room and into the current room. It has the following properties:
+A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
 * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
 * _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
+* _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
 
 __Example:__
 ```json
@@ -373,7 +440,8 @@ A `comeInWithGMode` object represents the need to either have or obtain G-mode w
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
 * _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room, or to have collected the Morph item.
-
+* _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
+required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough that knockback frames do not expire until after reserves finish filling.
 __Example:__
 ```json
 {"comeInWithGMode": {
@@ -418,6 +486,26 @@ __Example:__
   {"itemNotCollectedAtNode": 1},
   "canRiskPermanentLossOfAccess"
 ]}
+```
+
+### Obstacle-related objects
+
+#### obstaclesCleared
+
+An `obstaclesCleared` object represents a requirement that all of the listed obstacles must be already cleared.
+
+__Example:__
+```json
+{"obstaclesCleared": ["A"]}
+```
+
+#### obstaclesNotCleared
+
+An `obstaclesNotCleared` object represents a requirement that none of the listed obstacles be already cleared.
+
+__Example:__
+```json
+{"obstaclesNotCleared": ["A"]}
 ```
 
 ### Room Pathing Objects
