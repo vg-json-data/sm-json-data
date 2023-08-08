@@ -10,7 +10,8 @@ data = {
     "regions": {},
     "roomIDsByLCRoomName": {},
     "roomMetasByID": {},
-    "roomsByRegion": {}
+    "roomsByRegion": {},
+    "smooshedRoomNames": []
 }
 regionPath = os.path.join(
     ".",
@@ -35,6 +36,9 @@ for region in os.listdir(regionPath):
                     subregionJSON = json.load(subregionFile)
                     # cycle through rooms
                     for room in subregionJSON["rooms"]:
+                        # add smooshed name to our notes
+                        data["smooshedRoomNames"].append("".join([s for s in room["name"] if s.isalnum()]))
+                        data["smooshedRoomNames"].sort()
                         # add LC'd name to our notes
                         data["roomIDsByLCRoomName"][room["name"].lower()] = room["id"]
                         for stripped in [
@@ -109,6 +113,8 @@ for region in os.listdir(regionPath):
                         if "subsubarea" in room:
                             subsubarea = room["subsubarea"]
                             subarea = f"{subarea.lower()}-{subsubarea.lower()}"
+                            if "norfair" in region:
+                                subarea = subsubarea.lower()
 
                         roomDiagram = os.path.join(
                             # ".",
@@ -132,43 +138,24 @@ for region in os.listdir(regionPath):
                              "subarea": subarea
                         }
 
-with open(
-    os.path.join(
-        ".",
-        "resources",
-        "app",
-        "manifests",
-        "regions.json"
-    ),
-    "w",
-    encoding="utf-8"
-) as regionsLookupFile:
-    regionsLookupFile.write(json.dumps(data["regions"], indent=2))
-
-with open(
-    os.path.join(
-        ".",
-        "resources",
-        "app",
-        "manifests",
-        "roomIDsByLCRoomName.json"
-    ),
-    "w",
-    encoding="utf-8"
-) as lcNamesFile:
-    lcNamesFile.write(json.dumps(data["roomIDsByLCRoomName"], indent=2))
-with open(
-    os.path.join(
-        ".",
-        "resources",
-        "app",
-        "manifests",
-        "roomMetasByID.json"
-    ),
-    "w",
-    encoding="utf-8"
-) as roomNamesFile:
-    roomNamesFile.write(json.dumps(data["roomMetasByID"], indent=2))
+for jsonKey in [
+    "regions",
+    "roomIDsByLCRoomName",
+    "roomMetasByID",
+    "smooshedRoomNames"
+]:
+    with open(
+        os.path.join(
+            ".",
+            "resources",
+            "app",
+            "manifests",
+            f"{jsonKey}.json"
+        ),
+        "w",
+        encoding="utf-8"
+    ) as jsonFile:
+        jsonFile.write(json.dumps(data[jsonKey], indent=2))
 
 for region, regionData in data["roomsByRegion"].items():
     for subregion, subregionData in regionData.items():
