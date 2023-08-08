@@ -235,6 +235,8 @@ def process_strats(src, paramData):
     toNode = paramData["toNode"]
     bail = paramData["bail"]
 
+    stratNames = []
+
     showNodes = True
     toNodeRef = f"{fromNodeRef}:destinationNode[{toNode}]"
 
@@ -243,6 +245,11 @@ def process_strats(src, paramData):
         stratRef = f"{toNodeRef}:stratName[{strat}]"
         if "name" in strat:
             stratRef = f"{toNodeRef}:stratName[{strat['name']}]"
+            if(strat["name"] in stratNames):
+                msg = f"🔴ERROR: Duplicate strat:{stratRef}"
+                messages["reds"].append(msg)
+                messages["counts"]["reds"] += 1
+            stratNames.append(strat["name"])
         # if fromNode is valid
         if str(fromNode) in roomData["links"]["from"]:
             # if direct path to toNode from fromNode exists
