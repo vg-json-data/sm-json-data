@@ -472,7 +472,6 @@ __Additional considerations__
 
 Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
-
 #### itemNotCollectedAtNode object
 An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
 an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
@@ -488,7 +487,27 @@ __Example:__
 ]}
 ```
 
+### Lock-related objects
+This section contains logical elements that are affected by Lock type Objects attached to Nodes.
+
+#### doorUnlockedAtNode object
+
+A `doorUnlockedAtNode` object represents the need to interact with a Door, usually without travelling through it.  Doors can be unusable if
+a Lock object is present on that Node.  The `doorUnlockedAtNode` object can be fulfilled when either 1) There are no locks on a Door or
+2) All locks on the Door have been unlocked.  Bypassing the Lock does not fulfill this Object requirement.  An example would be opening a Door
+to use the door frame as runway for a jump.
+
+__Example:__
+```json
+{"requires": [
+  {"doorUnlockedAtNode": 1},
+  "HiJump",
+  "SpeedBooster"
+]}
+```
+
 ### Obstacle-related objects
+This section contains logical elements that are affected by Obstacle type Objects within a room.
 
 #### obstaclesCleared
 
