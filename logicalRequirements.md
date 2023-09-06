@@ -566,7 +566,6 @@ In order to fulfill a `resetRoom` object, Samus must be able to do all of the fo
 __Example:__
 ```json
 {"resetRoom":{
-  "nodes": [1, 2],
-  "obstaclesToAvoid": ["A"]
+  "nodes": [1, 2]
 }}
 ```
