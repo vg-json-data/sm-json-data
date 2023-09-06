@@ -527,25 +527,6 @@ __Example:__
 {"obstaclesNotCleared": ["A"]}
 ```
 
-### Room Pathing Objects
-This section contains logical elements that are affected by Samus' pathing within a room.
-
-#### previousNode object
-A `previousNode` object represents the need for Samus to have arrived to the node directly from a given node. This usually has to do with quick-respawn blocks not being back yet.
-
-__Example:__
-```json
-{"previousNode": 1}
-```
-
-#### previousStratProperty object
-A `previousStratProperty` object represents the need for Samus to have arrived to the node via a strat that has a given stratProperty. This usually has to do with quick-respawn blocks not being back yet, or spinjump conservation. In those cases, arriving via other strats doesn't allow reproducing those conditions.
-
-__Example:__
-```json
-{"previousStratProperty": "spinjump"}
-```
-
 __Additional considerations__
 Entering a room does not count as executing a strat, so this logical element cannot be fulfilled instantly upon entering a room.
 
