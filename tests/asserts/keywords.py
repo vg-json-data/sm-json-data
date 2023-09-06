@@ -598,7 +598,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     "clearsObstacles.",
                                     "obstaclesCleared.",
                                     "obstaclesNotCleared.",
-                                    "obstaclesToAvoid.",
                                 ],
                                 f"{roomData['fullarea']}:room",
                                 roomData["obstacles"]["ids"],
