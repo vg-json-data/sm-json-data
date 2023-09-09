@@ -29,7 +29,7 @@ messages = {            # track messages and message counts
     }
 }
 
-def process_keyvalue(k, v):
+def process_keyvalue(k, v, metadata):
     '''
     Take a keyvalue pair and see if the value exists in our list of keywords
     '''
@@ -45,6 +45,8 @@ def process_keyvalue(k, v):
 
     # keys to ignore for documented reasons
     manualKeys = [
+        "clearsObstacles",
+        "initiateRemotely",
         "obstaclesCleared",
         "obstaclesNotCleared"
     ]
@@ -162,7 +164,10 @@ def process_keyvalue(k, v):
                     not isWeapon and \
                     not isValue:
                     goodValue = False
-                    msg = f"🔴{k} {v}"
+                    msg = f"🔴ERROR: {k} {v}"
+                    msg = {"msg": msg, "region": metadata["region"]}
+                    if v == "":
+                        msg["note"] = "Empty string!"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
     return goodValue
@@ -257,7 +262,7 @@ def process_strats(src, paramData):
             if str(toNode) in roomData["links"]["from"][str(fromNode)]["to"]:
                 # if the strat referenced doesn't exist on this node
                 if strat not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"] and \
-                    strat["name"] not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"]:
+                    (("name" not in strat) or strat["name"] not in roomData["links"]["from"][str(fromNode)]["to"][str(toNode)]["strats"]):
                     msg = f"🔴ERROR: Invalid strat:{stratRef}"
                     messages["reds"].append(msg)
                     messages["counts"]["reds"] += 1
@@ -391,7 +396,7 @@ for jsonPath in [
             ][0]
             # print(flattened_dict)
             for [k, v] in flattened_dict.items():
-                process_keyvalue(k, v)
+                process_keyvalue(k, v, {})
 
 cheatSheetJSON = {}
 with open(
@@ -430,7 +435,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                     # do a naive pass on all data in this region
                     for [k, v] in flattened_dict.items():
-                        ret = process_keyvalue(k, v)
+                        ret = process_keyvalue(k, v, {"region": fullarea})
                         if not ret and not showArea:
                             showArea = True
 
@@ -899,6 +904,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                       r"(strats)(?:\.)" + \
                                       r"([\w]+)(?:\.)" + \
                                       r"(.*)"
+                                    region = ""
+                                    if isinstance(msg, dict):
+                                        if "region" in msg:
+                                            region = msg["region"]
+                                        if "msg" in msg:
+                                            msg = msg["msg"]
                                     matches = re.match(pattern, msg)
                                     if matches:
                                         groups = list(matches.groups())
@@ -933,19 +944,41 @@ if bail:
     firstWarn = True
     foundErr = False
     foundWarn = False
+    lastRegion = ""
+    region = ""
     for msg in messages["reds"]:
+        if isinstance(msg, dict):
+            if "region" in msg:
+                region = msg["region"]
+            if "msg" in msg:
+                if "note" in msg:
+                    msg["msg"] += " !! " + msg["note"]
+                msg = msg["msg"]
         if "ERROR" in msg or "requires" in msg:
             foundErr = True
             if firstErr:
                 print("🔴ERROR🔴")
                 firstErr = False
+            if region != lastRegion:
+                print(region)
+                lastRegion = region
             print(msg)
     for msg in messages["yellows"]:
+        if isinstance(msg, dict):
+            if "region" in msg:
+                region = msg["region"]
+            if "msg" in msg:
+                if "note" in msg:
+                    msg["msg"] += " !! " + msg["note"]
+                msg = msg["msg"]
         if "WARNING" in msg or "requires" in msg:
             foundWarn = True
             if firstWarn:
                 print("🟡WARNING🟡")
                 firstWarn = False
+            if region != lastRegion:
+                print(region)
+                lastRegion = region
             print(msg)
     if foundWarn:
         subprocess.run("echo \"::warning title=Warning::Check Log for Details...\"", shell=True)
