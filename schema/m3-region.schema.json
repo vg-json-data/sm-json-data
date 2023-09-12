@@ -71,7 +71,7 @@
           "$id": "#/definitions/strat/properties/leaveWithRunway",
           "type": "object",
           "title": "Leave With Runway Object",
-          "description": "Represents that executing this strat allows exiting the room through the strat's 'to' node while using a runway of specified length. Depending on the requirements of a strat in the neighboring room, this can be used to represent many possible uses of a runway, such as shinesparking through the door, carrying a shinecharge through the door, or starting a run to obtain a shinecharge in the next room.",
+          "description": "Represents that executing this strat allows exiting the room through the strat's destination node while using a runway of specified length. Depending on the requirements of a strat in the neighboring room, this can be used to represent many possible uses of a runway, such as shinesparking through the door, carrying a shinecharge through the door, or starting a run to obtain a shinecharge in the next room.",
           "additionalProperties": false,
           "required": [
             "length",
@@ -178,80 +178,45 @@
             }
           }
         },
-        "leaveCharged": {
-          "$id": "#/definitions/strat/properties/leaveCharged",
+        "leaveWithSpark": {
+          "$id": "#/definitions/strat/properties/leaveWithSpark",
           "type": "object",
-          "title": "Leave Charged",
-          "description": "Represents that Samus can leave through this door with a shinespark charge (or an active shinespark).",
-          "required": [
-            "framesRemaining",
-            "usedTiles",
-            "openEnd"
-          ],
+          "title": "Leave With Spark",
+          "description": "Represents that Samus can leave through this door with a shinespark.",
+          "required": [],
           "additionalProperties": false,
           "properties": {
-            "usedTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/usedTiles",
-              "type": "integer",
-              "title": "Used Tiles",
-              "minimum": 1,
-              "maximum": 33,
-              "description": "The number of tiles that are available to charge a shinespark"
-            },
             "framesRemaining": {
               "$id": "#/definitions/strat/properties/leaveCharged/properties/framesRemaining",
               "type": "integer",
               "title": "Frames Remaining",
               "description": "The number of frames remaining in the shinespark charge when leaving the room. If this is 0, Samus leaves the room shinesparking."
             },
-            "shinesparkFrames": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/shinesparkFrames",
-              "type": "integer",
-              "title": "Shinespark Frames",
-              "description": "If this requires shinespark out of the room, indicates how many frames that shinespark on the way out will last"
+            "note": {
+              "$ref" : "m3-note.schema.json#/definitions/note",
+              "$id": "#/definitions/strat/properties/leaveCharged/properties/note"
             },
-            "openEnd": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/openEnd",
+            "devNote": {
+              "$ref" : "m3-note.schema.json#/definitions/devNote",
+              "$id": "#/definitions/strat/properties/leaveCharged/properties/devNote"
+            }
+          }
+        },
+        "leaveCharged": {
+          "$id": "#/definitions/strat/properties/leaveCharged",
+          "type": "object",
+          "title": "Leave Charged",
+          "description": "Represents that Samus can leave through this door with a shinespark charge.",
+          "required": [
+            "framesRemaining"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "framesRemaining": {
+              "$id": "#/definitions/strat/properties/leaveCharged/properties/framesRemaining",
               "type": "integer",
-              "minimum": 0,
-              "maximum": 2,
-              "title": "Number of Open Ends",
-              "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
-            },
-            "gentleUpTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/gentleUpTiles",
-              "type": "integer",
-              "minimum": 0,
-              "title": "Gentle Up Tiles",
-              "description": "The number of tiles (among the used tiles) that slope gently upward (going up by half a tile)."
-            },
-            "gentleDownTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/gentleDownTiles",
-              "type": "integer",
-              "minimum": 0,
-              "title": "Gentle Down Tiles",
-              "description": "The number of tiles (among the used tiles) that slope gently downward (going down by half a tile)."
-            },
-            "steepUpTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/steepUpTiles",
-              "type": "integer",
-              "minimum": 0,
-              "title": "Steep Up Tiles",
-              "description": "The number of tiles (among the used tiles) that slope steeply upward (going up by a tile)."
-            },
-            "steepDownTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/steepDownTiles",
-              "type": "integer",
-              "minimum": 0,
-              "title": "Steep Down Tiles",
-              "description": "The number of tiles (among the used tiles) that slope steeply downward (going down by a tile)."
-            },
-            "startingDownTiles": {
-              "$id": "#/definitions/strat/properties/leaveCharged/properties/startingDownTiles",
-              "type": "integer",
-              "minimum": 0,
-              "title": "Starting Down Tiles",
-              "description": "The number of tiles (among the used tiles) that slope downwards at the start of a run, preventing the execution of a stutter."
+              "title": "Frames Remaining",
+              "description": "The number of frames remaining in the shinespark charge when leaving the room. If this is 0, Samus leaves the room shinesparking."
             },
             "note": {
               "$ref" : "m3-note.schema.json#/definitions/note",
@@ -269,18 +234,10 @@
           "title": "Come in Charged",
           "description": "Fulfilled by being able to come into the room through the strat's 'from' node either with a shinecharge that has at least the given number of frames remaining (or a shinespark through the tranition in case of 0 frames remaining), or by running into the room with sufficient space to complete a shinecharge in this room.",
           "required": [
-            "additionalTiles",
-            "framesRemaining",
-            "shinesparkFrames"
+            "framesRemaining"
           ],
           "additionalProperties": false,
           "properties": {
-            "additionalTiles": {
-              "$id": "#/definitions/strat/properties/comeInCharged/properties/additionalTiles",
-              "type": "number",
-              "title": "Additional Tiles",
-              "description": "The number of contiguous tiles that are part of the runway at the 'from' node which can be used to help complete a shinecharge when running into the room. A negative value indicates a need to reach blue speed in the previous room some distance prior to the door transition, for instance to be able to jump into a speedball with appropriate positioning."
-            },
             "framesRemaining": {
               "$id": "#/definitions/strat/properties/comeInCharged/properties/framesRemaining",
               "type": "integer",
@@ -289,19 +246,51 @@
               "title": "Frames Remaining",
               "description": "The number of frames that must be left on the shinespark charge when coming in."
             },
-            "shinesparkFrames": {
-              "$id": "#/definitions/strat/properties/comeInCharged/properties/shinesparkFrames",
+            "length": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/length",
               "type": "integer",
+              "title": "Length",
               "minimum": 0,
-              "title": "Shinespark Frames",
-              "description": "The duration (in frames) of the shinespark that must be executed. This defines the energy cost of the shinespark."
+              "maximum": 45,
+              "default": 0,
+              "description": "The number of contiguous tiles that are part of the runway at the 'from' node which can be used to help complete a shinecharge when running into the room. A negative value indicates a need to reach blue speed in the previous room some distance prior to the door transition, for instance to be able to jump into a speedball with appropriate positioning."
             },
-            "excessShinesparkFrames": {
-              "$id": "#/definitions/strat/properties/comeInCharged/properties/excessShinesparkFrames",
+            "gentleUpTiles": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/gentleUpTiles",
+              "type": "integer",
+              "title": "Gentle Up Tiles",
+              "default": 0,
+              "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running from the door)"
+            },
+            "gentleDownTiles": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/gentleDownTiles",
+              "type": "integer",
+              "title": "Gentle Down Tiles",
+              "default": 0,
+              "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running from the door)"
+            },
+            "steepUpTiles": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/steepUpTiles",
+              "type": "integer",
+              "title": "Steep Up Tiles",
+              "default": 0,
+              "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running from the door)"
+            },
+            "steepDownTiles": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/steepDownTiles",
+              "type": "integer",
+              "title": "Steep Down Tiles",
+              "default": 0,
+              "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running from the door)"
+            },
+            "openEnd": {
+              "$id": "#/definitions/strat/properties/comeInCharged/properties/openEnd",
               "type": "integer",
               "minimum": 0,
-              "title": "Excess Shinespark Frames",
-              "description": "The shinespark duration (in frames) that is not required to complete the objective of the shinespark.  Subtracting this from the shinesparkFrames defines the lower limit of the shinespark energy cost."
+              "maximum": 1,
+              "title": "Number of Open Ends",
+              "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+              "default": 0
             }
           }
         },
