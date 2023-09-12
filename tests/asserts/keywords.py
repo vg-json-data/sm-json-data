@@ -268,31 +268,6 @@ def process_strats(src, paramData):
                     messages["counts"]["reds"] += 1
                 else:
                     # valid strat
-                    # if it's got obstacles
-                    if "obstacles" in strat:
-                        for obstacle in strat["obstacles"]:
-                            # make sure the obstacle exists in the room
-                            if obstacle["id"] not in roomData["obstacles"]["ids"]:
-                                msg = f"🔴ERROR: Invalid Obstacle ID:{stratRef}:{obstacle['id']}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            # check additionalObstacles too
-                            if "additionalObstacles" in obstacle:
-                                for addtlObstacle in obstacle["additionalObstacles"]:
-                                    # make sure it exists in the room
-                                    if addtlObstacle not in roomData["obstacles"]["ids"]:
-                                        msg = f"🔴ERROR: Invalid Additional Obstacle ID:{stratRef}:{obstacle['id']}:{addtlObstacle}"
-                                        messages["reds"].append(msg)
-                                        messages["counts"]["reds"] += 1
-                    # check cleared obstacles too
-                    if "clearedObstacles" in strat:
-                        for obstacle in strat["clearedObstacles"]:
-                            # make sure it exists in the room
-                            if obstacle not in roomData["obstacles"]["ids"]:
-                                msg = f"🔴ERROR: Invalid Cleared Obstacle ID:{stratRef}:{obstacle}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-
                     if showArea:
                         msg = ""
                         area = roomData["area"]
