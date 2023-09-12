@@ -312,6 +312,8 @@ to have either "air" physics or "water" physics with Gravity.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
 
+Note: this logical requirement is deprecated, and the [strat property](../strats.md) `comeInWithRunway` should be used instead.
+
 __Example:__
 ```json
 {"adjacentRunway": {
@@ -359,6 +361,8 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
 * _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
 * _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
 * _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
+
+Note: this logical requirement is deprecated, and the [strat property](../strats.md) `comeInCharged` should be used instead.
 
 __Example:__
 ```json

@@ -108,6 +108,8 @@ Represents an array of runways connected to a door. A runway is a series of tile
 * _usableComingIn:_ If this property is present and false, the runway cannot be used in combination with an adjacent runway when entering the room. This will often be due to the presence of an enemy or obstacle that cannot be taken care of without breaking momentum.
 * _strats:_ An array of [strats](../strats.md), each of which may be executed in order to use this runway. If none of the strats can be executed, the runway cannot be used.
 
+Note: this node property is deprecated, and the [strat property](../strats.md) `leaveWithRunway` should be used instead.
+
 __Additional considerations__
 
 Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. However, some rules are intended to be applied when doing that calculation:
@@ -168,6 +170,8 @@ Represents the possibility for Samus to charge a shinespark without using the do
   * _pathToDoor:_ A list of objects, which describes the path that Samus must follow through the room from the `initiateAt` node to the exited door in order to properly leave charged. This path must end at the exited node. Each object in the path represents one link to follow, and has the following properties:
     * _destinationNode:_ The ID of the next node to visit, from the previous node in the path (and from the `initiateAt` node if at the first node in the path)
     * _strats:_ A list of possible strats to follow to go to `destinationNode` These must be names of an actual strat on an actual link from the previous node to the destination node. Samus has to fulfill all requirements of a strat at each link in `pathToDoor` to be able to properly leave charged.
+
+Note: this node property is deprecated, and the [strat property](../strats.md) `leaveCharged` should be used instead.
 
 __Additional considerations__
 
