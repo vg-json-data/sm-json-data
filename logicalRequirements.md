@@ -120,6 +120,12 @@ When trying to determine the ammo needed to fulfill an `enemyKill` object, it co
 ### Health Management Objects
 This section contains logical elements that are fulfilled by spending health. Encountering enough of those successively without having a chance to refill can impact the number of e-tanks that are needed to get through.
 
+#### shinesparkFrames
+A `shinesparkFrames` object represents the need for Samus to spend energy performing a shinespark for the given number of frames, which equals the amount of energy spent, as shinesparks use 1 energy per frame. This implicitly requires the `canShinespark` tech. It also requires that Samus has at least 29 energy remaining at the end of the spark.
+
+#### excessShinesparkFrames
+An `excessShinesparkFrames` object represents the need for Samus to spend energy performing a shinespark for the given number of frames, or until Samus' energy reaches 29, whichever happens first. This implicitly requires the `canShinespark` tech.
+
 #### acidFrames object
 An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
 
@@ -356,23 +362,19 @@ A `canComeInCharged` object represents the need to charge a shinespark in an adj
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
 * _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
-* _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
 * _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
 
 __Example:__
 ```json
 {"canComeInCharged": {
   "fromNode": 4,
-  "framesRemaining": 180,
-  "shinesparkFrames": 75
+  "framesRemaining": 180
 }}
 ```
 
 __Additional considerations__
 
 * A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
 * A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
 The number of framesRemaining in that case is:
   * 180 if there is a usable runway in the destination room
@@ -380,6 +382,8 @@ The number of framesRemaining in that case is:
 * Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
+
+Energy requirements for shinesparking (if applicable) are specified separately using `shinesparkFrames` and `excessShinesparkFrames` objects.
 
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
@@ -391,8 +395,6 @@ A `canShineCharge` object represents the need for Samus to be able to charge a s
   * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
   * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
 * _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
-* _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
 
 __Example:__
 ```json
@@ -400,15 +402,13 @@ __Example:__
   "usedTiles": 25,
   "steepUpTiles": 3,
   "steepDownTiles": 3,
-  "shinesparkFrames": 0,
   "openEnd": 1
 }},
 ```
 
 __Additional considerations__
 
-* A `canShineCharge` object implicitly requires the Speed Booster.
-* A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
+* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark are specified separately using `shinesparkFrames` and `excessShinesparkFrames` objects.
 
 #### comeInWithRMode object
 A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
