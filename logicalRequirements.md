@@ -120,11 +120,11 @@ When trying to determine the ammo needed to fulfill an `enemyKill` object, it co
 ### Health Management Objects
 This section contains logical elements that are fulfilled by spending health. Encountering enough of those successively without having a chance to refill can impact the number of e-tanks that are needed to get through.
 
-#### shinesparkFrames
-A `shinesparkFrames` object represents the need for Samus to spend energy performing a shinespark for the given number of frames, which equals the amount of energy spent, as shinesparks use 1 energy per frame. This implicitly requires the `canShinespark` tech. It also requires that Samus has at least 29 energy remaining at the end of the spark.
+#### shinespark
+A `shinespark` object represents the need for Samus to spend energy performing a shinespark for a given number of frames. This implicitly requires the `canShinespark` tech. It has the following properties:
 
-#### excessShinesparkFrames
-An `excessShinesparkFrames` object represents the need for Samus to spend energy performing a shinespark for the given number of frames, or until Samus' energy reaches 29, whichever happens first. This implicitly requires the `canShinespark` tech.
+* _frames_: The duration of the shinespark in frames, assuming the spark is completed without being interrupted by reaching 29 energy. The shinespark frames equals the amount of energy spent, as a shinespark uses 1 energy per frame. 
+* _excessFrames_: The shinespark duration (in frames) that is not required to complete the objective of the shinespark. Subtracting this from the `frames` defines the lower limit of the shinespark energy cost.
 
 #### acidFrames object
 An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
@@ -383,7 +383,7 @@ The number of framesRemaining in that case is:
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
 
-Energy requirements for shinesparking (if applicable) are specified separately using `shinesparkFrames` and `excessShinesparkFrames` objects.
+Energy requirements for shinesparking (if applicable) are specified separately using a `shinespark` object.
 
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
@@ -408,7 +408,7 @@ __Example:__
 
 __Additional considerations__
 
-* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark are specified separately using `shinesparkFrames` and `excessShinesparkFrames` objects.
+* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
 #### comeInWithRMode object
 A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:

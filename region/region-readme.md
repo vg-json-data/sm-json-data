@@ -177,7 +177,7 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
-In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using `shinesparkFrames` and `excessShinesparkFrames` objects.
+In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using a `shinespark` object.
 
 #### leaveWithGModeSetup
 
