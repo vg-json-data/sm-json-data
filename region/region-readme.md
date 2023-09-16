@@ -181,6 +181,8 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
+In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using a `shinespark` object.
+
 #### leaveWithGModeSetup
 
 Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
