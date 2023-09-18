@@ -2,9 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "https://raw.githubusercontent.com/vg-json-data/sm-json-data/master/schema/m3-region.schema.json",
   "definitions": {
-    "runwayGeometry": {
-
-    },
     "strat": {
       "$id": "#/definitions/strat",
       "type": "object",
@@ -105,16 +102,53 @@
               "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging",
               "type": "object",
               "title": "Come in Charging",
-              "description": "Represents a requirement to run into the room with enough space to complete a shinecharge in this room, using runways attached to both sides of the door.",
-              "required": [],
+              "description": "Represents a requirement to run into the room with enough space to complete a shinecharge in this room.",
+              "required": [
+                "length",
+                "openEnd"
+              ],
               "additionalProperties": false,
               "properties": {
-                "unusableTiles": {
-                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/unusableTiles",
-                  "type": "number",
+                "length": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/length",
+                  "type": "integer",
+                  "title": "Length",
                   "minimum": 0,
-                  "title": "Unusable Tiles",
-                  "description": "The number of contiguous tiles that are part of the runway but cannot be used to charge this shinespark."
+                  "maximum": 45,
+                  "description": "Length of the runway in the current room that can be used to complete the shinecharge."
+                },
+                "openEnd": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/openEnd",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "title": "Number of Open Ends",
+                  "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+                  "default": 1
+                },
+                "gentleUpTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/gentleUpTiles",
+                  "type": "integer",
+                  "title": "Gentle Up Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running away from the door)"
+                },
+                "gentleDownTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/gentleDownTiles",
+                  "type": "integer",
+                  "title": "Gentle Down Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running away from the door)"
+                },
+                "steepUpTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/steepUpTiles",
+                  "type": "integer",
+                  "title": "Steep Up Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running away from the door)"
+                },
+                "steepDownTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInCharging/properties/steepDownTiles",
+                  "type": "integer",
+                  "title": "Steep Down Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running away from the door)"
                 }
               }
             },
@@ -146,6 +180,23 @@
               "required": [],
               "additionalProperties": false,
               "properties": {}
+            },
+            "comeInWithBlueJump": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueJump",
+              "type": "object",
+              "title": "Come In With Spark",
+              "description": "Represents a requirement that Samus come in by jumping with blue speed through the door.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {
+                "jumpLengthTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueJump/properties/jumpLengthTiles",
+                  "type": "number",
+                  "minimum": 0,
+                  "title": "Jump Length Tiles",
+                  "description": "The horizontal distance (in tiles) that Samus must travel over during the jump in the previous room, assuming a runway height level with the door."
+                }
+              }
             },
             "comeInWithBombBoost": {
               "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBombBoost",
@@ -184,6 +235,66 @@
           "minProperties": 1,
           "maxProperties": 1,
           "properties": {
+            "leaveWithRunway": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway",
+              "type": "object",
+              "title": "Leave With Runway",
+              "description": "Represents that Samus can leave through this door using a runway of specified geometry. The specific way that the runway is used depends on the 'entranceCondition' in the next room.",
+              "additionalProperties": false,
+              "required": [
+                "length",
+                "openEnd"
+              ],
+              "properties": {
+                "length": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/length",
+                  "type": "integer",
+                  "title": "Length",
+                  "minimum": 0,
+                  "maximum": 45,
+                  "description": "Length of this Runway"
+                },
+                "openEnd": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/openEnd",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "title": "Number of Open Ends",
+                  "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+                  "default": 1
+                },
+                "gentleUpTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/gentleUpTiles",
+                  "type": "integer",
+                  "title": "Gentle Up Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running towards the door)"
+                },
+                "gentleDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/gentleDownTiles",
+                  "type": "integer",
+                  "title": "Gentle Down Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running towards the door)"
+                },
+                "steepUpTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/steepUpTiles",
+                  "type": "integer",
+                  "title": "Steep Up Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running towards the door)"
+                },
+                "steepDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/steepDownTiles",
+                  "type": "integer",
+                  "title": "Steep Down Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running towards the door)"
+                },
+                "startingDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/startingDownTiles",
+                  "type": "integer",
+                  "title": "Starting Down Tiles",
+                  "description": "Number of tiles at the start of the runway (away from the door) that slope down, preventing a stutter"
+                }
+              }
+            },
             "leaveCharged": {
               "$id": "#/definitions/strat/properties/exitCondition/properties/leaveCharged",
               "type": "object",
@@ -703,6 +814,7 @@
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways",
                   "type": "array",
                   "title": "Runways",
+                  "description": "DEPRECATED: This node property will be deleted. Use strat properties exitCondition and entranceCondition instead.",
                   "items": {
                     "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items",
                     "type": "object",
@@ -795,11 +907,6 @@
                         "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
                         "default": 1
                       },
-                      "otherNodeId": {
-                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items/properties/otherNodeId",
-                        "type": "integer",
-                        "description": "ID of node at the end of the runway opposite the door."
-                      },
                       "note": {
                         "$ref" : "m3-note.schema.json#/definitions/note",
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items/properties/note"
@@ -882,7 +989,7 @@
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged",
                   "type": "array",
                   "title": "Can Leave Charged",
-                  "description": "DEPRECATED: An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark). This node property will be deleted; the strat property 'leaveCharged' should be used instead.",
+                  "description": "DEPRECATED: An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark). This node property will be deleted; the strat property exitCondition/leaveCharged should be used instead.",
                   "items": {
                     "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/items",
                     "type": "object",
