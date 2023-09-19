@@ -70,13 +70,17 @@ A `leaveWithRunway` exit condition can satisfy the following entrance conditions
 `leaveWithRunway` has the following properties:
 
 * _length:_ The number of tiles in the runway
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
+* _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
+* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running towards the door.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
   * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
   * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
-* _openEnd:_ Any runway that is used to gain momentum has two ends (although in the case of actual `runway`s one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging ( 0 or 1).
+
+In most cases, what matters is the effective runway length (ERL), which takes into account how slopes temporarily slow down Samus' horizontal movement:
+
+`ERL = length - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
 
 In a heated room, a `leaveWithRunway` exit condition implicitly includes `heatFrames` needed to use the runway. The amount of `heatFrames` required depends on the entrance condition in the next room, and the details of how these `heatFrames` may be calculated are described under each entrance condition [below](#entrance-conditions). If the `from` and `to` nodes of the strat are different nodes, then it is assumed that the strat property `requires` already includes any heat frames needed to reach the starting point of the runway (the side furthest from the door), in which case the implicit `heatFrames` in `leaveWithRunway` will only account for the heat frames needed to use the runway in one direction, moving towards the door. If the `from` and `to` nodes of the strat are the same node, then the implicit `heatFrames` includes all heat frames needed to enter the room through the door, position appropriately on the runway, execute the required movement, and exit the room through the door.
 
@@ -171,109 +175,109 @@ Each of these properties is described in more detail below.
 ### Come In Running
 
 An `comeInRunning` object represents the need for Samus to be able to run into the room with speed in a certain range. It has the following properties:
-* _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used.
+* _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 
-A `comeInRunning` condition can be satisfied only by a matching strat on the other side of the door with `leaveWithRunway` exit condition: the conditions match if the effective runway length of the `leaveWithRunway` is at least as long as the `minTiles` in the `comeInRunning` condition.
+A `comeInRunning` condition can be satisfied only by a matching strat on the other side of the door with `leaveWithRunway` exit condition: a match is valid if all of the following are true:
+- The effective runway length of the `leaveWithRunway` is at least as long as the `minTiles` in the `comeInRunning` condition.
 
 Where applicable, a `comeInRunning` condition also includes implicit requirements which are effectively prepended to the start of the strat's `requires`:
 - If `speedBooster` is true, then there is an implicit "SpeedBooster" item requirement.
-- If the previous room is heated, then there is a `heatFrames` requirement based on the required time to perform the run. 
+- If the previous room is heated, then `heatFrames` are required based on the time needed to perform the run. 
+- If the previous door environment is water, then `Gravity` is required.
 
-Heat frames may be calculated based on the following components:
+Heat frames may be calculated based on the following table of approximations (which include almost no lenience):
 
-#### Frames to run from a standstill in one direction: without Speedbooster
+| Action                                                                  | Heat frames             |
+| ----------------------------------------------------------------------  | ----------------------- |
+| Run from a standstill in one direction, without Speedbooster, 0-6 tiles | `9 + 4 * tiles`         |
+| Run from a standstill in one direction, without Speedbooster, 7+ tiles  | `13 + 64 / 19 * tiles`  |
+| Run from a standstill in one direction, with Speedbooster, 0-6 tiles    | `9 + 4 * tiles`         |
+| Run from a standstill in one direction, with Speedbooster, 7-16 tiles   | `15 + 3 * tiles`        |
+| Run from a standstill in one direction, with Speedbooster, 17-42 tiles  | `32 + 2 * tiles`        |
+| Run from a standstill in one direction, with Speedbooster, 43+ tiles    | `47 + 64 / 39 * tiles`  |
+| Turn around                                                             | `8`                     |
+| Position using moonwalk (and shoot open the door)                       | `12`                    |
 
-Frames ~= 9 + 4 * tiles
+The way to calculate heat frames depends on the type of `leaveWithRunway`:
 
+- If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway is used starting from the door. In this case heat frames must be included for running in both directions. The distance to run is determined by the `minTiles` in the `comeInRunning` object. The heat frames for this run length should be doubled; then heat frames should be added to allow time to turn around and position. Even with optimal movement, time to position is necessary if the full length of the runway is required; in theory this time could be reduced by using X-Ray Scope to buffer the positioning and to turn-around in place.
+- If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway is used starting at the end opposite the door. In this case heat frames only need to be included for running in one direction, toward the door. However, if the `comeInRunning` condition has a `maxTiles` and it is less than the effective runway length in the `leaveWithRunway`, then it will not work to run through the entire length of the runway; there are a couple options in this case:
+  - The player can hold run until at a distance of `maxTiles` from the transition, then stop and restart running (by briefly releasing forward while holding an angle button). In this case the runway is partitioned into two runs, and the heat frames from the two individual runs must be added, along with any time for positioning.
+  - The player can hold dash at the beginning of the runway for a distance between `minTiles` and `maxTiles` (with the optimal strategy being to run as close to `maxTiles` as possible without going over), then release dash for the remainder of the run to maintain a constant speed.
 
-| Runway tiles | Frames  |
-| ------------ | ------- |
-|           1  |      13 |
-|           2  |      17 |
-|           3  |      21 |
-|           4  |      25 |
-|           5  |      29 |
-|           6  |      32 |
-|           7  |      36 |
+#### Example
+```json
+{
+  "name": "Come In Running",
+  "notable": false,
+  "requires": [],
+  "entranceCondition": {
+    "comeInRunning": {
+      "speedBooster": "any",
+      "minTiles": 2
+    }
+  }
+}
+```
 
+### Come In Jumping
 
-#### Frames to run from a standstill in one direction: with Speedbooster
+A `comeInJumping` object represents the need for Samus to be able to run toward the door in the previous room, with speed in a certain range, and spin jump just before hitting the transition. It has the following properties:
+* _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
+* _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 
-| Runway tiles | Frames  |
-| ------------ | ------- |
-|           1  |      13 |
-|           2  |      17 |
-|           3  |      21 |
-|           4  |      25 |
-|           5  |      29 |
-|           6  |      32 |
-|           7  |      36 |
-|           8  |      39 |
-|           9  |      42 |
-|          10  |      45 |
-|          11  |      48 |
-|          12  |      51 |
-|          13  |      54 |
-|          14  |      56 |
-|          15  |      59 |
-|          16  |      61 |
-|          17  |      64 |
-|          18  |      66 |
-|          19  |      69 |
-|          20  |      71 |
-|          21  |      73 |
-|          22  |      75 |
-|          23  |      77 |
-|          24  |      80 |
-|          25  |      82 |
-|          26  |      84 |
-|          27  |      86 |
-|          28  |      88 |
-|          29  |      90 |
-|          30  |      92 |
-|          31  |      94 |
-|          32  |      95 |
-|          33  |      97 |
-|          34  |      99 |
-|          35  |     101 |
-|          36  |     103 |
-|          37  |     104 |
-|          38  |     106 |
-|          39  |     108 |
-|          40  |     110 |
-|          41  |     111 |
-|          42  |     113 |
-|          43  |     115 |
+`comeInJumping` is very similar to `comeInRunning`, the only difference being the jump which happens just before the transition. Heat frames and other implicit requirements are generated in exactly the same way.
 
+#### Example
+```json
+{
+  "name": "Cross Room Jump",
+  "notable": false,
+  "requires": [],
+  "entranceCondition": {
+    "comeInJumping": {
+      "speedBooster": "any",
+      "minTiles": 2
+    }
+  }
+}
+```
 
-### Leave Charged
+### Come In Charging
 
-Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
-* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
+A `comeInCharging` object represents the need for Samus to run into the room with enough space to complete a shinecharge. It has the following properties:
+
+* _length:_ The number of tiles in the runway in this room that can be used to help complete the shinecharge.
+* _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
+* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running away from the door, consistent with the direction that Samus will be traveling.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
   * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
   * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
-* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
 
-Note: this node property is deprecated, and the [strat property](../strats.md) `leaveCharged` should be used instead.
+A `comeInCharging` must match with a corresponding `leaveWithRunway` requirement on the other side of the door. 
 
-__Additional considerations__
+A `comeInCharging` object also includes implicit requirements which are effectively prepended to the start of the strat's `requires`:
+- A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement as well as a check that the combined runway length is long enough that charging a shinespark is possible. The minimum that can be achieved (with incredibly high skill) is approximately 11 tiles, but in general a higher threshold should be used based on a desired difficulty level.
+- If the previous room is heated, then `heatFrames` are included based on the time spent running in that room.
+- If the current room is heated, then `heatFrames` are included based on the time spent running in this room.
+- If the previous door environment is water, then `Gravity` is required.
 
-Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible. As such, that is never explicitly defined in a `canLeaveCharged` object. The number of frames remaining in that charge will be:
-* 180 frames if there's a usable runway on the other side
-* Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
+The way to calculate heat frames depends on the type of `leaveWithRunway` and on which of the two rooms (or both) are heated:
 
-Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
+- If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway is used starting from the door. In this case Samus will need to run in both directions. The way to calculate heat frames then depends on which rooms are heated:
+  - If only the current room is heated, then heat frames are minimized by using the full available runway in the other room to gain as much speed as possible before the transition.
+  - If both rooms are heated, then it is best to use smallest amount of runway possible in the other room. This amount is determined by taking the required shinecharge tiles (based on the desired difficulty) and subtracting away the effective runway length in the current room (based on the `comeInCharging` properties). The run into the other room can be done at full speed, so the table [above](#come-in-running) can be used to determine the required heat frames for this run, and for turning around and positioning. The run back to charge the spark then requires a constant 85 frames (regardless of which shortcharging techniques are used).
+  - If only the other room is heated, then as in the previous case, it is best to use smallest amount of runway possible in the other room, and the tiles and heat frames for the first run (into the other room) can be calculated the same as before.
 
 
-## Come In Charged
-  * _leaveWithRunway_: Indicates that this strat uses a runway connected to the destination node to leave through the door transition in a special way. For details see below.
-  * _comeInWithRunway_: Indicates that this strat requires using a runway connected to the door in the previous room to enter through the door transition in a special way. For details see below.
-  * _leaveCharged_: Indicates that this strat leaves through the door transition at the destination node with a shinecharge. For details see below.
-  * _comeInCharged_: Indicates that this strat requires coming into the room with a shinecharge or shinespark, or by running into the room with enough runway tiles to complete a shinecharge in this room. For details see below.
+The minimum amount of runway to use in the other room is determined by taking the required shinecharge tiles (based on the desired difficulty) and subtracting away the effective runway length in the current room (based on the `comeInCharging` properties). The run into the other room can be done at full speed, so the table [above](#come-in-running) can be used to determine the required heat frames for this run, and for turning around and positioning. The charge back into the current room may require a stutter and/or taps which will slow down the run, increasing the heat frame requirements.
+
+The distance to run is determined by the `minTiles` in the `comeInRunning` object. The heat frames for this run length should be doubled; then heat frames should be added to allow time to turn around and position. Even with optimal movement, time to position is necessary if the full length of the runway is required; in theory this time could be reduced by using X-Ray Scope to buffer the positioning and to turn-around in place.
+- If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway is used starting at the end opposite the door. In this case heat frames only need to be included for running in one direction, toward the door. However, if the `comeInRunning` condition has a `maxTiles` and it is less than the effective runway length in the `leaveWithRunway`, then it will not work to run through the entire length of the runway; there are a couple options in this case:
+  - The player can hold run until at a distance of `maxTiles` from the transition, then stop and restart running (by briefly releasing forward while holding an angle button). In this case the runway is partitioned into two runs, and the heat frames from the two individual runs must be added, along with any time for positioning.
+  - The player can hold dash at the beginning of the runway for a distance between `minTiles` and `maxTiles` (with the optimal strategy being to run as close to `maxTiles` as possible without going over), then release dash for the remainder of the run to maintain a constant speed.
