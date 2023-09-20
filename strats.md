@@ -69,7 +69,7 @@ A `leaveWithRunway` exit condition can satisfy the following entrance conditions
 
 `leaveWithRunway` has the following properties:
 
-* _length:_ The number of tiles in the runway
+* _length:_ The number of tiles in the runway. This length should not include the transition tile, but it should include the door shell tile if applicable.
 * _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
 * The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running towards the door.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
@@ -81,6 +81,8 @@ A `leaveWithRunway` exit condition can satisfy the following entrance conditions
 In most cases, what matters is the effective runway length (ERL), which takes into account how slopes temporarily slow down Samus' horizontal movement:
 
 `ERL = length - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
+
+There is some variance in how much down slopes slow down Samus' movement, depending on specific alignment of Samus' X position. The amount of variance is small enough to be neglected as long as some small amount of lenience is included in how runways are required to be used.
 
 In a heated room, a `leaveWithRunway` exit condition implicitly includes `heatFrames` needed to use the runway. The amount of `heatFrames` required depends on the entrance condition in the next room, and the details of how these `heatFrames` may be calculated are described under each entrance condition [below](#entrance-conditions). If the `from` and `to` nodes of the strat are different nodes, then it is assumed that the strat property `requires` already includes any heat frames needed to reach the starting point of the runway (the side furthest from the door), in which case the implicit `heatFrames` in `leaveWithRunway` will only account for the heat frames needed to use the runway in one direction, moving towards the door. If the `from` and `to` nodes of the strat are the same node, then the implicit `heatFrames` includes all heat frames needed to enter the room through the door, position appropriately on the runway, execute the required movement, and exit the room through the door.
 
@@ -200,7 +202,7 @@ Heat frames may be calculated based on the following table of approximations (wh
 | Turn around                                                             | `8`                     |
 | Position using moonwalk (and shoot open the door)                       | `12`                    |
 
-The way to calculate heat frames depends on the type of `leaveWithRunway`:
+The way to calculate minimally required heat frames depends on the type of `leaveWithRunway`:
 
 - If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway is used starting from the door. In this case heat frames must be included for running in both directions. The distance to run is determined by the `minTiles` in the `comeInRunning` object. The heat frames for this run length should be doubled; then heat frames should be added to allow time to turn around and position. Even with optimal movement, time to position is necessary if the full length of the runway is required; in theory this time could be reduced by using X-Ray Scope to buffer the positioning and to turn-around in place.
 - If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway is used starting at the end opposite the door. In this case heat frames only need to be included for running in one direction, toward the door. However, if the `comeInRunning` condition has a `maxTiles` and it is less than the effective runway length in the `leaveWithRunway`, then it will not work to run through the entire length of the runway; there are a couple options in this case:
@@ -250,7 +252,7 @@ A `comeInJumping` object represents the need for Samus to be able to run toward 
 
 A `comeInCharging` object represents the need for Samus to run into the room with enough space to complete a shinecharge. It has the following properties:
 
-* _length:_ The number of tiles in the runway in this room that can be used to help complete the shinecharge.
+* _length:_ The number of tiles in the runway in this room that can be used to help complete the shinecharge. This length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles).
 * _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
 * The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running away from the door, consistent with the direction that Samus will be traveling.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
@@ -267,17 +269,28 @@ A `comeInCharging` object also includes implicit requirements which are effectiv
 - If the current room is heated, then `heatFrames` are included based on the time spent running in this room.
 - If the previous door environment is water, then `Gravity` is required.
 
-The way to calculate heat frames depends on the type of `leaveWithRunway` and on which of the two rooms (or both) are heated:
+The way to calculate minimally required heat frames depends on the type of `leaveWithRunway` and on which of the two rooms (or both) are heated:
 
-- If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway is used starting from the door. In this case Samus will need to run in both directions. The way to calculate heat frames then depends on which rooms are heated:
-  - If only the current room is heated, then heat frames are minimized by using the full available runway in the other room to gain as much speed as possible before the transition.
-  - If both rooms are heated, then it is best to use smallest amount of runway possible in the other room. This amount is determined by taking the required shinecharge tiles (based on the desired difficulty) and subtracting away the effective runway length in the current room (based on the `comeInCharging` properties). The run into the other room can be done at full speed, so the table [above](#come-in-running) can be used to determine the required heat frames for this run, and for turning around and positioning. The run back to charge the spark then requires a constant 85 frames (regardless of which shortcharging techniques are used).
-  - If only the other room is heated, then as in the previous case, it is best to use smallest amount of runway possible in the other room, and the tiles and heat frames for the first run (into the other room) can be calculated the same as before.
+- If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway in the other room is used starting from the door. In this case Samus will need to run in both directions. The way to calculate heat frames then depends on which rooms are heated:
+  - If both rooms are heated, then it is best to use smallest amount of runway possible in the other room. If no the required shinecharge tiles
+  (based on the desired difficulty) is no more than the effective runway length in the current room, then there is no need to add heat frames for running in the other room. Otherwise, the amount of runway to use in the other room is the difference between the required shinecharge tiles and the effective runway length in the current room (based on the `comeInCharging` properties). The run into the other room can be done at full speed, so the [table](#come-in-running) can be used to determine the required heat frames for this run, including heat frames for turning around and positioning. For the run back to charge the spark, there are two cases:
+     - If the combined effective runway length is at least 31.3 tiles, then dash can be held through the entire run, so the [table](#come-in-running) can be used to get the total heat frames. 
+     - If the combined effective runway length is less than 31.3 tiles, then run back to charge the spark requires a constant 85 frames (regardless of shortcharging technique).
 
+  - If only the current room is heated, then heat frames are minimized by using the full available runway in the other room to gain as much speed as possible before the transition. 
+    - If the combined effective runway length is at least 31.3 tiles, then dash can be held through the entire run. In this case, the frames spent on the combined run can be found in the [table](#come-in-running), as can the frames spent in the other room; subtracting these two values gives the frames spent on the heated part of the run (i.e. the part in the current room).
+    - If the combined effective runway length is less than 31.3 tiles, then the run can be completed in the constant 85 frames needed to perform the shinecharge (regardless of shortcharging technique). The precise amount of frames spent in the current room is complicated to determine as it depends on details of how the shortcharge is performed. We can get a reasonable approximation by modeling as the movement as starting at a speed of 0.125 tiles/frame (somewhat less than the full walking speed of 0.171875 pixels/frame) and having constant acceleration up to the end of the combined runway. This is a quadratic model which has the following solution:
 
-The minimum amount of runway to use in the other room is determined by taking the required shinecharge tiles (based on the desired difficulty) and subtracting away the effective runway length in the current room (based on the `comeInCharging` properties). The run into the other room can be done at full speed, so the table [above](#come-in-running) can be used to determine the required heat frames for this run, and for turning around and positioning. The charge back into the current room may require a stutter and/or taps which will slow down the run, increasing the heat frame requirements.
+      $$\begin{align*}
+      T &= \text{total time} = 85 \text{ frames} \\
+      C &= \text{initial speed} = 0.125 \text{ tiles per frame} \\
+      L &= \text{combined effective runway length (in tiles)} \\
+      L_o &= \text{effective runway length in other room} \\
+      a &= \text{acceleration} = 2(L - CT) / T^2 \\
+      T_o &= \text{time in other room} = \frac{\sqrt{C^2 + 2ax} - C}{a} \\
+      T_c &= \text{time in current room} = T - T_o \\
+      \end{align*}$$
 
-The distance to run is determined by the `minTiles` in the `comeInRunning` object. The heat frames for this run length should be doubled; then heat frames should be added to allow time to turn around and position. Even with optimal movement, time to position is necessary if the full length of the runway is required; in theory this time could be reduced by using X-Ray Scope to buffer the positioning and to turn-around in place.
-- If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway is used starting at the end opposite the door. In this case heat frames only need to be included for running in one direction, toward the door. However, if the `comeInRunning` condition has a `maxTiles` and it is less than the effective runway length in the `leaveWithRunway`, then it will not work to run through the entire length of the runway; there are a couple options in this case:
-  - The player can hold run until at a distance of `maxTiles` from the transition, then stop and restart running (by briefly releasing forward while holding an angle button). In this case the runway is partitioned into two runs, and the heat frames from the two individual runs must be added, along with any time for positioning.
-  - The player can hold dash at the beginning of the runway for a distance between `minTiles` and `maxTiles` (with the optimal strategy being to run as close to `maxTiles` as possible without going over), then release dash for the remainder of the run to maintain a constant speed.
+  - If only the other room is heated, then it is best to use smallest amount of runway possible in the other room. The heat frames for the first run in the other room (if it is needed) and to turn-around and position can be obtained using the [table](#come-in-running). Heat frames for the run back can be approximated using either the [table](#come-in-running) or the formula for $T_o$ in the quadratic model above, depending on if the combined runway has length greater 31.3 tiles.
+
+- If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway in the other room is used starting at the end opposite the door. The way to calculate heat frames in this case is similar to above, except the full combined runway is used in every case, and it is only necessary to consider the one run from the other room to the current room (there being no need to start by doing a separate run in the opposite direction).
