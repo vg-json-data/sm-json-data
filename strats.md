@@ -173,7 +173,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInCharged_: This indicates that Samus must enter the room with a shinecharge with a certain amount of frames remaining.
 - _comeInWithSpark_: This indicates that Samus must shinespark into the room.
 - _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
-- _comeInWithStutter_: This indicates that Samus must run into the room with a stutter immediately before the transition.
+- _comeInStutterCharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 
 Each of these properties is described in more detail below.
@@ -188,7 +188,7 @@ An `comeInRunning` entrance condition represents the need for Samus to be able t
 A `comeInRunning` condition can be satisfied only by a matching strat on the other side of the door with `leaveWithRunway` exit condition: a match is valid if all of the following are true:
 - The effective runway length of the `leaveWithRunway` is at least as long as the `minTiles` in the `comeInRunning` condition.
 
-Where applicable, a `comeInRunning` condition also includes implicit requirements which are effectively prepended to the start of the strat's `requires`:
+Where applicable, a `comeInRunning` condition also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
 - If `speedBooster` is true, then there is an implicit "SpeedBooster" item requirement.
 - If the previous room is heated, then `heatFrames` are required based on the time needed to perform the run. 
 - If the previous door environment is water, then `Gravity` is required.
@@ -267,7 +267,7 @@ A `comeInCharging` entrance condition represents the need for Samus to run into 
 
 A `comeInCharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
-A `comeInCharging` object also includes implicit requirements which are effectively prepended to the start of the current strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
+A `comeInCharging` object also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the current strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
 - A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement as well as a check that the combined runway length is long enough that charging a shinespark is possible.
 - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room.
 - If the current room is heated, then `heatFrames` are included based on the time spent running in this room.
@@ -301,21 +301,63 @@ The way to calculate minimally required heat frames depends on the type of `leav
 
 - If the `from` node of the `leaveWithRunway` is different from the `to` node, then this represents that the runway in the other room is used starting at the end opposite the door. The way to calculate heat frames in this case is similar to above, except the full combined runway is used in every case, and it is only necessary to consider the one run from the other room to the current room (there being no need to start by doing a separate run in the opposite direction).
 
+
+#### Example
+```json
+{
+  "name": "Come In Charging",
+  "notable": false,
+  "requires": [
+    {"shinespark": {
+      "frames": 40,
+      "excessFrames": 3
+    }}
+  ],
+  "entranceCondition": {
+    "comeInCharging": {
+      "length": 5,
+      "openEnd": 1
+    }
+  }
+}
+```
+
 ### Come In Charged
 
 A `comeInCharged` entrance condition represents the need for Samus to run into the room with a shinecharge with a certain amount of time remaining before it would expire. It has the following property:
 
 - _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
 
+A strat with a `comeInCharged` condition should include a `shinespark` requirement in its `requires`.
+
 A `comeInCharged` must match with either a `leaveCharged` condition or a `leaveWithRunway` condition on the other side of the door. 
 
 - In order for `comeInCharged` to have a valid match with a `leaveCharged` condition, the `framesRequired` in the `comeInCharged` must be less than or equal to the `framesRemaining` of the `leaveCharged` condition. Aside from this, `comeInCharged` condition has no implicit requirements when matched with a `leaveCharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveCharged`. The frame counts in `comeInCharged` and `leaveCharged` are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts (to increase `framesRequired` or decrease `framesRemaining`).
 
-- A `comeInCharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 179 frames remaining. This comes with implicit requirements on the `leaveWithRunway`:
+- A `comeInCharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 179 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInCharging`, except here with `comeInCharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
   
+#### Example
+```json
+{
+  "name": "Come In Charged",
+  "notable": false,
+  "requires": [
+    {"shinespark": {
+      "frames": 40,
+      "excessFrames": 3
+    }}
+  ],
+  "entranceCondition": {
+    "comeInCharged": {
+      "framesRequired": 65
+    }
+  }
+}
+```
+
 ### Come In With Spark
 
 A `comeInWithSpark` entrance condition indicates that Samus must shinespark into the room. The `comeInWithSpark` object has no properties. Properties might be added in the future to describe requirements on the position and direction of the spark. Currently it is implicitly assumed that the position can be fully controlled in the previous room, so a `comeInWithSpark` strat may make any assumptions needed about the position. The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
@@ -325,14 +367,91 @@ A strat with a `comeInWithSpark` condition should include a `shinespark` require
 A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveCharged`, or `leaveWithRunway` condition on the other side of the door:
 
 - A match with `leaveWithSpark` or `leaveCharged` is always valid and does not come with any implicit requirements.
-- A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInCharged`):
+- A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInCharged`) for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInCharging`, except here with `comeInCharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
 
+#### Example
+```json
+{
+  "name": "Come In With Spark",
+  "notable": false,
+  "requires": [
+    {"shinespark": {
+      "frames": 50,
+      "excessFrames": 3
+    }}
+  ],
+  "entranceCondition": {
+    "comeInWithSpark": {}
+  }
+}
+```
+
+### Come In Stutter Charging
+
+A `comeInStutterCharging` entrance condition indicates that Samus must run into the room with SpeedBooster equipped, with a stutter immediately before the transition. This is used when entering a water room in order to obtain a shinecharge in a shorter amount of space than would otherwise be possible. It has the following property:
+- _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
+
+A `comeInStutterCharging` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment. A match comes with the following implicit requirements for actions to be performed in the previous room:
+- The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item.
+- If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
+
+#### Example
+```json
+{
+  "name": "Come In Stutter Charging",
+  "notable": false,
+  "requires": [
+    {"shinespark": {"frames": 60}}
+  ],
+  "entranceCondition": {
+    "comeInStutterCharging": {}
+  }
+}
+```
+
 ### Come In With Bomb Boost
 
+A `comeInWithBombBoost` entrance condition indicates that Samus must come into the room with a horizontal bomb boost. This object has no properties.
 
-- _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
-- _comeInWithStutter_: This indicates that Samus must run into the room with a stutter immediately before the transition.
-- _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
+A `comeInWithBombBoost` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment. A match comes with the following implicit requirements for actions to be performed in the previous room:
+- A requirement `h_canBombThings`, to be able to use Bombs or a Power Bomb.
+- If the previous room is heated, a requirement of `{"heatFrames": 100}` is included, for positioning, placing the bomb, and waiting for it to detonate.
+
+#### Example
+```json
+{
+  "name": "Come In With Bomb Boost",
+  "notable": false,
+  "requires": [],
+  "entranceCondition": {
+    "comeInWithBombBoost": {}
+  }
+}
+```
+
+### Come In With Door Stuck Setup
+
+A `comeInWithDoorStuckSetup` entrance condition indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes. This object has no properties.
+
+A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condition on the other side of the door. A match comes with the following implicit requirements for actions to be performed in the previous room:
+- If the previous room is heated, a requirement of `{"heatFrames": 100}` is included, for positioning and executing the door stuck setup. Note that if X-Ray Scope is available (and it always should be for a strat with this condition, since the only known application of door stuck setups is for X-Ray climbing), then minimizing heat damage is made easier by using X-Ray to buffer the positioning near the door and to turn around in place.
+- If the previous room is to the left, then a tech requirement `canStationarySpinJump` is included.
+- If the previous room is to the right, then a tech requirement `canRightSideDoorStuck` is included.
+- If the previous door environment is water and is to the right, then a requirement `{"or": ["Gravity", "canRightSideDoorStuckFromWater"]}` is included.
+
+#### Example
+```json
+{
+  "name": "X-Ray Climb",
+  "notable": false,
+  "requires": [
+    "canXRayClimb"
+  ],
+  "entranceCondition": {
+    "comeInWithDoorStuckSetup": {}
+  }
+}
+```

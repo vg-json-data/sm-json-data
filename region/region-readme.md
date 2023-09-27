@@ -94,6 +94,9 @@ The `viewableNodes` property is an array of objects, each of which describing ho
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
 
 #### runways
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveWithRunway` should be used instead.
+
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
 * _name:_ A name, unique across the entire model, that identifies the runway
 * _length:_ The number of tiles in the runway
@@ -107,8 +110,6 @@ Represents an array of runways connected to a door. A runway is a series of tile
 * _openEnd:_ Any runway that is used to gain momentum has two ends (although in the case of actual `runway`s one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging ( 0 or 1).
 * _usableComingIn:_ If this property is present and false, the runway cannot be used in combination with an adjacent runway when entering the room. This will often be due to the presence of an enemy or obstacle that cannot be taken care of without breaking momentum.
 * _strats:_ An array of [strats](../strats.md), each of which may be executed in order to use this runway. If none of the strats can be executed, the runway cannot be used.
-
-Note: this node property is deprecated, and the [strat property](../strats.md) `leaveWithRunway` should be used instead.
 
 __Additional considerations__
 
@@ -153,6 +154,9 @@ __Example:__
 ```
 
 #### canLeaveCharged
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveCharged` should be used instead.
+
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
 * The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
@@ -170,8 +174,6 @@ Represents the possibility for Samus to charge a shinespark without using the do
   * _pathToDoor:_ A list of objects, which describes the path that Samus must follow through the room from the `initiateAt` node to the exited door in order to properly leave charged. This path must end at the exited node. Each object in the path represents one link to follow, and has the following properties:
     * _destinationNode:_ The ID of the next node to visit, from the previous node in the path (and from the `initiateAt` node if at the first node in the path)
     * _strats:_ A list of possible strats to follow to go to `destinationNode` These must be names of an actual strat on an actual link from the previous node to the destination node. Samus has to fulfill all requirements of a strat at each link in `pathToDoor` to be able to properly leave charged.
-
-Note: this node property is deprecated, and the [strat property](../strats.md) `leaveCharged` should be used instead.
 
 __Additional considerations__
 
