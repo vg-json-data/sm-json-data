@@ -88,7 +88,7 @@ In a heated room, a `leaveWithRunway` exit condition implicitly includes `heatFr
 
 When a `leaveWithRunway` condition is used to charge a shinespark, it implicitly includes a `canShinecharge` requirement with `usedTiles` based on the runway length (and also based on a continuation of the runway in the destination room where applicable). Again, this is described in more detail under the applicable entrance conditions below.
 
-When a `leaveWithRunway` conditions occurs on a door in a water environment, it implicitly includes a `Gravity` requirement.
+When a `leaveWithRunway` conditions occurs on a door in a water environment, it may implicitly include a `Gravity` requirement, depending on whether this is needed for the corresponding entrance condition.
 
 #### Example
 ```json
