@@ -218,13 +218,13 @@ The way to calculate minimally required heat frames depends on the type of `leav
 {
   "name": "Come In Running",
   "notable": false,
-  "requires": [],
   "entranceCondition": {
     "comeInRunning": {
       "speedBooster": "any",
       "minTiles": 2
     }
-  }
+  },
+  "requires": []
 }
 ```
 
@@ -242,13 +242,13 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 {
   "name": "Cross Room Jump",
   "notable": false,
-  "requires": [],
   "entranceCondition": {
     "comeInJumping": {
       "speedBooster": "any",
       "minTiles": 2
     }
-  }
+  },
+  "requires": []
 }
 ```
 
@@ -307,18 +307,18 @@ The way to calculate minimally required heat frames depends on the type of `leav
 {
   "name": "Come In Charging",
   "notable": false,
-  "requires": [
-    {"shinespark": {
-      "frames": 40,
-      "excessFrames": 3
-    }}
-  ],
   "entranceCondition": {
     "comeInCharging": {
       "length": 5,
       "openEnd": 1
     }
-  }
+  },
+  "requires": [
+    {"shinespark": {
+      "frames": 40,
+      "excessFrames": 3
+    }}
+  ]
 }
 ```
 
@@ -344,17 +344,17 @@ A `comeInCharged` must match with either a `leaveCharged` condition or a `leaveW
 {
   "name": "Come In Charged",
   "notable": false,
+  "entranceCondition": {
+    "comeInCharged": {
+      "framesRequired": 65
+    }
+  },
   "requires": [
     {"shinespark": {
       "frames": 40,
       "excessFrames": 3
     }}
-  ],
-  "entranceCondition": {
-    "comeInCharged": {
-      "framesRequired": 65
-    }
-  }
+  ]
 }
 ```
 
@@ -377,15 +377,15 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveC
 {
   "name": "Come In With Spark",
   "notable": false,
+  "entranceCondition": {
+    "comeInWithSpark": {}
+  },
   "requires": [
     {"shinespark": {
       "frames": 50,
       "excessFrames": 3
     }}
-  ],
-  "entranceCondition": {
-    "comeInWithSpark": {}
-  }
+  ]
 }
 ```
 
@@ -403,12 +403,12 @@ A `comeInStutterCharging` condition must match with a `leaveWithRunway` conditio
 {
   "name": "Come In Stutter Charging",
   "notable": false,
-  "requires": [
-    {"shinespark": {"frames": 60}}
-  ],
   "entranceCondition": {
     "comeInStutterCharging": {}
-  }
+  },
+  "requires": [
+    {"shinespark": {"frames": 60}}
+  ]
 }
 ```
 
@@ -425,10 +425,10 @@ A `comeInWithBombBoost` condition must match with a `leaveWithRunway` condition 
 {
   "name": "Come In With Bomb Boost",
   "notable": false,
-  "requires": [],
   "entranceCondition": {
     "comeInWithBombBoost": {}
-  }
+  },
+  "requires": []
 }
 ```
 
@@ -447,11 +447,11 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
 {
   "name": "X-Ray Climb",
   "notable": false,
-  "requires": [
-    "canXRayClimb"
-  ],
   "entranceCondition": {
     "comeInWithDoorStuckSetup": {}
-  }
+  },
+  "requires": [
+    "canXRayClimb"
+  ]
 }
 ```
