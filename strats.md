@@ -285,7 +285,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
     - If the combined effective runway length is at least 31.3 tiles, then dash can be held through the entire run. In this case, the frames spent on the combined run can be found in the [table](#come-in-running), as can the frames spent in the other room; subtracting these two values gives the frames spent on the heated part of the run (i.e. the part in the current room).
     - If the combined effective runway length is less than 31.3 tiles, then the run can be completed in the constant 85 frames needed to perform the shinecharge (regardless of shortcharging technique). The precise amount of frames spent in the current room is complicated to determine as it depends on details of how the shortcharge is performed. We can get a reasonable approximation by modeling as the movement as starting at a speed of 0.125 tiles/frame (somewhat less than the full walking speed of 0.171875 tiles/frame) and having constant acceleration up to the end of the combined runway. This is a quadratic model which has the following solution:
 
-      $$\begin{aligned}
+      $\begin{aligned}
       T &= \text{total time} = 85 \text{ frames} \\
       C &= \text{initial speed} = 0.125 \text{ tiles per frame} \\
       L &= \text{combined effective runway length (in tiles)} \\
@@ -293,7 +293,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
       a &= \text{acceleration} = 2(L - CT) / T^2 \\
       T_o &= \text{time in other room} = \frac{\sqrt{C^2 + 2ax} - C}{a} \\
       T_c &= \text{time in current room} = T - T_o \\
-      \end{aligned}$$
+      \end{aligned}$
 
     For medium-length runways (ones significantly longer than the player's minimum shortcharge length, but significantly less than 31.3 tiles), this model is somewhat lenient. It assumes essentially that the player would perform the shortcharge over the full length of the runway, like doing a 4-tap with relatively long, safe taps. If instead the player did a more precise start to the shortcharge and then held dash for the remainder of the run (e.g. like a stutter 2-tap), then the heat frames in the current room could be slightly reduced. This could be modeled, but it is probably not worth the hassle for the small difference it would make.
 
