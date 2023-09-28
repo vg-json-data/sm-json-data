@@ -74,6 +74,8 @@ def process_keyvalue(k, v, metadata):
         "resourceCapacity", # validated by schema
         "refill",           # validated by schema
         "comeInWithSpark",  # validated by schema
+        "comeInWithDoorStuckSetup", # validated by schema
+        "comeInJumping",  # validated by schema
     ]
 
     # check if it's a key we want to check
