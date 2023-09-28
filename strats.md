@@ -180,7 +180,7 @@ Each of these properties is described in more detail below.
 
 ### Come In Running
 
-An `comeInRunning` entrance condition represents the need for Samus to be able to run into the room with speed in a certain range. It has the following properties:
+A `comeInRunning` entrance condition represents the need for Samus to be able to run into the room with speed in a certain range. It has the following properties:
 * _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
