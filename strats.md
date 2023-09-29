@@ -9,10 +9,10 @@ A `strat` can have the following properties:
   * _name:_ The name of the strat.
   * _notable:_ Indicates whether the strat is notable.
   * _reusableRoomwideNotable:_ The name of the reusable roomwide notable strat. This must share an identical name with an entry in the `reusableRoomwideNotable` array and the other strats that are connected to this one. This is only applicable for strats where `notable` is `true`.
-  * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
-  * _clearsObstacles:_ An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
-  * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
   * _entranceCondition_: Indicates that this strat requires entering through the door transition in a special way, combining with a strat in the previous room.
+  * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
+  * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
+  * _clearsObstacles:_ An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
   
 These properties are described below in more detail.
 ### Example
