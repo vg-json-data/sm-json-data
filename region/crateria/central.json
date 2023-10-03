@@ -5372,11 +5372,17 @@
                 {
                   "name": "IBJ",
                   "notable": false,
-                  "requires": ["h_canIBJ"]
+                  "requires": ["h_canIBJ", "canBePatient"]
                 }
               ]
             }
           ]
+        },
+        {
+          "id": 6,
+          "name": "Cratera Super Room Junction with Temporary Blue (Right of Morph Tunnel)",
+          "nodeType": "junction",
+          "nodeSubType": "junction"
         }
       ],
       "enemies": [
@@ -5393,12 +5399,78 @@
           "id": "A",
           "name": "Boyons",
           "obstacleType": "enemies"
+        },
+        {
+          "id": "B",
+          "name": "Above SpeedBlocks with Temp Blue",
+          "obstacleType": "abstract"
+        },
+        {
+          "id": "C",
+          "name": "At Item in Direct G-Mode Morph with Bombs",
+          "obstacleType": "abstract"
         }
       ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Direct G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "direct",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "h_canArtificialMorphDiagonalBombJump",
+                      "h_canArtificialMorphCeilingBombJump"
+                    ]}
+                  ],
+                  "clearsObstacles": ["C"]
+                },
+                {
+                  "name": "G-Mode Morph",
+                  "notable": false,
+                  "requires": [
+                    {"comeInWithGMode": {
+                      "fromNodes": [1],
+                      "mode": "any",
+                      "artificialMorph": true
+                    }},
+                    {"or": [
+                      "h_canArtificialMorphDiagonalBombJump",
+                      "h_canArtificialMorphCeilingBombJump",
+                      {"and": [
+                        "SpringBall",
+                        {"spikeHits": 3},
+                        {"or": [
+                          "h_canArtificialMorphBombHorizontally",
+                          {"spikeHits": 1}
+                        ]}
+                      ]},
+                      {"and": [
+                        "h_canArtificialMorphIBJ",
+                        {"spikeHits": 10},
+                        {"or": [
+                          "h_canArtificialMorphBombHorizontally",
+                          {"spikeHits": 2}
+                        ]}
+                      ]}
+                    ]}
+                  ],
+                  "devNote": [
+                    "This is a softlock unless the item is Morph.",
+                    "The IBJ strat has 2 extra spike hits added as a leniency."
+                  ]
+                }
+              ]
+            },
             {
               "id": 4,
               "strats": [
@@ -5433,6 +5505,16 @@
                     }},
                     {"shinespark": {"frames": 65}}
                   ]
+                },
+                {
+                  "name": "Bomb Jump Over Spikes",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "h_canDiagonalBombJump",
+                      "h_canCeilingBombJump"
+                    ]}
+                  ]
                 }
               ]
             },
@@ -5440,33 +5522,7 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "X-Mode BlueSuit",
-                  "notable": false,
-                  "requires": [
-                    "canSuperJump",
-                    "Morph",
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1
-                    }},
-                    {"spikeHits": 3},
-                    {"or": [
-                      {"spikeHits": 3},
-                      "Grapple",
-                      "SpaceJump"
-                    ]}
-                  ],
-                  "note": [
-                    "Enter with a shinespark ready, activate XMode by bouncing into the spikes, then activate the shinespark but release XMode during the shinespark windup animation."
-                  ],
-                  "devNote": [
-                    "One leniency spikehit given.",
-                    "FIXME: This strat can visit 3 and pass the Boyons without additional health cost.",
-                    "FIXME: A Spikesuit can be gained using XMode, and that can be converted to a blue suit with another use of XMode but attempting to will lose the spikesuit."
-                  ]
-                },
-                {
-                  "name": "G-Mode Morph and Bombs to overload Speed Blocks",
+                  "name": "G-Mode Morph and Bombs to Overload Speed Blocks",
                   "notable": false,
                   "requires": [
                     {"comeInWithGMode": {
@@ -5505,13 +5561,14 @@
                           {"spikeHits": 2}
                         ]}
                       ]},
+                      "h_canArtificialMorphDiagonalBombJump",
                       "h_canArtificialMorphCeilingBombJump"
                     ]}
                   ],
                   "devNote": "The IBJ strat has 2 extra spike hits added as a leniency."
                 },
                 {
-                  "name": "G-Mode and Grapple to overload Grapple Blocks",
+                  "name": "G-Mode and Grapple to Overload Grapple Blocks",
                   "notable": false,
                   "requires": [
                     {"comeInWithGMode": {
@@ -5537,7 +5594,7 @@
                     ]}
                   ],
                   "note": "Quickly grapple to then release grapple on the grapple blocks a few times until they stop working. Be careful not to fall into the spikes.",
-                  "devNote": "Grapple cannot be used to get over the spikes, as the PLMs are overloaded too quickly."
+                  "devNote": "FIXME: Grapple will quickly overload PLMS.  It is barely possible to cross the gap using short grapples, canResetFallSpeed, and ending with a swing."
                 },
                 {
                   "name": "G-Mode Morph Overload PLMs by PBing Super Item",
@@ -5545,7 +5602,7 @@
                   "requires": [
                     {"itemNotCollectedAtNode": 3},
                     "canRiskPermanentLossOfAccess",
-                    {"ammo": { "type": "PowerBomb", "count": 4 }},
+                    {"ammo": { "type": "PowerBomb", "count": 2}},
                     {"comeInWithGMode": {
                       "fromNodes": [1],
                       "mode": "direct",
@@ -5575,10 +5632,187 @@
                       ]}
                     ]}
                   ],
-                  "note": "Place the PBs very close to the item in order to minimize the number needed. Be sure not to touch the item if this strat will be needed again in the future.",
+                  "note": "Place the PBs exactly two tiles left of the Morph tunnel. Be sure not to touch the item if this strat will be needed again in the future.",
                   "devNote": [
-                    "Can be done with 3 PBs, but it requires getting extremely close to the item.",
                     "FIXME Add strat for going down without PBs, by using the uncollected item to overload PLMs. This can only be done once, as it forces item pickup."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 6,
+              "strats": [
+                {
+                  "name": "SpaceJump Speedball",
+                  "notable": false,
+                  "requires": [
+                    "canSpeedball",
+                    "canBlueSpaceJump",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "unusableTiles": 1
+                    }}
+                  ]
+                },
+                {
+                  "name": "Springball Speedball",
+                  "notable": false,
+                  "requires": [
+                    "canSpeedball",
+                    "canTemporaryBlue",
+                    "canCarefulJump",
+                    "canSpringBallBounce",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 1,
+                      "unusableTiles": 2
+                    }},
+                    {"or": [
+                      "canTrickyJump",
+                      {"canShineCharge":{
+                        "usedTiles": 22,
+                        "openEnd": 1
+                      }}
+                    ]},
+                    {"spikeHits": 1}
+                  ],
+                  "note": [
+                    "Use Springball on the spikes to cross the room with a Speedball.",
+                    "It helps to not be at full run speed when bouncing through the spike pit, but is still possible with very tight jumps.",
+                    "Then bounce into the Morph tunnel and use Springball to bounce all of the way through.",
+                    "Unmorphing before the Morph tunnel to better control the bounce can help."
+                  ]
+                },
+                {
+                  "name": "X-Mode BlueSuit",
+                  "notable": false,
+                  "requires": [
+                    "canSuperJump",
+                    "Morph",
+                    {"canComeInCharged": {
+                      "fromNode": 1,
+                      "framesRemaining": 180,
+                      "unusableTiles": 1
+                    }},
+                    {"spikeHits": 3},
+                    {"or": [
+                      {"spikeHits": 3},
+                      "Grapple",
+                      "SpaceJump"
+                    ]}
+                  ],
+                  "note": "Enter with a shinespark ready, activate XMode by bouncing into the spikes, then activate the shinespark but release XMode during the shinespark windup animation.",
+                  "devNote": [
+                    "One leniency spikehit given."
+                  ]
+                },
+                {
+                  "name": "Crateria Supers In-Room X-Mode BlueSuit",
+                  "notable": true,
+                  "requires": [
+                    "canSuperJump",
+                    "Morph",
+                    {"spikeHits": 3},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"shinespark":{"frames": 5}},
+                    {"spikeHits": 2},
+                    {"or": [
+                      {"spikeHits": 1},
+                      "Grapple",
+                      "SpaceJump"
+                    ]}
+                  ],
+                  "note": "Use X-Mode to store a spikesuit, and then convert that to a blue suit with more X-Mode.",
+                  "devNote": "One leniency spikehit given."
+                },
+                {
+                  "name": "SpeedKeep for Temporary Blue",
+                  "notable": false,
+                  "requires": [
+                    "canSpeedKeep",
+                    "canCarefulJump",
+                    {"or": [
+                      {"and": [
+                        "canSlowShortCharge",
+                        "can3HighMidAirMorph",
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 12,
+                          "physics": ["normal"]
+                        }},
+                        {"spikeHits": 1}
+                      ]},
+                      {"and": [
+                        "can3HighMidAirMorph",
+                        {"canComeInCharged": {
+                          "framesRemaining": 180,
+                          "fromNode": 1,
+                          "unusableTiles": 13
+                        }},
+                        {"spikeHits": 1}
+                      ]},
+                      {"and": [
+                        {"canShineCharge": {
+                          "usedTiles": 21,
+                          "openEnd": 2
+                        }},
+                        {"adjacentRunway": {
+                          "fromNode": 1,
+                          "usedTiles": 4,
+                          "physics": ["normal"]
+                        }},
+                        {"spikeHits": 1},
+                        {"or": [
+                          {"spikeHits": 1},
+                          "canChainTemporaryBlue"
+                        ]}
+                      ]}
+                    ]},
+                    "canSpeedball"
+                  ],
+                  "note": [
+                    "Bounce into the spikes and use a SpeedKeep to run on spikes to setup for a speedball towards the item.",
+                    "Bouncing on the platform near the door can save a spike hit, if the running space is available.",
+                    "Or a DamageBoost SpeedKeep could be used instead of a Spike SpeedKeep with enough runspeed."
+                  ]
+                },
+                {
+                  "name": "Climb Supers In-Room SpeedKeep for Temporary Blue",
+                  "notable": true,
+                  "requires": [
+                    "canSpeedKeep",
+                    "canSlowShortCharge",
+                    {"doorUnlockedAtNode": 1},
+                    {"or": [
+                      {"and": [
+                        "canChainTemporaryBlue",
+                        {"canShineCharge": {
+                          "usedTiles": 13,
+                          "openEnd": 1
+                        }},
+                        {"spikeHits": 1}
+                      ]},
+                      {"and": [
+                        {"canShineCharge": {
+                          "usedTiles": 14,
+                          "openEnd": 1
+                        }},
+                        {"spikeHits": 2}
+                      ]},
+                      {"and": [
+                        "canChainTemporaryBlue",
+                        {"spikeHits": 3}
+                      ]}
+                    ]},
+                    "canSpeedball"
+                  ],
+                  "note": [
+                    "Using only the short runway and spike pit, use one or more SpeedKeeps to Speedball towards the Super Missile item location.",
+                    "This requires either a very short shortcharge, or a second SpeedKeep in the spikes which also resets Samus' run speed with a crouch jump before spike I-Frames expire."
                   ]
                 }
               ]
@@ -5731,18 +5965,16 @@
                     }},
                     {"or": [
                       "canUseFrozenEnemies",
+                      "canTrickyJump",
                       {"and": [
                         "ScrewAttack",
-                        "SpeedBooster"
+                        "SpaceJump"
                       ]},
                       {"and": [
+                        "canCarefulJump",
                         {"or": [
                           "ScrewAttack",
                           "SpeedBooster"
-                        ]},
-                        {"or": [
-                          "canCarefulJump",
-                          "SpaceJump"
                         ]}
                       ]},
                       {"enemyKill": { "enemies": [ [ "Boyon", "Boyon", "Boyon", "Boyon" ] ] }},
@@ -5790,7 +6022,11 @@
                   "name": "Take Boyon Damage",
                   "notable": false,
                   "requires": [
-                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}}
+                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}},
+                    {"or": [
+                      {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}},
+                      "canCarefulJump"
+                    ]}
                   ],
                   "note": "Take damage before attempting to jump through to avoid falling in the acid."
                 },
@@ -5812,6 +6048,11 @@
                   "notable": false,
                   "requires": [ {"enemyKill": { "enemies": [[ "Boyon", "Boyon", "Boyon", "Boyon" ]] }} ],
                   "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Jump Under Boyons",
+                  "notable": false,
+                  "requires": ["canTrickyJump"]
                 }
               ]
             }
@@ -5827,6 +6068,22 @@
                   "name": "Base",
                   "notable": false,
                   "requires": [ "Morph" ]
+                },
+                {
+                  "name": "Remote Acquire Item",
+                  "notable": false,
+                  "requires": [{"obstaclesCleared": ["C"]}]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [{"obstaclesCleared": ["B"]}],
+                  "devNote": "The strat specific requirements are included when clearing the abstract obstacle."
                 }
               ]
             }
@@ -5858,6 +6115,30 @@
                       {"spikeHits": 1}
                     ]}
                   ]
+                },
+                {
+                  "name": "Bomb Jump Over Spikes",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "h_canDiagonalBombJump",
+                      {"and": [
+                        "h_canCeilingBombJump",
+                        "canPreciseWalljump",
+                        "canWallJumpInstantMorph",
+                        "canJumpIntoIBJ"
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "G-Mode Artificial Morph Diagonal Bomb Jump",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    "h_canArtificialMorphDiagonalBombJump"
+                  ],
+                  "devNote": "Returning from the item in GMode needs to avoid any spike damage, or Crystal Flash."
                 }
               ]
             },
@@ -5868,23 +6149,6 @@
                   "name": "Base",
                   "notable": false,
                   "requires": ["Morph"]
-                }
-              ]
-            },
-            {
-              "id": 5,
-              "strats": [
-                {
-                  "name": "SpaceJump Speedball",
-                  "notable": false,
-                  "requires": [
-                    "canSpeedball",
-                    "canBlueSpaceJump",
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 180
-                    }}
-                  ]
                 }
               ]
             }
@@ -5910,7 +6174,11 @@
                   "name": "Take Boyon Damage",
                   "notable": false,
                   "requires": [
-                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}}
+                    {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}},
+                    {"or": [
+                      {"enemyDamage": {"enemy": "Boyon","hits": 1,"type": "contact"}},
+                      "canCarefulJump"
+                    ]}
                   ],
                   "note": "Take damage before attempting to jump through to avoid falling in the acid."
                 },
@@ -5932,6 +6200,49 @@
                   "notable": false,
                   "requires": [ {"enemyKill": { "enemies": [[ "Boyon", "Boyon", "Boyon", "Boyon" ]] }} ],
                   "clearsObstacles": ["A"]
+                },
+                {
+                  "name": "Jump Under Boyons",
+                  "notable": false,
+                  "requires": ["canTrickyJump"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "from": 6,
+          "to": [
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Jump Over the Speed Blocks",
+                  "notable": false,
+                  "requires": [
+                    "canChainTemporaryBlue",
+                    {"or": [
+                      "canTrickyJump",
+                      "canXRayTurnaround"
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"],
+                  "note": [
+                    "Unmorph on the leftmost edge of the Speed blocks and jump across.",
+                    "Landing on the right side Speedblock, and the solid tile, gives enough time to run to the item and fall before the block respawns.",
+                    "Or jump fully over the Speed blocks and turn around using X-Ray after collecting the item."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Base",
+                  "notable": false,
+                  "requires": [],
+                  "devNote": "Samus is in a Speedball or BlueSuit state."
                 }
               ]
             }
