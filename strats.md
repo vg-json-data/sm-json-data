@@ -189,7 +189,8 @@ A `comeInRunning` condition can be satisfied only by a matching strat on the oth
 - The effective runway length of the `leaveWithRunway` is at least as long as the `minTiles` in the `comeInRunning` condition.
 
 Where applicable, a `comeInRunning` condition also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
-- If `speedBooster` is true, then there is an implicit "SpeedBooster" item requirement.
+- If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
+- If `speedBooster` is false, then there is an implicit `canDisableEquipment` tech requirement.
 - If the previous room is heated, then `heatFrames` are required based on the time needed to perform the run. 
 - If the previous door environment is water, then `Gravity` is required.
 
