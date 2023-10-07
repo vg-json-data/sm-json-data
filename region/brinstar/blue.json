@@ -17,38 +17,6 @@
           "nodeSubType": "grey",
           "nodeAddress": "0x0018e9e",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Morph Ball Room Left Door (to Green Hill Zone)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 25,
-              "framesRemaining": 80,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["C"]},
-                    "canShinechargeMovement"
-                  ],
-                  "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -93,20 +61,6 @@
           "nodeType": "door",
           "nodeSubType": "elevator",
           "nodeAddress": "0x0018eb6",
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 130,
-              "usedTiles": 30,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGMode": [
             {
               "leavesWithArtificialMorph": false,
@@ -132,35 +86,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eaa",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Morph Ball Room Right Door (to Construction Zone)",
-              "length": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 30,
-              "framesRemaining": 100,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 4,
@@ -245,21 +171,59 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 25,
+                      "openEnd": 0
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 80
+                    }
+                  },
+                  "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
+                }
+              ]
+            },
+            {
               "id": 5,
               "strats": [
                 {
                   "name": "Room Entry Speedball",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 2,
+                      "openEnd": 0
+                    }
+                  },
                   "requires": [
-                    "canSpeedball",
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 1
-                    }}
+                    "canSpeedball"
                   ],
                   "clearsObstacles": ["A"],
-                  "devNote": "This is a direct link because clearing the hoppers is unnecessary."
+                  "devNote": [
+                    "This is a direct link because clearing the hoppers is unnecessary.",
+                    "One tile is subtracted from the runway length since Samus must be blue before contacting the first Hopper."
+                  ]
                 },
                 {
                   "name": "G-Mode Morph Overload PLMs Zebes Asleep",
@@ -414,6 +378,20 @@
                   ]
                 },
                 {
+                  "name": "Spark into Room",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 40,
+                      "excessFrames": 9
+                    }}
+                  ],
+                  "clearsObstacles": ["C"]
+                },
+                {
                   "name": "Kill on Entry",
                   "notable": false,
                   "requires": [
@@ -434,23 +412,13 @@
                             "PowerBomb"
                           ]
                         }}
-                      ]},
-                      {"and": [
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 0
-                        }},
-                        {"shinespark": {
-                          "frames": 40,
-                          "excessFrames": 9
-                        }}
                       ]}
-                  ]}
+                    ]}
                   ],
                   "clearsObstacles": ["C"],
                   "note": [
                     "Enter the room ready to kill the hoppers before they can hit Samus.",
-                    "with a charge plasma shot ready, or in a shinespark, screw attack spin jump, or a morph, ready to lay a power bomb."
+                    "with a charge plasma shot ready, or in a screw attack spin jump, or a morph, ready to lay a power bomb."
                   ]
                 },
                 {
@@ -519,6 +487,27 @@
           "from": 2,
           "to": [
             {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 30,
+                      "openEnd": 0
+                    }},
+                    "canShinechargeMovement"
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 130
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 3,
               "strats": [
                 {
@@ -550,6 +539,38 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 30,
+                      "openEnd": 0
+                    }},
+                    "canShinechargeMovement"
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 100
+                    }
+                  }        
                 }
               ]
             },
@@ -805,21 +826,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ec2",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Construction Zone Top Left Door (to Morph Ball)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 0
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -852,21 +858,6 @@
           "nodeSubType": "red",
           "nodeAddress": "0x0018ece",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Construction Zone Right Door (to Ceiling E-Tank)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 0
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -912,20 +903,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eda",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Construction Zone Bottom Left Door (to Alpha Missiles)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -964,6 +941,22 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
@@ -978,6 +971,22 @@
         {
           "from": 2,
           "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 4,
               "strats": [
@@ -994,6 +1003,22 @@
           "from": 3,
           "to": [
             {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 0
+                    }
+                  }
+                }    
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
@@ -1004,18 +1029,11 @@
                 {
                   "name": "Construction Room X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
                   "requires": [
-                    "h_canLeftDoorXRayClimb",
-                    { "resetRoom": {
-                      "nodes": [3],
-                      "mustStayPut": true
-                    }},
-                    {"adjacentRunway": {
-                      "fromNode": 3,
-                      "usedTiles": 0.5,
-                      "overrideRunwayRequirements": true,
-                      "useFrames": 200
-                    }}
+                    "canXRayClimb"
                   ],
                   "note": "This is a short climb of only a few tiles."
                 },
@@ -1103,21 +1121,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fa6",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - First Missiles Room Door (to Construction Zone)",
-              "length": 9,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -1133,6 +1137,22 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave With Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 10,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -1178,50 +1198,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ee6",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Ceiling E-Tank Bottom Left Door (to Construction Zone)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 31,
-              "framesRemaining": 120,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            },
-            {
-              "usedTiles": 33,
-              "framesRemaining": 120,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    "h_canUsePowerBombs",
-                    "canShinechargeMovement"
-                  ]
-                }
-              ]
-            }
-          ],
           "viewableNodes": [
             {
               "id": 3,
@@ -1263,20 +1239,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ef2",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Ceiling E-Tank Top Left Door (to Boulder Room)",
-              "length": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -1422,6 +1384,50 @@
             {
               "id": 1,
               "strats": [
+                {
+                  "name": "Leave With Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 31,
+                      "openEnd": 0
+                    }},
+                    "canShinechargeMovement" 
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 120
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged - Power Bomb Blocks Broken",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 1
+                    }},
+                    "canShinechargeMovement" 
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 120
+                    }
+                  }
+                },
                 {
                   "name": "Geemer, Skree, and Reo Farm",
                   "notable": false,
@@ -1687,6 +1693,22 @@
           "from": 2,
           "to": [
             {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 4,
               "strats": [
                 {
@@ -1704,14 +1726,15 @@
                 {
                   "name": "Temporary Blue",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 3,
+                      "openEnd": 0
+                    }
+                  },
                   "requires": [
                     "Morph",
-                    "canTemporaryBlue",
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 2,
-                      "unusableTiles": 1
-                    }}
+                    "canTemporaryBlue"
                   ],
                   "clearsObstacles": ["A","B"]
                 }
@@ -1999,36 +2022,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fee",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Boulder Room Left Door (to Billy Mays)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 0
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 19,
-              "framesRemaining": 100,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -2036,63 +2030,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018fe2",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Boulder Room Right Door (to Ceiling E-Tank)",
-              "length": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 19,
-              "framesRemaining": 80,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovement",
-                    "Gravity"
-                  ]
-                }
-              ]
-            },
-            {
-              "usedTiles": 19,
-              "framesRemaining": 50,
-              "openEnd": 1,
-              "strats": [
-                {
-                  "name": "Boulder Room Shinecharge into PreOpened Door",
-                  "notable": true,
-                  "requires": [
-                    "canShinechargeMovement",
-                    "canCarefulJump"
-                  ],
-                  "note": [
-                    "Shoot the bridge to see where it ends.",
-                    "Opening the door requires a shot that is fired while Samus has some momentum from running to the right.",
-                    "Charge a spark running left then run off right into a preopened door."
-                  ],
-                  "devNote": [
-                    "Using the second openEnd means you cannot make it to the door in time.",
-                    "Could attach `canMomentumShot` tech if that gets added.",
-                    "Emphasis on Careful.  There is no jump."
-                  ]
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         }
       ],
       "enemies": [
@@ -2108,6 +2046,37 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 0
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 19,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 100
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -2139,6 +2108,50 @@
                   "notable": false,
                   "requires": [ "canCarefulJump" ],
                   "note": "Shoot open the door and jump through it without going into the water below."
+                },
+                {
+                  "name": "Leave Charged (with Gravity)",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 19,
+                      "openEnd": 2  
+                    }},
+                    "canShinechargeMovement",
+                    "Gravity"
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 80
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged (Suitless)",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 19,
+                      "openEnd": 1
+                    }},
+                    "canShinechargeMovement",
+                    "canCarefulJump"
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 50
+                    }
+                  },
+                  "note": [
+                    "Shoot the bridge to see where it ends.",
+                    "Opening the door requires a shot that is fired while Samus has some momentum from running to the right.",
+                    "Charge a spark running left then run off right into a preopened door."
+                  ],
+                  "devNote": [
+                    "Using the second openEnd means you cannot make it to the door in time.",
+                    "Could attach `canMomentumShot` tech if that gets added.",
+                    "Emphasis on Careful.  There is no jump."
+                  ]
                 }
               ]
             }
@@ -2182,14 +2195,14 @@
                 {
                   "name": "Boulder Room Jump Through the Door",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInJumping": {
+                      "speedBooster": "any",
+                      "minTiles": 1
+                    }
+                  },
                   "requires": [
                     "canCarefulJump",
-                    {"adjacentRunway": {
-                      "fromNode": 2,
-                      "usedTiles": 0.5,
-                      "inRoomPath": [ 2, 1 ],
-                      "physics": ["normal"]
-                    }},
                     "canWalljump"
                   ],
                   "note": "A doorsill with an open end is really all the room that's needed on the other side."
@@ -2257,6 +2270,22 @@
                   "note": "Starting an IBJ from spring ball with no other items is not very precise, it just takes a bit of an odd timing."
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 1,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
             }
           ]
         }
@@ -2277,22 +2306,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ffa",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Billy Mays Room Door (to Boulder Room)",
-              "length": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -2316,6 +2330,22 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 2,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [

@@ -306,6 +306,9 @@ __Example:__
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
 #### adjacentRunway object
+
+_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition` should be used instead.
+
 An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
@@ -358,6 +361,9 @@ __Additional considerations__
 Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
 #### canComeInCharged object
+
+_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition/comeInCharged` should be used instead.
+
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.

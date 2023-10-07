@@ -94,6 +94,9 @@ The `viewableNodes` property is an array of objects, each of which describing ho
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
 
 #### runways
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveWithRunway` should be used instead.
+
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
 * _name:_ A name, unique across the entire model, that identifies the runway
 * _length:_ The number of tiles in the runway
@@ -151,6 +154,9 @@ __Example:__
 ```
 
 #### canLeaveCharged
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveCharged` should be used instead.
+
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
 * The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
