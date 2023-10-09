@@ -187,7 +187,7 @@ In cases where `canLeaveCharged` represents shinesparking out of the room, energ
 
 #### leaveWithGModeSetup
 
-_Note_: This node property is deprecated. The strat-level exit condition `leaveWithGModeSetup`(../strats.md#leave-with-g-mode-setup) should be used instead.
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGModeSetup`](../strats.md#leave-with-g-mode-setup) should be used instead.
 
 Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
 
@@ -220,7 +220,7 @@ __Example:__
 
 #### leaveWithGMode
 
-_Note_: This node property is deprecated. The strat-level exit condition `leaveWithGMode`(../strats.md#leave-with-g-mode) should be used instead.
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGMode`](../strats.md#leave-with-g-mode) should be used instead.
 
 Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
 
@@ -253,7 +253,7 @@ where 0 is replaced with the node ID of the given node, and another where the `f
 
 #### gModeImmobile
 
-_Note_: This node property is deprecated. The strat property [`gModeMobilize`](../strats.md#g-mode-mobilize) should be used instead.
+_Note_: This node property is deprecated. The strat property [`gModeRegainMobility`](../strats.md#g-mode-regain-mobility) should be used instead.
 
 This is populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
 

@@ -418,7 +418,7 @@ __Additional considerations__
 
 #### comeInWithRMode object
 
-_Note_: This logical requirement is deprecated. The strat-level entrance condition `comeInWithRMode`(../strats.md#come-in-with-g-mode) should be used instead.
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithRMode`](strats.md#come-in-with-r-mode) should be used instead.
 
 A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
@@ -446,7 +446,7 @@ Please refer to the sections on `leaveWithGModeSetup` in [the Region documentati
 
 #### comeInWithGMode object
 
-_Note_: This logical requirement is deprecated. The strat-level entrance condition `comeInWithGMode`(../strats.md#come-in-with-g-mode) should be used instead.
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithGMode`](strats.md#come-in-with-g-mode) should be used instead.
 
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
