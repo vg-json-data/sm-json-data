@@ -17,27 +17,6 @@
           "nodeSubType": "grey",
           "nodeAddress": "0x0018e9e",
           "doorEnvironments": [{"physics": "air"}],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Sidehopper",
-                  "notable": false,
-                  "requires": [ "f_ZebesAwake" ]
-                }
-              ]
-            }
-          ],
-          "gModeImmobile": {
-            "requires": [
-              {"enemyDamage": {
-                "enemy": "Sidehopper",
-                "type": "contact",
-                "hits": 1
-              }},
-              "f_ZebesAwake"
-            ]
-          },
           "locks": [
             {
               "name": "Morph Ball Room Grey Lock (to Green Hill Zone)",
@@ -60,25 +39,7 @@
           "name": "Blue Brinstar Elevator to Crateria",
           "nodeType": "door",
           "nodeSubType": "elevator",
-          "nodeAddress": "0x0018eb6",
-          "leaveWithGMode": [
-            {
-              "leavesWithArtificialMorph": false,
-              "strats": [
-                {
-                  "name": "Carry G-Mode Up the Elevator",
-                  "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [3],
-                      "artificialMorph": false,
-                      "mode": "any"
-                    }}
-                  ]
-                }
-              ]
-            }
-          ]
+          "nodeAddress": "0x0018eb6"
         },
         {
           "id": 3,
@@ -201,7 +162,28 @@
                     }
                   },
                   "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
-                }
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Sidehopper",
+                  "notable": false,
+                  "requires": ["f_ZebesAwake"],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  }
+                },
+                {
+                  "name": "G-Mode Regain Mobility",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Sidehopper",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    "f_ZebesAwake"
+                  ],
+                  "gModeRegainMobility": {}
+                }      
               ]
             },
             {
@@ -228,14 +210,15 @@
                 {
                   "name": "G-Mode Morph Overload PLMs Zebes Asleep",
                   "notable": false,
-                  "requires": [
-                    { "not": "f_ZebesAwake" },
-                    "canRiskPermanentLossOfAccess",
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "any",
-                      "artificialMorph": true
-                    }}
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
+                    {"not": "f_ZebesAwake"},
+                    "canRiskPermanentLossOfAccess"
                   ],
                   "clearsObstacles": ["D"],
                   "note": "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door."
@@ -243,12 +226,13 @@
                 {
                   "name": "G-Mode Overload PLMs Indirect",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "indirect",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     {"or": [
                       {"enemyDamage": {
                         "enemy": "Sidehopper",
@@ -279,12 +263,13 @@
                 {
                   "name": "G-Mode Morph Overload PLMs Direct",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "direct",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     {"or": [
                       {"enemyDamage": {
                         "enemy": "Sidehopper",
@@ -539,6 +524,22 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                },
+                {
+                  "name": "Carry G-Mode Up the Elevator",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithGMode": {
+                      "mode": "any",
+                      "morphed": false
+                    }
+                  },
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithGMode": {
+                      "morphed": false
+                    }
+                  }
                 }
               ]
             },
@@ -580,12 +581,13 @@
                 {
                   "name": "G-Mode Morph Power Bomb the Blocks",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [3],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "any",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     {"ammo": { "type": "PowerBomb", "count": 1 }},
                     "h_canArtificialMorphMovement"
                   ],
@@ -825,31 +827,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ec2",
-          "doorEnvironments": [{"physics": "air"}],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Geemer",
-                  "notable": false,
-                  "requires": [ "f_ZebesAwake" ],
-                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
-                }
-              ]
-            }
-          ],
-          "gModeImmobile": {
-            "requires": [
-              {"enemyDamage": {
-                "enemy": "Geemer (blue)",
-                "type": "contact",
-                "hits": 1
-              }},
-              "f_ZebesAwake",
-              {"ammo": { "type": "Super", "count": 1 }}
-            ],
-            "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."
-          }
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -858,30 +836,6 @@
           "nodeSubType": "red",
           "nodeAddress": "0x0018ece",
           "doorEnvironments": [{"physics": "air"}],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Geemer",
-                  "notable": false,
-                  "requires": [ "f_ZebesAwake" ],
-                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
-                }
-              ]
-            }
-          ],
-          "gModeImmobile": {
-            "requires": [
-              {"enemyDamage": {
-                "enemy": "Geemer (blue)",
-                "type": "contact",
-                "hits": 1
-              }},
-              "f_ZebesAwake",
-              {"ammo": { "type": "Super", "count": 1 }}
-            ],
-            "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."
-          },
           "locks": [
             {
               "name": "Construction Zone Red Lock (to Ceiling E-Tank)",
@@ -902,22 +856,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018eda",
-          "doorEnvironments": [{"physics": "air"}],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Geemer",
-                  "notable": false,
-                  "requires": [
-                    "Morph",
-                    "f_ZebesAwake"
-                  ],
-                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 4,
@@ -953,6 +892,30 @@
                       "openEnd": 0
                     }
                   }
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer",
+                  "notable": false,
+                  "requires": ["f_ZebesAwake"],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                },
+                {
+                  "name": "G-Mode Regain Mobility",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Geemer (blue)",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    "f_ZebesAwake",
+                    {"ammo": { "type": "Super", "count": 1 }}
+                  ],
+                  "gModeRegainMobility": {},
+                  "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."                  
                 }
               ]
             },
@@ -984,7 +947,31 @@
                       "openEnd": 0
                     }
                   }
-                }
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer",
+                  "notable": false,
+                  "requires": ["f_ZebesAwake"],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                },
+                {
+                  "name": "G-Mode Regain Mobility",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Geemer (blue)",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    "f_ZebesAwake",
+                    {"ammo": { "type": "Super", "count": 1 }}
+                  ],
+                  "gModeRegainMobility": {},
+                  "note": "Shoot a Super at the wall, while the Geemer is moving vertically. If it is on the bottom of the shot blocks, it will not fall."
+                }      
               ]
             },
             {
@@ -1015,7 +1002,19 @@
                       "openEnd": 0
                     }
                   }
-                }    
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer",
+                  "notable": false,
+                  "requires": [
+                    "Morph",
+                    "f_ZebesAwake"
+                  ],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Carefully shoot the shoot blocks at the right time to knock off a Geemer without killing it."
+                }      
               ]
             },
             {
@@ -1040,13 +1039,13 @@
                 {
                   "name": "G-Mode Morph",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [3],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "any",
-                      "artificialMorph": true
-                    }}
-                  ]
+                      "morphed": true
+                    }
+                  },
+                  "requires": []
                 }
               ]
             }
@@ -1209,28 +1208,7 @@
                 }
               ]
             }
-          ],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Geemer",
-                  "notable": false,
-                  "requires": [ "f_ZebesAwake" ]
-                }
-              ]
-            }
-          ],
-          "gModeImmobile": {
-            "requires": [
-              {"enemyDamage": {
-                "enemy": "Geemer (blue)",
-                "type": "contact",
-                "hits": 1
-              }},
-              "f_ZebesAwake"
-            ]
-          }
+          ]
         },
         {
           "id": 2,
@@ -1238,56 +1216,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ef2",
-          "doorEnvironments": [{"physics": "air"}],
-          "leaveWithGModeSetup": [
-            {
-              "strats": [
-                {
-                  "name": "Get Hit By Geemer - Break the Crumble Blocks",
-                  "notable": false,
-                  "requires": [
-                    "f_ZebesAwake",
-                    {"or": [
-                      "h_canDestroyBombWalls",
-                      {"obstaclesCleared": ["A"]}
-                    ]},
-                    {"or": [
-                      "canConsecutiveWalljump",
-                      "h_canFly"
-                    ]}
-                  ],
-                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
-                },
-                {
-                  "name": "Get Hit By Geemer - Break the Power Bomb Blocks",
-                  "notable": false,
-                  "requires": [
-                    "f_ZebesAwake",
-                    {"or": [
-                      "h_canDestroyBombWalls",
-                      {"obstaclesCleared": ["A"]}
-                    ]},
-                    "h_canUsePowerBombs",
-                    {"canShineCharge": {
-                      "usedTiles": 33,
-                      "openEnd": 2
-                    }},
-                    {"shinespark": {"frames": 43 }}
-                  ],
-                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
-                },
-                {
-                  "name": "Get Hit By Geemer - Blocks Already Broken",
-                  "notable": false,
-                  "requires": [
-                    "f_ZebesAwake",
-                    {"obstaclesCleared": ["A","B"]}
-                  ],
-                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -1439,6 +1368,27 @@
                     }},
                     {"refill": ["Energy", "Missile"]}
                   ]
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer",
+                  "notable": false,
+                  "requires": ["f_ZebesAwake"],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  }
+                },
+                {
+                  "name": "G-Mode Regain Mobility",
+                  "notable": false,
+                  "requires": [
+                    {"enemyDamage": {
+                      "enemy": "Geemer (blue)",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    "f_ZebesAwake"
+                  ],
+                  "gModeRegainMobility": {}
                 }
               ]  
             },
@@ -1558,13 +1508,14 @@
                 {
                   "name": "G-Mode Morph",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithGMode": {
+                      "mode": "any",
+                      "morphed": true
+                    }
+                  },
                   "requires": [
                     "f_ZebesAwake",
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
-                      "mode": "any",
-                      "artificialMorph": true
-                    }},
                     {"or": [
                       "SpringBall",
                       "Bombs",
@@ -1584,12 +1535,13 @@
                 {
                   "name": "G-Mode Morph with Flashing Lights",
                   "notable": true,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "any",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     {"or": [
                       {"and": [
                         { "not": "f_ZebesAwake" },
@@ -1623,13 +1575,14 @@
                 {
                   "name": "G-Mode Morph",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithGMode": {
+                      "mode": "direct",
+                      "morphed": true
+                    }
+                  },
                   "requires": [
                     "f_ZebesAwake",
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
-                      "mode": "direct",
-                      "artificialMorph": true
-                    }},
                     {"or": [
                       "SpringBall",
                       "Bombs",
@@ -1638,26 +1591,34 @@
                         "enemy": "Geemer (blue)",
                         "hits": 1,
                         "type": "contact"
-                      }},
-                      {"comeInWithGMode": {
-                        "fromNodes": [1],
-                        "mode": "direct",
-                        "artificialMorph": true,
-                        "mobility": "immobile"
                       }}
                     ]}
                   ],
                   "devNote": "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here."
                 },
                 {
+                  "name": "G-Mode Immobile Morph",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithGMode": {
+                      "mode": "direct",
+                      "morphed": true,
+                      "mobility": "immobile"
+                    }
+                  },
+                  "requires": ["f_ZebesAwake"],
+                  "devNote": "The immobile case is included as a separate strat, since the Geemer hit to restore mobility provides i-frames eliminating a need to account for a subsequent Geemer hit (or a way to evade it)."
+                },
+                {
                   "name": "G-Mode Morph with Flashing Lights",
                   "notable": true,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [1],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "direct",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     {"or": [
                       {"and": [
                         { "not": "f_ZebesAwake" },
@@ -1670,20 +1631,32 @@
                         "enemy": "Geemer (blue)",
                         "hits": 1,
                         "type": "contact"
-                      }},
-                      {"comeInWithGMode": {
-                        "fromNodes": [1],
-                        "mode": "direct",
-                        "artificialMorph": true,
-                        "mobility": "immobile"
                       }}
                     ]}
                   ],
                   "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
                   "note": [
-                    "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+                    "The eye scanners are particularly annoying while in G-mode. They scan Samus with bright flashing lights which remain for a further distance.",
                     "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
                   ]
+                },
+                {
+                  "name": "G-Mode Immobile Morph with Flashing Lights",
+                  "notable": true,
+                  "entranceCondition": {
+                    "comeInWithGMode": {
+                      "mode": "direct",
+                      "morphed": true,
+                      "mobility": "immobile"
+                    }
+                  },
+                  "requires": [],
+                  "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+                  "note": [
+                    "The eye scanners are particularly annoying while in G-mode. They scan Samus with bright flashing lights which remain for a further distance.",
+                    "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in G-mode in this room if Zebes is awake."
+                  ],
+                  "devNote": "The immobile case is included as a separate strat, since the Geemer hit to restore mobility provides i-frames eliminating a need to account for a subsequent Geemer hit (or a way to evade it)."
                 }
               ]  
             }
@@ -1705,7 +1678,59 @@
                       "openEnd": 0
                     }
                   }
-                }
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer - Broken Crumble Blocks",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"or": [
+                      "h_canDestroyBombWalls",
+                      {"obstaclesCleared": ["A"]}
+                    ]},
+                    {"or": [
+                      "canConsecutiveWalljump",
+                      "h_canFly"
+                    ]}
+                  ],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer - Broken Power Bomb Blocks",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"or": [
+                      "h_canDestroyBombWalls",
+                      {"obstaclesCleared": ["A"]}
+                    ]},
+                    "h_canUsePowerBombs",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"shinespark": {"frames": 43 }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                },
+                {
+                  "name": "G-Mode Setup - Get Hit By Geemer - Blocks Already Broken",
+                  "notable": false,
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"obstaclesCleared": ["A","B"]}
+                  ],
+                  "exitCondition": {
+                    "leaveWithGModeSetup": {}
+                  },
+                  "note": "Falling down the shaft and breaking the crumble block does not require Morph."
+                }      
               ]
             },
             {
@@ -2238,12 +2263,13 @@
                 {
                   "name": "G-Mode Direct Doorsill Jump",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [2],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "direct",
-                      "artificialMorph": false
-                    }},
+                      "morphed": false
+                    }
+                  },
+                  "requires": [
                     "canPreciseWalljump",
                     "canCarefulJump",
                     {"or":[
@@ -2258,12 +2284,13 @@
                 {
                   "name": "G-Mode Morph Spring Ball IBJ",
                   "notable": false,
-                  "requires": [
-                    {"comeInWithGMode": {
-                      "fromNodes": [2],
+                  "entranceCondition": {
+                    "comeInWithGMode": {
                       "mode": "any",
-                      "artificialMorph": true
-                    }},
+                      "morphed": true
+                    }
+                  },
+                  "requires": [
                     "h_canArtificialMorphJumpIntoIBJ",
                     "canBombHorizontally"
                   ],
