@@ -924,37 +924,6 @@
           "nodeType": "door",
           "nodeSubType": "elevator",
           "nodeAddress": "0x0018c0a",
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 130,
-              "usedTiles": 33,
-              "strats": [
-                {
-                  "name": "Come In Charged",
-                  "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1
-                    }}
-                  ]
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "framesRemaining": 130,
-              "usedTiles": 14,
-              "strats": [
-                {
-                  "name": "In-Room Shortcharge",
-                  "notable": false,
-                  "requires": [{"doorUnlockedAtNode": 1}]
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGMode": [
             {
               "leavesWithArtificialMorph": false,
@@ -1003,6 +972,22 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 13,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 130
+                    }
+                  }
                 }
               ]
             }
@@ -1018,6 +1003,27 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave Charged, In-Room Shortcharge",
+                  "notable": false,
+                  "requires": [
+                    {"doorUnlockedAtNode": 1},
+                    {"canShineCharge": {
+                      "usedTiles": 14,
+                      "openEnd": 0
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 130
+                    }
+                  }
                 }
               ]
             }
@@ -1040,21 +1046,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00191e6",
-          "doorEnvironments": [{"physics": "air"}],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 33,
-              "framesRemaining": 120,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -1062,21 +1054,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00191f2",
-          "doorEnvironments": [{"physics": "air"}],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 33,
-              "framesRemaining": 120,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         }
       ],
       "enemies": [],
@@ -1095,6 +1073,22 @@
                     "leaveWithRunway": {
                       "length": 3,
                       "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 120
                     }
                   }
                 }
@@ -1126,6 +1120,22 @@
                     "leaveWithRunway": {
                       "length": 3,
                       "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 120
                     }
                   }
                 }
@@ -1430,63 +1440,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018952",
           "doorEnvironments": [{"physics": "air"}],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 0,
-              "usedTiles": 18,
-              "openEnd": 1,
-              "startingDownTiles": 0,
-              "steepDownTiles": 1,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Yapping Maw Alive",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    "canShinechargeMovement",
-                    {"shinespark": {"frames": 45}}
-                  ],
-                  "note": [
-                    "It is possible to run through the Yapping Maw while it is attacking a different direction.",
-                    "But that likely requires acid damage and isn't entirely reliable."
-                  ]
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "usedTiles": 21,
-              "openEnd": 0,
-              "startingDownTiles": 1,
-              "steepDownTiles": 2,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Yapping Maw Dead",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    {"enemyKill": {"enemies": [["Yapping Maw"]]}},
-                    {"shinespark": {"frames": 45}}
-                  ]
-                },
-                {
-                  "name": "Yapping Maw Frozen",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    "canUseFrozenEnemies",
-                    {"shinespark": {"frames": 45}}
-                  ],
-                  "note": "Freeze the Yapping Maw while it is in the air, extended."
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -1515,63 +1468,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018946",
           "doorEnvironments": [{"physics": "air"}],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 0,
-              "usedTiles": 18,
-              "openEnd": 1,
-              "startingDownTiles": 2,
-              "steepDownTiles": 3,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Yapping Maw Alive",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    {"shinespark": {"frames": 45}}
-                  ],
-                  "devNote": "The yapping maw prevents use of an extra runway tile because it will move to grab Samus"
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "usedTiles": 22,
-              "openEnd": 0,
-              "startingDownTiles": 2,
-              "steepDownTiles": 3,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Yapping Maw Dead",
-                  "notable": false,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    {"enemyKill": {"enemies": [["Yapping Maw"]]}},
-                    {"shinespark": {"frames": 45}}
-                  ]
-                },
-                {
-                  "name": "Gauntlet Entrance Shinecharge Under Yapping Maw",
-                  "notable": true,
-                  "requires": [
-                    {"obstaclesCleared": ["A"]},
-                    "canMidairShinespark",
-                    "canCameraManip",
-                    {"shinespark": {"frames": 45}}
-                  ],
-                  "note": [
-                    "Jump towards the yapping maw before it is on screen so it moves up.",
-                    "Quickly move it off camera so it will be `frozen` in place.",
-                    "Shortcharge like normal.  If the Yapping Maw is returning to its hole, it will usually not grab Samus."
-                  ]
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -1647,6 +1543,73 @@
                       "steepDownTiles": 1
                     }
                   }
+                },
+                {
+                  "name": "Leave with Spark, Yapping Maw Alive",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canShinechargeMovement",
+                    {"shinespark": {
+                      "frames": 45
+                    }},
+                    {"canShineCharge": {
+                      "usedTiles": 18,
+                      "openEnd": 1,
+                      "startingDownTiles": 0,
+                      "steepDownTiles": 1,
+                      "steepUpTiles": 2,
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": [
+                    "It is possible to run through the Yapping Maw while it is attacking a different direction.",
+                    "But that likely requires acid damage and isn't entirely reliable."
+                  ]
+                },
+                {
+                  "name": "Leave with Spark, Yapping Maw Dead",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    {"enemyKill": {"enemies": [["Yapping Maw"]]}},
+                    {"shinespark": {"frames": 45}},
+                    {"canShineCharge": {
+                      "usedTiles": 21,
+                      "openEnd": 0,
+                      "startingDownTiles": 1,
+                      "steepDownTiles": 2,
+                      "steepUpTiles": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  }
+                },
+                {
+                  "name": "Leave with Spark, Yapping Maw Frozen",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canUseFrozenEnemies",
+                    {"shinespark": {"frames": 45}},
+                    {"canShineCharge": {
+                      "usedTiles": 21,
+                      "openEnd": 0,
+                      "startingDownTiles": 1,
+                      "steepDownTiles": 2,
+                      "steepUpTiles": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Freeze the Yapping Maw while it is in the air, extended."
                 }
               ]
             },
@@ -1847,6 +1810,73 @@
                       "steepDownTiles": 1
                     }
                   }
+                },
+                {
+                  "name": "Leave with Spark, Yapping Maw Alive",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    {"shinespark": {
+                      "frames": 45
+                    }},
+                    {"canShineCharge": {
+                      "usedTiles": 18,
+                      "openEnd": 1,
+                      "startingDownTiles": 2,
+                      "steepDownTiles": 3,
+                      "steepUpTiles": 1,
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "devNote": "The yapping maw prevents use of an extra runway tile because it will move to grab Samus"
+                },
+                {
+                  "name": "Leave with Spark, Yapping Maw Dead",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    {"enemyKill": {"enemies": [["Yapping Maw"]]}},
+                    {"shinespark": {"frames": 45}},
+                    {"canShineCharge": {
+                      "usedTiles": 22,
+                      "openEnd": 0,
+                      "startingDownTiles": 2,
+                      "steepDownTiles": 3,
+                      "steepUpTiles": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  }
+                },
+                {
+                  "name": "Gauntlet Entrance Shinecharge Under Yapping Maw",
+                  "notable": true,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canCameraManip",
+                    {"shinespark": {"frames": 45}},
+                    {"canShineCharge": {
+                      "usedTiles": 22,
+                      "openEnd": 0,
+                      "startingDownTiles": 2,
+                      "steepDownTiles": 3,
+                      "steepUpTiles": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": [
+                    "Jump towards the yapping maw before it is on screen so it moves up.",
+                    "Quickly move it off camera so it will be `frozen` in place.",
+                    "Shortcharge like normal.  If the Yapping Maw is returning to its hole, it will usually not grab Samus."
+                  ]
                 }
               ]
             }
