@@ -1325,26 +1325,18 @@
                   "devNote": "FIXME: Add a way to come from the right, only requiring a single PB to break the bomb blocks."
                 },
                 {
-                  "name": "Speed Through the Blocks and Get Hit By Geemer",
+                  "name": "Speed Through the Blocks then Get Hit By Geemer",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 13,
+                      "openEnd": 0,
+                      "steepUpTiles": 2,
+                      "steepDownTiles": 2
+                    }
+                  },
                   "requires": [
                     "f_ZebesAwake",
-                    {"or":[
-                      {"canComeInCharged": {
-                        "fromNode": 1,
-                        "framesRemaining": 180
-                      }},
-                      {"and": [
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 0
-                        }},
-                        {"shinespark": {
-                          "frames": 67,
-                          "excessFrames": 42
-                        }}
-                      ]}
-                    ]},
                     "canCarefulJump",
                     {"canShineCharge": {
                       "usedTiles": 25,
@@ -1354,7 +1346,33 @@
                     }}
                   ],
                   "note": [
-                    "From the left, break the bomb blocks with either a shinespark or blue speed from the neighboring room.",
+                    "From the left, break the bomb blocks with blue speed from the neighboring room.",
+                    "After the blocks respawn and the Geemer is near, destroy them again using blue speed from the right.",
+                    "This opens a path for the Geemer to hit Samus through the transition."
+                  ]
+                },
+                {
+                  "name": "Shinespark Through the Blocks then Get Hit By Geemer",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    "f_ZebesAwake",
+                    {"shinespark": {
+                      "frames": 67,
+                      "excessFrames": 42
+                    }},
+                    "canCarefulJump",
+                    {"canShineCharge": {
+                      "usedTiles": 25,
+                      "steepUpTiles": 3,
+                      "steepDownTiles": 3,
+                      "openEnd": 1
+                    }}
+                  ],
+                  "note": [
+                    "From the left, break the bomb blocks by shinesparking from the neighboring room.",
                     "After the blocks respawn and the Geemer is near, destroy them again using blue speed from the right.",
                     "This opens a path for the Geemer to hit Samus through the transition."
                   ]
@@ -1362,7 +1380,7 @@
               ],
               "devNote": [
                 "FIXME: There is a double G-mode strat that could be added, using artificial morph and Power Bombs coming in from the right (and a Crystal Flash to refill reserves), but it can't be correctly expressed without first changing how cross-room strats are structured.",
-                "FIXME: The canComeInCharged requirements from node 1 could be dropped if coming from the right."
+                "FIXME: Coming in from the left with speed could be dropped if coming from the right."
               ]
             }
           ],
@@ -1478,38 +1496,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x001896a",
           "doorEnvironments": [{"physics": "air"}],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 17,
-              "steepUpTiles": 2,
-              "steepDownTiles": 2,
-              "gentleDownTiles": 1,
-              "gentleUpTiles": 1,
-              "framesRemaining": 90,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ]
-            },
-            {
-              "usedTiles": 25,
-              "steepUpTiles": 3,
-              "steepDownTiles": 3,
-              "framesRemaining": 30,
-              "openEnd": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -1979,19 +1965,10 @@
                 {
                   "name": "Parlor X-Ray Climb",
                   "notable": false,
-                  "requires": [
-                    "h_canLeftDoorXRayClimb",
-                    {"resetRoom":{
-                      "nodes": [2],
-                      "mustStayPut": true
-                    }},
-                    {"adjacentRunway": {
-                      "fromNode": 2,
-                      "usedTiles": 0.5,
-                      "overrideRunwayRequirements": true,
-                      "useFrames": 200
-                    }}
-                  ],
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
+                  "requires": [ "canXRayClimb" ],
                   "note": "This is a short climb of only a few tiles."
                 },
                 {
@@ -2606,7 +2583,8 @@
                   "exitCondition": {
                     "leaveWithSpark": {}
                   },
-                  "note": "Break the bomb wall while blue, or spark diagonally next to it. Open the door then charge the spark again and spark through the wall and door."
+                  "note": "Break the bomb wall while blue, or spark diagonally next to it. Open the door then charge the spark again and spark through the wall and door.",
+                  "devNote": "The canCarefulJump or 2 spark frames could be reduced by having the door already open, but that's probably not worth modeling."
                 },
                 {
                   "name": "Leave with Runway, Broken Wall",
@@ -2641,7 +2619,7 @@
                       "steepDownTiles": 2
                     }
                   }
-                }
+                },
                 {
                   "name": "G-Mode through Terminator Bomb Blocks (from Right)",
                   "notable": false,
@@ -2701,6 +2679,41 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                },
+                {
+                  "name": "Leave Charged, Using the Raised Platform",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 17,
+                      "openEnd": 2,
+                      "steepUpTiles": 3,
+                      "steepDownTiles": 3
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 90
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Charged, Using the Left of the Raised Platform",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 25,
+                      "openEnd": 1,
+                      "steepUpTiles": 3,
+                      "steepDownTiles": 3
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 30
+                    }
+                  }
                 }
               ]
             },
