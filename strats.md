@@ -594,7 +594,7 @@ __Example:__
 
 ## G-Mode Regain Mobility
 
-A `gModeRegainMobility` property on a strat indicates that the strat allows Samus to regain mobility (by taking knockback from an enemy or projectile) after entering with G-mode immobile. In all strats with a `gModeRegainMobility` property, the `from` node of the strat must be the same as the `to` node and must be a door node. A strat with `gModeRegainMobility` should normally include an `enemyDamage` requirement in its `requires`.
+A `gModeRegainMobility` property on a strat indicates that the strat allows Samus to regain mobility (by taking knockback from an enemy) after entering with G-mode immobile. In all strats with a `gModeRegainMobility` property, the `from` node of the strat must be the same as the `to` node and must be a door node. A strat with `gModeRegainMobility` should normally include an `enemyDamage` requirement in its `requires`.
 
 A `gModeRegainMobility` object has no properties.
 
