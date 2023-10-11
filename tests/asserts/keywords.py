@@ -78,6 +78,7 @@ def process_keyvalue(k, v, metadata):
         "comeInJumping",    # validated by schema
         "leaveWithGModeSetup", # validated by schema
         "gModeRegainMobility",    # validated by schema
+        "leaveWithSpark", # validated by schema
     ]
 
     # check if it's a key we want to check
