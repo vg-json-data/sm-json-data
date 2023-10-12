@@ -4851,21 +4851,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018c82",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Final Missile Bombway Left Door (to Final Missile)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -4896,6 +4882,22 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -4923,21 +4925,24 @@
                   "notable": false,
                   "requires": [
                     "canSpeedball",
-                    {"or": [
-                      {"and": [
-                        "canSlowShortCharge",
-                        {"canComeInCharged": {
-                          "framesRemaining": 180,
-                          "fromNode": 2,
-                          "unusableTiles": 5
-                        }}
-                      ]},
-                      {"canComeInCharged": {
-                        "framesRemaining": 180,
-                        "fromNode": 2,
-                        "unusableTiles": 14
-                      }}
-                    ]}
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 2,
+                      "unusableTiles": 14
+                    }}
+                  ]
+                },
+                {
+                  "name": "Slow Speedball",
+                  "notable": false,
+                  "requires": [
+                    "canSpeedball",
+                    "canSlowShortCharge",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 2,
+                      "unusableTiles": 5
+                    }}
                   ]
                 },
                 {
@@ -4965,6 +4970,22 @@
                     "Bombs"
                   ],
                   "note": "Repeatedly bomb the crumble blocks until the PLMs are overloaded."
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 0
+                    }
+                  }
                 }
               ]
             }
@@ -5336,25 +5357,6 @@
               ],
               "openEnd": 1
             }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 70,
-              "usedTiles": 33,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "XMode",
-                  "notable": false,
-                  "requires": [
-                    "h_canXMode",
-                    "canShinechargeMovement",
-                    "canIframeSpikeJump",
-                    {"spikeHits": 2}
-                  ]
-                }
-              ]
-            }
           ]
         },
         {
@@ -5363,34 +5365,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018c76",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Crateria Super Room Bottom Left Door (to Climb Middle)",
-              "length": 35,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Frozon Boyon Runway - Crateria Super Room Bottom Left Door (to Climb Middle)",
-              "length": 45,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canUseFrozenEnemies" ]
-                }
-              ],
-              "openEnd": 1,
-              "usableComingIn": false
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -5471,6 +5446,46 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 6,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "X-Mode, Leave Charged",
+                  "notable": false,
+                  "requires": [
+                    "h_canXMode",
+                    "canShinechargeMovement",
+                    "canIframeSpikeJump",
+                    {"spikeHits": 2},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 70
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -5554,13 +5569,10 @@
                 {
                   "name": "Shinespark",
                   "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 0
-                    }},
-                    {"shinespark": {"frames": 65}}
-                  ]
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [ {"shinespark": {"frames": 65}} ]
                 },
                 {
                   "name": "Bomb Jump Over Spikes",
@@ -5701,29 +5713,31 @@
                 {
                   "name": "SpaceJump Speedball",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 4,
+                      "openEnd": 1
+                    }
+                  },
                   "requires": [
                     "canSpeedball",
-                    "canBlueSpaceJump",
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 180,
-                      "unusableTiles": 1
-                    }}
+                    "canBlueSpaceJump"
                   ]
                 },
                 {
                   "name": "Springball Speedball",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 3,
+                      "openEnd": 1
+                    }
+                  },
                   "requires": [
                     "canSpeedball",
                     "canTemporaryBlue",
                     "canCarefulJump",
                     "canSpringBallBounce",
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 2
-                    }},
                     {"or": [
                       "canTrickyJump",
                       {"canShineCharge":{
@@ -5743,14 +5757,15 @@
                 {
                   "name": "X-Mode BlueSuit",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 4,
+                      "openEnd": 1
+                    }
+                  },
                   "requires": [
                     "canSuperJump",
                     "Morph",
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 180,
-                      "unusableTiles": 1
-                    }},
                     {"spikeHits": 3},
                     {"or": [
                       {"spikeHits": 3},
@@ -5788,45 +5803,67 @@
                 {
                   "name": "SpeedKeep for Temporary Blue",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": true,
+                      "minTiles": 12
+                    }
+                  },
                   "requires": [
                     "canSpeedKeep",
                     "canCarefulJump",
+                    "canSlowShortCharge",
+                    "can3HighMidAirMorph",
+                    {"spikeHits": 1},
+                    "canSpeedball"
+                  ],
+                  "note": [
+                    "Bounce into the spikes and use a SpeedKeep to run on spikes to setup for a speedball towards the item.",
+                    "Bouncing on the platform near the door can save a spike hit, if the running space is available.",
+                    "Or a DamageBoost SpeedKeep could be used instead of a Spike SpeedKeep with enough runspeed."
+                  ]
+                },
+                {
+                  "name": "SpeedKeep for Temporary Blue",
+                  "notable": false,
+                  "requires": [
+                    "canSpeedKeep",
+                    "canCarefulJump",
+                    "can3HighMidAirMorph",
+                    {"canComeInCharged": {
+                      "framesRemaining": 180,
+                      "fromNode": 1,
+                      "unusableTiles": 13
+                    }},
+                    {"spikeHits": 1},
+                    "canSpeedball"
+                  ],
+                  "note": [
+                    "Bounce into the spikes and use a SpeedKeep to run on spikes to setup for a speedball towards the item.",
+                    "Bouncing on the platform near the door can save a spike hit, if the running space is available.",
+                    "Or a DamageBoost SpeedKeep could be used instead of a Spike SpeedKeep with enough runspeed."
+                  ]
+                },
+                {
+                  "name": "SpeedKeep for Temporary Blue",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": true,
+                      "minTiles": 4
+                    }
+                  },
+                  "requires": [
+                    "canSpeedKeep",
+                    "canCarefulJump",
+                    {"canShineCharge": {
+                      "usedTiles": 21,
+                      "openEnd": 2
+                    }},
+                    {"spikeHits": 1},
                     {"or": [
-                      {"and": [
-                        "canSlowShortCharge",
-                        "can3HighMidAirMorph",
-                        {"adjacentRunway": {
-                          "fromNode": 1,
-                          "usedTiles": 12,
-                          "physics": ["normal"]
-                        }},
-                        {"spikeHits": 1}
-                      ]},
-                      {"and": [
-                        "can3HighMidAirMorph",
-                        {"canComeInCharged": {
-                          "framesRemaining": 180,
-                          "fromNode": 1,
-                          "unusableTiles": 13
-                        }},
-                        {"spikeHits": 1}
-                      ]},
-                      {"and": [
-                        {"canShineCharge": {
-                          "usedTiles": 21,
-                          "openEnd": 2
-                        }},
-                        {"adjacentRunway": {
-                          "fromNode": 1,
-                          "usedTiles": 4,
-                          "physics": ["normal"]
-                        }},
-                        {"spikeHits": 1},
-                        {"or": [
-                          {"spikeHits": 1},
-                          "canChainTemporaryBlue"
-                        ]}
-                      ]}
+                      {"spikeHits": 1},
+                      "canChainTemporaryBlue"
                     ]},
                     "canSpeedball"
                   ],
@@ -5884,21 +5921,41 @@
                 {
                   "name": "X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
                   "requires": [
-                    "h_canLeftDoorXRayClimb",
-                    {"resetRoom":{
-                      "nodes": [2],
-                      "mustStayPut": true
-                    }},
-                    {"adjacentRunway": {
-                      "fromNode": 2,
-                      "usedTiles": 0.5,
-                      "overrideRunwayRequirements": true,
-                      "useFrames": 200
-                    }},
+                    "canXRayClimb",
                     "canBeVeryPatient"
                   ],
                   "note": "Climb up 7 screens."
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 35,
+                      "openEnd": 0
+                    }
+                  }
+                },
+                {
+                  "name": "Leave with Runway, Frozen Boyon Bridge",
+                  "notable": false,
+                  "requires": [ "canUseFrozenEnemies" ],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 45,
+                      "openEnd": 1
+                    }
+                  }
                 }
               ]
             },
@@ -6329,20 +6386,6 @@
           "nodeType": "door",
           "nodeSubType": "elevator",
           "nodeAddress": "0x0018b9e",
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 130,
-              "usedTiles": 14,
-              "strats": [
-                {
-                  "name": "In-Room Shortcharge",
-                  "notable": false,
-                  "requires": [{"doorUnlockedAtNode": 1}]
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGMode": [
             {
               "leavesWithArtificialMorph": false,
