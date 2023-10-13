@@ -16,23 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ade",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Moat Left Door (to Kihunters)",
-              "length": 2,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -40,21 +24,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018aea",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Moat Right Door (to West Ocean)",
-              "length": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -66,10 +36,45 @@
         }
       ],
       "enemies": [],
+      "obstacles": [
+        {
+          "id": "A",
+          "obstacleType": "abstract",
+          "name": "Shinespark Left"
+        },
+        {
+          "id": "B",
+          "obstacleType": "abstract",
+          "name": "Shinespark Right"
+        }
+      ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Moat SpringBall Bounce",
+          "note": "From an open doorway or adjacent room, run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
+        }
+      ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -86,14 +91,35 @@
                     {"or": [
                       "Grapple",
                       "SpaceJump",
-                      "Gravity",
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 3,
-                        "physics": ["normal"]
-                      }}
+                      "Gravity"
                     ]}
                   ]
+                },
+                {
+                  "name": "Run Through Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 3
+                    }
+                  },
+                  "requires": []
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 18,
+                      "excessFrames": 0
+                    }}
+                  ],
+                  "clearsObstacles": ["B"],
+                  "devNote": "This will grab the item and continue the spark to the right door. If this is an E-Tank, Samus will not maintain full Energy after the next strat."
                 }
               ]
             }
@@ -109,6 +135,22 @@
                   "name": "Pass Below",
                   "notable": false,
                   "requires": ["h_canBombThings"]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 1
+                    }
+                  }
                 }
               ]
             },
@@ -150,11 +192,7 @@
                       {"doorUnlockedAtNode": 2},
                       "canTrickyJump",
                       "canLateralMidAirMorph",
-                      "SpeedBooster",
-                      {"adjacentRunway": {
-                        "fromNode": 2,
-                        "usedTiles": 2
-                      }}
+                      "SpeedBooster"
                     ]}
                   ],
                   "note": [
@@ -164,19 +202,37 @@
                   "devNote": "Could use a failure definition?"
                 },
                 {
+                  "name": "Moat Reverse Jump, Run Through Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 2
+                    }
+                  },
+                  "requires": [
+                    "canDisableEquipment",
+                    "canCarefulJump"
+                  ],
+                  "note": [
+                    "Execution of this strat is non-trivial, and failing will lead to falling into the pit.",
+                    "Depending on item loadout, that could be a softlock."
+                  ]
+                },
+                {
                   "name": "Shinespark",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "framesRemaining": 0,
-                      "fromNode": 2
-                    }},
                     {"shinespark": {
-                      "frames": 42,
-                      "excessFrames": 15
+                      "frames": 23,
+                      "excessFrames": 0
                     }}
                   ],
-                  "devNote": "FIXME: This will grab the item and continue the spark to the left door. If this is an E-Tank, Samus will not maintain full Energy after the strat."
+                  "clearsObstacles": ["A"],
+                  "devNote": "This will grab the item and continue the spark to the left door. If this is an E-Tank, Samus will not maintain full Energy after the next strat."
                 }
               ]
             }
@@ -191,7 +247,7 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ {"obstaclesNotCleared": ["A","B"]} ]
                 }
               ]
             },
@@ -201,12 +257,18 @@
                 {
                   "name": "Grapple",
                   "notable": false,
-                  "requires": ["Grapple"]
+                  "requires": [
+                    "Grapple",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ]
                 },
                 {
                   "name": "Space Jump",
                   "notable": false,
-                  "requires": ["SpaceJump"]
+                  "requires": [
+                    "SpaceJump",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ]
                 },
                 {
                   "name": "Gravity with Jump Assist",
@@ -227,7 +289,8 @@
                         "HiJump",
                         "SpeedBooster"
                       ]}
-                    ]}
+                    ]},
+                    {"obstaclesNotCleared": ["A","B"]}
                   ]
                 },
                 {
@@ -235,7 +298,8 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
-                    "h_canIBJ"
+                    "h_canIBJ",
+                    {"obstaclesNotCleared": ["A","B"]}
                   ]
                 },
                 {
@@ -243,65 +307,95 @@
                   "notable": false,
                   "requires": [
                     "canGravityJump",
-                    "canSuitlessMaridia"
+                    "canSuitlessMaridia",
+                    {"obstaclesNotCleared": ["A","B"]}
                   ]
                 },
                 {
-                  "name": "Shinespark",
+                  "name": "Continue Shinespark Left",
                   "notable": false,
                   "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "inRoomPath": [1, 3],
-                      "framesRemaining": 0
-                    }},
                     {"shinespark": {
-                      "frames": 44,
-                      "excessFrames": 6
-                    }}
-                  ]
+                      "frames": 19,
+                      "excessFrames": 19
+                    }},
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "devNote": "This will continue the Shinespark from the right door. This is needed in case the item is an E-Tank, Samus will not maintain full Energy after the Spark."
                 },
                 {
-                  "name": "Moat SpringBall Bounce",
+                  "name": "Continue Shinespark Right",
+                  "notable": false,
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 24,
+                      "excessFrames": 7
+                    }},
+                    {"obstaclesCleared": ["B"]}
+                  ],
+                  "devNote": "This will continue the Shinespark from the left door. This is needed in case the item is an E-Tank, Samus will not maintain full Energy after the Spark."
+                },
+                {
+                  "name": "Moat SpringBall Bounce, Open Doorway",
                   "notable": true,
                   "requires": [ 
                     "canSpringBallBounce",
-                    {"or": [
-                      {"doorUnlockedAtNode": 1},
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 1
-                      }}
-                    ]}
+                    {"doorUnlockedAtNode": 1},
+                    {"obstaclesNotCleared": ["A","B"]}
                   ],
+                  "reusableRoomwideNotable": "Moat SpringBall Bounce",
                   "note": "Open the door and step as close to the transition as possible. Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
                 },
                 {
-                  "name": "Moat Continuous Walljump",
+                  "name": "Moat SpringBall Bounce, Run Through the Door",
+                  "notable": true,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 1
+                    }
+                  },
+                  "requires": [ 
+                    "canSpringBallBounce",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ],
+                  "reusableRoomwideNotable": "Moat SpringBall Bounce",
+                  "note": "Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
+                },
+                {
+                  "name": "Moat Continuous Walljump, Open Doorway",
                   "notable": false,
                   "requires": [
                     "canCWJ",
+                    {"doorUnlockedAtNode": 1},
                     {"or": [
-                       {"and": [
-                        {"doorUnlockedAtNode": 1},
-                        {"or": [
-                          "canMoonwalk",
-                          "Morph",
-                          "canXRayTurnaround"
-                        ]}
-                      ]},
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 1.5,
-                        "overrideRunwayRequirements": true,
-                        "physics": ["normal"],
-                        "useFrames": 100
-                      }}
-                    ]}
+                      "canMoonwalk",
+                      "Morph",
+                      "canXRayTurnaround"
+                    ]},
+                    {"obstaclesNotCleared": ["A","B"]}
                   ],
                   "note": [
                     "Stand on the farthest pixel into the door possible using moonwalk, X-Ray, or morphball turn around.",
-                    "Aligning against the closed door shell on the other side of the transition also works if possible and movement speed is not impeded.",
+                    "Run towards the water and jump on the last possible frame.",
+                    "Perform the CWJ off of the item pedestal to cross to the other side."
+                  ]
+                },
+                {
+                  "name": "Moat Continuous Walljump, Run Through the Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 1.4
+                    }
+                  },
+                  "requires": [
+                    "canCWJ",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ],
+                  "note": [
+                    "Aligning against the closed door shell on the other side of the transition.",
                     "Run towards the water and jump on the last possible frame.",
                     "Perform the CWJ off of the item pedestal to cross to the other side."
                   ]
@@ -309,7 +403,10 @@
                 {
                   "name": "Moat Horizontal Bomb Jump",
                   "notable": false,
-                  "requires": ["h_canHBJ"]
+                  "requires": [
+                    "h_canHBJ",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ]
                 },
                 {
                   "name": "Double Spring Ball Jump",
@@ -317,13 +414,17 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "canDoubleSpringBallJumpMidAir",
-                    "HiJump"
+                    "HiJump",
+                    {"obstaclesNotCleared": ["A","B"]}
                   ]
                 },
                 {
                   "name": "Moat Ceiling Bomb Jump",
                   "notable": false,
-                  "requires": ["h_canCeilingBombJump"]
+                  "requires": [
+                    "h_canCeilingBombJump",
+                    {"obstaclesNotCleared": ["A","B"]}
+                  ]
                 },
                 {
                   "name": "G-mode Morph IBJ",
@@ -335,7 +436,8 @@
                       "artificialMorph": true
                     }},
                     "Gravity",
-                    "h_canArtificialMorphIBJ"
+                    "h_canArtificialMorphIBJ",
+                    {"obstaclesNotCleared": ["A","B"]}
                   ]
                 }
               ]
