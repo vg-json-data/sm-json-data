@@ -77,6 +77,7 @@ def process_keyvalue(k, v, metadata):
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInJumping",  # validated by schema
         "leaveWithSpark", # validated by schema
+        "speedBooster", # validated by schema
     ]
 
     # check if it's a key we want to check
