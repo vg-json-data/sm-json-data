@@ -3018,21 +3018,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00194b6",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Grapple Tutorial Room 3 Left Door (to Grapple Tutorial 2)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -3040,40 +3026,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00194c2",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Grapple Tutorial Room 3 Right Door (to Shaft)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Runway with Gate Open - Grapple Tutorial Room 3 Right Door (to Shaft)",
-              "length": 6,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    {"or": [
-                      "h_canGreenGateGlitch",
-                      {"obstaclesCleared": ["A"]}
-                    ]}
-                  ],
-                  "clearsObstacles": ["A"]
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -3126,6 +3079,14 @@
               "id": 1,
               "strats": [
                 {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 4, "openEnd": 1}
+                  }
+                },
+                {
                   "name": "Gamet Farm",
                   "notable": false,
                   "requires": [
@@ -3138,15 +3099,30 @@
               "id": 3,
               "strats": [
                 {
-                  "name": "Shinespark",
+                  "name": "Enter Shinesparking",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 0
-                    }},
                     {"shinespark": {
                       "frames": 56,
+                      "excessFrames": 1
+                    }}
+                  ]
+                },
+                {
+                  "name": "Enter Building Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 3,
+                      "openEnd": 1
+                    }
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 54,
                       "excessFrames": 1
                     }}
                   ]
@@ -3184,27 +3160,34 @@
                   ]
                 },
                 {
-                  "name": "Speedy SpringBall Jump",
+                  "name": "Careful SpringBall Bounce",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "minTiles": 4,
+                      "speedBooster": "any"
+                    }
+                  },
                   "requires": [
-                    "h_canUseSpringBall",
+                    "canCarefulJump",
                     "canMockball",
-                    {"or": [
-                      {"and": [
-                        "canCarefulJump",
-                        {"adjacentRunway": {
-                          "fromNode": 1,
-                          "usedTiles": 4
-                        }}
-                      ]},
-                      {"and": [
-                        "canTrickyJump",
-                        {"adjacentRunway": {
-                          "fromNode": 1,
-                          "usedTiles": 2
-                        }}
-                      ]}
-                    ]}
+                    "canSpringballBounce"
+                  ],
+                  "note": "With enough run speed, jump over the first moat and MockBall into a regular springball jump over the second moat."
+                },
+                {
+                  "name": "Tricky SpringBall Bounce",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "minTiles": 2,
+                      "speedBooster": "any"
+                    }
+                  },
+                  "requires": [
+                    "canTrickyJump",
+                    "canMockball",
+                    "canSpringballBounce"
                   ],
                   "note": "With enough run speed, jump over the first moat and MockBall into a regular springball jump over the second moat."
                 }
@@ -3239,16 +3222,27 @@
                   ]
                 },
                 {
-                  "name": "Speedy Jump",
+                  "name": "Speed Jump",
                   "notable": false,
                   "requires": [
+                    "SpeedBooster",
+                    "canTrickyJump",
                     {"or": [
-                      "SpeedBooster",
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 2
-                      }}
-                    ]},
+                      "canWalljump",
+                      "canLateralMidAirMorph"
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Little Run Speed Jump",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "minTiles": 2,
+                      "speedBooster": "any"
+                    }
+                  },
+                  "requires": [
                     "canTrickyJump",
                     {"or": [
                       "canWalljump",
@@ -3259,13 +3253,13 @@
                 {
                   "name": "Full Run Speed Jump",
                   "notable": false,
-                  "requires": [
-                    "canCarefulJump",
-                    {"adjacentRunway": {
-                      "fromNode": 1,
-                      "usedTiles": 4
-                    }}
-                  ]
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "minTiles": 4,
+                      "speedBooster": "any"
+                    }
+                  },
+                  "requires": ["canCarefulJump"]
                 },
                 {
                   "name": "Grapple Tutorial Gamet Boost",
@@ -3307,6 +3301,27 @@
         {
           "from": 2,
           "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Limited Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 4, "openEnd": 0}
+                  }
+                },
+                {
+                  "name": "Leave with Full Runway",
+                  "notable": false,
+                  "requires": [{"obstaclesCleared": ["A"]}],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 7, "openEnd": 1}
+                  }
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
