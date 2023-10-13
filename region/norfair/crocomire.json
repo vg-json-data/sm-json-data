@@ -1843,21 +1843,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00194da",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Post Crocomire Jump Room Left Door (to Grapple)",
-              "length": 9,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -1930,39 +1916,6 @@
                 "It also makes it possible to gain more speed by running a few tiles further, which is needed for certain strats."
               ]
             }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 32,
-              "framesRemaining": 60,
-              "openEnd": 1,
-              "strats": [
-                {
-                  "name": "Speed Blocks Broken",
-                  "notable": false,
-                  "requires": [ {"obstaclesCleared": ["B"]} ],
-                  "note": "This is available if obstacle B can be destroyed by travelling to node 4."
-                }
-              ]
-            },
-            {
-              "usedTiles": 33,
-              "framesRemaining": 120,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Break Power Bomb Blocks",
-                  "notable": false,
-                  "requires": [
-                    {"or": [
-                      "h_canUsePowerBombs",
-                      {"obstaclesCleared": ["A"]}
-                    ]}
-                  ],
-                  "clearsObstacles": ["A"]
-                }
-              ]
-            }
           ]
         },
         {
@@ -2033,6 +1986,22 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 10,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 3,
               "strats": [
                 {
@@ -2041,19 +2010,84 @@
                   "requires": ["SpaceJump"]
                 },
                 {
-                  "name": "PCJR Left-Side Indiana Jones Shinespark",
+                  "name": "Left-Side Enter with Shinespark",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 110
+                    }
+                  },
                   "requires": [
-                    "canWalljump",
+                    "canPreciseWalljump",
+                    "canConsecutiveWalljump",
                     "canShinechargeMovement",
                     "canMidairShinespark",
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 150
-                    }},
-                    {"shinespark": {"frames": 40}}
+                    {"shinespark": {"frames": 78}}
                   ],
-                  "note" : "Doesn't need hjb. Takes two walljumps, and must do the shinespark at the apex."
+                  "note" : "Takes three walljumps, and must shinespark at the apex."
+                },
+                {
+                  "name": "Left-Side Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 9,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": [
+                    "canPreciseWalljump",
+                    "canConsecutiveWalljump",
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"shinespark": {"frames": 78}}
+                  ],
+                  "note" : "Takes three walljumps, and must shinespark at the apex."
+                },
+                {
+                  "name": "Left-Side Enter with Shinespark and HiJump",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 80
+                    }
+                  },
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "canWalljump",
+                        {"shinespark": {"frames": 20}}
+                      ]},
+                      "canTrickyDashJump"
+                    ]},
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"shinespark": {"frames": 60}}
+                  ],
+                  "note" : "Walljump or build run speed using the full runway to jump high enough for the shinespark."
+                },
+                {
+                  "name": "Left-Side HiJump Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 9,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": [
+                    {"or": [
+                      {"and": [
+                        "canWalljump",
+                        {"shinespark": {"frames": 20}}
+                      ]},
+                      "canTrickyDashJump"
+                    ]},
+                    "canShinechargeMovement",
+                    "canMidairShinespark",
+                    {"shinespark": {"frames": 60}}
+                  ],
+                  "note" : "Walljump or build run speed using the full runway to jump high enough for the shinespark."
                 },
                 {
                   "name": "Indiana Jones Grapple",
@@ -2073,13 +2107,13 @@
                 {
                   "name": "PCJR Full Room Space Jump Through Speed Blocks",
                   "notable": true,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "framesRemaining": 180
-                    }},
-                    "canBlueSpaceJump"
-                  ],
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 9,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": ["canBlueSpaceJump"],
                   "note": "The blocks can be broken if you can generate a blue suit using the previous room's runway, and carry it to the blocks by slowing floating down with Space Jump."
                 }
               ]
@@ -2103,6 +2137,12 @@
               "id": 2,
               "strats": [
                 {
+                  "name": "Break Power Bomb Blocks",
+                  "notable": false,
+                  "requires": ["h_canUsePowerBombs"],
+                  "clearsObstacles": ["A"]
+                },
+                {
                   "name": "Mella Farm",
                   "notable": false,
                   "requires": [
@@ -2121,6 +2161,28 @@
                     {"refill": ["Energy", "Missile"]}
                   ],
                   "note": "Shoot the Mellas when they first begin to come on screen, and they will not move."
+                },
+                {
+                  "name": "Leave with Shinecharge - Power Bomb Blocks Destroyed",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A", "B"]},
+                    "canShinechargeMovement"
+                  ],
+                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 130}}
+                },
+                {
+                  "name": "Leave with Shinecharge - Power Bomb Blocks Intact",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["B"]},
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 32,
+                      "openEnd": 1
+                    }}
+                  ],
+                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 100}}
                 }
               ]
             },
@@ -2137,24 +2199,22 @@
                   "notable": false,
                   "requires": [
                     "SpeedBooster",
-                    {"or": [
-                      "h_canUsePowerBombs",
-                      {"obstaclesCleared": ["A"]}
-                    ]}
+                    {"obstaclesCleared": ["A"]}
                   ],
-                  "clearsObstacles": ["A","B"]
+                  "clearsObstacles": ["B"]
                 },
                 {
                   "name": "Shinespark",
                   "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 2,
-                      "framesRemaining": 100
-                    }},
-                    {"shinespark": {"frames": 120}}
-                  ],
-                  "clearsObstacles": ["B"]
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 120
+                    }
+                  },
+                  "requires": [{"shinespark": {"frames": 120}}],
+                  "clearsObstacles": ["B"],
+                  "note": "Spark from the ground, left of the Power Bomb blocks.",
+                  "devNote": "For safety, don't expect to end the spark early because falling in the acid is hard to avoid."
                 },
                 {
                   "name": "Shinecharge",
