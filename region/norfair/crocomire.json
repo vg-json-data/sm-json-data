@@ -2607,21 +2607,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019522",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Grapple Room Top Right Door (to Grapple Tutorial 1)",
-              "length": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -2629,21 +2615,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019516",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Grapple Bottom Right Door (to Jump Room)",
-              "length": 9,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -2660,6 +2632,19 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 1,"openEnd": 1}
+                  }
+                }
+              ]
+            },
+            {
               "id": 3,
               "strats": [
                 {
@@ -2674,6 +2659,19 @@
         {
           "from": 2,
           "to": [
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 10, "openEnd": 0}
+                  }
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -2713,44 +2711,29 @@
                 {
                   "name": "Shinespark",
                   "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 2,
-                      "inRoomPath": [2, 3],
-                      "framesRemaining": 20
-                    }},
-                    {"shinespark": {"frames": 40}}
-                  ]
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 9,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": [{"shinespark": {"frames": 40}}]
+                },
+                {
+                  "name": "Enter Shinecharged Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {"framesRequired": 13}
+                  },
+                  "requires": [{"shinespark": {"frames": 40}}]
                 },
                 {
                   "name": "X-Ray Climb",
                   "notable": false,
-                  "requires": [
-                    "h_canRightDoorXRayClimb",
-                    {"resetRoom": {
-                      "nodes": [2],
-                      "mustStayPut": false
-                    }},
-                    {"or": [
-                      {"adjacentRunway": {
-                        "fromNode": 2,
-                        "usedTiles": 0.5,
-                        "overrideRunwayRequirements": true,
-                        "physics": ["normal"],
-                        "useFrames": 200
-                      }},
-                      {"and": [
-                        "h_canRightDoorXRayClimbFromWater",
-                        {"adjacentRunway": {
-                          "fromNode": 2,
-                          "usedTiles": 0.5,
-                          "overrideRunwayRequirements": true,
-                          "physics": ["water"],
-                          "useFrames": 200
-                        }}
-                      ]}
-                    ]}
-                  ],
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
+                  "requires": ["h_canRightDoorXRayClimb"],
                   "note": "Climb up 2 screens."
                 }
               ]
