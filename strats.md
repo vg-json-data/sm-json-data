@@ -105,7 +105,7 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 }
 ```
 
-### Leave Charged
+### Leave Shinecharged
 
 A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge).
 
@@ -119,7 +119,7 @@ A strat with a `leaveShinecharged` condition should include a `canShinecharge` r
 #### Example
 ```json
 {
-  "name": "Leave Charged",
+  "name": "Leave Shinecharged",
   "notable": false,
   "requires": [
     {"canShinecharge": {
@@ -291,7 +291,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
       $$L = \text{combined effective runway length (in tiles)}$$
       $$L_o = \text{effective runway length in other room}$$
       $$a = \text{acceleration} = 2(L - CT) / T^2$$
-      $$T_o = \text{time in other room} = \frac{\sqrt{C^2 + 2ax} - C}{a}$$
+      $$T_o = \text{time in other room} = \frac{\sqrt{C^2 + 2aL_o} - C}{a}$$
       $$T_c = \text{time in current room} = T - T_o$$
 
     For medium-length runways (ones significantly longer than the player's minimum shortcharge length, but significantly less than 31.3 tiles), this model is somewhat lenient. It assumes essentially that the player would perform the shortcharge over the full length of the runway, like doing a 4-tap with relatively long, safe taps. If instead the player did a more precise start to the shortcharge and then held dash for the remainder of the run (e.g. like a stutter 2-tap), then the heat frames in the current room could be slightly reduced. This could be modeled, but it is probably not worth the hassle for the small difference it would make.
@@ -393,7 +393,7 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveS
 A `comeInStutterShinecharging` entrance condition indicates that Samus must run into the room with SpeedBooster equipped, with a stutter immediately before the transition. This is used when entering a water room in order to obtain a shinecharge in a shorter amount of space than would otherwise be possible. It has the following property:
 - _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
 
-A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment. A match comes with the following implicit requirements for actions to be performed in the previous room:
+A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
 - The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item.
 - If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
 
@@ -403,7 +403,9 @@ A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` con
   "name": "Come In Stutter Shinecharging",
   "notable": false,
   "entranceCondition": {
-    "comeInStutterShinecharging": {}
+    "comeInStutterShinecharging": {
+      "minTiles": 2
+    }
   },
   "requires": [
     {"shinespark": {"frames": 60}}
