@@ -54,7 +54,7 @@ Some strats involve leaving the room in a special way that allows a correspondin
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
@@ -223,7 +223,7 @@ Aside from the implicit strats, there are a limited amount of `leaveWithGMode` s
 
 ## Entrance conditions
 
-In all strats with an `entranceCondition`, the `from` node of the strat must be a door node. An `entranceCondition` object must contain exactly one property:
+In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
 
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
@@ -572,7 +572,7 @@ When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit req
 - The requirement `{"or": ["Morph", "canArtificialMorph"]}`, if the `morphed` property of `comeInWithGMode` is true.
 - Requirements for regaining mobility (there may be multiple options here, and they should be treated either as separate strats or the requirements should be joined as though with an `or`):
   - G-mode mobile: Samus uses the knockback from the previous room to retain mobility. Here the `knockback` property of the `leaveWithGModeSetup` must be true, and reserve energy is assumed to have been drained to at most 4 before doing the strat.
-  - G-mode immobile: Samus uses knockback from a hit in the current room to regain mobility. The possibility of doing this is indicated by the presence of a strat with a `gModeRegainMobility` property with `from` and `to` node matching the `from` node (entrance door node) of the current strat. Any requirements of the `gModeRegainMobility` strat should be included as requirements to execute the current strat; it is important that these requirements be applied *after* the requirement to damage down to 0 energy and trigger reserves. If there are multiple such `gModeRegainMobility` strats, then these should be treated as multiple options.
+  - G-mode immobile: Samus uses knockback from a hit in the current room to regain mobility. The possibility of doing this is indicated by the presence of a strat with a `gModeRegainMobility` property with `from` and `to` node matching entrance/door node of the current strat (the `from` node of the strat with `comeInWithGMode`). Any requirements of the `gModeRegainMobility` strat should be included as requirements to execute the current strat; it is important that these requirements be applied *after* the requirement to damage down to 0 energy and trigger reserves. If there are multiple such `gModeRegainMobility` strats, then these should be treated as multiple options.
 
 When matching with a `leaveWithGMode`, a `comeInWithGMode` has an implicit requirement in one scenario:
 - If `morphed` property of `comeInWithGMode` is true but a matching `leaveWithGMode` has `morphed` false, then the `Morph` item is implicitly required.
@@ -594,7 +594,7 @@ __Example:__
 
 ## G-Mode Regain Mobility
 
-A `gModeRegainMobility` property on a strat indicates that the strat allows Samus to regain mobility (by taking knockback from an enemy) after entering with G-mode immobile. In all strats with a `gModeRegainMobility` property, the `from` node of the strat must be the same as the `to` node and must be a door node. A strat with `gModeRegainMobility` should normally include an `enemyDamage` requirement in its `requires`.
+A `gModeRegainMobility` property on a strat indicates that the strat allows Samus to regain mobility (by taking knockback from an enemy) after entering with G-mode immobile. In all strats with a `gModeRegainMobility` property, the `from` node of the strat must be the same as the `to` node and must be a door or entrance node. A strat with `gModeRegainMobility` should normally include an `enemyDamage` requirement in its `requires`.
 
 A `gModeRegainMobility` object has no properties.
 
