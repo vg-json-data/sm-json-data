@@ -1563,7 +1563,10 @@
                       "framesRemaining": 100
                     }
                   },
-                  "note": "Get a normal height jump by releasing run with SpeedBooster and no HiJump."
+                  "note": [
+                    "Get a normal height jump by releasing run with SpeedBooster and no HiJump.",
+                    "Break spin to reach the transition without a wall jump."
+                  ]
                 }
               ]
             }
@@ -2091,6 +2094,7 @@
                       ]},
                       "canTrickyDashJump"
                     ]},
+                    "HiJump",
                     "canShinechargeMovement",
                     "canMidairShinespark",
                     {"shinespark": {"frames": 60}}
@@ -2114,6 +2118,7 @@
                       ]},
                       "canTrickyDashJump"
                     ]},
+                    "HiJump",
                     "canShinechargeMovement",
                     "canMidairShinespark",
                     {"shinespark": {"frames": 60}}
@@ -2129,6 +2134,7 @@
                   "requires": [
                     "canTrickyJump",
                     "canShinechargeMovementComplex",
+                    "canMidairShinespark",
                     {"shinespark": {"frames": 40}}
                   ],
                   "note": [
@@ -2216,7 +2222,11 @@
                     {"obstaclesCleared": ["A", "B"]},
                     "canShinechargeMovement"
                   ],
-                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 130}}
+                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 130}},
+                  "note": [
+                    "Get a normal height jump by releasing run with SpeedBooster and no HiJump.",
+                    "Break spin to reach the transition without a wall jump."
+                  ]
                 },
                 {
                   "name": "Leave with Shinecharge - Power Bomb Blocks Intact",
@@ -2229,7 +2239,11 @@
                       "openEnd": 1
                     }}
                   ],
-                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 100}}
+                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 100}},
+                  "note": [
+                    "Get a normal height jump by releasing run with SpeedBooster and no HiJump.",
+                    "Break spin to reach the transition without a wall jump."
+                  ]
                 }
               ]
             },
@@ -2251,17 +2265,44 @@
                   "clearsObstacles": ["B"]
                 },
                 {
-                  "name": "Shinespark",
+                  "name": "Full Shinespark",
                   "notable": false,
                   "entranceCondition": {
                     "comeInShinecharged": {
                       "framesRequired": 120
                     }
                   },
-                  "requires": [{"shinespark": {"frames": 120}}],
+                  "requires": [{"shinespark": {"frames": 115}}],
                   "clearsObstacles": ["B"],
-                  "note": "Spark from the ground, left of the Power Bomb blocks.",
-                  "devNote": "For safety, don't expect to end the spark early because falling in the acid is hard to avoid."
+                  "note": "Spark from the ground, left of the Power Bomb blocks."
+                },
+                {
+                  "name": "Shinespark Ends Over Acid",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 120
+                    }
+                  },
+                  "requires": [
+                    {"shinespark": {"frames": 115, "excessFrames": 85}},
+                    {"or": [
+                      "canTrickyJump",
+                      {"and": [
+                        {"or": [
+                          "canWalljump",
+                          "HiJump"
+                        ]},
+                        {"acidFrames": 25}
+                      ]},
+                      {"and": [
+                        "Gravity",
+                        {"acidFrames": 20}
+                      ]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["B"],
+                  "note": "Spark from the ground, left of the Power Bomb blocks."
                 },
                 {
                   "name": "Shinecharge",
@@ -2676,6 +2717,39 @@
           "from": 2,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 9,
+                      "openEnd": 0
+                    }
+                  },
+                  "requires": [{"shinespark": {"frames": 40}}]
+                },
+                {
+                  "name": "Enter Shinecharged Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {"framesRequired": 13}
+                  },
+                  "requires": [{"shinespark": {"frames": 40}}]
+                },
+                {
+                  "name": "X-Ray Climb",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
+                  "requires": ["h_canRightDoorXRayClimb"],
+                  "note": "Climb up 2 screens."
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -2723,34 +2797,6 @@
                       "h_canFly"
                     ]}
                   ]
-                },
-                {
-                  "name": "Shinespark",
-                  "notable": false,
-                  "entranceCondition": {
-                    "comeInShinecharging": {
-                      "length": 9,
-                      "openEnd": 0
-                    }
-                  },
-                  "requires": [{"shinespark": {"frames": 40}}]
-                },
-                {
-                  "name": "Enter Shinecharged Shinespark",
-                  "notable": false,
-                  "entranceCondition": {
-                    "comeInShinecharged": {"framesRequired": 13}
-                  },
-                  "requires": [{"shinespark": {"frames": 40}}]
-                },
-                {
-                  "name": "X-Ray Climb",
-                  "notable": false,
-                  "entranceCondition": {
-                    "comeInWithDoorStuckSetup": {}
-                  },
-                  "requires": ["h_canRightDoorXRayClimb"],
-                  "note": "Climb up 2 screens."
                 }
               ]
             },
@@ -2831,7 +2877,8 @@
                     "canShinechargeMovement",
                     {"shinespark": {"frames": 11}}
                   ],
-                  "exitCondition": {"leaveWithSpark": {}}
+                  "exitCondition": {"leaveWithSpark": {}},
+                  "note": "Build some run speed to jump to the opposite runway to open the door before Shinesparking."
                 }
               ]
             }
@@ -2868,7 +2915,8 @@
                     "comeInShinecharging": {"length": 7, "openEnd": 0}
                   },
                   "requires": ["canShinechargeMovement"],
-                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 40}}
+                  "exitCondition": {"leaveShinecharged": {"framesRemaining": 40}},
+                  "note": "Jump to the opposite runway to open the door before Shinesparking."
                 }
               ]
             }
