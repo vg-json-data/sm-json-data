@@ -16,23 +16,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018ade",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Moat Left Door (to Kihunters)",
-              "length": 2,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -40,21 +24,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018aea",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Moat Right Door (to West Ocean)",
-              "length": 4,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -66,10 +36,59 @@
         }
       ],
       "enemies": [],
+      "obstacles": [
+        {
+          "id": "A",
+          "obstacleType": "abstract",
+          "name": "Shinespark Left"
+        }
+      ],
+      "reusableRoomwideNotable": [
+        {
+          "name": "Moat SpringBall Bounce",
+          "note": "From an open doorway or adjacent room, run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
+        }
+      ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 42,
+                      "excessFrames": 7
+                    }}
+                  ],
+                  "devNote": "To avoid making another obstacle, it is assumed the item at 3 is collected by other means."
+                }
+              ]
+            },
             {
               "id": 3,
               "strats": [
@@ -86,14 +105,20 @@
                     {"or": [
                       "Grapple",
                       "SpaceJump",
-                      "Gravity",
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 3,
-                        "physics": ["normal"]
-                      }}
+                      "Gravity"
                     ]}
                   ]
+                },
+                {
+                  "name": "Run Through Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 3
+                    }
+                  },
+                  "requires": []
                 }
               ]
             }
@@ -109,6 +134,22 @@
                   "name": "Pass Below",
                   "notable": false,
                   "requires": ["h_canBombThings"]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 1
+                    }
+                  }
                 }
               ]
             },
@@ -150,11 +191,7 @@
                       {"doorUnlockedAtNode": 2},
                       "canTrickyJump",
                       "canLateralMidAirMorph",
-                      "SpeedBooster",
-                      {"adjacentRunway": {
-                        "fromNode": 2,
-                        "usedTiles": 2
-                      }}
+                      "SpeedBooster"
                     ]}
                   ],
                   "note": [
@@ -164,19 +201,37 @@
                   "devNote": "Could use a failure definition?"
                 },
                 {
+                  "name": "Moat Reverse Jump, Run Through Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 2
+                    }
+                  },
+                  "requires": [
+                    "canDisableEquipment",
+                    "canCarefulJump"
+                  ],
+                  "note": [
+                    "Execution of this strat is non-trivial, and failing will lead to falling into the pit.",
+                    "Depending on item loadout, that could be a softlock."
+                  ]
+                },
+                {
                   "name": "Shinespark",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "framesRemaining": 0,
-                      "fromNode": 2
-                    }},
                     {"shinespark": {
-                      "frames": 42,
-                      "excessFrames": 15
+                      "frames": 23,
+                      "excessFrames": 0
                     }}
                   ],
-                  "devNote": "FIXME: This will grab the item and continue the spark to the left door. If this is an E-Tank, Samus will not maintain full Energy after the strat."
+                  "clearsObstacles": ["A"],
+                  "devNote": "This will grab the item and continue the spark to the left door. If this is an E-Tank, Samus will not maintain full Energy after the next strat."
                 }
               ]
             }
@@ -191,7 +246,19 @@
                 {
                   "name": "Base",
                   "notable": false,
-                  "requires": []
+                  "requires": [ {"obstaclesNotCleared": ["A"]} ]
+                },
+                {
+                  "name": "Continue Shinespark Left",
+                  "notable": false,
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 19,
+                      "excessFrames": 19
+                    }},
+                    {"obstaclesCleared": ["A"]}
+                  ],
+                  "devNote": "This will continue the Shinespark from the right door. This is needed in case the item is an E-Tank, Samus will not maintain full Energy after the Spark."
                 }
               ]
             },
@@ -201,12 +268,18 @@
                 {
                   "name": "Grapple",
                   "notable": false,
-                  "requires": ["Grapple"]
+                  "requires": [
+                    "Grapple",
+                    {"obstaclesNotCleared": ["A"]}
+                  ]
                 },
                 {
                   "name": "Space Jump",
                   "notable": false,
-                  "requires": ["SpaceJump"]
+                  "requires": [
+                    "SpaceJump",
+                    {"obstaclesNotCleared": ["A"]}
+                  ]
                 },
                 {
                   "name": "Gravity with Jump Assist",
@@ -227,7 +300,8 @@
                         "HiJump",
                         "SpeedBooster"
                       ]}
-                    ]}
+                    ]},
+                    {"obstaclesNotCleared": ["A"]}
                   ]
                 },
                 {
@@ -235,7 +309,8 @@
                   "notable": false,
                   "requires": [
                     "Gravity",
-                    "h_canIBJ"
+                    "h_canIBJ",
+                    {"obstaclesNotCleared": ["A"]}
                   ]
                 },
                 {
@@ -243,65 +318,75 @@
                   "notable": false,
                   "requires": [
                     "canGravityJump",
-                    "canSuitlessMaridia"
+                    "canSuitlessMaridia",
+                    {"obstaclesNotCleared": ["A"]}
                   ]
                 },
                 {
-                  "name": "Shinespark",
-                  "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 1,
-                      "inRoomPath": [1, 3],
-                      "framesRemaining": 0
-                    }},
-                    {"shinespark": {
-                      "frames": 44,
-                      "excessFrames": 6
-                    }}
-                  ]
-                },
-                {
-                  "name": "Moat SpringBall Bounce",
+                  "name": "Moat SpringBall Bounce, Open Doorway",
                   "notable": true,
                   "requires": [ 
                     "canSpringBallBounce",
-                    {"or": [
-                      {"doorUnlockedAtNode": 1},
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 1
-                      }}
-                    ]}
+                    "canDisableEquipment",
+                    {"doorUnlockedAtNode": 1},
+                    {"obstaclesNotCleared": ["A"]}
                   ],
+                  "reusableRoomwideNotable": "Moat SpringBall Bounce",
                   "note": "Open the door and step as close to the transition as possible. Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
                 },
                 {
-                  "name": "Moat Continuous Walljump",
+                  "name": "Moat SpringBall Bounce, Run Through the Door",
+                  "notable": true,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 1
+                    }
+                  },
+                  "requires": [ 
+                    "canSpringBallBounce",
+                    "canDisableEquipment",
+                    {"obstaclesNotCleared": ["A"]}
+                  ],
+                  "reusableRoomwideNotable": "Moat SpringBall Bounce",
+                  "note": "Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
+                },
+                {
+                  "name": "Moat Continuous Walljump, Open Doorway",
                   "notable": false,
                   "requires": [
                     "canCWJ",
+                    "canDisableEquipment",
+                    {"doorUnlockedAtNode": 1},
                     {"or": [
-                       {"and": [
-                        {"doorUnlockedAtNode": 1},
-                        {"or": [
-                          "canMoonwalk",
-                          "Morph",
-                          "canXRayTurnaround"
-                        ]}
-                      ]},
-                      {"adjacentRunway": {
-                        "fromNode": 1,
-                        "usedTiles": 1.5,
-                        "overrideRunwayRequirements": true,
-                        "physics": ["normal"],
-                        "useFrames": 100
-                      }}
-                    ]}
+                      "canMoonwalk",
+                      "Morph",
+                      "canXRayTurnaround"
+                    ]},
+                    {"obstaclesNotCleared": ["A"]}
                   ],
                   "note": [
                     "Stand on the farthest pixel into the door possible using moonwalk, X-Ray, or morphball turn around.",
-                    "Aligning against the closed door shell on the other side of the transition also works if possible and movement speed is not impeded.",
+                    "Run towards the water and jump on the last possible frame.",
+                    "Perform the CWJ off of the item pedestal to cross to the other side."
+                  ]
+                },
+                {
+                  "name": "Moat Continuous Walljump, Run Through the Door",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "speedBooster": "any",
+                      "minTiles": 1.4
+                    }
+                  },
+                  "requires": [
+                    "canCWJ",
+                    "canDisableEquipment",
+                    {"obstaclesNotCleared": ["A"]}
+                  ],
+                  "note": [
+                    "Aligning against the closed door shell on the other side of the transition.",
                     "Run towards the water and jump on the last possible frame.",
                     "Perform the CWJ off of the item pedestal to cross to the other side."
                   ]
@@ -309,7 +394,10 @@
                 {
                   "name": "Moat Horizontal Bomb Jump",
                   "notable": false,
-                  "requires": ["h_canHBJ"]
+                  "requires": [
+                    "h_canHBJ",
+                    {"obstaclesNotCleared": ["A"]}
+                  ]
                 },
                 {
                   "name": "Double Spring Ball Jump",
@@ -317,13 +405,17 @@
                   "requires": [
                     "canSuitlessMaridia",
                     "canDoubleSpringBallJumpMidAir",
-                    "HiJump"
+                    "HiJump",
+                    {"obstaclesNotCleared": ["A"]}
                   ]
                 },
                 {
                   "name": "Moat Ceiling Bomb Jump",
                   "notable": false,
-                  "requires": ["h_canCeilingBombJump"]
+                  "requires": [
+                    "h_canCeilingBombJump",
+                    {"obstaclesNotCleared": ["A"]}
+                  ]
                 },
                 {
                   "name": "G-mode Morph IBJ",
@@ -335,7 +427,8 @@
                       "artificialMorph": true
                     }},
                     "Gravity",
-                    "h_canArtificialMorphIBJ"
+                    "h_canArtificialMorphIBJ",
+                    {"obstaclesNotCleared": ["A"]}
                   ]
                 }
               ]
@@ -360,22 +453,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a2a",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Crateria Kihunter Room Left Door (to Crateria Tube)",
-              "length": 33,
-              "steepUpTiles": 5,
-              "steepDownTiles": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -404,34 +481,6 @@
           "nodeSubType": "yellow",
           "nodeAddress": "0x0018a36",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Crateria Kihunter Room Right Door (to Moat)",
-              "length": 3,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 33,
-              "framesRemaining": 60,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "canShinechargeMovement" ]
-                }
-              ]
-            }
-          ],
           "locks": [
             {
               "name": "Crateria Kihunter Room Right Yellow Lock (to Moat)",
@@ -528,6 +577,24 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 34,
+                      "openEnd": 0,
+                      "steepUpTiles": 5,
+                      "steepDownTiles": 2
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -555,6 +622,35 @@
             {
               "id": 2,
               "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave Shinecharged",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovement",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 0,
+                      "steepUpTiles": 2,
+                      "steepDownTiles": 5
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 65
+                    }
+                  }
+                },
                 {
                   "name": "Kihunter and Sciser Farm",
                   "notable": false,
@@ -604,6 +700,26 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 2,
+                      "excessFrames": 2
+                    }}
+                  ],
+                  "note": "Enter on the right side of the doorway to reduce the amount of energy used.",
+                  "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
                 }
               ]
             }
@@ -733,42 +849,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x00189ca",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Left Door (to Moat)",
-              "length": 23,
-              "steepUpTiles": 6,
-              "steepDownTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 0,
-              "usedTiles": 33,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Ocean Floor Shinecharge Left",
-                  "notable": false,
-                  "requires": [
-                    "Gravity",
-                    "canShinechargeMovementComplex",
-                    {"shinespark": {"frames": 38}}
-                  ],
-                  "note": "Jump to the Runway connected to the Left side door before sparking."
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -777,44 +858,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x00189ee",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Top Right Door (to Attic)",
-              "length": 6,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 32,
-              "framesRemaining": 30,
-              "openEnd": 1,
-              "strats": [
-                {
-                  "name": "West Ocean Top Right Shinecharge With Jump Assist",
-                  "notable": false,
-                  "requires": [ 
-                    "canShinechargeMovementComplex",
-                    "HiJump",
-                    {"or": [
-                       "canWalljump",
-                       "canTrickyDashJump",
-                       "SpaceJump"
-                     ]}
-                  ],
-                  "note": "Charge on the below runway and use HiJump to get up quickly."
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -851,20 +894,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x00189fa",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Middle Right Door (to Bowling Alley Top)",
-              "length": 32,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -899,59 +928,6 @@
           "nodeSubType": "grey",
           "nodeAddress": "0x0018a06",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Middle Right Door (from Gravity Suit Room)",
-              "length": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 18,
-              "usedTiles": 33,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "West Ocean Floor Fast Wallclimb to Gravity Door",
-                  "notable": true,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "canFastWalljumpClimb",
-                    "HiJump",
-                    "Gravity"
-                  ],
-                  "note": "Use walljumps to climb from the ocean floor up to the gravity suit room door."
-                }
-              ]
-            },
-            {
-              "framesRemaining": 35,
-              "usedTiles": 33,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "West Ocean Floor Fast Spacejump Wallclimb to Gravity Door",
-                  "notable": true,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "canFastWalljumpClimb",
-                    "HiJump",
-                    "Gravity",
-                    "SpaceJump"
-                  ],
-                  "note": "Spacejump out of the water then use walljumps up to the gravity suit room door."
-                }
-              ]
-            }
-          ],
           "locks": [
             {
               "name": "West Ocean Ship Exit Grey Lock (to Gravity Suit Room)",
@@ -991,94 +967,6 @@
           "nodeSubType": "green",
           "nodeAddress": "0x00189d6",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Bottom Right Door (to Wrecked Ship Entrance)",
-              "length": 8,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 40,
-              "openEnd": 2,
-              "usedTiles": 33,
-              "strats": [
-                {
-                  "name": "Ocean Floor Jump Assist Shinecharge Right",
-                  "notable": false,
-                  "requires": [
-                    "Gravity",
-                    "canShinechargeMovementComplex",
-                    {"or": [
-                       "HiJump",
-                       "SpaceJump"
-                     ]}
-                    
-                  ]
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "openEnd": 2,
-              "usedTiles": 33,
-              "strats": [
-                {
-                  "name": "Ocean Floor Precise Walljump Shinecharge Right",
-                  "notable": false,
-                  "requires": [
-                    "Gravity",
-                    "canShinechargeMovementComplex",
-                    "canPreciseWalljump",
-                    {"shinespark": {"frames": 15}}
-                  ]
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "openEnd": 1,
-              "usedTiles": 23,
-              "steepUpTiles": 6,
-              "steepDownTiles": 1,
-              "strats": [
-                {
-                  "name": "Over Ocean Spark",
-                  "notable": false,
-                  "requires": [
-                    {"shinespark": {"frames": 131}}
-                  ]
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "openEnd": 1,
-              "usedTiles": 23,
-              "steepUpTiles": 6,
-              "steepDownTiles": 1,
-              "strats": [
-                {
-                  "name": "Over Ocean Midair Spark",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovement",
-                    "canMidairShinespark",
-                    {"shinespark": {"frames": 106}}
-                  ]
-                }
-              ]
-            }
-          ],
           "locks": [
             {
               "name": "West Ocean Green Lock (to Wrecked Ship Entrance)",
@@ -1100,43 +988,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x00189e2",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - West Ocean Center Right Door (to Bowling Alley Path)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 0,
-              "usedTiles": 33,
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "West Ocean Morph Tunnel Rush",
-                  "notable": true,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "h_canUseSpringBall",
-                    {"shinespark": {"frames": 25}}
-                  ],
-                  "note": [
-                    "Preopen the door and shotblock, then go back and charge a shinespark.",
-                    "Springball through the short morphball tunnel to just have enough time to shinespark out the door."
-                  ]
-                }
-              ]
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -1267,6 +1118,70 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 24,
+                      "openEnd": 1,
+                      "steepUpTiles": 6,
+                      "steepDownTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Shinespark Into Room",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 146,
+                      "excessFrames": 35
+                    }}
+                  ]
+                },
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 23,
+                      "openEnd": 1,
+                      "steepUpTiles": 1,
+                      "steepDownTiles": 6
+                    }
+                  },
+                  "requires": [
+                    {"or":[
+                      {"shinespark": {
+                        "frames": 131,
+                        "excessFrames": 35
+                      }},
+                      {"and": [
+                        "canShinechargeMovement",
+                        "canMidairShinespark",
+                        {"shinespark": {
+                          "frames": 106,
+                          "excessFrames": 35
+                        }}
+                      ]}
+                    ]}
+                  ]
+                }
+              ]
+            },
+            {
               "id": 13,
               "strats": [
                 {
@@ -1314,6 +1229,23 @@
           "from": 2,
           "to": [
             {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 7,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 12,
               "strats": [
                 {
@@ -1329,6 +1261,23 @@
           "from": 3,
           "to": [
             {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 33,
+                      "openEnd": 1,
+                      "steepUpTiles": 4
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 12,
               "strats": [
                 {
@@ -1343,6 +1292,22 @@
         {
           "from": 4,
           "to": [
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 1,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 5,
               "strats": [
@@ -1376,11 +1341,12 @@
                 {
                   "name": "Shinespark Deep Stuck X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 1
+                    }
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 4,
-                      "framesRemaining": 1
-                    }},
                     {"shinespark": {
                       "frames": 1,
                       "excessFrames": 1
@@ -1490,11 +1456,12 @@
                 {
                   "name": "Shinespark Deep Stuck X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 1
+                    }
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 5,
-                      "framesRemaining": 1
-                    }},
                     {"shinespark": {
                       "frames": 1,
                       "excessFrames": 1
@@ -1589,6 +1556,23 @@
               ]
             },
             {
+              "id": 5,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 9,
+                      "openEnd": 1,
+                      "steepUpTiles": 2
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 13,
               "strats": [
                 {
@@ -1672,6 +1656,17 @@
             {
               "id": 6,
               "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 1
+                    }
+                  }
+                },
                 {
                   "name": "Zeb Farm",
                   "notable": false,
@@ -1844,11 +1839,12 @@
                 {
                   "name": "Shinespark Deep Stuck X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 1
+                    }
+                  },
                   "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 6,
-                      "framesRemaining": 1
-                    }},
                     {"shinespark": {
                       "frames": 1,
                       "excessFrames": 1
@@ -1946,6 +1942,30 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                },
+                {
+                  "name": "West Ocean Top Right Shinecharge With Jump Assist",
+                  "notable": false,
+                  "requires": [ 
+                    "canShinechargeMovementComplex",
+                    "HiJump",
+                    {"or": [
+                      "canWalljump",
+                      "canTrickyDashJump",
+                      "SpaceJump"
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 32,
+                      "openEnd": 1,
+                      "steepUpTiles": 4
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 30
+                    }
+                  },
+                  "note": "Charge on the below runway and use HiJump to get up quickly."
                 }
               ]
             },
@@ -1970,6 +1990,26 @@
                       "h_canBombThings",
                       "h_canUseSpringBall"
                     ]}
+                  ]
+                },
+                {
+                  "name": "West Ocean Shinespark, Morph Tunnel Rush",
+                  "notable": true,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "h_canUseSpringBall",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"shinespark": {"frames": 25}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": [
+                    "Preopen the door and shotblock, then go back and charge a shinespark.",
+                    "Springball through the short morphball tunnel to just have enough time to shinespark out the door."
                   ]
                 }
               ]
@@ -2056,6 +2096,69 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                },
+                {
+                  "name": "Ocean Floor Shinecharge, Spark Left",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canShinechargeMovementComplex",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"shinespark": {"frames": 38}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Jump to the runway connected to the left side door before sparking."
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "West Ocean Floor Shinecharge, Fast Wallclimb to Gravity Door",
+                  "notable": true,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canFastWalljumpClimb",
+                    "HiJump",
+                    "Gravity",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 18
+                    }
+                  },
+                  "note": "Use walljumps to climb from the ocean floor up to the gravity suit room door."
+                },
+                {
+                  "name": "West Ocean Floor Shinecharge, Fast Spacejump Wallclimb to Gravity Door",
+                  "notable": true,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canFastWalljumpClimb",
+                    "HiJump",
+                    "Gravity",
+                    "SpaceJump",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 35
+                    }
+                  },
+                  "note": "Spacejump out of the water then use walljumps up to the gravity suit room door."
                 }
               ]
             },
@@ -2063,7 +2166,7 @@
               "id": 5,
               "strats": [
                 {
-                  "name": "Base or Vanilla",
+                  "name": "Base",
                   "notable": false,
                   "requires": [
                     {"or":[
@@ -2097,46 +2200,6 @@
                   "devNote": "A speedy jump would be obsoleted by another strat for being tricky."
                 },
                 {
-                  "name": "Shinespark",
-                  "notable": false,
-                  "requires": [
-                    {"or":[
-                      {"and": [
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 0
-                        }},
-                        {"shinespark": {
-                          "frames": 146,
-                          "excessFrames": 35
-                        }}
-                      ]},
-                      {"and": [
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 180
-                        }},
-                        {"shinespark": {
-                          "frames": 131,
-                          "excessFrames": 35
-                        }}
-                      ]},
-                      {"and": [
-                        "canShinechargeMovement",
-                        "canMidairShinespark",
-                        {"canComeInCharged": {
-                          "fromNode": 1,
-                          "framesRemaining": 180
-                        }},
-                        {"shinespark": {
-                          "frames": 106,
-                          "excessFrames": 35
-                        }}
-                      ]}
-                    ]}
-                  ]
-                },
-                {
                   "name": "Gravity Suit and Shinespark",
                   "notable": false,
                   "requires": [
@@ -2149,6 +2212,120 @@
                       "frames": 17,
                       "excessFrames": 5
                     }}
+                  ]
+                },
+                {
+                  "name": "Ocean Floor Jump Assist Shinecharge Right",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canShinechargeMovementComplex",
+                    {"or": [
+                      "HiJump",
+                      "SpaceJump"
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 40
+                    }
+                  }
+                },
+                {
+                  "name": "Ocean Floor Precise Walljump Shinespark Right",
+                  "notable": false,
+                  "requires": [
+                    "Gravity",
+                    "canShinechargeMovementComplex",
+                    "canPreciseWalljump",
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"shinespark": {"frames": 15}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  }
+                },
+                {
+                  "name": "Over Ocean Spark, In-Room",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      {"canShineCharge": {
+                        "usedTiles": 23,
+                        "openEnd": 1,
+                        "steepUpTiles": 6,
+                        "steepDownTiles": 1
+                      }},
+                      {"and": [
+                        {"canShineCharge": {
+                          "usedTiles": 24,
+                          "openEnd": 1,
+                          "steepUpTiles": 6,
+                          "steepDownTiles": 1
+                        }},
+                        {"doorUnlockedAtNode": 1}
+                      ]}
+                    ]},
+                    {"or": [
+                      {"shinespark": {"frames": 131}},
+                      {"and": [
+                        "canShinechargeMovement",
+                        "canMidairShinespark",
+                        {"shinespark": {"frames": 106}}
+                      ]}
+                    ]}
+                  ]
+                },
+                {
+                  "name": "Over Ocean Spark, Through the Door",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "canCarefulJump",
+                      "Grapple",
+                      "Wave",
+                      "SpaceJump"
+                    ]},
+                    {"or": [
+                      {"canShineCharge": {
+                        "usedTiles": 23,
+                        "openEnd": 1,
+                        "steepUpTiles": 6,
+                        "steepDownTiles": 1
+                      }},
+                      {"and": [
+                        {"canShineCharge": {
+                          "usedTiles": 24,
+                          "openEnd": 1,
+                          "steepUpTiles": 6,
+                          "steepDownTiles": 1
+                        }},
+                        {"doorUnlockedAtNode": 1}
+                      ]}
+                    ]},
+                    {"or": [
+                      {"shinespark": {"frames": 131}},
+                      {"and": [
+                        "canShinechargeMovement",
+                        "canMidairShinespark",
+                        {"shinespark": {"frames": 106}}
+                      ]}
+                    ]}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Open the right door before sparking to spark out of it.",
+                  "devNote": [
+                    "The right door could be an obstacle, but with this shinecharge, a careful jump is probably fair to include.",
+                    "This room is already pretty complex, so adding an obstacle is fairly significant."
                   ]
                 }
               ]
@@ -2359,34 +2536,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a12",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Bowling Alley Path Left Door (to West Ocean)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Submerged Runway - Bowling Alley Path Left Door (to West Ocean)",
-              "length": 4,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "Gravity" ],
-                  "note": "This longer runway requires starting in the water."
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -2415,34 +2564,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a1e",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Bowling Alley Path Right Door (to Homing Geemer)",
-              "length": 6,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Submerged Runway - Bowling Alley Path Right Door (to Homing Geemer)",
-              "length": 8,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [ "Gravity" ],
-                  "note": "This longer runway requires starting in the water."
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -2489,6 +2610,30 @@
               "id": 1,
               "strats": [
                 {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 4,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave with Runway, With Gravity",
+                  "notable": false,
+                  "requires": [ "Gravity" ],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 1,
+                      "steepUpTiles": 2
+                    }
+                  }
+                },
+                {
                   "name": "Waver and Choot Farm",
                   "notable": false,
                   "requires": [
@@ -2525,6 +2670,35 @@
                   "requires": []
                 }
               ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 8,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                },
+                {
+                  "name": "Leave with Runway, With Gravity",
+                  "notable": false,
+                  "requires": [ "Gravity" ],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 9,
+                      "openEnd": 1,
+                      "steepUpTiles": 2
+                    }
+                  }
+                }
+              ]
             }
           ]
         }
@@ -2545,45 +2719,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a66",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - East Ocean Left Door (to Electric Death)",
-              "length": 7,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 0,
-              "usedTiles": 20,
-              "openEnd": 0,
-              "startingDownTiles": 1,
-              "steepDownTiles": 4,
-              "steepUpTiles": 2,
-              "strats": [
-                {
-                  "name": "East Ocean Floor Shinecharge Left",
-                  "notable": true,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "canMidairShinespark",
-                    "Gravity",
-                    {"shinespark": {"frames": 23}}
-                  ],
-                  "note": "Quickly climb the submerged structures.  Not dashing may make platforming easier."
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -2591,66 +2727,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a72",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - East Ocean Right Door (to Kago Room)",
-              "length": 4,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 30,
-              "usedTiles": 22,
-              "openEnd": 0,
-              "startingDownTiles": 1,
-              "steepUpTiles": 3,
-              "steepDownTiles": 3,
-              "strats": [
-                {
-                  "name": "East Ocean Floor Jump Assist Shinecharge Right",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "Gravity",
-                    {"or": [
-                       "HiJump",
-                       "SpaceJump"
-                     ]}
-                  ]
-                }
-              ]
-            },
-            {
-              "framesRemaining": 0,
-              "usedTiles": 22,
-              "openEnd": 0,
-              "startingDownTiles": 1,
-              "steepDownTiles": 3,
-              "steepUpTiles": 3,
-              "strats": [
-                {
-                  "name": "East Ocean Floor Walljump Shinecharge Right",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "Gravity",
-                    "canWalljump",
-                    {"shinespark": {"frames": 10}}
-                  ]
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -2718,6 +2795,23 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 8,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -2776,6 +2870,13 @@
                 {
                   "name": "Full Room Shinespark Plus SpaceJump",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 6,
+                      "openEnd": 1,
+                      "steepDownTiles": 1
+                    }
+                  },
                   "requires": [
                     "canShinechargeMovementComplex",
                     "canCarefulJump",
@@ -2805,11 +2906,6 @@
                         ]}
                       ]}
                     ]},
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 1
-                    }},
                     {"shinespark": {
                       "frames": 123,
                       "excessFrames": 5
@@ -2832,11 +2928,19 @@
                     "From there, use SpaceJump to escape the water.",
                     "Carry the shinespark to the bottom of the ramp by delaying the first Choot with two Power Beam shots, killing it, or bounceballing through it.",
                     "The Choot can be shot diagonally from the middle platform, and again by running off that platform and aiming down to float above it."
-                  ]
+                  ],
+                  "devNote": "There is 1 unusable tile in this runway."
                 },
                 {
                   "name": "East Ocean Shinespark Water Escape",
                   "notable": true,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 6,
+                      "openEnd": 1,
+                      "steepDownTiles": 1
+                    }
+                  },
                   "requires": [
                     {"or": [
                       "ScrewAttack",
@@ -2851,11 +2955,6 @@
                       {"ammo": {"type": "Missile", "count": 1}},
                       {"ammo": {"type": "Super", "count": 1}}
                     ]},
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 1
-                    }},
                     {"shinespark": {
                       "frames": 14,
                       "excessFrames": 5
@@ -2872,11 +2971,19 @@
                     "Using Screw Attack: stay a little bit high in the water so that it remains active for the second Choot.",
                     "Using Plasma or ammo: kill the first Choot while running down the middle platform, and the second while gliding above it after spacejumping through the water.",
                     "Then shinespark up and use SpaceJump to reach the door."
-                  ]
+                  ],
+                  "devNote": "There is 1 unusable tile in this runway."
                 },
                 {
                   "name": "East Ocean Shinespark Water Escape With Lower Choot Alive (Morph)",
                   "notable": true,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 6,
+                      "openEnd": 1,
+                      "steepDownTiles": 1
+                    }
+                  },
                   "requires": [
                     {"or": [
                       {"and": [
@@ -2893,11 +3000,6 @@
                         "canMockball"
                       ]}
                     ]},
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 1
-                    }},
                     {"shinespark": {
                       "frames": 14,
                       "excessFrames": 5
@@ -2912,21 +3014,24 @@
                     "Unmorphing with the correct timing and positioning for the Shinespark are very precise, and there are no extra frames on the Shinespark timer to work with.",
                     "Carry the shinespark to the bottom of the ramp either with a bounce ball which takes damage from the Choot, or delay the first Choot with two shots and then use a late mockball.",
                     "Then shinespark up and use SpaceJump to reach the door."
-                  ]
+                  ],
+                  "devNote": "There is 1 unusable tile in this runway."
                 },
                 {
                   "name": "East Ocean Shinespark Water Escape With Lower Choot Alive (Ice Wave Spazer)",
                   "notable": true,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 6,
+                      "openEnd": 1,
+                      "steepDownTiles": 1
+                    }
+                  },
                   "requires": [
                     "Ice",
                     "Wave",
                     "Spazer",
                     "canDodgeWhileShooting",
-                    {"canComeInCharged": {
-                      "framesRemaining": 180,
-                      "fromNode": 1,
-                      "unusableTiles": 1
-                    }},
                     {"shinespark": {
                       "frames": 14,
                       "excessFrames": 5
@@ -2943,7 +3048,8 @@
                     "Freeze the first Choot from the middle platform.",
                     "Either SpaceJump just right so as to pass above the second Choot, or freeze it as it touches Samus to pass through without losing speed.",
                     "Then shinespark up and use SpaceJump to reach the door."
-                  ]
+                  ],
+                  "devNote": "There is 1 unusable tile in this runway."
                 },
                 {
                   "name": "G-mode Morph IBJ",
@@ -2976,6 +3082,23 @@
           "from": 2,
           "to": [
             {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 5,
+                      "openEnd": 1,
+                      "steepUpTiles": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 3,
               "strats": [
                 {
@@ -2986,13 +3109,12 @@
                 {
                   "name": "Shinespark",
                   "notable": false,
-                  "requires": [
-                    {"canComeInCharged": {
-                      "fromNode": 2,
-                      "framesRemaining": 10
-                    }},
-                    {"shinespark": {"frames": 35}}
-                  ],
+                  "entranceCondition": {
+                    "comeInShinecharged": {
+                      "framesRequired": 10
+                    }
+                  },
+                  "requires": [ {"shinespark": {"frames": 35}} ],
                   "note": "Horizontally shinespark from the grassy patch on the ledge near the door, then jump across the platforms."
                 }
               ],
@@ -3086,6 +3208,27 @@
                     "canSuitlessMaridia",
                     "canBombJumpWaterEscape"
                   ]
+                },
+                {
+                  "name": "East Ocean Floor Shinespark Left",
+                  "notable": true,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark",
+                    "Gravity",
+                    {"canShineCharge": {
+                      "usedTiles": 20,
+                      "openEnd": 0,
+                      "steepUpTiles": 2,
+                      "steepDownTiles": 4,
+                      "startingDownTiles": 1
+                    }},
+                    {"shinespark": {"frames": 23}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Quickly climb the submerged structures. Not dashing may make platforming easier."
                 }
               ]
             },
@@ -3247,6 +3390,50 @@
                     "Perform a precise spring ball jump to get to the far right ledge, while avoiding hitting the water surface.",
                     "While on the ledge, stand on the raised ground to the right and jump to the surface, then space jump across the water to the left."
                   ]
+                },
+                {
+                  "name": "East Ocean Floor Jump Assist Shinecharge Right",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "Gravity",
+                    {"or": [
+                      "HiJump",
+                      "SpaceJump"
+                    ]},
+                    {"canShineCharge": {
+                      "usedTiles": 22,
+                      "openEnd": 0,
+                      "steepUpTiles": 3,
+                      "steepDownTiles": 3,
+                      "startingDownTiles": 1
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 30
+                    }
+                  }
+                },
+                {
+                  "name": "East Ocean Floor Walljump Shinespark Right",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "Gravity",
+                    "canWalljump",
+                    {"canShineCharge": {
+                      "usedTiles": 22,
+                      "openEnd": 0,
+                      "steepUpTiles": 3,
+                      "steepDownTiles": 3,
+                      "startingDownTiles": 1
+                    }},
+                    {"shinespark": {"frames": 10}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  }
                 }
               ]
             },
@@ -3318,23 +3505,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018a7e",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Forgotten Highway Kago Room Left Door (to East Ocean)",
-              "length": 10,
-              "steepUpTiles": 1,
-              "steepDownTiles": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -3361,6 +3532,19 @@
             {
               "id": 1,
               "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 11,
+                      "openEnd": 1,
+                      "steepUpTiles": 1,
+                      "steepDownTiles": 2
+                    }
+                  }
+                },
                 {
                   "name": "Kago Farm",
                   "notable": false,
@@ -3396,6 +3580,26 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 2,
+                      "excessFrames": 2
+                    }}
+                  ],
+                  "note": "Enter on the left side of the doorway to reduce the amount of energy used.",
+                  "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
                 }
               ]
             }
@@ -3476,37 +3680,6 @@
           "nodeSubType": "blue",
           "nodeAddress": "0x0018aae",
           "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Crab Maze Left Door (to Forgotten Highway Elbow)",
-              "length": 7,
-              "steepUpTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Submerged Runway - Crab Maze Left Door (to Forgotten Highway Elbow)",
-              "length": 28,
-              "steepUpTiles": 5,
-              "steepDownTiles": 1,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": ["Gravity"],
-                  "note": "This longer runway requires starting in the water."
-                }
-              ],
-              "openEnd": 0,
-              "usableComingIn": false
-            }
-          ],
           "leaveWithGModeSetup": [
             {
               "strats": [
@@ -3645,6 +3818,32 @@
             {
               "id": 2,
               "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 8,
+                      "openEnd": 0,
+                      "steepUpTiles": 1
+                    }
+                  },
+                  "devNote": "Because the next tile is a slope into the water, it behaves like no open end."
+                },
+                {
+                  "name": "Leave with Runway, With Gravity",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 29,
+                      "openEnd": 0,
+                      "steepUpTiles": 5,
+                      "steepDownTiles": 1
+                    }
+                  }
+                },
                 {
                   "name": "Sciser Farm",
                   "notable": false,
@@ -3821,22 +4020,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018aa2",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Forgotten Highway Elbow Right Door (to Crab Maze)",
-              "length": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -3866,6 +4050,22 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 3,
+                      "openEnd": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "id": 2,
               "strats": [
                 {
@@ -3887,6 +4087,25 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Shinespark",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInWithSpark": {}
+                  },
+                  "requires": [
+                    {"shinespark": {
+                      "frames": 3,
+                      "excessFrames": 3
+                    }}
+                  ],
+                  "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
                 }
               ]
             }
@@ -3909,21 +4128,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018b26",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Homing Geemer Room Left Door (to Bowling Alley Path)",
-              "length": 12,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 2,
@@ -3931,21 +4136,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0018b32",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Homing Geemer Room Right Door (to Bowling Alley)",
-              "length": 12,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         }
       ],
       "enemies": [],
@@ -3953,6 +4144,33 @@
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 13,
+                      "openEnd": 0
+                    }
+                  }
+                },
+                {
+                  "name": "Leave with Runway, Open Both Doors",
+                  "notable": false,
+                  "requires": [ {"doorUnlockedAtNode": 2} ],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 14,
+                      "openEnd": 0
+                    }
+                  }
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -3975,6 +4193,33 @@
                   "name": "Base",
                   "notable": false,
                   "requires": []
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 13,
+                      "openEnd": 0
+                    }
+                  }
+                },
+                {
+                  "name": "Leave with Runway, Open Both Doors",
+                  "notable": false,
+                  "requires": [ {"doorUnlockedAtNode": 1} ],
+                  "exitCondition": {
+                    "leaveWithRunway": {
+                      "length": 14,
+                      "openEnd": 0
+                    }
+                  }
                 }
               ]
             }

@@ -75,10 +75,12 @@ def process_keyvalue(k, v, metadata):
         "refill",           # validated by schema
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
+        "comeInRunning",  # validated by schema
         "comeInJumping",    # validated by schema
         "leaveWithGModeSetup", # validated by schema
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
+        "speedBooster", # validated by schema
     ]
 
     # check if it's a key we want to check
