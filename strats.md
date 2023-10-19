@@ -54,11 +54,13 @@ Some strats involve leaving the room in a special way that allows a correspondin
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
+- _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
+- _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 
 Each of these properties is described in more detail below.
 
@@ -163,9 +165,65 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
 }
 ```
 
+### Leave with G-Mode Setup
+
+A `leaveWithGModeSetup` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This sets up the player to enter R-mode or direct G-mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should _not_ be included in the `requires`, as the type/amount of enemy damage is irrelevant since Samus' energy will always reach zero here in order to trigger reserves.
+
+A `leaveWithGModeSetup` object contains the following property:
+- _knockback_: If true, then Samus gets knockback frames through the transition. This makes it possible for Samus to retain mobility in the next room if reserve energy is at most 4. Most enemies provide knockback, so this property is true by default if unspecified. Certain enemies such as Beetoms, Metroids, and Mochtroids do not provide knockback, so this property should be set to false for strats that use these enemies for the transition damage.
+
+A `leaveWithGModeSetup` comes with implicit requirements, which are described in detail under the entrance conditions `comeInWithRMode` and `comeInWithGMode`. The implicit requirements depend on the specifics of the entrance condition in the next room, but they always include at least the following:
+- The `XRayScope` item requirement.
+- A requirement to have at least 1 reserve energy.
+- A requirement to damage down to 0 energy, triggering reserves.
+
+#### Example
+```json
+{
+  "name": "Leave With G-Mode Setup",
+  "notable": false,
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGModeSetup": {}
+  }
+}
+```
+
+### Leave with G-Mode
+
+A `leaveWithGMode` exit condition represents that Samus can leave through this door while in G-mode, resulting in indirect G-mode in the next room. A strat with a `leaveWithGMode` exit condition should always also have a `comeInWithGMode` entrance condition since the only (known) way to enter G-mode is while (or before) coming into the room.
+
+A `leaveWithGMode` object has the following property:
+- _morphed_: If true, then this strat results in leaving the room in a morphed state, either by maintaining artificial morph or by having the Morph item.
+
+For most doors in the game, it is possible to enter the room with a G-mode setup and then immediately exit back through the same door. This is because in direct G-mode the door does not close behind Samus. To avoid the need to write out tedious boilerplate, these strats are understood to be included implicitly. Specifically, for every door node without a `spawnAt` property, there are two implicit strats, with `leaveWithGMode` exit conditions, one of the form
+
+```json
+{
+  "name": "G-Mode Go Back Through Door",
+  "notable": false,
+  "entranceCondition": {
+    "comeInWithGMode": {
+      "mode": "direct",
+      "morphed": false
+    }
+  },
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGMode": {
+      "morphed": false
+    }
+  }
+}
+```
+
+and another where the `false` values for `morphed` are replaced with `true`. Here we are referring to nodes with `"nodeType": "door"`, which excludes sand entrances (which instead have `"nodeType": "entrance"`). These implicit strats have the same door node for both their `from` and `to` nodes.
+
+Aside from the implicit strats, there are a limited amount of `leaveWithGMode` strats possible. Normally entering a room with G-mode (or a G-mode setup) and then leaving with G-mode through a different door is not possible, since door shells cannot be opened while in G-mode. However, some door transitions do not have door shells (e.g. in Crateria Tube, Glass Tunnel, Crab Hole, Big Pink; also elevators and sand transitions), and some door shells are possible to bypass using glitches, so `leaveWithGMode` can be used in these situations.
+
 ## Entrance conditions
 
-In all strats with an `entranceCondition`, the `from` node of the strat must be a door node. An `entranceCondition` object must contain exactly one property:
+In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
 
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
@@ -175,6 +233,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
+- _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 
 Each of these properties is described in more detail below.
 
@@ -456,3 +515,103 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
   ]
 }
 ```
+
+### Come In With R-Mode
+
+A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode while coming through this door.
+
+A `comeInWithRMode` object does not have any properties.
+
+A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` entrance condition on the other side of the door. It comes with the following implicit requirements:
+- The tech requirement `canEnterRMode`.
+- The `XRayScope` item requirement.
+- A requirement to have at least 1 reserve energy.
+- A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
+
+```json
+{
+  "name": "Red Tower R-Mode Frozen Beetom X-Ray Climb",
+  "notable": true,
+  "entranceCondition": {
+    "comeInWithRMode": {}
+  },
+  "requires": [
+    "canWalljump",
+    {"enemyDamage": {
+      "enemy": "Beetom",
+      "type": "contact",
+      "hits": 1
+    }},
+    {"enemyDamage": {
+      "enemy": "Ripper",
+      "type": "contact",
+      "hits": 1
+    }},
+    "canWallIceClip",
+    "canXRayClimb"
+  ]
+}
+```
+
+### Come In With G-Mode
+
+A `comeInWithGMode` entrance condition indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
+
+A `comeInWithGMode` object has the following properties:
+* _mode_: Takes one of three possible values, "direct", "indirect", or "any", indicating whether Samus must enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
+* _morphed_: A boolean indicating whether Samus must enter the room in a morphed state. This can be satisfied by obtaining or already being in an artificially morphed state, or by having collected the Morph item.
+* _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
+required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough (<= 4 energy) so that knockback frames do not expire until after reserves finish filling.
+
+A `comeInWithGMode` entrance condition must match with either a `leaveWithGModeSetup` or `leaveWithGMode` entrance condition on the other side of the door:
+- If `mode` is "direct", then it can only match with a `leaveWithGModeSetup`. If `mode` is "indirect", then it can only match with a `leaveWithGMode`.
+
+When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit requirements:
+- The tech requirement `canEnterGMode`.
+- The `XRayScope` item requirement.
+- A requirement to have at least 1 reserve energy.
+- A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
+- The requirement `{"or": ["Morph", "canArtificialMorph"]}`, if the `morphed` property of `comeInWithGMode` is true.
+- Requirements for regaining mobility (there may be multiple options here, and they should be treated either as separate strats or the requirements should be joined as though with an `or`):
+  - G-mode mobile: Samus uses the knockback from the previous room to retain mobility. Here the `knockback` property of the `leaveWithGModeSetup` must be true, and reserve energy is assumed to have been drained to at most 4 before doing the strat.
+  - G-mode immobile: Samus uses knockback from a hit in the current room to regain mobility. The possibility of doing this is indicated by the presence of a strat with a `gModeRegainMobility` property with `from` and `to` node matching entrance/door node of the current strat (the `from` node of the strat with `comeInWithGMode`). Any requirements of the `gModeRegainMobility` strat should be included as requirements to execute the current strat; it is important that these requirements be applied *after* the requirement to damage down to 0 energy and trigger reserves. If there are multiple such `gModeRegainMobility` strats, then these should be treated as multiple options.
+
+When matching with a `leaveWithGMode`, a `comeInWithGMode` has an implicit requirement in one scenario:
+- If `morphed` property of `comeInWithGMode` is true but a matching `leaveWithGMode` has `morphed` false, then the `Morph` item is implicitly required.
+
+__Example:__
+```json
+{
+  "name": "G-Mode Morph",
+  "entranceCondition": {
+    "comeInWithGMode": {
+      "mode": "any",
+      "morphed": true
+    }
+  },
+  "requires": []
+}
+```
+
+
+## G-Mode Regain Mobility
+
+A `gModeRegainMobility` property on a strat indicates that the strat allows Samus to regain mobility (by taking knockback from an enemy) after entering with G-mode immobile. In all strats with a `gModeRegainMobility` property, the `from` node of the strat must be the same as the `to` node and must be a door or entrance node. A strat with `gModeRegainMobility` should normally include an `enemyDamage` requirement in its `requires`.
+
+A `gModeRegainMobility` object has no properties.
+
+### Example
+```json
+{
+  "name": "G-Mode Regain Mobility",
+  "notable": false,
+  "requires": [
+    "f_ZebesAwake",
+    {"enemyDamage": {
+      "enemy": "Geemer (blue)",
+      "type": "contact",
+      "hits": 1
+    }}
+  ],
+  "gModeRegainMobility": {}
+}

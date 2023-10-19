@@ -244,6 +244,57 @@
               "required": [],
               "additionalProperties": false,
               "properties": {}
+            },
+            "comeInWithRMode": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithRMode",
+              "type": "object",
+              "title": "Come in With R-Mode",
+              "description": "Represents that Samus must obtain R-mode coming through this door.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "comeInWithGMode": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode",
+              "type": "object",
+              "title": "Come in With G-Mode",
+              "description": "Represents that Samus must have or obtain G-mode coming through this door.",
+              "required": [
+                "mode",
+                "morphed"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/mode",
+                  "type": "string",
+                  "enum": [
+                    "direct",
+                    "indirect",
+                    "any"
+                  ],
+                  "title": "Mode",
+                  "description": "Whether we must come in with direct G-mode, indirect G-mode, or either"
+                },
+                "morphed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/morphed",
+                  "type": "boolean",
+                  "title": "Artificial Morph",
+                  "description": "If true, then the strat assumes entering in a morphed state, either with artificial morph or by having Morph collected."
+                },
+                "mobility": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/mobility",
+                  "type": "string",
+                  "enum": [
+                    "mobile",
+                    "immobile",
+                    "any"
+                  ],
+                  "default": "any",
+                  "title": "Mobility",
+                  "description": "Whether Samus must come in mobile, immobile, or either."
+                }
+              }
             }  
           }
         },
@@ -348,8 +399,49 @@
               "required": [],
               "additionalProperties": false,
               "properties": {}
-            }    
+            },
+            "leaveWithGModeSetup": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGModeSetup",
+              "type": "object",
+              "title": "Leave With G-Mode Setup",
+              "description": "Represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This is for setting up to enter R-mode or direct G-mode in the next room.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {
+                "knockback": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGModeSetup/properties/knockback",
+                  "type": "boolean",
+                  "default": true,
+                  "title": "Leaves With Knockback",
+                  "description": "If true, then Samus gets knockback frames through the transition."
+                }
+              }
+            },
+            "leaveWithGMode": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGMode",
+              "type": "object",
+              "title": "Leave With G-Mode",
+              "description": "Represents that Samus can leave through this door while in G-mode, resulting in indirect G-mode in the next room.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {
+                "morphed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGMode/properties/morphed",
+                  "type": "boolean",
+                  "title": "Morphed",
+                  "description": "If true, then this strat results in leaving the room in a morphed state, either by maintaining artificial morph or by having the Morph item."
+                }
+              }
+            }
           }
+        },
+        "gModeRegainMobility": {
+          "$id": "#/definitions/strat/properties/gModeRegainMobility",
+          "type": "object",
+          "description": "Indicates that this strat allows Samus, after entering with G-mode immobile, to regain mobility (by taking knockback from an enemy) while staying in G-mode.",
+          "required": [],
+          "additionalProperties": false,
+          "properties": {}
         },
         "clearsObstacles": {
           "$id": "#/definitions/strat/properties/clearsObstacles",
@@ -1261,7 +1353,7 @@
                       "$id": "#/properties/rooms/items/properties/nodes/items/properties/gModeImmobile/properties/requires",
                       "$ref": "m3-requirements.schema.json#/definitions/logicalRequirements",
                       "title": "G-Mode Immobile Requirements",
-                      "description": "Logical requirements in order to allow control to be returned to Samus when coming into this door with G-mode immobile"
+                      "description": "DEPRECATED: This node property will be deleted. Use the strat property 'gModeRegainMobility' instead."
                     },
                     "note": {
                       "$ref" : "m3-note.schema.json#/definitions/note",
