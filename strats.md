@@ -52,6 +52,25 @@ Some notable strats may be very similar to each other. If similar notable strats
 
 Some strats involve leaving the room in a special way that allows a corresponding strat in the next room to be executed. Common examples include leaving the room with a shinespark or shinecharge, or running out of the room in order to complete a shinecharge in the next room. Strats that exit a room in such a way are identified by a strat property `exitCondition`, containing a property describing the type of exit condition, such as `leaveWithRunway`, `leaveShinecharged`, or `leaveWithSpark`. Likewise, strats that require entering the room in a special way are identified by a strat property `entranceCondition`, containing a property describing the type of entrance condition required, such as `comeInRunning`, `comeInShinecharged`, or `comeInWithSpark`.
 
+## Runway geometry
+
+Many cross-room strats involve the use of runways. The geometry of a runway is summarized by an object having the following properties:
+
+* _length:_ The number of tiles in the runway. 
+* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall or a door transition tile. An open end offers a bit more room to run. This property indicates the number of open ends that are available to use (0 or 1).
+* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Samus temporarily moves more slowly over sloped tiles, which effectively gives a longer distance over which to gain speed on the runway. These properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted.
+  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
+  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
+  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
+  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
+  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
+
+In most cases, what matters is the effective runway length (ERL), which takes into account how slopes temporarily slow down Samus' horizontal movement:
+
+`ERL = length - startingDownTiles - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
+
+There is some variance in how much downward slopes slow Samus' movement, depending on specific alignment of Samus' X position. The amount of variance is small enough to be neglected as long as some small amount of lenience is included in how runways are required to be used.
+
 ## Exit conditions
 
 In all strats with an `exitCondition`, the `to` node of the strat must be a door node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
@@ -65,24 +84,13 @@ Each of these properties is described in more detail below.
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, and `comeInWithDoorStuckSetup`.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, and `comeInWithDoorStuckSetup`, `comeInSpeedballing`. Details are given under the corresponding entrance conditions below.
 
-`leaveWithRunway` has the following properties:
+`leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details) :
 
-* _length:_ The number of tiles in the runway. This length should not include the transition tile, but it should include the door shell tile if applicable.
-* _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running towards the door.
-  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
-  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
-  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
-  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
+* _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_, _startingDownTiles_
 
-In most cases, what matters is the effective runway length (ERL), which takes into account how slopes temporarily slow down Samus' horizontal movement:
-
-`ERL = length - startingDownTiles - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
-
-There is some variance in how much down slopes slow down Samus' movement, depending on specific alignment of Samus' X position. The amount of variance is small enough to be neglected as long as some small amount of lenience is included in how runways are required to be used.
+The runway length should not include the transition tile, but it should include the door shell tile if applicable.
 
 In a heated room, a `leaveWithRunway` exit condition implicitly includes `heatFrames` needed to use the runway. The amount of `heatFrames` required depends on the entrance condition in the next room, and the details of how these `heatFrames` may be calculated are described under each entrance condition [below](#entrance-conditions). If the `from` and `to` nodes of the strat are different nodes, then it is assumed that the strat property `requires` already includes any heat frames needed to reach the starting point of the runway (the side furthest from the door), in which case the implicit `heatFrames` in `leaveWithRunway` will only account for the heat frames needed to use the runway in one direction, moving towards the door. If the `from` and `to` nodes of the strat are the same node, then the implicit `heatFrames` includes all heat frames needed to position appropriately on the runway (starting from the door), execute the required movement, and exit the room through the door.
 
@@ -175,6 +183,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
+- _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
 
 Each of these properties is described in more detail below.
 
@@ -255,16 +264,11 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 
 ### Come In Shinecharging
 
-A `comeInShinecharging` entrance condition represents the need for Samus to run into the room with enough space to complete a shinecharge. It has the following properties:
+A `comeInShinecharging` entrance condition represents the need for Samus to run into the room with enough space to complete a shinecharge. It has the following properties describing the geometry of the runway in the current room which can be used to help complete the shinecharge (see [runway geometry](#runway-geometry) above for details):
 
-* _length:_ The number of tiles in the runway in this room that can be used to help complete the shinecharge. This length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles).
-* _openEnd:_ Any runway that is used to gain momentum has two ends (although in this case one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (0 or 1).
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be omitted. All up/down tile counts assume Samus is running away from the door, consistent with the direction that Samus will be traveling.
-  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
-  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
-  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
-  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
+* _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_
+
+The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles).
 
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
@@ -456,3 +460,20 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
   ]
 }
 ```
+
+### Come In Speedballing
+
+A `comeInSpeedballing` entrance condition indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball. It has the following property:
+
+- _runway_: A [runway geometry](#runway-geometry) object describing the tiles available in the current room to complete the speedball. The end of this runway represents the point by which the speedball must be complete (i.e. when Samus must be morphed and on the ground with blue speed). A runway length of 0 would represent that the speedball must be completed before the transition.
+
+It is assumed that the runway in the current room is level or sloping up; adjustments would be needed to handle a case where it sloped down.
+
+Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
+
+A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. A match with a `leaveWithRunway` comes with implicit requirements:
+- A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
+  - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
+  - Otherwise 14 tiles are needed.
+- If the previous door environment is water, then `Gravity` is required.
+- If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
