@@ -558,7 +558,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                             messages["counts"]["reds"] += 1
                                                     if "exitCondition" in strat:
                                                         if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
-                                                            msg = f"🔴ERROR: Strat has entranceCondition but To Node is not door or exit:{stratRef}"
+                                                            msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                                             messages["reds"].append(msg)
                                                             messages["counts"]["reds"] += 1
 
