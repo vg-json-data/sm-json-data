@@ -1590,21 +1590,7 @@
           "nodeAddress": "0x0019312",
           "doorEnvironments": [{"physics": "air"}],
           "spawnAt": 6,
-          "runways": [
-            {
-              "name": "Base Runway - Ice Beam Gate Room Top Left Door (to Ice Tutorial)",
-              "length": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 1
-            }
-          ],
-          "note": "Samus is considered to spawn at 5 because of the crumble blocks"
+          "note": "Samus is considered to spawn at 6 because of the crumble blocks"
         },
         {
           "id": 2,
@@ -1612,51 +1598,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001931e",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Ice Beam Gate Room Center Left Door (to Ice Beam Acid Room)",
-              "length": 14,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 33,
-              "framesRemaining": 100,
-              "initiateRemotely": {
-                "initiateAt": 4,
-                "mustOpenDoorFirst": false,
-                "pathToDoor": [
-                  {
-                    "destinationNode": 2,
-                    "strats": ["Speed Through"]
-                  }
-                ]
-              },
-              "openEnd": 2,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    {"resetRoom": {
-                      "nodes": [4],
-                      "mustStayPut": true
-                    }}
-                  ],
-                  "note": "Run through the room from node 4, store the spark after the gate, and run out."
-                }
-              ]
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 3,
@@ -1664,34 +1606,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x0019336",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Ice Beam Gate Room Bottom Left Door (to Crumble Shaft)",
-              "length": 6,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            },
-            {
-              "name": "Runway with no Enemies - Ice Beam Gate Room Bottom Left Door (to Crumble Shaft)",
-              "length": 45,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "usableComingIn": false,
-              "openEnd": 1
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 4,
@@ -1699,21 +1614,7 @@
           "nodeType": "door",
           "nodeSubType": "blue",
           "nodeAddress": "0x001932a",
-          "doorEnvironments": [{"physics": "air"}],
-          "runways": [
-            {
-              "name": "Base Runway - Ice Beam Gate Room Right Door (to Business Center)",
-              "length": 13,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "openEnd": 0
-            }
-          ]
+          "doorEnvironments": [{"physics": "air"}]
         },
         {
           "id": 5,
@@ -1773,6 +1674,19 @@
           "from": 1,
           "to": [
             {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 1, "openEnd": 1}
+                  }
+                }
+              ]
+            },
+            {
               "id": 6,
               "strats": [
                 {
@@ -1793,17 +1707,14 @@
                 {
                   "name": "Ice Beam Gate Room X-Ray Climb",
                   "notable": false,
+                  "entranceCondition": {
+                    "comeInWithDoorStuckSetup": {}
+                  },
                   "requires": [
-                    "h_canLeftDoorXRayClimb",
+                    "canXRayClimb",
                     {"resetRoom":{
                       "nodes":[2],
                       "mustStayPut": true
-                    }},
-                    {"adjacentRunway": {
-                      "fromNode": 2,
-                      "usedTiles": 0.5,
-                      "overrideRunwayRequirements": true,
-                      "useFrames": 200
                     }}
                   ],
                   "note": "Climb up 2 screens."
@@ -1811,18 +1722,87 @@
               ]
             },
             {
-              "id": 3,
+              "id": 2,
               "strats": [
                 {
-                  "name": "Broken Power Bomb Blocks",
+                  "name": "Leave with Runway",
                   "notable": false,
-                  "requires": [ {"obstaclesCleared": ["C"]} ]
+                  "requires": [{"obstaclesNotCleared": ["C"]}],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 15,"openEnd": 0}
+                  },
+                  "devNote": "FIXME: It is possible to run through the room and leave with runway with a longer runway by antitapping to avoid gaining Blue, and shooting the door open with precise timing."
                 },
                 {
-                  "name": "Base",
+                  "name": "Leave with Runway Floor Blocks Destroyed",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 6,"openEnd": 1}
+                  }
+                },
+                {
+                  "name": "Power Bomb the Blocks",
                   "notable": false,
                   "requires": [ "h_canUsePowerBombs" ],
                   "clearsObstacles": ["A","B","C"]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "strats": [
+                {
+                  "name": "Tank Enemy Damage",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    {"enemyDamage": {
+                      "enemy": "Mella",
+                      "type": "contact",
+                      "hits": 1
+                    }},
+                    {"enemyDamage": {
+                      "enemy": "Sm. Dessgeega",
+                      "type": "contact",
+                      "hits": 1
+                    }}
+                  ]
+                },
+                {
+                  "name": "Kill Enemies",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    {"or": [
+                      "Spazer",
+                      "Plasma",
+                      "ScrewAttack",
+                      "Wave",
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "h_canUsePowerBombs"
+                      ]},
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "canTrickyJump"
+                      ]}
+                    ]}
+                  ],
+                  "devNote": "Dessgeegas will drop Power Bombs so you can use multiple while getting most of them back."
+                },
+                {
+                  "name": "Shortcharge",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["C"]},
+                    {"canShineCharge": {
+                      "usedTiles": 18,
+                      "openEnd": 0,
+                      "gentleDownTiles": 3,
+                      "gentleUpTiles": 2
+                    }}
+                  ]
                 }
               ]
             },
@@ -1832,15 +1812,13 @@
                 {
                   "name": "Mockball",
                   "notable": false,
-                  "requires": [
-                    "canMockball",
-                    {"adjacentRunway": {
-                      "fromNode": 2,
-                      "usedTiles": 11,
-                      "inRoomPath": [ 2, 4 ],
-                      "physics": ["normal"]
-                    }}
-                  ],
+                  "entranceCondition": {
+                    "comeInRunning": {
+                      "minTiles": 11,
+                      "speedBooster": "any"
+                    }
+                  },
+                  "requires": ["canMockball"],
                   "devNote": "FIXME Mockballing from the next room can also be done with smaller runways (like in the vanilla strat). See issue #63."
                 }
               ]
@@ -1881,6 +1859,20 @@
                   "notable": false,
                   "requires": [
                     {"or": [
+                      "Spazer",
+                      "Plasma",
+                      "ScrewAttack",
+                      "Wave",
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "h_canUsePowerBombs"
+                      ]},
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "canTrickyJump"
+                      ]}
+                    ]},
+                    {"or": [
                       "h_canUsePowerBombs",
                       {"obstaclesCleared": ["C"]}
                     ]}
@@ -1890,12 +1882,56 @@
                     "Avoiding damage from all enemies with just Power Beam is tricky, but doable.",
                     "Placing the Power Bomb high can break the bomb blocks in the morph tunnel above."
                   ]
+                },
+                {
+                  "name": "Come in Shinecharging",
+                  "notable": false,
+                  "entranceCondition": {
+                    "comeInShinecharging": {
+                      "length": 6,
+                      "openEnd": 0,
+                      "steepDownTiles": 2
+                    }
+                  },
+                  "requires": [
+                    {"or": [
+                      "h_canUsePowerBombs",
+                      {"obstaclesCleared": ["C"]}
+                    ]}
+                  ],
+                  "clearsObstacles": ["A","B","C"],
+                  "note": [
+                    "Placing the Power Bomb high can break the bomb blocks in the morph tunnel above."
+                  ]
                 }
               ]
             },
             {
               "id": 3,
               "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [
+                    {"or": [
+                      "Spazer",
+                      "Plasma",
+                      "ScrewAttack",
+                      "Wave",
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "h_canUsePowerBombs"
+                      ]},
+                      {"and": [
+                        "canDodgeWhileShooting",
+                        "canTrickyJump"
+                      ]}
+                    ]}
+                  ],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 45, "openEnd": 1}
+                  }
+                },
                 {
                   "name": "Sova, Mella, and Sm. Desgeega Farm",
                   "notable": false,
@@ -1925,9 +1961,36 @@
                   "requires": ["SpeedBooster"]
                 },
                 {
+                  "name": "Speed Through and Leave Shinecharged",
+                  "notable": false,
+                  "requires": [
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {"framesRemaining": 130}
+                  },
+                  "note": "Store the Shinespark after the second shutter to avoid breaking the Bomb Blocks in the floor."
+                },
+                {
                   "name": "Ice Beam Mockball",
                   "notable": false,
                   "requires": ["canMockball"]
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "strats": [
+                {
+                  "name": "Leave with Runway",
+                  "notable": false,
+                  "requires": [],
+                  "exitCondition": {
+                    "leaveWithRunway": {"length": 14, "openEnd": 0}
+                  }
                 }
               ]
             }
@@ -1940,7 +2003,7 @@
               "id": 2,
               "strats": [
                 {
-                  "name": "Screw",
+                  "name": "Screw or Bombs",
                   "notable": false,
                   "requires": [
                     {"or": [
@@ -1990,12 +2053,28 @@
               "id": 1,
               "strats": [
                 {
-                  "name": "Ice Beam Gate Room Crumble Jump Retreat",
+                  "name": "Space Jump Retreat",
+                  "notable": false,
+                  "requires": [
+                    "canPrepareForNextRoom",
+                    "SpaceJump"
+                  ]
+                },
+                {
+                  "name": "WallJump Retreat",
+                  "notable": false,
+                  "requires": [
+                    "canPrepareForNextRoom",
+                    "canWalljump"
+                  ]
+                },
+                {
+                  "name": "Crumble Jump Retreat",
                   "notable": false,
                   "requires": ["canCrumbleJump"]
                 },
                 {
-                  "name": "Ice Beam Gate Room SpringBall Retreat",
+                  "name": "SpringBall Retreat",
                   "notable": false,
                   "requires": ["h_canUseSpringBall"],
                   "note": "Use SpringBall to bounce on the crumble blocks, the unmorph and shoot the door open."
