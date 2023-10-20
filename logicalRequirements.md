@@ -417,6 +417,9 @@ __Additional considerations__
 * A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
 #### comeInWithRMode object
+
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithRMode`](strats.md#come-in-with-r-mode) should be used instead.
+
 A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 
@@ -442,6 +445,9 @@ __Additional considerations__
 Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
 
 #### comeInWithGMode object
+
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithGMode`](strats.md#come-in-with-g-mode) should be used instead.
+
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).

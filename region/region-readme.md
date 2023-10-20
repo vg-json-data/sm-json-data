@@ -187,6 +187,8 @@ In cases where `canLeaveCharged` represents shinesparking out of the room, energ
 
 #### leaveWithGModeSetup
 
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGModeSetup`](../strats.md#leave-with-g-mode-setup) should be used instead.
+
 Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
 
 The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work.
@@ -217,6 +219,8 @@ __Example:__
 ```
 
 #### leaveWithGMode
+
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGMode`](../strats.md#leave-with-g-mode) should be used instead.
 
 Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
 
@@ -249,7 +253,9 @@ where 0 is replaced with the node ID of the given node, and another where the `f
 
 #### gModeImmobile
 
-This should be populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
+_Note_: This node property is deprecated. The strat property [`gModeRegainMobility`](../strats.md#g-mode-regain-mobility) should be used instead.
+
+This is populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
 
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
