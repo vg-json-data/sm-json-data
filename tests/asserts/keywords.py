@@ -488,8 +488,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                         # Document Nodes
                         # Validate Nodes
+                        node_lookup = {}
                         for node in room["nodes"]:
                             if "id" in node:
+                                node_lookup[node['id']] = node
                                 nodeRef = f"{roomRef}:{node['id']}"
                                 if node["id"] in roomData["nodes"]["froms"]:
                                     msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
@@ -544,10 +546,22 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                             }
                                             if "strats" in to:
                                                 for strat in to["strats"]:
+                                                    stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
                                                     roomData["links"] \
                                                       ["from"][str(fromNode)] \
                                                       ["to"][str(toNode)] \
                                                       ["strats"].append(strat["name"])
+                                                    if "entranceCondition" in strat:
+                                                        if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
+                                                            msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
+                                                            messages["reds"].append(msg)
+                                                            messages["counts"]["reds"] += 1
+                                                    if "exitCondition" in strat:
+                                                        if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
+                                                            msg = f"🔴ERROR: Strat has entranceCondition but To Node is not door or exit:{stratRef}"
+                                                            messages["reds"].append(msg)
+                                                            messages["counts"]["reds"] += 1
+
 
                             # Validate "enemies"
                             if "enemies" in room:
