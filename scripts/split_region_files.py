@@ -29,16 +29,20 @@ for path in sorted(Path("../region/").glob("**/*.json")):
         continue
 
     print("Processing", path)
-    base_name = path.name.removesuffix('.json')
+    new_region_json = format_json.format(region_json, indent=2)
+    path.write_text(new_region_json)
+
+    # base_name = path.name.removesuffix('.json')
 
     # Create a new directory to hold room files
-    region_dir = path.parent / base_name
-    for file in region_dir.glob("**/*"):
-        file.unlink()
-    region_dir.mkdir(exist_ok=True)
-
-    for room_json in region_json["rooms"]:
-        room_name = room_json["name"].replace('/', 'or')
-        room_path = region_dir / (room_name + ".json")
-        new_room_json = restructure_room(room_json)
-        room_path.write_text(format_json.format(new_room_json, indent=2))
+    # region_dir = path.parent / base_name
+    # for file in region_dir.glob("**/*"):  # clean up old output first:
+    #     file.unlink()
+    # region_dir.rmdir()
+    # region_dir.mkdir(exist_ok=True)
+    #
+    # for room_json in region_json["rooms"]:
+    #     room_name = room_json["name"].replace('/', 'or')
+    #     room_path = region_dir / (room_name + ".json")
+    #     new_room_json = restructure_room(room_json)
+    #     room_path.write_text(format_json.format(new_room_json, indent=2))

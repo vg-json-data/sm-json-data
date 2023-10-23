@@ -30,7 +30,7 @@ def format(obj, indent, current_indent=0, one_liner_dict_allowed=True):
         output_list.append("\n" + current_indent * " " + "]")
         return ''.join(output_list)
     if isinstance(obj, dict):
-        if one_liner_dict_allowed and is_one_liner_dict(obj):
+        if len(obj) == 0 or (one_liner_dict_allowed and is_one_liner_dict(obj)):
             return json.dumps(obj)
         if one_liner_dict_allowed and len(obj) == 1:
             key, value = next(iter(obj.items()))
