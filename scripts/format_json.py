@@ -11,16 +11,21 @@ def is_one_liner_dict(obj, nesting_allowed=True):
     else:
         return all(isinstance(x, (str, int, float, bool)) for x in obj.values())
 
-def is_one_liner_list(obj):
-    if all(isinstance(x, (str, int, float, bool)) for x in obj):
-        return len(json.dumps(obj)) <= 50
-    return False
+def is_one_liner_list(obj, nesting_allowed=True):
+    if len(json.dumps(obj)) > 50:
+        return False
+    if len(obj) == 0:
+        return True
+    if len(obj) == 1:
+        return is_one_liner(obj[0], nesting_allowed=nesting_allowed)
+    else:
+        return all(isinstance(x, (str, int, float, bool)) for x in obj)
 
 def is_one_liner(obj, nesting_allowed=True):
     if isinstance(obj, dict):
         return nesting_allowed and is_one_liner_dict(obj, nesting_allowed=False)
     elif isinstance(obj, list):
-        return nesting_allowed and is_one_liner_list(obj)
+        return nesting_allowed and is_one_liner_list(obj, nesting_allowed=False)
     else:
         return True
 
