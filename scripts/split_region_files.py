@@ -33,6 +33,8 @@ for path in sorted(Path("../region/").glob("**/*.json")):
 
     # Create a new directory to hold room files
     region_dir = path.parent / base_name
+    for file in region_dir.glob("**/*"):
+        file.unlink()
     region_dir.mkdir(exist_ok=True)
 
     for room_json in region_json["rooms"]:
