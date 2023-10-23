@@ -1098,57 +1098,6 @@
                 }
               ]
             }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 13,
-              "openEnd": 0,
-              "framesRemaining": 0,
-              "initiateRemotely": {
-                "initiateAt": 2,
-                "mustOpenDoorFirst": true,
-                "pathToDoor": [
-                  {
-                    "destinationNode": 1,
-                    "strats": ["In-Room Shinespark"]
-                  }
-                ]
-              },
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": []
-                }
-              ],
-              "note": [
-                "Requires opening the door, then going to the middle of the room to use the really small runway.",
-                "ShinesparkFrames are at 0 because the shinespark frames are accounted for in the path to door."
-              ]
-            },
-            {
-              "usedTiles": 33,
-              "openEnd": 2,
-              "framesRemaining": 0,
-              "strats": [
-                {
-                  "name": "XMode",
-                  "notable": false,
-                  "requires": [
-                    "h_canXMode",
-                    "canIframeSpikeJump",
-                    {"spikeHits": 2},
-                    {"or": [
-                      "SpaceJump",
-                      {"spikeHits": 2}
-                    ]},
-                    {"shinespark": {
-                      "frames": 50
-                    }}
-                  ]
-                }
-              ]
-            }
           ]
         },
         {
@@ -1170,46 +1119,6 @@
                 }
               ],
               "openEnd": 1
-            }
-          ],
-          "canLeaveCharged": [
-            {
-              "usedTiles": 13,
-              "openEnd": 0,
-              "framesRemaining": 0,
-              "strats": [
-                {
-                  "name": "Base",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovementComplex",
-                    "canMidairShinespark",
-                    {"shinespark": {"frames": 50}}
-                  ],
-                  "note": "Requires opening the door, then going to pit in the middle of the room to use the really small runway."
-                }
-              ]
-            },
-            {
-              "usedTiles": 33,
-              "openEnd": 2,
-              "framesRemaining": 40,
-              "strats": [
-                {
-                  "name": "XMode",
-                  "notable": false,
-                  "requires": [
-                    "canShinechargeMovement",
-                    "h_canXMode",
-                    {"spikeHits": 2}
-                  ],
-                  "note": [
-                    "Jump from the entry runway to bounce onto spikes for XMode.",
-                    "Store a spark in XMode and use that to shinepark across the room.",
-                    "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."
-                  ]
-                }
-              ]
             }
           ]
         }
@@ -1245,10 +1154,29 @@
           "homeNodes": [ 2 ]
         }
       ],
+      "obstacles": [
+        {
+          "id": "A",
+          "name": "Left Door Open",
+          "obstacleType": "inanimate"
+        }
+      ],
       "links": [
         {
           "from": 1,
           "to": [
+            {
+              "id": 1,
+              "strats": [
+                {
+                  "name": "Open the Door",
+                  "notable": false,
+                  "requires": [],
+                  "clearsObstacles": ["A"],
+                  "devNote": "A doorUnlockedAtNode requirement is not included, since it is implicitly included in the exitCondition of strats that rely on this."
+                }
+              ]
+            },
             {
               "id": 2,
               "strats": [
@@ -1382,7 +1310,7 @@
                   ]
                 },
                 {
-                  "name": "In-Room Shinespark",
+                  "name": "Shinespark (In-Room Runway)",
                   "notable": false,
                   "requires": [
                     "canMidairShinespark",
@@ -1396,10 +1324,30 @@
                       "excessFrames": 6
                     }}
                   ],
-                  "note": "Use the really small runway in a pit in the middle of the room."
+                  "note": "Use the really small runway in the pit in the middle of the room."
                 },
                 {
-                  "name": "XMode Shinespark",
+                  "name": "Leave With Spark (In-Room Runway)",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "canShinechargeMovementComplex",
+                    {"canShineCharge": {
+                      "usedTiles": 13,
+                      "openEnd": 0
+                    }},
+                    {"shinespark": {
+                      "frames": 107
+                    }}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Use the really small runway in the pit in the middle of the room. The door must be already opened."
+                },
+                {
+                  "name": "Shinespark (X-Mode)",
                   "notable": false,
                   "requires": [
                     "canMidairShinespark",
@@ -1408,17 +1356,45 @@
                       "usedTiles": 33,
                       "openEnd": 2
                     }},
+                    {"spikeHits": 1},
                     {"shinespark": {
                       "frames": 146,
                       "excessFrames": 6
-                    }},
-                    {"spikeHits": 1}
+                    }}
                   ],
                   "note": [
                     "Jump from the entry runway to bounce onto spikes for XMode.",
                     "Store a spark in XMode and use that to shinepark across the room.",
                     "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."
                   ]
+                },
+                {
+                  "name": "Leave With Spark (X-Mode)",
+                  "notable": false,
+                  "requires": [
+                    {"obstaclesCleared": ["A"]},
+                    "canMidairShinespark",
+                    "h_canXMode",
+                    {"spikeHits": 1},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    {"or": [
+                      {"shinespark": {
+                        "frames": 146
+                      }},
+                      {"and": [
+                        "SpaceJump",
+                        {"shinespark": {
+                          "frames": 50
+                        }}
+                      ]}
+                    ]}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  }
                 },
                 {
                   "name": "X-Ray Access Ice Bridge",
@@ -1580,7 +1556,42 @@
                     }},
                     {"refill": ["Energy", "PowerBomb"]}
                   ]
-                }
+                },
+                {
+                  "name": "Leave With Spark (In-Room Runway)",
+                  "notable": false,
+                  "requires": [
+                    "canShinechargeMovementComplex",
+                    "canMidairShinespark",
+                    {"canShineCharge": {
+                      "usedTiles": 13,
+                      "openEnd": 0
+                    }},
+                    {"shinespark": {"frames": 50}}
+                  ],
+                  "exitCondition": {
+                    "leaveWithSpark": {}
+                  },
+                  "note": "Requires opening the door, then going to the pit in the middle of the room to use the really small runway."
+                },
+                {
+                  "name": "Leave Shinecharged (X-Mode)",
+                  "notable": false,
+                  "requires": [
+                    "h_canXMode",
+                    {"spikeHits": 2},
+                    {"canShineCharge": {
+                      "usedTiles": 33,
+                      "openEnd": 2
+                    }},
+                    "canShinechargeMovement"
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 40
+                    }
+                  }
+                }      
               ]
             }
           ]
@@ -2139,23 +2150,6 @@
               "usableComingIn": false,
               "openEnd": 1
             }
-          ],
-          "canLeaveCharged": [
-            {
-              "framesRemaining": 70,
-              "usedTiles": 33,
-              "openEnd": 0,
-              "strats": [
-                {
-                  "name": "Samus Eater Left",
-                  "requires": [
-                    "canSamusEaterStandUp",
-                    { "samusEaterFrames": 160 }
-                  ],
-                  "notable": false
-                }
-              ]
-            }
           ]
         },
         {
@@ -2268,7 +2262,20 @@
                   "requires": [
                     {"refill": ["Energy", "Missile", "Super"]}
                   ]
-                }
+                },
+                {
+                  "name": "Leave Shinecharged (Samus Eater)",
+                  "notable": false,
+                  "requires": [
+                    "canSamusEaterStandUp",
+                    {"samusEaterFrames": 160}
+                  ],
+                  "exitCondition": {
+                    "leaveShinecharged": {
+                      "framesRemaining": 70
+                    }
+                  }
+                }      
               ]
             },
             {
