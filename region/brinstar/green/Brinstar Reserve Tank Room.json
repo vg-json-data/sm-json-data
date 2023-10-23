@@ -1,0 +1,199 @@
+{
+  "id": 46,
+  "name": "Brinstar Reserve Tank Room",
+  "area": "Brinstar",
+  "subarea": "Green",
+  "playable": true,
+  "roomAddress": "0x79C07",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Brinstar Reserve Tank Room Door (to Early Supers)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0018d66",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Brinstar Reserve Tank Room Door (to Early Supers)",
+          "length": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "usableComingIn": false,
+          "openEnd": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Reserve Tank, Brinstar",
+      "nodeType": "item",
+      "nodeSubType": "chozo",
+      "nodeItem": "ReserveTank",
+      "nodeAddress": "0x7852C"
+    },
+    {
+      "id": 3,
+      "name": "Missile (green Brinstar behind reserve tank)",
+      "nodeType": "item",
+      "nodeSubType": "visible",
+      "nodeItem": "Missile",
+      "nodeAddress": "0x78538"
+    },
+    {
+      "id": 4,
+      "name": "Missile (green Brinstar behind missile)",
+      "nodeType": "item",
+      "nodeSubType": "hidden",
+      "nodeItem": "Missile",
+      "nodeAddress": "0x78532"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "G-Mode Morph: Remote Acquire the item",
+      "obstacleType": "abstract"
+    }
+  ],
+  "enemies": [],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "G-mode Morph",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "G-mode Morph Remote Acquire",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "direct",
+          "artificialMorph": true
+        }},
+        {"or": [
+          "SpringBall",
+          {"and": ["h_canArtificialMorphIBJ", "canOffScreenMovement"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": ["Blindly grab the item before PLMs are overloaded, then return and exit g-mode to remotely acquire the item.", "Starting a completely blind IBJ can be somewhat tricky, even if for such a short distance."],
+      "devNote": ["There would typically be risk of the logic being incorrect if the player exits g-mode, progresses to the right to get the next item,", "then comes back and this obstacle is still set so they can go through the pipe. Fortunately getting the item to the right also requires Morph."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": ["Morph"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": ["Morph"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "G-mode Morph Remote Acquire Return",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": ["h_canBombThings"]
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "name": "Brinstar Reserve Hole-in-One",
+      "notable": true,
+      "requires": [
+        "Morph",
+        "ScrewAttack",
+        {"or": [
+          "canTunnelCrawl",
+          {"and": ["canTwoTileSqueeze", "canTrickyJump"]}
+        ]}
+      ],
+      "note": ["A single very precise jump into the bomb blocks can break both sets of blocks with screw attack. Obtaining the item requires morph, so this strat has no soft lock risk.", "Alternatively, tunnel crawl through to break both blocks with multiple, less precise jumps."]
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "name": "Brinstar Reserve Temporary Blue",
+      "notable": true,
+      "requires": [
+        "canSpeedball",
+        "canTrickyJump",
+        {"or": ["canTemporaryBlue", "SpringBall"]},
+        {"or": [
+          {"and": [
+            "canSlowShortCharge",
+            {"canComeInCharged": {
+              "framesRemaining": 180,
+              "fromNode": 1,
+              "unusableTiles": 2
+            }}
+          ]},
+          {"canComeInCharged": {
+            "framesRemaining": 180,
+            "fromNode": 1,
+            "unusableTiles": 10
+          }}
+        ]}
+      ],
+      "note": ["Speedball through the morphtunnel and use it to break the bomb blocks in front of the hidden Missile location.", "This can be done using springball, or by unmorphing and using Temporary Blue to bounce through the bomb blocks."],
+      "devNote": ["Speedballing through a door into a pit like this must limit run speed a little bit.", "UnusableTiles doesn't help, but with canTrickyJump and Notable, we can make some assumptions about shortcharge ability."]
+    },
+    {
+      "from": 4,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": ["Morph"]
+    }
+  ]
+}

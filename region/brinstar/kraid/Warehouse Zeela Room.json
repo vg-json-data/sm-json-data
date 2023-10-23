@@ -1,0 +1,262 @@
+{
+  "id": 79,
+  "name": "Warehouse Zeela Room",
+  "area": "Brinstar",
+  "subarea": "Kraid",
+  "playable": true,
+  "roomAddress": "0x7A471",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Warehouse Zeelas Top Left Door (to Warehouse Entrance)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001913e",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Zeela",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Zeela",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Warehouse Zeelas Bottom Left Door (to E-Tank)",
+      "nodeType": "door",
+      "nodeSubType": "grey",
+      "nodeAddress": "0x001914a",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Zeela",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Zeela",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      },
+      "locks": [
+        {
+          "name": "Warehouse Zeela Room Grey Lock (to E-Tank)",
+          "lockType": "gameFlag",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["f_DefeatedKraid"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Warehouse Zeelas Right Vertical Door (to Kihunters)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0019156",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "jumpways": [
+        {
+          "name": "Door frame",
+          "jumpwayType": "doorFrameBelow",
+          "height": 8,
+          "requires": []
+        },
+        {
+          "name": "Platform",
+          "jumpwayType": "platformBelow",
+          "height": 9,
+          "leftPosition": -2,
+          "rightPosition": 2,
+          "requires": []
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Frozen Zeela",
+            "notable": false,
+            "requires": ["canUpwardGModeSetup", "canTrickyUseFrozenEnemies", "h_canBombThings"]
+          }
+        ]}
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Warehouse Top Zeelas",
+      "enemyName": "Zeela",
+      "quantity": 2,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Warehouse Bottom Zeela",
+      "enemyName": "Zeela",
+      "quantity": 1,
+      "homeNodes": [2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Zeela Farm",
+      "notable": false,
+      "requires": [
+        {"resetRoom": {
+          "nodes": [1, 2],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "Missile", "Super"]}
+      ],
+      "devNote": ["FIXME: Node 3 could be used to reset the room, with additional requirements."]
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": ["h_canBombThings"]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Through Door Speedball",
+      "notable": false,
+      "entranceCondition": {
+        "comeInSpeedballing": {
+          "runway": {
+            "length": 4,
+            "openEnd": 0
+          }
+        }
+      },
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Temporary Blue Bounce",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": ["canTemporaryBlue", "canLateralMidAirMorph"],
+      "devNote": "The runway has 1 unusable tile, to allow space to perform the blue bounce."
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "G-Mode Morph Overload PLMs",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [2],
+          "mode": "any",
+          "artificialMorph": true
+        }}
+      ],
+      "note": "Wiggle back and forth to get through the bomb blocks before the Zeela hits Samus.",
+      "devNote": "This is off camera, but doesnt require canOffScreenMovement because of its simplicity."
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": ["h_canBombThings"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "G-Mode Morph Overload PLMs",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [3],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "canOffScreenMovement"
+      ],
+      "note": ["Wiggle back and forth to get through the bomb blocks while avoiding the off screen Zeela.", "Unmorph and exit G-Mode then quickly run back and forth to fix the camera or go through the door."]
+    }
+  ]
+}

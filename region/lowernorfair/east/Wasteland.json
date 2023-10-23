@@ -1,0 +1,708 @@
+{
+  "id": 138,
+  "name": "Wasteland",
+  "area": "Norfair",
+  "subarea": "Lower",
+  "subsubarea": "East",
+  "playable": true,
+  "roomAddress": "0x7B5D5",
+  "roomEnvironments": [
+    {"heated": true}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Wasteland Left Door (to Metal Pirates)",
+      "nodeType": "door",
+      "nodeSubType": "green",
+      "nodeAddress": "0x0019a1a",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Wasteland Left Door (to Metal Pirates)",
+          "length": 5,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                {"heatFrames": 90}
+              ]
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "locks": [
+        {
+          "name": "Wasteland Green Lock (to Metal Pirates)",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["h_canOpenGreenDoors"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Wasteland Top Door (to Red Kihunters)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0019a26",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "jumpways": [
+        {
+          "name": "Door frame",
+          "jumpwayType": "doorFrameBelow",
+          "height": 2,
+          "requires": [
+            {"heatFrames": 120}
+          ]
+        },
+        {
+          "name": "Platform",
+          "jumpwayType": "platformBelow",
+          "height": 6,
+          "leftPosition": -1.5,
+          "rightPosition": 1.5,
+          "requires": [
+            {"heatFrames": 120}
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Power Bomb (Power Bombs of shame)",
+      "nodeType": "item",
+      "nodeSubType": "visible",
+      "nodeItem": "PowerBomb",
+      "nodeAddress": "0x790C0"
+    },
+    {
+      "id": 4,
+      "name": "Wasteland Junction (Central, Enemy Dealt with)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "This includes either having killed the Dessgeega or having iframes so you can leave without further damage."
+    },
+    {
+      "id": 5,
+      "name": "Wasteland Junction (Just Below Central Junction)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "This means being just below the central junction, before dealing with the Dessgeega."
+    },
+    {
+      "id": 6,
+      "name": "Wasteland Junction (Just Left of Central Junction)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "This means being just left of the central junction, before dealing with the Dessgeega."
+    },
+    {
+      "id": 7,
+      "name": "Wasteland Junction (Left of Morph Tunnel)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Power Bomb Blocks",
+      "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "Bomb Blocks of Shame",
+      "obstacleType": "inanimate"
+    },
+    {
+      "id": "C",
+      "name": "Dessgeega on PB-blocks",
+      "obstacleType": "enemies"
+    },
+    {
+      "id": "D",
+      "name": "3 Dessgeegas",
+      "obstacleType": "enemies"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Wasteland Left Dessgeega",
+      "enemyName": "Dessgeega",
+      "quantity": 1,
+      "homeNodes": [4],
+      "dropRequires": ["h_heatProof"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Wasteland Right Dessgeegas",
+      "enemyName": "Dessgeega",
+      "quantity": 3,
+      "betweenNodes": [4, 7],
+      "dropRequires": ["h_heatProof"]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 5,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 580},
+        {"or": [
+          "canWalljump",
+          {"heatFrames": 200}
+        ]},
+        {"or": [
+          {"and": [
+            "h_canUsePowerBombs",
+            {"heatFrames": 120}
+          ]},
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A", "B"]
+    },
+    {
+      "from": 1,
+      "to": 6,
+      "name": "Wasteland X-Ray Climb",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canLeftDoorXRayClimb",
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": true
+        }},
+        {"adjacentRunway": {
+          "fromNode": 1,
+          "usedTiles": 0.5,
+          "overrideRunwayRequirements": true,
+          "useFrames": 200
+        }},
+        {"heatFrames": 2800}
+      ],
+      "note": "Climb up 2 screens.",
+      "devNote": ["Ever so slightly shorter than the long climb in Screw Attack Room (1 tile), we'll just put the same value.", "Heat frames split into the actual climb and the setup in the adjacent room."]
+    },
+    {
+      "from": 2,
+      "to": 7,
+      "name": "Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canUseMorphBombs",
+        {"heatFrames": 350}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 7,
+      "name": "Power Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 2
+        }},
+        {"heatFrames": 350}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 6,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"heatFrames": 120},
+        {"obstaclesCleared": ["B"]}
+      ],
+      "devNote": ["It's not possible to reach node 3 without destroying obstacle B.", "So no need to elaborate on how it can be destroyed from here and how many heat frames it would take."]
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 4,
+      "to": 6,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["D"]},
+        {"heatFrames": 200}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 250},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "HeatProof Kill",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"]
+          ],
+          "excludedWeapons": ["Bombs"]
+        }}
+      ],
+      "clearsObstacles": ["D"],
+      "devNote": "Bombs excluded because that'd probably cost more health than just running through."
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 300}
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "Supers Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 550},
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega", "Dessgeega", "Dessgeega"]
+          ],
+          "explicitWeapons": ["Super"]
+        }}
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "name": "Strong Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 550},
+        "Plasma",
+        {"or": ["Ice", "Wave"]}
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "from": 5,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 600},
+        {"or": [
+          {"and": [
+            "h_canUsePowerBombs",
+            {"heatFrames": 50}
+          ]},
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A", "B"],
+      "devNote": ["This expects that the PB gets used a bit before the node is actually reached.", "This is why the full wait time isn't included in heat frames."]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["C"]}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "HeatProof Kill",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"]
+          ],
+          "excludedWeapons": ["Bombs"]
+        }}
+      ],
+      "clearsObstacles": ["C"],
+      "devNote": "Bombs excluded because that'd probably cost more health than just running through."
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 50},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 100}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Supers Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"]
+          ],
+          "explicitWeapons": ["Super"]
+        }},
+        {"heatFrames": 100}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"or": ["Ice", "Wave"]},
+        {"heatFrames": 100}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 6,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"heatFrames": 100},
+        {"obstaclesCleared": ["B"]}
+      ]
+    },
+    {
+      "from": 6,
+      "to": 3,
+      "name": "Screw",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        "Morph",
+        {"heatFrames": 100}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "from": 6,
+      "to": 3,
+      "name": "Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canUseMorphBombs",
+        {"heatFrames": 200}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "from": 6,
+      "to": 3,
+      "name": "Power Bomb",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canUsePowerBombs",
+        {"heatFrames": 100}
+      ],
+      "clearsObstacles": ["A", "B"],
+      "devNote": "This expects that the PB is used earlier, avoiding the need to wait for the blast."
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 80},
+        {"obstaclesCleared": ["C"]}
+      ]
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 130},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "HeatProof Kill",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"]
+          ],
+          "excludedWeapons": ["Bombs"]
+        }}
+      ],
+      "clearsObstacles": ["C"],
+      "devNote": "Bombs excluded because that'd probably cost more health than just running through."
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 130}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "Supers Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"]
+          ],
+          "explicitWeapons": ["Super"]
+        }},
+        {"heatFrames": 130}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "name": "Strong Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"or": ["Ice", "Wave"]},
+        {"heatFrames": 130}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "from": 7,
+      "to": 2,
+      "name": "Avoid Hibashi",
+      "notable": false,
+      "requires": ["h_heatProof", "h_canBombThings", "h_canUsePowerBombs"],
+      "note": ["The hibashi hit can be avoided by waiting for the pillar to go up.", "That requires the use of one PB and more time than is worth unless heat proof."],
+      "devNote": "Note that if using PBs, two is required. One each from h_canBombThings, h_canUsePowerBombs."
+    },
+    {
+      "from": 7,
+      "to": 2,
+      "name": "Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canUseMorphBombs",
+        {"heatFrames": 400},
+        {"hibashiHits": 1}
+      ]
+    },
+    {
+      "from": 7,
+      "to": 2,
+      "name": "Power Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 2
+        }},
+        {"heatFrames": 400},
+        {"hibashiHits": 1}
+      ]
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 150},
+        {"obstaclesCleared": ["D"]}
+      ]
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 200},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
+          "type": "contact",
+          "hits": 2
+        }}
+      ]
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "HeatProof Kill",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega"],
+            ["Dessgeega"],
+            ["Dessgeega", "Dessgeega"]
+          ]
+        }}
+      ],
+      "clearsObstacles": ["C", "D"],
+      "devNote": "Bombs are not excluded here because there are consistent, safe setups for all Dessgeegas from this direction."
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 300}
+      ],
+      "clearsObstacles": ["C", "D"]
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "Supers Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyKill": {
+          "enemies": [
+            ["Dessgeega", "Dessgeega", "Dessgeega", "Dessgeega"]
+          ],
+          "explicitWeapons": ["Super"]
+        }},
+        {"heatFrames": 600}
+      ],
+      "clearsObstacles": ["C", "D"]
+    },
+    {
+      "from": 7,
+      "to": 4,
+      "name": "Strong Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"or": ["Ice", "Wave"]},
+        {"heatFrames": 600}
+      ],
+      "clearsObstacles": ["C", "D"]
+    }
+  ]
+}

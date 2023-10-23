@@ -1,0 +1,424 @@
+{
+  "id": 241,
+  "name": "Tourian Escape Room 3",
+  "area": "Tourian",
+  "subarea": "Main",
+  "playable": true,
+  "roomAddress": "0x7DEA7",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Tourian Escape Room 3 Left Door (to Escape Room 2)",
+      "nodeType": "door",
+      "nodeSubType": "grey",
+      "nodeAddress": "0x001ab10",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "locks": [
+        {
+          "name": "Tourian Escape 3 Lock (to Escape Room 2)",
+          "lockType": "permanent",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["never"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Tourian Escape Room 3 Right Door (to Escape Room 4)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001ab1c",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Tourian Escape Room 3 Bottom Pirates",
+      "enemyName": "Tourian Space Pirate (all)",
+      "quantity": 4,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Tourian Escape Room 3 Top Pirates",
+      "enemyName": "Tourian Space Pirate (all)",
+      "quantity": 3,
+      "homeNodes": [2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Pass Through Pirates",
+      "notable": false,
+      "requires": [
+        {"or": ["HiJump", "canWalljump", "h_canFly"]},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 3
+          }},
+          {"and": ["Plasma", "canHitbox"]}
+        ]}
+      ],
+      "note": "Walk through the pirates either by taking damage or by using Plasma Beam."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Fight Pirates Slowly",
+      "notable": false,
+      "requires": [
+        {"or": ["HiJump", "canWalljump", "h_canFly"]},
+        {"or": [
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": [
+              "Plasma",
+              {"and": ["h_hasBeamUpgrade", "canBePatient"]},
+              "canBeVeryPatient"
+            ]}
+          ]},
+          {"and": [
+            {"or": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Tourian Space Pirate (all)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]},
+            {"or": ["Morph", "canTurnaroundAimCancel", "canXRayTurnaround"]}
+          ]}
+        ]}
+      ],
+      "note": ["Run from or Roll under the pirate lazers.", "The Pirates will also not shoot if they come on screen while Samus is crouched."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Kill Pirates Fast",
+      "notable": false,
+      "requires": [
+        {"or": ["HiJump", "canWalljump", "h_canFly"]},
+        {"or": [
+          "Wave",
+          "ScrewAttack",
+          {"and": ["Plasma", "canXRayWaitForIFrames"]},
+          {"enemyKill": {
+            "enemies": [
+              ["Tourian Space Pirate (all)", "Tourian Space Pirate (all)", "Tourian Space Pirate (all)"],
+              ["Tourian Space Pirate (all)", "Tourian Space Pirate (all)", "Tourian Space Pirate (all)"]
+            ],
+            "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
+          }}
+        ]}
+      ],
+      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from below with Wave."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "SpeedBooster",
+      "notable": false,
+      "requires": ["SpeedBooster"],
+      "note": ["Run into the pirates with speedbooster to save health over shinesparking.", "A speedy jump can reach the top platform."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      },
+      "note": "Coming from the left only requires SpeedBooster to kill all the Pirates."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "G-Mode Morph PB Pirate Kill",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": ["h_canArtificialMorphIBJ", "h_canArtificialMorphSpringBallBombJump"]},
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 5
+        }}
+      ],
+      "note": "IBJ or spring ball bomb jump to avoid the wall jump. The first pirate takes 2 PBs, the next 3 can be killed with 3 total PBs if they are placed under the middle pirate."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "G-Mode Morph PB Pirate Hitbox",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": ["h_canArtificialMorphIBJ", "h_canArtificialMorphSpringBallBombJump"]},
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 3
+        }},
+        "canHitbox"
+      ],
+      "note": "IBJ or spring ball bomb jump to avoid the wall jump. Using a total of 3 PBs will allow Samus to roll through the bottom 4 pirates."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "G-Mode Morph Pirate Tank",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": ["h_canArtificialMorphIBJ", "h_canArtificialMorphSpringBallBombJump"]},
+        {"enemyDamage": {
+          "enemy": "Tourian Space Pirate (all)",
+          "type": "contact",
+          "hits": 3
+        }}
+      ],
+      "note": "Tank 3 pirate hits then IBJ or spring ball bomb jump to avoid the wall jump."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "G-Mode Morph Overload Speed Blocks",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "h_canArtificialMorphIBJ",
+        {"or": ["h_canArtificialMorphCeilingBombJump", "canBeVeryPatient"]}
+      ],
+      "note": "Take the bottom path and place many bombs near the speed blocks to overload PLMs and go through them."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Pass Through Pirates",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 3
+          }},
+          {"and": ["Plasma", "canHitbox"]}
+        ]}
+      ],
+      "note": "Walk through the pirates either by taking damage or by using Plasma Beam."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Fight Pirates Slowly",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": [
+              "Plasma",
+              {"and": ["h_hasBeamUpgrade", "canBePatient"]},
+              "canBeVeryPatient"
+            ]}
+          ]},
+          {"and": [
+            {"or": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Tourian Space Pirate (all)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]},
+            {"or": ["Morph", "canTurnaroundAimCancel", "canXRayTurnaround"]}
+          ]}
+        ]}
+      ],
+      "note": ["Run from or Roll under the pirate lazers.", "The Pirates will also not shoot if they come on screen while Samus is crouched."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Kill Pirates Fast",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "Wave",
+          "ScrewAttack",
+          {"and": ["Plasma", "canXRayWaitForIFrames"]},
+          {"enemyKill": {
+            "enemies": [
+              ["Tourian Space Pirate (all)", "Tourian Space Pirate (all)"],
+              ["Tourian Space Pirate (all)", "Tourian Space Pirate (all)"],
+              ["Tourian Space Pirate (all)"]
+            ],
+            "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
+          }}
+        ]}
+      ],
+      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from above with Wave."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "SpeedBooster",
+      "notable": false,
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Tourian Space Pirate (all)",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"or": [
+          "canTemporaryBlue",
+          {"and": [
+            "canUseSpeedEchoes",
+            {"canShineCharge": {
+              "usedTiles": 33,
+              "openEnd": 2
+            }},
+            {"shinespark": {
+              "frames": 2,
+              "excessFrames": 2
+            }}
+          ]}
+        ]}
+      ],
+      "note": "Fall through the speed blocks from above with Temporary Blue, or kill the pirates from above with speed echoes."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Enter with Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }},
+          {"and": ["Plasma", "canHitbox"]},
+          "Morph",
+          "ScrewAttack",
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": ["h_hasBeamUpgrade", "canBePatient"]}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    }
+  ]
+}

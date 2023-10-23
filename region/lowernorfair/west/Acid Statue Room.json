@@ -1,0 +1,557 @@
+{
+  "id": 149,
+  "name": "Acid Statue Room",
+  "area": "Norfair",
+  "subarea": "Lower",
+  "subsubarea": "West",
+  "playable": true,
+  "roomAddress": "0x7B1E5",
+  "roomEnvironments": [
+    {"heated": true}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Acid Statue Room Top Right Door (to Main Hall)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0019846",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Acid Statue Room Top Right Door (to Main Hall)",
+          "length": 1,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                {"heatFrames": 50}
+              ]
+            }
+          ],
+          "usableComingIn": false,
+          "openEnd": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Acid Statue Room Bottom Right Door (to Golden Torizo)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001983a",
+      "doorEnvironments": [
+        {
+          "physics": "air",
+          "devNote": ["Technically it is acid if entering from node 1 and the statue hasn't been cleared, but that doesn't seem worth modeling.", "The acid is not there regardless when entering from node 2."]
+        }
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Acid Statue Room Bottom Right Door (to Golden Torizo)",
+          "length": 3,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                {"heatFrames": 75}
+              ]
+            }
+          ],
+          "openEnd": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Acid Chozo Statue",
+      "nodeType": "event",
+      "nodeSubType": "flag",
+      "yields": ["f_UsedAcidChozoStatue"],
+      "locks": [
+        {
+          "name": "Acid Statue Lock",
+          "lockType": "triggeredEvent",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                "h_canActivateAcidChozo",
+                "h_canUsePowerBombs",
+                {"heatFrames": 1000}
+              ]
+            }
+          ]
+        }
+      ],
+      "note": "This node represents the ledge the statue is on. This is why it can be reached without breaking the PB blocks, but not unlocked."
+    },
+    {
+      "id": 4,
+      "name": "Acid Statue Room Junction (Above Acid Plug Without Acid)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Because going here while there is acid is pointless unless traveling from 1 to 3, this node will be considered to only be visitable when the acid is gone"
+    },
+    {
+      "id": 5,
+      "name": "Acid Statue Room Junction (Below Acid Plug)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Acid Statue Room Holtzes",
+      "enemyName": "Holtz",
+      "quantity": 3,
+      "homeNodes": [2],
+      "dropRequires": ["h_heatProof"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Acid Statue Room Magdollite",
+      "enemyName": "Magdollite",
+      "quantity": 1,
+      "homeNodes": [2],
+      "dropRequires": ["Grapple", "h_heatProof"]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "SpaceJump",
+        {"heatFrames": 180}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Without Acid",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "h_canIBJ",
+            {"heatFrames": 780}
+          ]}
+        ]},
+        {"heatFrames": 270}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"canComeInCharged": {
+          "framesRemaining": 0,
+          "fromNode": 1
+        }},
+        {"heatFrames": 125},
+        {"shinespark": {
+          "frames": 36
+        }}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Gravityless Acid Dive",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canSuitlessLavaDive",
+        {"or": ["HiJump", "canWalljump", "canSpringBallJumpMidAir"]},
+        {"acidFrames": 116},
+        {"heatFrames": 285}
+      ],
+      "note": ["Try to jump to the far left side raised ledges to reduce the time spent in acid.", "This could mean turning off HiJump, or airballing to jump farther."]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Gravity Acid Dive",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canSuitlessLavaDive",
+        "Gravity",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "canSpringBallJumpMidAir",
+          "canGravityJump",
+          {"and": [
+            "canIBJ",
+            {"acidFrames": 1050},
+            {"heatFrames": 1050}
+          ]}
+        ]},
+        {"acidFrames": 100},
+        {"heatFrames": 255}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Wall Pocket Acid Dive",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canPartialFloorClip",
+        "canSuitlessLavaDive",
+        {"or": [
+          {"and": [
+            "canLateralMidAirMorph",
+            "canDownBack",
+            "canTrickyJump",
+            {"acidFrames": 108}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"heatFrames": 30},
+            {"acidFrames": 136}
+          ]},
+          {"and": [
+            {"heatFrames": 90},
+            {"acidFrames": 216}
+          ]}
+        ]},
+        {"heatFrames": 285}
+      ],
+      "note": ["There is a hole in the left side wall that Samus can fit into by shrinking her hitbox.", "Once in the wall, stand up if crouched then turnaround into a buffered spinjump to jump out of the acid."],
+      "devNote": "Not notable because it only skips a walljump."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Ceiling Bomb Jump",
+      "notable": false,
+      "requires": ["h_heatProof", "h_canCeilingBombJump"]
+    },
+    {
+      "from": 1,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 270}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "name": "Avoid Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "canTrickyJump",
+          {"and": [
+            "canHorizontalDamageBoost",
+            "canCarefulJump",
+            {"enemyDamage": {
+              "enemy": "Magdollite",
+              "type": "flame",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        {"heatFrames": 330}
+      ],
+      "note": "Wait for the first Holtz to attack then either use the Magdollite for IFrames, or avoid the projectiles and continue dodging bats."
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyDamage": {
+          "enemy": "Holtz",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"heatFrames": 375}
+      ],
+      "note": "Wait for the first Holtz before trying to cross."
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "name": "Full Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Charge",
+        "Ice",
+        "Wave",
+        "Plasma",
+        {"heatFrames": 360}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"canComeInCharged": {
+          "framesRemaining": 0,
+          "fromNode": 2
+        }},
+        {"heatFrames": 125},
+        {"shinespark": {
+          "frames": 41,
+          "excessFrames": 6
+        }}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "SpaceJump",
+        {"heatFrames": 300}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Without Acid",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        {"heatFrames": 300}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 250}
+      ],
+      "devNote": "4 requires that the acid is gone."
+    },
+    {
+      "from": 4,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "h_canIBJ",
+            {"heatFrames": 780}
+          ]}
+        ]},
+        {"heatFrames": 200}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "name": "Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        "h_canUseMorphBombs",
+        {"heatFrames": 400}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "name": "PowerBombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        "h_canUsePowerBombs",
+        {"heatFrames": 250}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 240}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Avoid Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "canTrickyJump",
+          {"and": [
+            "canHorizontalDamageBoost",
+            "canCarefulJump",
+            {"enemyDamage": {
+              "enemy": "Magdollite",
+              "type": "flame",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        {"heatFrames": 375}
+      ],
+      "note": "Wait for the Magdollite to attack then either use it for IFrames, or jump over the swooping Holtzes."
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Tank the Damage",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyDamage": {
+          "enemy": "Holtz",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Holtz",
+            "type": "contact",
+            "hits": 1
+          }},
+          "canCarefulJump"
+        ]},
+        {"heatFrames": 330}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Full Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Charge",
+        "Ice",
+        "Wave",
+        "Plasma",
+        {"heatFrames": 375}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        "h_canUseMorphBombs",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "h_canIBJ",
+            {"heatFrames": 1020}
+          ]}
+        ]},
+        {"heatFrames": 600}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Power Bombs",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "f_UsedAcidChozoStatue",
+        "h_canUsePowerBombs",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "h_canIBJ",
+            {"heatFrames": 1020}
+          ]}
+        ]},
+        {"heatFrames": 300}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "CF Grapple Clip",
+      "notable": false,
+      "requires": ["h_heatProof", "h_canBombThings", "h_canJumpIntoCrystalFlashClip", "HiJump", "Grapple"],
+      "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down.",
+      "devNote": "The extra Power Bomb or bombs is to get through the bomb blocks."
+    }
+  ]
+}

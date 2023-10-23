@@ -1,0 +1,271 @@
+{
+  "id": 222,
+  "name": "Shaktool Room",
+  "area": "Maridia",
+  "subarea": "Inner",
+  "subsubarea": "Green",
+  "playable": true,
+  "roomAddress": "0x7D8C5",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Shaktool Left Door (to East Pants Room)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a8c4",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Shaktool Left Door (to East Pants Room)",
+          "length": 0,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 33,
+          "framesRemaining": 80,
+          "openEnd": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["f_ShaktoolDoneDigging"]
+            }
+          ]
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Shaktool",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Shaktool",
+            "type": "contact",
+            "hits": 1
+          }}
+        ],
+        "note": "This takes 1 min 40 sec if Shaktool is done digging."
+      }
+    },
+    {
+      "id": 2,
+      "name": "Shaktool Right Door (to Spring Ball)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a8d0",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Shaktool Right Door (to Spring Ball)",
+          "length": 0,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 33,
+          "framesRemaining": 80,
+          "openEnd": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["f_ShaktoolDoneDigging"]
+            }
+          ]
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Shaktool",
+            "notable": false,
+            "requires": ["f_ShaktoolDoneDigging"]
+          },
+          {
+            "name": "Get Hit By Yard (Snail)",
+            "notable": false,
+            "requires": ["h_ShaktoolCameraFix"],
+            "note": "Shoot a Snail (Yard) to make it chase Samus."
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"or": [
+            {"and": [
+              {"enemyDamage": {
+                "enemy": "Shaktool",
+                "type": "contact",
+                "hits": 1
+              }},
+              "f_ShaktoolDoneDigging"
+            ]},
+            {"and": [
+              {"enemyDamage": {
+                "enemy": "Yard",
+                "type": "contact",
+                "hits": 1
+              }},
+              "h_ShaktoolCameraFix",
+              {"or": [
+                {"ammo": {
+                  "type": "Super",
+                  "count": 1
+                }},
+                {"and": [
+                  "canSpecialBeamAttack",
+                  {"ammo": {
+                    "type": "PowerBomb",
+                    "count": 1
+                  }}
+                ]}
+              ]}
+            ]}
+          ]}
+        ],
+        "note": "Wait for Shaktool. If Shaktool's camera is fixed it is possible without Shaktool using a Yard (Snail): a Super or any SBA can trigger a Yard to attack."
+      }
+    },
+    {
+      "id": 3,
+      "name": "f_ShaktoolDoneDigging",
+      "nodeType": "event",
+      "nodeSubType": "flag",
+      "yields": ["f_ShaktoolDoneDigging"],
+      "devNote": "No unlock requirements for this event, since just reaching it is enough but the requirements for reaching it depend on where you're coming from"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Shaktool",
+      "enemyName": "Shaktool",
+      "quantity": 1,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Shaktool Room Yards",
+      "enemyName": "Yard",
+      "quantity": 2,
+      "homeNodes": [2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": ["f_ShaktoolDoneDigging", "h_canUsePowerBombs"]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "G-Mode PB",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 1
+        }}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": ["f_ShaktoolDoneDigging"]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Vanilla",
+      "notable": false,
+      "requires": ["h_ShaktoolVanillaFlag"],
+      "note": "Entering from the right door gives a weird alignment glitch, but it's possible to exit back through the door and that triggers the event flag, which opens up the room on the next re-entry"
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Reverse Shaktool",
+      "notable": false,
+      "requires": ["h_canUsePowerBombs"],
+      "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "G-Mode Morph Reverse Shaktool",
+      "notable": true,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [2],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": [
+          {"and": ["Gravity", "h_canArtificialMorphIBJ"]},
+          "SpringBall"
+        ]},
+        {"ammo": {
+          "type": "PowerBomb",
+          "count": 1
+        }}
+      ],
+      "note": ["The Snails will dig through the sand without showing any visual difference. Each block they pass through gets closer to overloading PLMs.", "In order to PB the left wall before PLMs are overloaded, it is necessary to only allow one snail to dig, either by bombing one or by facing one to prevent movement until it is off screen.", "If using mobile g-mode, it is easiest to get past the bottom one and prevent it from digging. If using immobile g-mode, it is easiest to have whichever one hits Samus go off screen.", "In the morph tunnel, it is important to place the PB as far right as possible, while still hitting the PB blocks, otherwise the Snails will have overloaded the PLMs and the blocks won't break.", "The green stone changes one tile earlier than the PB wall, and can be a good visual cue to place the PB.", "After using the PB, exit the sand, leave G-Mode, and wait for Shaktool. Note that the Snails will not dig while off screen or while Samus is facing them, even while she is morphed."]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": ["f_ShaktoolDoneDigging"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "id": 36,
+  "name": "Crab Maze",
+  "area": "Crateria",
+  "subarea": "East",
+  "playable": true,
+  "roomAddress": "0x7957D",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Crab Maze Top Door (to Kago Room)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0018a96",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "jumpways": [
+        {
+          "name": "Door frame",
+          "jumpwayType": "doorFrameBelow",
+          "height": 2,
+          "requires": []
+        },
+        {
+          "name": "Platform",
+          "jumpwayType": "platformBelow",
+          "height": 6,
+          "leftPosition": -2.5,
+          "rightPosition": 2.5,
+          "requires": []
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Frozen Sciser",
+            "notable": false,
+            "requires": ["canUpwardGModeSetup", "canTrickyUseFrozenEnemies", "h_canUseSpringBall", "canBePatient"],
+            "note": ["The nearby Global crab can be used to exit on the left side of the door.", "Exiting on the right will require travelling the Morph maze to find a local crab or two."],
+            "devNote": ["There is a Morphless way to jump on the crab with aim down but it feels too precise to include.", "Global Crab (left side) takes 40 seconds, local crab (Right side) is 180.  Finding two left side crabs to use together is faster."]
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Sciser",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Crab Maze Left Door (to Forgotten Highway Elbow)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0018aae",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Getting hit by Sciser",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Crab Maze Middle Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Exists mainly to separate node 2 from the shot block."
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Crab Maze Top Right Sciser",
+      "enemyName": "Sciser",
+      "quantity": 1,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Crab Maze Bottom Left Scisers",
+      "enemyName": "Sciser",
+      "quantity": 3,
+      "homeNodes": [2]
+    },
+    {
+      "id": "e3",
+      "groupName": "Crab Maze Top Left Scisers",
+      "enemyName": "Sciser",
+      "quantity": 4,
+      "homeNodes": [3]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Sciser Farm",
+      "notable": false,
+      "requires": [
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "PowerBomb"]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": ["Morph"]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "G-Mode Morph",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": [
+          "SpringBall",
+          {"and": [
+            {"or": [
+              "Bombs",
+              {"ammo": {
+                "type": "PowerBomb",
+                "count": 1
+              }}
+            ]},
+            "Gravity"
+          ]},
+          "h_canArtificialMorphIBJ"
+        ]}
+      ],
+      "note": ["Without Springball or Gravity, it is possible to overload PLMs with the crumble blocks with bombs.", "Take the first left above the waterline. Place bombs in the single tile nook on the left."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "G-Mode Morph to overload Crumble Block Plms",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [2],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": [
+          {"and": ["Gravity", "h_canArtificialMorphIBJ"]},
+          {"and": ["SpringBall", "HiJump", "Bombs"]}
+        ]}
+      ],
+      "note": ["Place bombs at the far right, next to the low underwater ceiling.", "To safely bomb the fast crab, wait just left of the crack on the floor where it falls."]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 0,
+          "steepUpTiles": 1
+        }
+      },
+      "devNote": "Because the next tile is a slope into the water, it behaves like no open end."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway, With Gravity",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 0,
+          "steepUpTiles": 5,
+          "steepDownTiles": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Sciser Farm",
+      "notable": false,
+      "requires": [
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "PowerBomb"]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "canCarefulJump",
+          "canUseFrozenEnemies",
+          "SpaceJump",
+          {"and": [
+            "Gravity",
+            {"or": ["HiJump", "canWalljump", "h_canCrouchJumpDownGrab", "h_canIBJ", "canSpringBallJumpMidAir"]}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": ["Morph"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    }
+  ]
+}

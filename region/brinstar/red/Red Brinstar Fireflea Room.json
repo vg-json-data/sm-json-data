@@ -1,0 +1,467 @@
+{
+  "id": 67,
+  "name": "Red Brinstar Fireflea Room",
+  "area": "Brinstar",
+  "subarea": "Red",
+  "playable": true,
+  "roomAddress": "0x7A293",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Red Firefleas Left Door (to X-Ray)",
+      "nodeType": "door",
+      "nodeSubType": "red",
+      "nodeAddress": "0x001905a",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Red Firefleas Left Door (to X-Ray)",
+          "length": 5,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "locks": [
+        {
+          "name": "Red Firefleas Red Lock (to X-Ray)",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": ["h_canOpenRedDoors"]
+            }
+          ]
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 13,
+          "openEnd": 0,
+          "framesRemaining": 0,
+          "initiateRemotely": {
+            "initiateAt": 2,
+            "mustOpenDoorFirst": true,
+            "pathToDoor": [
+              {
+                "destinationNode": 1,
+                "strats": ["In-Room Shinespark"]
+              }
+            ]
+          },
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "note": ["Requires opening the door, then going to the middle of the room to use the really small runway.", "ShinesparkFrames are at 0 because the shinespark frames are accounted for in the path to door."]
+        },
+        {
+          "usedTiles": 33,
+          "openEnd": 2,
+          "framesRemaining": 0,
+          "strats": [
+            {
+              "name": "XMode",
+              "notable": false,
+              "requires": [
+                "h_canXMode",
+                "canIframeSpikeJump",
+                {"spikeHits": 2},
+                {"or": [
+                  "SpaceJump",
+                  {"spikeHits": 2}
+                ]},
+                {"shinespark": {
+                  "frames": 50
+                }}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Red Firefleas Right Door (to Red Tower)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0019066",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Red Firefleas Right Door (to Red Tower)",
+          "length": 4,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 13,
+          "openEnd": 0,
+          "framesRemaining": 0,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "canShinechargeMovementComplex",
+                "canMidairShinespark",
+                {"shinespark": {
+                  "frames": 50
+                }}
+              ],
+              "note": "Requires opening the door, then going to pit in the middle of the room to use the really small runway."
+            }
+          ]
+        },
+        {
+          "usedTiles": 33,
+          "openEnd": 2,
+          "framesRemaining": 40,
+          "strats": [
+            {
+              "name": "XMode",
+              "notable": false,
+              "requires": [
+                "canShinechargeMovement",
+                "h_canXMode",
+                {"spikeHits": 2}
+              ],
+              "note": ["Jump from the entry runway to bounce onto spikes for XMode.", "Store a spark in XMode and use that to shinepark across the room.", "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Red Brinstar Fireflea Room Wavers",
+      "enemyName": "Waver",
+      "quantity": 3,
+      "homeNodes": [1, 2]
+    },
+    {
+      "id": "e2",
+      "groupName": "Red Brinstar Fireflea Room Left Yapping Maws",
+      "enemyName": "Yapping Maw",
+      "quantity": 2,
+      "betweenNodes": [1, 2],
+      "dropRequires": ["never"]
+    },
+    {
+      "id": "e3",
+      "groupName": "Red Brinstar Fireflea Room Right Yapping Maw",
+      "enemyName": "Yapping Maw",
+      "quantity": 1,
+      "betweenNodes": [1, 2]
+    },
+    {
+      "id": "e4",
+      "groupName": "Red Brinstar Firefleas",
+      "enemyName": "Fireflea",
+      "quantity": 5,
+      "homeNodes": [2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": ["Grapple", "SpaceJump"]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        {"canComeInCharged": {
+          "fromNode": 1,
+          "framesRemaining": 0
+        }},
+        {"shinespark": {
+          "frames": 150,
+          "excessFrames": 57
+        }}
+      ],
+      "note": "Enter the door high to avoid a frame perfect spike hit.",
+      "devNote": ["FIXME: There is one frame where ending the spark early puts you over spikes with no avoiding them, unless you entered the room at top of door.", "Which frame is determined by actual shinesparkFrames and shinespark velocity."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "X-Ray Exit Damage Boost",
+      "notable": true,
+      "requires": [
+        "canHorizontalDamageBoost",
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 5
+        }}
+      ],
+      "note": ["If you wait long enough, a Waver will arrive. After it turns around to go back to the right, damage boost off of it, then follow it.", "Continue to hit it to get iframes to avoid taking damage from any spikes."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "X-Ray Exit Spike Floor",
+      "notable": false,
+      "requires": [
+        {"spikeHits": 4},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ],
+      "note": "This strat is simply running and jumping across the spikes."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": ["SpaceJump", "Grapple"]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        {"canComeInCharged": {
+          "fromNode": 2,
+          "framesRemaining": 0
+        }},
+        {"shinespark": {
+          "frames": 146,
+          "excessFrames": 6
+        }}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "In-Room Shinespark",
+      "notable": false,
+      "requires": [
+        "canMidairShinespark",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 13,
+          "openEnd": 0
+        }},
+        {"shinespark": {
+          "frames": 107,
+          "excessFrames": 6
+        }}
+      ],
+      "note": "Use the really small runway in a pit in the middle of the room."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "XMode Shinespark",
+      "notable": false,
+      "requires": [
+        "canMidairShinespark",
+        "h_canXMode",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {
+          "frames": 146,
+          "excessFrames": 6
+        }},
+        {"spikeHits": 1}
+      ],
+      "note": ["Jump from the entry runway to bounce onto spikes for XMode.", "Store a spark in XMode and use that to shinepark across the room.", "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access Ice Bridge",
+      "notable": true,
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "canCarefulJump",
+        {"spikeHits": 3},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ],
+      "note": ["Cross the gaps by freezing multiple enemies or by refreezing a Waver while standing on it.", "Be careful running on frozen enemies.", "Freeze the final Waver high and walljump up, or wait for the second Waver to come back."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Ice and HiJump",
+      "notable": false,
+      "requires": [
+        "canUseFrozenEnemies",
+        "HiJump",
+        "canCarefulJump",
+        {"or": ["canTrickyJump", "canWalljump"]},
+        {"spikeHits": 3},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ],
+      "note": "Use the Fireflea when it moves to the right to cross the first gap."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access IBJ",
+      "notable": false,
+      "requires": [
+        "h_canJumpIntoIBJ",
+        {"spikeHits": 5},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access Springwall",
+      "notable": false,
+      "requires": [
+        "canSpringwall",
+        {"spikeHits": 5},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access Speed HiJump",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        {"spikeHits": 4},
+        "SpeedBooster",
+        {"or": ["canTrickyJump", "canWalljump"]},
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 2}
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access SpikeJumps with HiJump",
+      "notable": true,
+      "requires": [
+        "HiJump",
+        "canWalljump",
+        "canIframeSpikeJump",
+        "canTrickyJump",
+        {"spikeHits": 3},
+        {"or": [
+          {"spikeHits": 1},
+          {"and": [
+            {"enemyDamage": {
+              "enemy": "Fireflea",
+              "type": "contact",
+              "hits": 1
+            }},
+            "canHorizontalDamageBoost"
+          ]}
+        ]},
+        {"or": [
+          "canInsaneWalljump",
+          {"and": [
+            {"spikeHits": 1},
+            "canHorizontalDamageBoost"
+          ]}
+        ]}
+      ],
+      "note": ["Jump to the door leading to X-Ray either by jumping from spikes or with a very precise jump.", "Cross the room by Jumping atop the spikes.", "Taking enemy damage can be used to reduce some spike damage.", "The final jump can either be made by jumping from the bottommost spike stair or from the safe stair.", "Setup run speed atop the spike stair by holding forward to be pushed backward.", "The safe stair jump is much harder, but can be made without every pixel of runway."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access MidAir Spring Ball",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        {"spikeHits": 4},
+        "canSpringBallJumpMidAir",
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 3}
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Access Damage Boost",
+      "notable": true,
+      "requires": [
+        "canHorizontalDamageBoost",
+        "canTrickyJump",
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 6
+        }}
+      ],
+      "note": ["A precise strat that involves crossing both gaps by dboosting off Wavers.", "The Wavers are also used for iframes to avoid taking damage from any spikes."]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Fireflea Farm",
+      "notable": false,
+      "requires": [
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "PowerBomb"]}
+      ]
+    }
+  ]
+}

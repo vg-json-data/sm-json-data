@@ -1,0 +1,287 @@
+{
+  "id": 230,
+  "name": "Blue Hopper Room",
+  "area": "Tourian",
+  "subarea": "Main",
+  "playable": true,
+  "roomAddress": "0x7DC19",
+  "roomEnvironments": [
+    {"heated": false}
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Blue Hopper Room Top Door (to Metroid Room 4)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001aa08",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "jumpways": [
+        {
+          "name": "Door frame",
+          "jumpwayType": "doorFrameBelow",
+          "height": 3,
+          "requires": []
+        },
+        {
+          "name": "Platform",
+          "jumpwayType": "platformBelow",
+          "height": 8.5,
+          "leftPosition": -1.5,
+          "rightPosition": 1.5,
+          "requires": [],
+          "devNote": "Additional platforms could be added, but they don't yet appear to have applications."
+        }
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Blue Hopper Room Left Door (to Dust Torizo)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001aa14",
+      "doorEnvironments": [
+        {"physics": "air"}
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Tank During Setup",
+            "notable": false,
+            "requires": [
+              {"enemyDamage": {
+                "enemy": "Blue Sidehopper",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]
+          },
+          {
+            "name": "Prepared Dodge",
+            "notable": false,
+            "requires": [
+              "canPrepareForNextRoom",
+              {"or": [
+                {"and": ["ScrewAttack", "SpaceJump"]},
+                {"and": [
+                  "Morph",
+                  {"or": [
+                    "canTrickyJump",
+                    {"enemyKill": {
+                      "enemies": [
+                        ["Blue Sidehopper"]
+                      ]
+                    }}
+                  ]}
+                ]}
+              ]}
+            ]
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Blue Hoppers",
+      "enemyName": "Blue Sidehopper",
+      "quantity": 2,
+      "homeNodes": [1, 2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Blue Hopper Dodge",
+      "notable": true,
+      "requires": ["canTrickyJump"],
+      "note": ["When coming from the right, run under the right Hopper and jump over the left Hopper to avoid all damage.", "Wait for the top hopper to move right to start running.", "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper for all patterns."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Screw Attack",
+      "notable": false,
+      "requires": [
+        "ScrewAttack",
+        {"or": ["SpaceJump", "canCarefulJump"]}
+      ],
+      "note": "Wait for the top hopper to move right, then jump through the left hopper."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Kill the enemies",
+      "notable": false,
+      "requires": [
+        "canDodgeWhileShooting",
+        {"or": ["canTrickyJump", "canCameraManip"]},
+        {"enemyKill": {
+          "enemies": [
+            ["Blue Sidehopper", "Blue Sidehopper"]
+          ]
+        }}
+      ],
+      "note": ["Kill the top hopper quickly; the left hopper is more random.", "To be safe, plan to retreat right while attacking.", "It also helps to attempt to move the hopper off camera between attacks."]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Take the Damage",
+      "notable": false,
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "note": ["Wait for the left hopper to move right so it does not follow Samus as IFrames run out.", "A damage boost using the top hopper also moves through the room fast enough to be safe."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Screw Attack with Space Jump",
+      "notable": false,
+      "requires": ["canPrepareForNextRoom", "ScrewAttack", "SpaceJump"],
+      "note": "Samus must enter the room in a screw attack space jump to avoid hopper damage."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Screw Attack",
+      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 2
+        }
+      },
+      "requires": ["canPrepareForNextRoom", "ScrewAttack", "canCarefulJump"],
+      "note": "Samus must enter the room in a screw attack spin jump, with enough speed to go deep into the room, to avoid hopper damage."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Screw Attack Tricky Jump",
+      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 1
+        }
+      },
+      "requires": ["canPrepareForNextRoom", "ScrewAttack", "canTrickyJump"],
+      "note": "Samus must enter the room in a screw attack spin jump, with a very short runway, land just past the first Sidehopper and carefully traverse the room."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {
+
+        }
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 32,
+          "excessFrames": 7
+        }}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Blue Hopper Room Roll Under Hoppers",
+      "notable": true,
+      "requires": ["Morph", "canPrepareForNextRoom", "canTrickyJump"],
+      "note": ["Time Samus' movement carefully to roll underneath a Blue Hopper and also race it to the far door.", "Enter the room in ball mode and let the hoppers jump against the wall a couple of times.", "After the lower hopper has long enough time between jumps, roll under and run to the door."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Kill Hopper",
+      "notable": false,
+      "requires": [
+        "Morph",
+        "canPrepareForNextRoom",
+        {"enemyKill": {
+          "enemies": [
+            ["Blue Sidehopper"]
+          ]
+        }},
+        "canCameraManip"
+      ],
+      "note": ["Enter the room in ball mode and let the hoppers jump against the wall a couple of times.", "Between hops, unmorph and shoot the lower hopper.", "Roll under the top hopper until it goes off camera to the left."]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Take the Damage",
+      "notable": false,
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Blue Speed Jump through Hoppers",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 0,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": ["SpaceJump", "canCarefulJump"]}
+      ],
+      "note": "Jump far enough to land on the first floor pillar.",
+      "devNote": "This is not the level of precision that would call for canBlueSpaceJump."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": ["never"],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "devNote": "FIXME: Add requirements to be able to use this runway."
+    }
+  ]
+}
