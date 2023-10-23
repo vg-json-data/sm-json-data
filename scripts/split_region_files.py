@@ -30,6 +30,10 @@ for path in sorted(Path("../region/").glob("**/*.json")):
 
     print("Processing", path)
     new_region_json = format_json.format(region_json, indent=2)
+
+    # Validate that the new JSON is equivalent to the old (i.e. the differences affect formatting only):
+    assert json.loads(new_region_json) == region_json
+
     path.write_text(new_region_json)
 
     # base_name = path.name.removesuffix('.json')
