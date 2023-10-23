@@ -6,11 +6,11 @@ def is_one_liner_dict(obj):
     if len(obj) == 1:
         value = next(iter(obj.values()))
         return isinstance(value, (str, int, float, bool))
-    return False
+    return len(json.dumps(obj)) <= 40
 
 def is_one_liner_list(obj):
     if all(isinstance(x, (str, int, float, bool)) for x in obj):
-        return True
+        return len(json.dumps(obj)) <= 40
     return False
 
 def format(obj, indent, current_indent=0, one_liner_dict_allowed=True):
