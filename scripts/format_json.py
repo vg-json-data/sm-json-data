@@ -1,20 +1,30 @@
 import json
 
-def is_one_liner_dict(obj):
+def is_one_liner_dict(obj, nesting_allowed=True):
+    if len(json.dumps(obj)) > 50:
+        return False
     if len(obj) == 0:
         return True
     if len(obj) == 1:
         value = next(iter(obj.values()))
-        return isinstance(value, (str, int, float, bool))
-    return len(json.dumps(obj)) <= 40
+        return is_one_liner(value, nesting_allowed=nesting_allowed)
+    else:
+        return all(isinstance(x, (str, int, float, bool)) for x in obj.values())
 
 def is_one_liner_list(obj):
     if all(isinstance(x, (str, int, float, bool)) for x in obj):
-        return len(json.dumps(obj)) <= 40
+        return len(json.dumps(obj)) <= 50
     return False
 
+def is_one_liner(obj, nesting_allowed=True):
+    if isinstance(obj, dict):
+        return nesting_allowed and is_one_liner_dict(obj, nesting_allowed=False)
+    elif isinstance(obj, list):
+        return nesting_allowed and is_one_liner_list(obj)
+    else:
+        return True
+
 def format(obj, indent, current_indent=0, one_liner_dict_allowed=True):
-    # print("Formatting {}".format(obj))
     if isinstance(obj, (str, int, float, bool)) or obj is None:
         return json.dumps(obj)
     if isinstance(obj, list):
@@ -48,23 +58,27 @@ def format(obj, indent, current_indent=0, one_liner_dict_allowed=True):
         return ''.join(output_list)
     raise ValueError("Unexpected object type {}: {}".format(type(obj), obj))
 
-# data = {
-#     "requires": [
-#         {"heatFrames": 100},
-#         {"or": [
-#             "canTrickyJump",
-#             {"and": [
-#                 "Morph",
-#                 "canWalljump",
-#                 {"shinespark": {
-#                     "frames": 50,
-#                 }}
-#             ]},
-#         ]}
-#     ],
-#     "clearsObstacles": ["A"],
-#     "exitCondition": {
-#         "leaveWithSpark": {}
-#     }
-# }
-# print(format(data, indent=2))
+data = {
+    "entranceCondition": {
+        "comeInWithShinecharge": {
+            "framesRequired": 50
+        }
+    },
+    "requires": [
+        {"heatFrames": 100},
+        {"or": [
+            "canTrickyJump",
+            {"and": [
+                "Morph",
+                "canWalljump",
+                {"shinespark": {"frames": 50}},
+                {"ammo": {"type": "PowerBomb", "count": 1}}
+            ]},
+        ]}
+    ],
+    "clearsObstacles": ["A"],
+    "exitCondition": {
+        "leaveWithSpark": {}
+    }
+}
+print(format(data, indent=2))
