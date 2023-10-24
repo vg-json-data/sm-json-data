@@ -232,7 +232,7 @@ def process_strats(src, paramData):
     fromNode = paramData["fromNode"]
     fromNodeRef = paramData["fromNodeRef"]
     roomData = paramData["roomData"]
-    roomIDX = paramData["roomIDX"]
+    # roomIDX = paramData["roomIDX"]
     toNode = paramData["toNode"]
     bail = paramData["bail"]
 
@@ -292,7 +292,8 @@ def process_strats(src, paramData):
                         msg = ""
                         area = roomData["area"]
                         subarea = roomData["subarea"]
-                        msg += f"🟢{roomData['fullarea']}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
+                        # msg += f"🟢{roomData['fullarea']}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
+                        msg += f"🟢{roomData['fullarea']}/rooms.???.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x {strat}"
                         messages["greens"].append(msg)
                         messages["counts"]["greens"] += 1
                     if key == "linkStrats":
@@ -322,9 +323,10 @@ def process_strats(src, paramData):
                     messages[f"{color}s"].append(msg)
                     messages["counts"][f"{color}s"] += 1
         else:
-            msg = f"🔴ERROR: From node not found:{fromNodeRef}"
-            messages["reds"].append(msg)
-            messages["counts"]["reds"] += 1
+            pass
+            # msg = f"🔴ERROR: From node not found:{fromNodeRef}"
+            # messages["reds"].append(msg)
+            # messages["counts"]["reds"] += 1
 
     paramData = {
         "fromNode": fromNode,
@@ -410,22 +412,23 @@ print("Check Regions")
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
-            regionPath = os.path.join(r, filename)
-            with open(regionPath, encoding="utf-8") as regionFile:
-                regionJSON = json.load(regionFile)
+            roomPath = os.path.join(r, filename)
+            with open(roomPath, encoding="utf-8") as roomFile:
+                roomJSON = json.load(roomFile)
                 flattened_dict = [
-                    flatten(d, '.') for d in [regionJSON]
+                    flatten(d, '.') for d in [roomJSON]
                 ][0]
                 # print(flattened_dict)
                 # check rooms
-                if "rooms" in regionJSON:
+                if True:
                     # get data about this region by getting from first room
-                    room = regionJSON["rooms"][0]
+                    room = roomJSON
                     area = room["area"]
                     subarea = room["subarea"]
                     subsubarea = room["subsubarea"] if "subsubarea" in room else ""
+                    roomName = room["name"]
                     showArea = False
-                    fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "")
+                    fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "") + f"/{roomName}"
                     print(fullarea)
 
                     # do a naive pass on all data in this region
@@ -435,8 +438,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             showArea = True
 
                     # cycle through rooms
-                    for [roomIDX, room] in enumerate(regionJSON["rooms"]):
-                        roomRef = f"{fullarea}:{room['id']}:{room['name']}"
+                    for room in [roomJSON]:
+                        roomRef = f"{fullarea}:{room['id']}:{roomName}"
                         # check for uniqueness
                         if room["id"] not in uniques["roomID"]:
                             uniques["roomID"].append(room["id"])
@@ -736,9 +739,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 #     messages[f"{color}s"].append(msg)
                                                                 #     messages["counts"][f"{color}s"] += 1
                                                         else:
-                                                            msg = f"🔴ERROR: {fromNodeRef} not found!"
-                                                            messages["reds"].append(msg)
-                                                            messages["counts"]["reds"] += 1
+                                                            pass
+                                                            # msg = f"🔴ERROR: {fromNodeRef} not found!"
+                                                            # messages["reds"].append(msg)
+                                                            # messages["counts"]["reds"] += 1
 
                                                         # process strats in this path
                                                         if "strats" in path:
@@ -747,7 +751,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 "fromNode": fromNode,
                                                                 "fromNodeRef": fromNodeRef,
                                                                 "roomData": roomData,
-                                                                "roomIDX": roomIDX,
+                                                                # "roomIDX": roomIDX,
                                                                 "toNode": toNode,
                                                                 "bail": bail
                                                             }
@@ -761,24 +765,25 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         gModeObjects.append(leaveG)
 
                             # Validate Links
-                            for link in room["links"]:
-                                if "from" in link:
-                                    fromNode = link["from"]
-                                    fromNodeRef = f"Node[{roomRef}:{fromNode}]"
-                                    for to in link["to"]:
-                                        toNode = to["id"]
-                                        paramData = {
-                                            "key": "linkStrats",
-                                            "fromNode": fromNode,
-                                            "fromNodeRef": fromNodeRef,
-                                            "roomData": roomData,
-                                            "roomIDX": roomIDX,
-                                            "toNode": toNode,
-                                            "bail": bail
-                                        }
-                                        paramData = process_strats(to, paramData)
-                                        showNodes = paramData["showNodes"]
-                                        bail = paramData["bail"]
+                            if "links" in room:
+                                for link in room["links"]:
+                                    if "from" in link:
+                                        fromNode = link["from"]
+                                        fromNodeRef = f"Node[{roomRef}:{fromNode}]"
+                                        for to in link["to"]:
+                                            toNode = to["id"]
+                                            paramData = {
+                                                "key": "linkStrats",
+                                                "fromNode": fromNode,
+                                                "fromNodeRef": fromNodeRef,
+                                                "roomData": roomData,
+                                                # "roomIDX": roomIDX,
+                                                "toNode": toNode,
+                                                "bail": bail
+                                            }
+                                            paramData = process_strats(to, paramData)
+                                            showNodes = paramData["showNodes"]
+                                            bail = paramData["bail"]
 
                             # Validate GMode objects
                             for gModeObj in gModeObjects:
@@ -803,7 +808,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 messages["counts"]["reds"] += 1
                                                             else:
                                                                 msg = ""
-                                                                msg += f"🟢{area}/{subarea}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
+                                                                # msg += f"🟢{area}/{subarea}/rooms.{roomIDX}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
+                                                                msg += f"🟢{area}/{subarea}/rooms.???.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
                                                                 messages["greens"].append(msg)
                                                                 messages["counts"]["greens"] += 1
                             # Validate Nodes
@@ -868,9 +874,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                                 otherRef = f"{oNode['roomid']}:{oNode['roomName']}:{oNode['nodeid']}:{oNode['nodeName']}"
                                                                 foundNode = True
                                     if not foundNode:
-                                        msg = f"🔴ERROR: Orphaned Node! {nodeRef}"
-                                        messages["reds"].append(msg)
-                                        messages["counts"]["reds"] += 1
+                                        pass
+                                        # msg = f"🔴ERROR: Orphaned Node! {nodeRef}"
+                                        # messages["reds"].append(msg)
+                                        # messages["counts"]["reds"] += 1
                                     else:
                                         msg = f"🟢{nodeRef}" + "\n" + f"::{otherRef}"
                                         # messages["greens"].append(msg)

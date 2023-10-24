@@ -6,6 +6,8 @@ import json
 import os
 import re
 
+from collections import OrderedDict
+
 data = {
     "regions": {},
     "roomIDsByLCRoomName": {},
@@ -19,124 +21,137 @@ regionPath = os.path.join(
 )
 
 # cycle through regions
+print("> Cycling regions")
 for region in os.listdir(regionPath):
     # if it's a folder
     if os.path.isdir(os.path.join(regionPath, region)):
+        print(f" > {region}")
         # add the region to our notes
         data["regions"][region] = []
         data["roomsByRegion"][region] = {}
-        # cycle through files
+        # cycle through subregions
         for subregion in os.listdir(os.path.join(regionPath, region)):
-            # if it's a JSON file and not a roomDiagram
-            if ".json" in subregion and "roomDiagrams" not in subregion:
-                # add the subregion to our notes
-                data["regions"][region].append(os.path.splitext(subregion)[0])
-                # open a subregion file
-                with open(os.path.join(regionPath, region, subregion), "r", encoding="utf-8") as subregionFile:
-                    subregionJSON = json.load(subregionFile)
-                    # cycle through rooms
-                    for room in subregionJSON["rooms"]:
-                        # add smooshed name to our notes
-                        data["smooshedRoomNames"].append("".join([s for s in room["name"] if s.isalnum()]))
-                        data["smooshedRoomNames"].sort()
-                        # add LC'd name to our notes
-                        data["roomIDsByLCRoomName"][room["name"].lower()] = room["id"]
-                        for stripped in [
-                            room["name"].lower(),
-                            "".join([s for s in room["name"].lower() if s.isalnum() or s.isspace()])
-                        ]:
-                            for [search, repls] in {"": "", "\\W": " "}.items():
-                                for repl in repls:
-                                    stripped = re.sub(r"[" + search + "]+", repl, room["name"].lower())
-                                stripped = re.sub(r"[\s]{2,}", " ", stripped)
-                                stripped = re.sub(r" s ", "s ", stripped)
-                                if stripped.startswith("the "):
-                                    data["roomIDsByLCRoomName"][stripped[4:]] = room["id"]
-                                if stripped != room["name"].lower():
-                                    data["roomIDsByLCRoomName"][stripped] = room["id"]
+            if os.path.isdir(os.path.join(regionPath, region, subregion)):
+                # if it's not a roomDiagram
+                if "roomDiagrams" not in subregion:
+                    print(f"  > {region}/{subregion}")
+                    # cycle through files
+                    for roomFileName in os.listdir(os.path.join(regionPath, region, subregion)):
+                        # if it's a JSON file
+                        if ".json" in roomFileName:
+                            roomName = roomFileName.replace(".json", "")
+                            print(f"   > {region}/{subregion}/{roomName}")
+                            # add the subregion to our notes
+                            if os.path.splitext(subregion)[0] not in data["regions"][region]:
+                                data["regions"][region].append(os.path.splitext(subregion)[0])
+                            # open a room file
+                            with open(os.path.join(regionPath, region, subregion, roomFileName), "r", encoding="utf-8") as roomFile:
+                                roomJSON = json.load(roomFile)
+                                # read through room
+                                rooms = [roomJSON]
+                                for room in rooms:
+                                    # add smooshed name to our notes
+                                    data["smooshedRoomNames"].append("".join([s for s in room["name"] if s.isalnum()]))
+                                    data["smooshedRoomNames"].sort()
+                                    # add LC'd name to our notes
+                                    data["roomIDsByLCRoomName"][room["name"].lower()] = room["id"]
+                                    for stripped in [
+                                        room["name"].lower(),
+                                        "".join([s for s in room["name"].lower() if s.isalnum() or s.isspace()])
+                                    ]:
+                                        for [search, repls] in {"": "", "\\W": " "}.items():
+                                            for repl in repls:
+                                                stripped = re.sub(r"[" + search + "]+", repl, room["name"].lower())
+                                            stripped = re.sub(r"[\s]{2,}", " ", stripped)
+                                            stripped = re.sub(r" s ", "s ", stripped)
+                                            if stripped.startswith("the "):
+                                                data["roomIDsByLCRoomName"][stripped[4:]] = room["id"]
+                                            if stripped != room["name"].lower():
+                                                data["roomIDsByLCRoomName"][stripped] = room["id"]
 
-                        if "ceres" in room["area"].lower():
-                            room["area"] = "Ceres"
-                            room["subarea"] = "Ceres"
+                                    if "ceres" in room["area"].lower():
+                                        room["area"] = "Ceres"
+                                        room["subarea"] = "Ceres"
 
-                        # trim nodes
-                        for [i, node] in enumerate(room["nodes"]):
-                            for nuke in [
-                                "runways",
-                                "canLeaveCharged",
-                                "leaveWithGMode",
-                                "leaveWithGModeSetup",
-                                "gModeImmobile",
-                                "viewableNodes",
-                                "locks"
-                            ]:
-                                if nuke in node:
-                                    del node[nuke]
-                            room["nodes"][i] = node
+                                    # trim nodes
+                                    for [i, node] in enumerate(room["nodes"]):
+                                        for nuke in [
+                                            "runways",
+                                            "canLeaveCharged",
+                                            "leaveWithGMode",
+                                            "leaveWithGModeSetup",
+                                            "gModeImmobile",
+                                            "viewableNodes",
+                                            "locks"
+                                        ]:
+                                            if nuke in node:
+                                                del node[nuke]
+                                        room["nodes"][i] = node
 
-                        # trim room
-                        if "reusableRoomwideNotable" in room: del room["reusableRoomwideNotable"]
-                        if "obstacles" in room: del room["obstacles"]
-                        if "enemies" in room:   del room["enemies"]
+                                    # trim room
+                                    if "reusableRoomwideNotable" in room: del room["reusableRoomwideNotable"]
+                                    if "obstacles" in room: del room["obstacles"]
+                                    if "enemies" in room:   del room["enemies"]
 
-                        # trim links
-                        if "links" in room:
-                            for [i, link] in enumerate(room["links"]):
-                                for [j, toNode] in enumerate(link["to"]):
-                                    if "strats" in toNode: del toNode["strats"]
-                                    link["to"][j] = toNode
-                                room["links"][i] = link
+                                    # trim links
+                                    if "links" in room:
+                                        for [i, link] in enumerate(room["links"]):
+                                            for [j, toNode] in enumerate(link["to"]):
+                                                if "strats" in toNode: del toNode["strats"]
+                                                link["to"][j] = toNode
+                                            room["links"][i] = link
 
-                        # add roomDiagram path
-                        sanitizedRoomName = room["name"]
-                        for [repl, chars] in {
-                            "": [
-                                "-",
-                                ".",
-                                "(",
-                                ")",
-                                "'"
-                            ],
-                            "-": [
-                                "\\",
-                                "/"
-                            ]
-                        }.items():
-                            for char in chars:
-                                sanitizedRoomName = sanitizedRoomName.replace(char, repl)
-                        sanitizedRoomName = sanitizedRoomName \
-                            .replace(" and ", " And ") \
-                            .replace(" ", "")
+                                    # add roomDiagram path
+                                    sanitizedRoomName = room["name"]
+                                    for [repl, chars] in {
+                                        "": [
+                                            "-",
+                                            ".",
+                                            "(",
+                                            ")",
+                                            "'"
+                                        ],
+                                        "-": [
+                                            "\\",
+                                            "/"
+                                        ]
+                                    }.items():
+                                        for char in chars:
+                                            sanitizedRoomName = sanitizedRoomName.replace(char, repl)
+                                    sanitizedRoomName = sanitizedRoomName \
+                                        .replace(" and ", " And ") \
+                                        .replace(" ", "")
 
-                        subarea = room["subarea"].lower()
+                                    subarea = room["subarea"].lower()
 
-                        if "subsubarea" in room:
-                            subsubarea = room["subsubarea"]
-                            subarea = f"{subarea.lower()}-{subsubarea.lower()}"
-                            if "norfair" in region:
-                                subarea = subsubarea.lower()
+                                    if "subsubarea" in room:
+                                        subsubarea = room["subsubarea"]
+                                        subarea = f"{subarea.lower()}-{subsubarea.lower()}"
+                                        if "norfair" in region:
+                                            subarea = subsubarea.lower()
 
-                        roomDiagram = os.path.join(
-                            # ".",
-                            "region",
-                            region,
-                            "roomDiagrams",
-                            f"{subarea}_{room['id']}_{sanitizedRoomName}.png"
-                        )
+                                    roomDiagram = os.path.join(
+                                        # ".",
+                                        "region",
+                                        region,
+                                        "roomDiagrams",
+                                        f"{subarea}_{room['id']}_{sanitizedRoomName}.png"
+                                    )
 
-                        if os.path.isfile(roomDiagram):
-                            room["roomDiagram"] = roomDiagram
-                        else:
-                            print(f"ERROR: {region}:{subarea}:{room['id']}:{room['name']} roomDiagram not found!")
+                                    if os.path.isfile(roomDiagram):
+                                        room["roomDiagram"] = roomDiagram
+                                    else:
+                                        print(f"ERROR: {region}:{subarea}:{room['id']}:{room['name']} roomDiagram not found!")
 
-                        # add trimmed room to our notes
-                        if subarea.lower() not in data["roomsByRegion"][region]:
-                            data["roomsByRegion"][region][subarea] = {}
-                        data["roomsByRegion"][region][subarea][room["id"]] = room
-                        data["roomMetasByID"][room["id"]] = {
-                             "region": region,
-                             "subarea": subarea
-                        }
+                                    # add trimmed room to our notes
+                                    if subarea.lower() not in data["roomsByRegion"][region]:
+                                        data["roomsByRegion"][region][subarea] = {}
+                                    data["roomsByRegion"][region][subarea][room["id"]] = room
+                                    data["roomMetasByID"][room["id"]] = {
+                                         "region": region,
+                                         "subarea": subarea,
+                                         "roomName": room["name"]
+                                    }
 
 for jsonKey in [
     "regions",
@@ -155,6 +170,8 @@ for jsonKey in [
         "w",
         encoding="utf-8"
     ) as jsonFile:
+        # if isinstance(data[jsonKey], dict):
+        #     data[jsonKey] = OrderedDict(sorted(data[jsonKey].items(), reverse=True))
         jsonFile.write(json.dumps(data[jsonKey], indent=2))
 
 for region, regionData in data["roomsByRegion"].items():
