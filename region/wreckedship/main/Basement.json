@@ -1,0 +1,353 @@
+{
+  "id": 156,
+  "name": "Basement",
+  "area": "Wrecked Ship",
+  "subarea": "Main",
+  "playable": true,
+  "roomAddress": "0x7CC6F",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Basement Left Door (to Map)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a2a0",
+      "doorEnvironments": [{"physics": "air"}],
+      "runways": [
+        {
+          "name": "Base Runway - Basement Left Door (to Map)",
+          "length": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "usableComingIn": false,
+          "openEnd": 1
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 33,
+          "framesRemaining": 120,
+          "openEnd": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ]
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Atomic",
+            "notable": false,
+            "requires": [
+              "f_DefeatedPhantoon"
+            ]
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Atomic",
+            "type": "contact",
+            "hits": 1
+          }},
+          "f_DefeatedPhantoon"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Basement Top Door (to Main Shaft)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a294",
+      "doorEnvironments": [{"physics": "air"}],
+      "jumpways": [
+        {
+          "name": "Door frame",
+          "jumpwayType": "doorFrameBelow",
+          "height": 2,
+          "requires": []
+        },
+        {
+          "name": "Platform",
+          "jumpwayType": "platformBelow",
+          "height": 6,
+          "leftPosition": -5.5,
+          "rightPosition": 5.5,
+          "requires": [],
+          "devNote": "We could add another jumpway (or two) for the long platform below but it does not yet seem to have an application."
+        }
+      ],
+      "canLeaveCharged": [
+        {
+          "usedTiles": 33,
+          "framesRemaining": 60,
+          "openEnd": 2,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ]
+        }
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Atomic",
+            "type": "contact",
+            "hits": 1
+          }},
+          "f_DefeatedPhantoon"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "Phantoon Eye Door",
+      "nodeType": "door",
+      "nodeSubType": "eye",
+      "nodeAddress": "0x001a2ac",
+      "doorEnvironments": [{"physics": "air"}],
+      "runways": [
+        {
+          "name": "Base Runway - Phantoon Eye Door",
+          "length": 1,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "usableComingIn": false,
+          "openEnd": 1
+        }
+      ],
+      "locks": [
+        {
+          "name": "Phantoon Eye Lock",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canOpenEyeDoors"
+              ]
+            }
+          ]
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Atomic from the Left",
+            "notable": false,
+            "requires": [
+              "f_DefeatedPhantoon",
+              "h_canBombThings"
+            ],
+            "devNote": "FIXME could have already broken the blocks, or could come in with artificial morph from any door to lure an atomic."
+          }
+        ]}
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Basement Atomics",
+      "enemyName": "Atomic",
+      "quantity": 3,
+      "homeNodes": [1, 2],
+      "spawn": ["f_DefeatedPhantoon"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Basement Workrobots",
+      "enemyName": "Workrobot",
+      "quantity": 2,
+      "homeNodes": [1, 2],
+      "spawn": ["f_DefeatedPhantoon"]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "G-mode Morph",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "h_canArtificialMorphMovement"
+      ],
+      "note": "Use the camera scroll blocks just left of the bomb blocks, in order to overload PLMs and go through them."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Atomic Farm",
+      "notable": false,
+      "requires": [
+        "f_DefeatedPhantoon",
+        {"or": [
+          "ScrewAttack",
+          "Wave",
+          "Spazer",
+          "Plasma"
+        ]},
+        {"resetRoom": {
+          "nodes": [1, 2],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "Missile"]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canBombThings"
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Basement Speedball (Phantoon Dead)",
+      "notable": false,
+      "requires": [
+        "canMockball",
+        "f_DefeatedPhantoon",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "shinesparkFrames": 0,
+          "openEnd": 2
+        }}
+      ],
+      "note": [
+        "This speedball is easier with Phantoon dead, since you can push the robots all the way left.",
+        "It's even possible to setup the short hop mockball by bonking the center platform."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Basement Speedball (Phantoon Alive)",
+      "notable": false,
+      "requires": [
+        "canMockball",
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "shinesparkFrames": 0,
+          "openEnd": 0
+        }}
+      ],
+      "note": "This speedball is harder with Phantoon alive and has a shorter runway because of the robot standing in the way."
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "G-mode Morph",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [2],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "h_canArtificialMorphMovement"
+      ],
+      "note": "Use the camera scroll blocks just left of the bomb blocks, in order to overload PLMs and go through them."
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canBombThings"
+      ]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Speedball",
+      "notable": false,
+      "requires": [
+        "canMockball",
+        "canCarefulJump",
+        "canSlowShortCharge",
+        {"canComeInCharged": {
+          "framesRemaining": 180,
+          "shinesparkFrames": 0,
+          "fromNode": 3,
+          "unusableTiles": 2
+        }}
+      ],
+      "devNote": "A more controlled angle is needed entering the room for this strat."
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "G-mode",
+      "notable": false,
+      "requires": [
+        "Morph",
+        {"comeInWithGMode": {
+          "fromNodes": [3],
+          "mode": "any",
+          "artificialMorph": false
+        }}
+      ],
+      "note": "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them. Cancel g-mode and return into the morph tunnel to fix the camera."
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "G-mode Morph While Blind",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [3],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "canOffScreenMovement"
+      ],
+      "note": "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them. Dodge the enemies while getting to the door."
+    }
+  ]
+}

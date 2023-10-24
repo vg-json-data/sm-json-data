@@ -1,0 +1,152 @@
+{
+  "id": 116,
+  "name": "Volcano Room",
+  "area": "Norfair",
+  "subarea": "Upper",
+  "subsubarea": "East",
+  "playable": true,
+  "roomAddress": "0x7AE32",
+  "roomEnvironments": [
+    {
+      "entranceNodes": [1],
+      "heated": false,
+      "note": "This room is not heated when entering from the top"
+    },
+    {
+      "entranceNodes": [2],
+      "heated": true,
+      "note": "This room is only heated when entering from the bottom"
+    }
+  ],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Volcano Room Top Left Door (to Spiky Platforms Tunnel)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001964e",
+      "doorEnvironments": [{"physics": "air"}],
+      "runways": [
+        {
+          "name": "Base Runway - Volcano Room Top Left Door (to Spiky Platforms Tunnel)",
+          "length": 7,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                {"heatFrames": 110}
+              ]
+            }
+          ],
+          "openEnd": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Volcano Room Bottom Left Door (to Kronic Boost Room)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001965a",
+      "doorEnvironments": [
+        {
+          "physics": "lava",
+          "entranceNodes": [1],
+          "note": "There is always lava at this door if entering from node 1"
+        },
+        {
+          "physics": "air",
+          "entranceNodes": [2],
+          "note": "Lava can eventually rise up to this door entering from node 2, but it's possible to have air physics"
+        }
+      ],
+      "runways": [
+        {
+          "name": "Base Runway - Volcano Room Bottom Left Door (to Kronic Boost Room)",
+          "length": 5,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canNavigateHeatRooms",
+                {"heatFrames": 90},
+                {"resetRoom": {
+                  "nodes": [2],
+                  "mustStayPut": true
+                }}
+              ]
+            }
+          ],
+          "openEnd": 1,
+          "note": "Can't charge in lava, so doesn't work coming in from the top left door"
+        }
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Volcano Room Top Funes",
+      "enemyName": "Fune",
+      "quantity": 5,
+      "homeNodes": [1],
+      "dropRequires": ["h_heatProof"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Volcano Room Bottom Fune",
+      "enemyName": "Fune",
+      "quantity": 1,
+      "homeNodes": [2],
+      "dropRequires": ["h_heatProof", "Gravity"]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "Morph",
+        {"or": [
+          "canMockball",
+          {"lavaFrames": 10}
+        ]},
+        {"or": [
+          {"lavaFrames": 215},
+          {"and": [
+            "SpaceJump",
+            {"lavaFrames": 145}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Suitless Volcano Dive",
+      "notable": false,
+      "requires": [
+        "canSuitlessLavaDive",
+        "Morph",
+        {"lavaFrames": 450}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"heatFrames": 650}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "id": 242,
+  "name": "Tourian Escape Room 4",
+  "area": "Tourian",
+  "subarea": "Main",
+  "playable": true,
+  "roomAddress": "0x7DEDE",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Tourian Escape Room 4 Left Door (to Escape Room 3)",
+      "nodeType": "door",
+      "nodeSubType": "grey",
+      "nodeAddress": "0x001ab28",
+      "doorEnvironments": [{"physics": "air"}],
+      "runways": [
+        {
+          "name": "Base Runway - Tourian Escape Room 4 Left Door (to Escape Room 3)",
+          "length": 0,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      },
+      "locks": [
+        {
+          "name": "Tourian Escape 4 Lock (to Escape Room 3)",
+          "lockType": "permanent",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "never"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Tourian Escape Room 4 Right Door (to Climb)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001ab34",
+      "doorEnvironments": [{"physics": "air"}],
+      "runways": [
+        {
+          "name": "Base Runway - Tourian Escape Room 4 Right Door (to Climb)",
+          "length": 25,
+          "strats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": []
+            }
+          ],
+          "openEnd": 1
+        }
+      ]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Tourian Escape Room 4 Left Pirates",
+      "enemyName": "Tourian Space Pirate (all)",
+      "quantity": 6,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Tourian Escape Room 4 Right Pirates",
+      "enemyName": "Tourian Space Pirate (all)",
+      "quantity": 7,
+      "homeNodes": [2]
+    }
+  ],
+  "strats": [
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "HiJump",
+          "SpaceJump",
+          "canWalljump",
+          {"and": [
+            "h_canIBJ",
+            "h_canCrouchJumpDownGrab"
+          ]}
+        ]},
+        {"or": [
+          "canCarefulJump",
+          "ScrewAttack",
+          "Morph",
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "devNote": "IBJ can be used to avoid wall jumps before the acid starts rising, but a crouch jump down grab is needed near the right door."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "G-Mode Morph PB Pirate Kill",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "h_canArtificialMorphIBJ",
+        {"ammo": {"type": "PowerBomb", "count": 10}},
+        "h_canCrouchJumpDownGrab"
+      ],
+      "note": [
+        "IBJ and use 10 PBs to kill the pirates and get to the top. Exit gmode and fall to the bottom.",
+        "Quickly climb the platforms - there is a route that doesn't need wall jumps, but a crouch jump down grab is needed to get to the final platform."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Protected Shaft Climb",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"and": [
+            "canConsecutiveWalljump",
+            {"or": [
+              "ScrewAttack",
+              "canWalljumpWithCharge"
+            ]}
+          ]},
+          {"and": [
+            "SpaceJump",
+            "HiJump",
+            {"or": [
+              "ScrewAttack",
+              "canPseudoScrew"
+            ]}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Use Screw Attack or a Pseudo Screw to avoid Space Pirate attacks while climbing the central shaft.",
+        "The Screw Attack effect is not active when Samus is preparing to Walljump."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Reverse Tourian Escape Room 4 Dodge While Climbing",
+      "notable": true,
+      "requires": [
+        {"or": [
+          "canCarefulJump",
+          "ScrewAttack",
+          "Morph",
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }},
+          {"canComeInCharged": {
+            "framesRemaining": 180,
+            "fromNode": 2,
+            "shinesparkFrames": 0,
+            "unusableTiles": 22
+          }}
+        ]},
+        {"or": [
+          "canCarefulJump",
+          "ScrewAttack",
+          "HiJump"
+        ]},
+        {"or": [
+          "canConsecutiveWalljump",
+          {"and": [
+            "SpaceJump",
+            {"or": [
+              "HiJump",
+              {"and": [
+                "canCarefulJump",
+                {"acidFrames": 20},
+                {"enemyDamage": {
+                  "enemy": "Tourian Space Pirate (all)",
+                  "type": "contact",
+                  "hits": 1
+                }}
+              ]},
+              {"acidFrames": 100}
+            ]}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Navigate Leodox Room in reverse by killing or distracting the right side pirates and manipulating or dodging the left side pirates during the shaft climb.",
+        "The acid starts rising when Samus is at the bottom of the long climb.",
+        "The right-side pirates can be killed while going down to prevent having to dodge their lasers during the climb.",
+        "Alternatively, jump and force the pirates to shoot just before starting to climb."
+      ]
+    }
+  ]
+}
