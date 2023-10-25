@@ -5,7 +5,10 @@ import copy
 import format_json
 
 def restructure_room(room_json):
-    new_room_json = copy.deepcopy(room_json)
+    new_room_json = {
+        "$schema": "../../../schema/m3-room.schema.json",
+        **copy.deepcopy(room_json)
+    }
     strat_list = []
     for link_json in new_room_json["links"]:
         from_id = link_json["from"]
@@ -20,7 +23,6 @@ def restructure_room(room_json):
                 strat_list.append(new_strat)
     new_room_json["strats"] = strat_list
     del new_room_json["links"]
-    new_room_json["$schema"] = "../../schema/m3-room.schema.json"
     return new_room_json
 
 for path in sorted(Path("../region/").glob("**/*.json")):
