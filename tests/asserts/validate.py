@@ -197,65 +197,69 @@ for region in os.listdir(os.path.join(".", "region")):
     if os.path.isdir(os.path.join(".", "region", region)):
         print("  " + region.capitalize())
         for subregion in os.listdir(os.path.join(".", "region", region)):
-            if ".json" in subregion and "roomDiagrams" not in subregion:
-                print("   " + subregion[:subregion.find(".")].capitalize())
-                with open(
-                    os.path.join(
-                        ".",
-                        "region",
-                        region,
-                        subregion
-                    ),
-                    "r",
-                    encoding="utf-8"
-                ) as jsonFile:
-                    regionJSON = None
+            if os.path.isdir(os.path.join(".", "region", region, subregion)):
+                if "roomDiagrams" not in subregion:
+                    for roomFileName in os.listdir(os.path.join(".", "region", region, subregion)):
+                        if ".json" in roomFileName:
+                            roomName = roomFileName.replace(".json", "")
+                            print("   " + roomName)
+                            with open(
+                                os.path.join(
+                                    ".",
+                                    "region",
+                                    region,
+                                    subregion,
+                                    roomFileName
+                                ),
+                                "r",
+                                encoding="utf-8"
+                            ) as jsonFile:
+                                roomJSON = None
+                                try:
+                                    regionJSON = json.load(jsonFile)
+                                except json.JSONDecodeError as e:
+                                    jsonFile.seek(0)
+                                    errorLine = ""
+                                    errorCol = 0
+                                    pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
+                                    match = re.match(pattern, str(e))
+                                    if match:
+                                        line_num = int(match.group(1))
+                                        for i,line in enumerate(jsonFile):
+                                            if i == (line_num - 1):
+                                                errorLine = line
+                                            if i > line_num:
+                                                break
+                                        errorCol = int(match.group(2))
+                                    errors.append([
+                                        f"🔴ERROR: Region '{region}/{subregion}/{roomName}' is malformed!",
+                                        e,
+                                        errorLine.replace("\n",""),
+                                        ("-" * (errorCol - 3)) + "^"
+                                    ])
+                                    bail = True
 
-                    try:
-                        regionJSON = json.load(jsonFile)
-                    except json.JSONDecodeError as e:
-                        jsonFile.seek(0)
-                        errorLine = ""
-                        errorCol = 0
-                        pattern = r"^(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)(\d+)(?:\D+)$"
-                        match = re.match(pattern, str(e))
-                        if match:
-                            line_num = int(match.group(1))
-                            for i,line in enumerate(jsonFile):
-                                if i == (line_num - 1):
-                                    errorLine = line
-                                if i > line_num:
-                                    break
-                            errorCol = int(match.group(2))
-                        errors.append([
-                            f"🔴ERROR: Region '{region}/{subregion}' is malformed!",
-                            e,
-                            errorLine.replace("\n",""),
-                            ("-" * (errorCol - 3)) + "^"
-                        ])
-                        bail = True
+                                if regionJSON:
+                                    try:
+                                        result = validate(
+                                            instance=regionJSON,
+                                            schema=schemas["m3"]["room"],
+                                            resolver=RefResolver(
+                                                base_uri=schemaURI,
+                                                referrer=schemas["m3"]["room"]
+                                            )
+                                        )
+                                    except JSONSchemaExceptions.ValidationError as e:
+                                        errors.append([
+                                            f"🔴ERROR: Region '{region}/{subregion}' doesn't validate!",
+                                            e,
+                                            "---"
+                                        ])
+                                        bail = True
 
-                    if regionJSON:
-                        try:
-                            result = validate(
-                                instance=regionJSON,
-                                schema=schemas["m3"]["region"],
-                                resolver=RefResolver(
-                                    base_uri=schemaURI,
-                                    referrer=schemas["m3"]["region"]
-                                )
-                            )
-                        except JSONSchemaExceptions.ValidationError as e:
-                            errors.append([
-                                f"🔴ERROR: Region '{region}/{subregion}' doesn't validate!",
-                                e,
-                                "---"
-                            ])
-                            bail = True
-
-                    if result:
-                        print("    " + "INVALID")
-                        pass
+                                if result:
+                                    print("    " + "INVALID")
+                                    pass
 print()
 
 # weapons
