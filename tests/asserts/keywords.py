@@ -343,7 +343,6 @@ with open(
 
 print("")
 print("Check Regions")
-last_fullarea = None
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
@@ -363,9 +362,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                 subsubarea = room["subsubarea"] if "subsubarea" in room else ""
                 showArea = False
                 fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "")
-                if fullarea != last_fullarea:
-                    print(fullarea)
-                    last_fullarea = fullarea
 
                 # do a naive pass on all data in this region
                 for [k, v] in flattened_dict.items():
@@ -463,12 +459,23 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Document Links
                     # Document Link Strats
                     for strat in room["strats"]:
+                        if "from" not in strat:
+                            msg = f"🔴ERROR: Strat is missing From Node:{fromNodeRef}:{strat['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
                         fromNode = strat["from"]
                         fromNodeRef = f"{roomRef}:FromNode[{fromNode}]"
                         if fromNode not in roomData["nodes"]["ids"]:
                             msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
+
+                        if "to" not in strat:
+                            msg = f"🔴ERROR: Strat is missing To Node:{fromNodeRef}:{strat['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
                         toNode = strat["to"]
                         roomData["nodes"]["tos"].append(toNode)
                         toNodeRef = f"{roomRef}:FromNode[{fromNode}]:ToNode[{toNode}]"
@@ -617,6 +624,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                     # Validate strats
                     for strat in room["strats"]:
+                        if "from" not in strat or "to" not in strat:
+                            # Errors are already generated above if either of these fields is missing.
+                            continue
                         fromNode = strat["from"]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
                         toNode = strat["to"]
