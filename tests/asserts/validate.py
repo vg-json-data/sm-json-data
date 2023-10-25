@@ -199,10 +199,10 @@ for region in os.listdir(os.path.join(".", "region")):
         for subregion in os.listdir(os.path.join(".", "region", region)):
             if os.path.isdir(os.path.join(".", "region", region, subregion)):
                 if "roomDiagrams" not in subregion:
+                    print("   " + subregion)
                     for roomFileName in os.listdir(os.path.join(".", "region", region, subregion)):
                         if ".json" in roomFileName:
                             roomName = roomFileName.replace(".json", "")
-                            print("   " + roomName)
                             with open(
                                 os.path.join(
                                     ".",

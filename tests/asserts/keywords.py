@@ -343,6 +343,7 @@ with open(
 
 print("")
 print("Check Regions")
+last_fullarea = None
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
@@ -361,8 +362,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                 subarea = room["subarea"]
                 subsubarea = room["subsubarea"] if "subsubarea" in room else ""
                 showArea = False
-                fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "") + f"/{roomName}"
-                print(fullarea)
+                fullarea = f"{area}/{subarea}" + ((subsubarea != "") and f"/{subsubarea}" or "")
+                if fullarea != last_fullarea:
+                    print(fullarea)
+                    last_fullarea = fullarea
 
                 # do a naive pass on all data in this region
                 for [k, v] in flattened_dict.items():
