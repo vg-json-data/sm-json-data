@@ -502,6 +502,7 @@ A `comeInWithDoorStuckSetup` entrance condition indicates that Samus must enter 
 
 A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condition on the other side of the door. A match comes with the following implicit requirements for actions to be performed in the previous room:
 - If the previous room is heated, a minimum requirement of `{"heatFrames": 100}` is included, for positioning and executing the door stuck setup; depending on the desired difficulty, this requirement can be increased to add leniency. Note that if X-Ray Scope is available (and it always should be for a strat with this condition, since the only known application of door stuck setups is for X-Ray climbing), then minimizing heat damage is made easier by using X-Ray to buffer the positioning near the door and to turn around in place.
+- If the current room is heated and leniency is desired for failed attempts, then a minimum requirement of `{"heatFrames": 50}` should be included per potential failed attempt.
 - If the previous room is to the left, then a tech requirement `canStationarySpinJump` is included.
 - If the previous room is to the right, then a tech requirement `canRightSideDoorStuck` is included.
 - If the previous door environment is water and is to the right, then a requirement `{"or": ["Gravity", "canRightSideDoorStuckFromWater"]}` is included.
