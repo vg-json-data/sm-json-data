@@ -6,6 +6,8 @@ import os
 import json
 import re
 from pathlib import Path
+import jsonschema.validators
+from jsonschema.validators import Draft7Validator
 from jsonschema import validate, RefResolver
 from jsonschema import exceptions as JSONSchemaExceptions
 
@@ -193,16 +195,24 @@ print()
 
 # regions
 print(" REGIONS")
+room_validator = Draft7Validator(
+    schema=schemas["m3"]["room"],
+    resolver=RefResolver(
+        base_uri=schemaURI,
+        referrer=schemas["m3"]["room"]
+    )
+)
 for region in os.listdir(os.path.join(".", "region")):
     if os.path.isdir(os.path.join(".", "region", region)):
         print("  " + region.capitalize())
         for subregion in os.listdir(os.path.join(".", "region", region)):
             if os.path.isdir(os.path.join(".", "region", region, subregion)):
                 if "roomDiagrams" not in subregion:
+                    print("   " + subregion)
                     for roomFileName in os.listdir(os.path.join(".", "region", region, subregion)):
                         if ".json" in roomFileName:
                             roomName = roomFileName.replace(".json", "")
-                            print("   " + roomName)
+                            # print("    " + roomName)
                             with open(
                                 os.path.join(
                                     ".",
@@ -215,7 +225,6 @@ for region in os.listdir(os.path.join(".", "region")):
                                 encoding="utf-8"
                             ) as jsonFile:
                                 roomJSON = None
-
                                 try:
                                     roomJSON = json.load(jsonFile)
                                 except json.JSONDecodeError as e:
@@ -233,26 +242,20 @@ for region in os.listdir(os.path.join(".", "region")):
                                                 break
                                         errorCol = int(match.group(2))
                                     errors.append([
-                                        f"🔴ERROR: Region '{region}/{subregion}/{roomName}' is malformed!",
+                                        f"🔴ERROR: Room '{region}/{subregion}/{roomName}' is malformed!",
                                         e,
                                         errorLine.replace("\n",""),
                                         ("-" * (errorCol - 3)) + "^"
                                     ])
                                     bail = True
 
+
                                 if roomJSON:
                                     try:
-                                        result = validate(
-                                            instance=roomJSON,
-                                            schema=schemas["m3"]["region"],
-                                            resolver=RefResolver(
-                                                base_uri=schemaURI,
-                                                referrer=schemas["m3"]["region"]
-                                            )
-                                        )
+                                        result = room_validator.validate(roomJSON)
                                     except JSONSchemaExceptions.ValidationError as e:
                                         errors.append([
-                                            f"🔴ERROR: Region '{region}/{subregion}/{roomName}' doesn't validate!",
+                                            f"🔴ERROR: Room '{region}/{subregion}/{roomName}' doesn't validate!",
                                             e,
                                             "---"
                                         ])
