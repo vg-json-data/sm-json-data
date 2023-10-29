@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 241,
   "name": "Tourian Escape Room 3",
   "area": "Tourian",
@@ -14,35 +15,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001ab10",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Tourian Escape Room 3 Left Door (to Escape Room 2)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Tourian Escape 3 Lock (to Escape Room 2)",
@@ -65,35 +37,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001ab1c",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Tourian Escape Room 3 Right Door (to Escape Room 4)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -115,6 +59,37 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Pass Through Pirates",
       "notable": false,
@@ -133,8 +108,7 @@
           {"and": [
             "Plasma",
             "canHitbox"
-          ]},
-          "ScrewAttack"
+          ]}
         ]}
       ],
       "note": "Walk through the pirates either by taking damage or by using Plasma Beam."
@@ -142,7 +116,7 @@
     {
       "from": 1,
       "to": 2,
-      "name": "Fight Pirates Safely",
+      "name": "Fight Pirates Slowly",
       "notable": false,
       "requires": [
         {"or": [
@@ -151,15 +125,37 @@
           "h_canFly"
         ]},
         {"or": [
-          "canDodgeWhileShooting",
-          "Morph",
-          "Wave",
-          "canTurnaroundAimCancel",
-          "canXRayTurnaround"
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": [
+              "Plasma",
+              {"and": [
+                "h_hasBeamUpgrade",
+                "canBePatient"
+              ]},
+              "canBeVeryPatient"
+            ]}
+          ]},
+          {"and": [
+            {"or": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Tourian Space Pirate (all)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]},
+            {"or": [
+              "Morph",
+              "canTurnaroundAimCancel",
+              "canXRayTurnaround"
+            ]}
+          ]}
         ]}
       ],
       "note": [
-        "Run or Roll under the pirate lazers or fight the pirates from below with Wave Beam",
+        "Run from or Roll under the pirate lazers.",
         "The Pirates will also not shoot if they come on screen while Samus is crouched."
       ]
     },
@@ -175,6 +171,8 @@
           "h_canFly"
         ]},
         {"or": [
+          "Wave",
+          "ScrewAttack",
           {"and": [
             "Plasma",
             "canXRayWaitForIFrames"
@@ -195,7 +193,8 @@
             "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
           }}
         ]}
-      ]
+      ],
+      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from below with Wave."
     },
     {
       "from": 1,
@@ -209,6 +208,24 @@
         "Run into the pirates with speedbooster to save health over shinesparking.",
         "A speedy jump can reach the top platform."
       ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      },
+      "note": "Coming from the left only requires SpeedBooster to kill all the Pirates."
     },
     {
       "from": 1,
@@ -306,8 +323,7 @@
           {"and": [
             "Plasma",
             "canHitbox"
-          ]},
-          "ScrewAttack"
+          ]}
         ]}
       ],
       "note": "Walk through the pirates either by taking damage or by using Plasma Beam."
@@ -315,19 +331,42 @@
     {
       "from": 2,
       "to": 1,
-      "name": "Fight Pirates Safely",
+      "name": "Fight Pirates Slowly",
       "notable": false,
       "requires": [
         {"or": [
-          "canDodgeWhileShooting",
-          "Morph",
-          "Wave",
-          "canXRayTurnaround"
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": [
+              "Plasma",
+              {"and": [
+                "h_hasBeamUpgrade",
+                "canBePatient"
+              ]},
+              "canBeVeryPatient"
+            ]}
+          ]},
+          {"and": [
+            {"or": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Tourian Space Pirate (all)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]},
+            {"or": [
+              "Morph",
+              "canTurnaroundAimCancel",
+              "canXRayTurnaround"
+            ]}
+          ]}
         ]}
       ],
       "note": [
-        "Dodge the pirate lazers, or shoot them from above with Wave Beam",
-        "Pirates will not attack if Samus is crouched when they come on screen."
+        "Run from or Roll under the pirate lazers.",
+        "The Pirates will also not shoot if they come on screen while Samus is crouched."
       ]
     },
     {
@@ -337,6 +376,8 @@
       "notable": false,
       "requires": [
         {"or": [
+          "Wave",
+          "ScrewAttack",
           {"and": [
             "Plasma",
             "canXRayWaitForIFrames"
@@ -356,7 +397,8 @@
             "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
           }}
         ]}
-      ]
+      ],
+      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from above with Wave."
     },
     {
       "from": 2,
@@ -375,10 +417,9 @@
             "canUseSpeedEchoes",
             {"canShineCharge": {
               "usedTiles": 33,
-              "openEnd": 2,
-              "shinesparkFrames": 2,
-              "excessShinesparkFrames": 2
-            }}
+              "openEnd": 2
+            }},
+            {"shinespark": {"frames": 2, "excessFrames": 2}}
           ]}
         ]}
       ],
@@ -389,13 +430,64 @@
       "to": 1,
       "name": "Enter with Speed",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
       "requires": [
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2,
-          "shinesparkFrames": 0
-        }}
-      ]
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }},
+          {"and": [
+            "Plasma",
+            "canHitbox"
+          ]},
+          "Morph",
+          "ScrewAttack",
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"or": [
+              "h_hasBeamUpgrade",
+              "canBePatient"
+            ]}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
     }
   ]
 }

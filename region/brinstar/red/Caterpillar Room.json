@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 75,
   "name": "Caterpillar Room",
   "area": "Brinstar",
@@ -14,40 +15,6 @@
       "nodeSubType": "green",
       "nodeAddress": "0x00190a2",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Caterpillar Room Top Left Door (to Beta Power Bombs)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 0,
-          "openEnd": 1,
-          "usedTiles": 17,
-          "shinesparkFrames": 22,
-          "strats": [
-            {
-              "name": "Gate Open",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovementComplex",
-                "Morph",
-                {"obstaclesCleared": ["A"]}
-              ],
-              "note": "Slow rolling or getting a fast mockball work equally well."
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Caterpillar Room Top Left Green Lock (to Beta Power Bombs)",
@@ -71,29 +38,6 @@
       "nodeSubType": "yellow",
       "nodeAddress": "0x00190ae",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Caterpillar Room Center Left Door (to Hellway)",
-          "length": 8,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"resetRoom": {
-                  "nodes": [1, 2, 4, 5, 6],
-                  "nodesToAvoid": [3]
-                }}
-              ],
-              "note": [
-                "Runway not usable if the shot blocks are broken.",
-                "Those blocks are not an obstacle right now, but there's no need to destroy them except when travelling between nodes 2 and 3."
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "locks": [
         {
           "name": "Caterpillar Room Yellow Lock (to Hellway)",
@@ -117,20 +61,6 @@
       "nodeSubType": "green",
       "nodeAddress": "0x0019096",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Caterpillar Room Bottom Left Door (to Alpha Power Bombs)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "locks": [
         {
           "name": "Caterpillar Room Bottom Left Green Lock (to Alpha Power Bombs)",
@@ -153,22 +83,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00190d2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Caterpillar Room Bottom Right Door (to Save)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 5,
@@ -176,41 +91,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00190c6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Caterpillar Room Top Right Door (to Red Fish Room)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Caterpillar Room Top Right Door (to Red Fish Room)",
-          "length": 17,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"or": [
-                  {"ammo": {"type": "Super", "count": 1}},
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ],
-              "clearsObstacles": ["A"],
-              "note": "This longer runway is only available if the green gate is open."
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 6,
@@ -224,6 +105,11 @@
     {
       "id": "A",
       "name": "Green Gate",
+      "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "Shot Blocks",
       "obstacleType": "inanimate"
     }
   ],
@@ -244,6 +130,42 @@
     }
   ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave With Spark (Gate Open)",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 0
+        }},
+        "canShinechargeMovementComplex",
+        "Morph",
+        {"obstaclesCleared": ["A"]},
+        {"shinespark": {"frames": 22}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Slow rolling or getting a fast mockball work equally well.",
+      "devNote": [
+        "One tile longer runway could be used if the door to the right of the gate were known to be unlocked"
+      ]
+    },
     {
       "from": 1,
       "to": 4,
@@ -274,10 +196,43 @@
     },
     {
       "from": 2,
+      "to": 2,
+      "name": "Leave With Runway (Shot Blocks Broken)",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave With Runway (Shot Blocks Intact)",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["B"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "note": [
+        "Runway not usable if the shot blocks are broken.",
+        "Those blocks are not an obstacle right now, but there's no need to destroy them except when travelling between nodes 2 and 3."
+      ]
+    },
+    {
+      "from": 2,
       "to": 3,
       "name": "Base",
       "notable": false,
-      "requires": []
+      "requires": [],
+      "clearsObstacles": ["B"]
     },
     {
       "from": 2,
@@ -307,7 +262,8 @@
       "to": 2,
       "name": "Base",
       "notable": false,
-      "requires": []
+      "requires": [],
+      "clearsObstacles": ["B"]
     },
     {
       "from": 3,
@@ -322,6 +278,19 @@
         {"refill": ["PowerBomb"]}
       ],
       "devNote": "FIXME: Other nodes could be used to reset the room, with additional requirements."
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
     },
     {
       "from": 4,
@@ -377,6 +346,19 @@
       "devNote": "FIXME: Other nodes could be used to reset the room, with additional requirements."
     },
     {
+      "from": 4,
+      "to": 4,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
       "from": 5,
       "to": 1,
       "name": "Base",
@@ -408,6 +390,37 @@
         }},
         {"refill": ["Energy", "Super", "PowerBomb"]}
       ]
+    },
+    {
+      "from": 5,
+      "to": 5,
+      "name": "Leave With Runway (Gate Closed)",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 5,
+      "to": 5,
+      "name": "Leave With Runway (Gate Open)",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"ammo": {"type": "Super", "count": 1}},
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 18,
+          "openEnd": 0
+        }
+      }
     },
     {
       "from": 6,

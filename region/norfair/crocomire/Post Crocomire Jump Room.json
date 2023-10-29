@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 127,
   "name": "Post Crocomire Jump Room",
   "area": "Norfair",
@@ -14,21 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00194da",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Post Crocomire Jump Room Left Door (to Grapple)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -105,41 +92,6 @@
             "It also makes it possible to gain more speed by running a few tiles further, which is needed for certain strats."
           ]
         }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 32,
-          "framesRemaining": 60,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Speed Blocks Broken",
-              "notable": false,
-              "requires": [
-                {"obstaclesCleared": ["B"]}
-              ],
-              "note": "This is available if obstacle B can be destroyed by travelling to node 4."
-            }
-          ]
-        },
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Break Power Bomb Blocks",
-              "notable": false,
-              "requires": [
-                {"or": [
-                  "h_canUsePowerBombs",
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ],
-              "clearsObstacles": ["A"]
-            }
-          ]
-        }
       ]
     },
     {
@@ -208,6 +160,19 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 3,
       "name": "Base",
       "notable": false,
@@ -218,19 +183,130 @@
     {
       "from": 1,
       "to": 3,
-      "name": "PCJR Left-Side Indiana Jones Shinespark",
+      "name": "Full Speed Jump to Missile",
       "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 29,
+          "speedBooster": true
+        }
+      },
       "requires": [
         "canWalljump",
+        "canCarefulJump"
+      ],
+      "note": "Jump with enough run speed to reach the wall below the Missile Item Location."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Left-Side Enter with Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "canPreciseWalljump",
+        "canConsecutiveWalljump",
         "canShinechargeMovement",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 150,
-          "shinesparkFrames": 40
-        }}
+        {"shinespark": {"frames": 78}}
       ],
-      "note": "Doesn't need hjb. Takes two walljumps, and must do the shinespark at the apex."
+      "note": "Takes three walljumps, and must shinespark at the apex."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Left-Side Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canPreciseWalljump",
+        "canConsecutiveWalljump",
+        "canShinechargeMovement",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 78}}
+      ],
+      "note": "Takes three walljumps, and must shinespark at the apex."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Left-Side Enter with Shinespark and HiJump",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
+      "requires": [
+        {"or": [
+          {"and": [
+            "canWalljump",
+            {"shinespark": {"frames": 20}}
+          ]},
+          "canTrickyDashJump"
+        ]},
+        "HiJump",
+        "canShinechargeMovement",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 60}}
+      ],
+      "note": "Walljump or build run speed using the full runway to jump high enough for the shinespark."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Left-Side HiJump Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"or": [
+          {"and": [
+            "canWalljump",
+            {"shinespark": {"frames": 20}}
+          ]},
+          "canTrickyDashJump"
+        ]},
+        "HiJump",
+        "canShinechargeMovement",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 60}}
+      ],
+      "note": "Walljump or build run speed using the full runway to jump high enough for the shinespark."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "PCJR Left Side Diagonal Shinespark",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 175
+        }
+      },
+      "requires": [
+        "canTrickyJump",
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 40}}
+      ],
+      "note": [
+        "Store a shinespark near the Grapple Room door and use the remaining runway to jump as far as possible to the right.",
+        "Once near the acid platforms, Shinespark diagonally to reach the Missile Location."
+      ]
     },
     {
       "from": 1,
@@ -242,19 +318,20 @@
         "canPreciseGrapple"
       ],
       "reusableRoomwideNotable": "PCJR Indiana Jones Grapple",
-      "note": "Involves grappling off several Ripper 2."
+      "note": "Grapple off several Ripper 2."
     },
     {
       "from": 1,
       "to": 4,
       "name": "PCJR Full Room Space Jump Through Speed Blocks",
       "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 180,
-          "shinesparkFrames": 0
-        }},
         "canBlueSpaceJump"
       ],
       "note": "The blocks can be broken if you can generate a blue suit using the previous room's runway, and carry it to the blocks by slowing floating down with Space Jump."
@@ -265,6 +342,16 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Break Power Bomb Blocks",
+      "notable": false,
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "from": 2,
@@ -280,9 +367,55 @@
           "Spazer",
           "Plasma"
         ]},
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }},
         {"refill": ["Energy", "Missile"]}
       ],
       "note": "Shoot the Mellas when they first begin to come on screen, and they will not move."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Shinecharge - Power Bomb Blocks Destroyed",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A", "B"]},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 130
+        }
+      },
+      "note": [
+        "Get a normal height jump by releasing run with SpeedBooster and no HiJump.",
+        "Break spin to reach the transition without a wall jump."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Shinecharge - Power Bomb Blocks Intact",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      },
+      "note": [
+        "Get a normal height jump by releasing run with SpeedBooster and no HiJump.",
+        "Break spin to reach the transition without a wall jump."
+      ]
     },
     {
       "from": 2,
@@ -300,26 +433,58 @@
       "notable": false,
       "requires": [
         "SpeedBooster",
-        {"or": [
-          "h_canUsePowerBombs",
-          {"obstaclesCleared": ["A"]}
-        ]}
+        {"obstaclesCleared": ["A"]}
       ],
-      "clearsObstacles": ["A", "B"]
+      "clearsObstacles": ["B"]
     },
     {
       "from": 2,
       "to": 4,
-      "name": "Shinespark",
+      "name": "Full Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 100,
-          "shinesparkFrames": 120
-        }}
+        {"shinespark": {"frames": 115}}
       ],
-      "clearsObstacles": ["B"]
+      "clearsObstacles": ["B"],
+      "note": "Spark from the ground, left of the Power Bomb blocks."
+    },
+    {
+      "from": 2,
+      "to": 4,
+      "name": "Shinespark Ends Over Acid",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 115,
+          "excessFrames": 85
+        }},
+        {"or": [
+          "canTrickyJump",
+          {"and": [
+            {"or": [
+              "canWalljump",
+              "HiJump"
+            ]},
+            {"acidFrames": 25}
+          ]},
+          {"and": [
+            "Gravity",
+            {"acidFrames": 20}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": "Spark from the ground, left of the Power Bomb blocks."
     },
     {
       "from": 2,
@@ -329,7 +494,6 @@
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
-          "shinesparkFrames": 0,
           "openEnd": 0
         }}
       ],
@@ -375,9 +539,9 @@
         "canMidairShinespark",
         {"canShineCharge": {
           "usedTiles": 32,
-          "shinesparkFrames": 90,
           "openEnd": 1
-        }}
+        }},
+        {"shinespark": {"frames": 90}}
       ],
       "note": "Fire off the shinespark at the apex of two consecutive walljumps.",
       "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
@@ -392,9 +556,9 @@
         "canMidairShinespark",
         {"canShineCharge": {
           "usedTiles": 32,
-          "shinesparkFrames": 52,
           "openEnd": 1
-        }}
+        }},
+        {"shinespark": {"frames": 52}}
       ],
       "note": "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex.",
       "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
@@ -438,9 +602,9 @@
       "requires": [
         {"canShineCharge": {
           "usedTiles": 32,
-          "shinesparkFrames": 40,
           "openEnd": 1
-        }}
+        }},
+        {"shinespark": {"frames": 40}}
       ],
       "devNote": "You can have a capped length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
     },
@@ -638,10 +802,10 @@
         "Gravity",
         {"canShineCharge": {
           "usedTiles": 33,
-          "shinesparkFrames": 35,
           "openEnd": 2
         }},
-        {"acidFrames": 140}
+        {"acidFrames": 140},
+        {"shinespark": {"frames": 35}}
       ],
       "clearsObstacles": ["B"],
       "note": "Gravity makes it possible to charge a spark in the acid in order to break the speed blocks."

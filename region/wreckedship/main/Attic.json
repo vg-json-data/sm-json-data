@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 160,
   "name": "Attic",
   "area": "Wrecked Ship",
@@ -14,67 +15,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001a1e0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Attic Left Door (to West Ocean)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "shinesparkFrames": 80,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                "canMidairShinespark"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 14,
-          "framesRemaining": 110,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 20,
-          "framesRemaining": 45,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Attic Left Grey Lock (to West Ocean)",
@@ -130,44 +70,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a1c8",
       "doorEnvironments": [{"physics": "air"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 60,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        },
-        {
-          "usedTiles": 24,
-          "framesRemaining": 125,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        },
-        {
-          "usedTiles": 18,
-          "framesRemaining": 155,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Attic Bottom Grey Lock (to Main Shaft)",
@@ -215,37 +117,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001a1d4",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Attic Right Door (to East Missiles)",
-          "length": 16,
-          "steepUpTiles": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 30,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Attic Right Grey Lock (to East Missiles)",
@@ -332,6 +203,73 @@
     }
   ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged, Second Closest Runway",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 45
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged, Closest Runway",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 110
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Door Runway, Shinespark Left",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        "canMidairShinespark",
+        {"shinespark": {"frames": 80}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
     {
       "from": 1,
       "to": 1,
@@ -460,6 +398,88 @@
     },
     {
       "from": 2,
+      "to": 2,
+      "name": "Leave Charged, Full Runway",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Charged, Partial Runway",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 24,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 125
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Charged, Short Runway",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 155
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 6, "excessFrames": 6}}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Leave Charged",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 30
+        }
+      }
+    },
+    {
+      "from": 2,
       "to": 3,
       "name": "Power Off",
       "notable": false,
@@ -534,6 +554,20 @@
           }}
         ]}
       ]
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 17,
+          "openEnd": 0,
+          "steepUpTiles": 4
+        }
+      }
     }
   ]
 }

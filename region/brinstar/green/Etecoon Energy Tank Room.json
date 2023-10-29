@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 51,
   "name": "Etecoon Energy Tank Room",
   "area": "Brinstar",
@@ -204,6 +205,11 @@
       "id": "A",
       "name": "Beetoms",
       "obstacleType": "enemies"
+    },
+    {
+      "id": "B",
+      "name": "Artificial Morph from Above",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -323,6 +329,38 @@
       "requires": []
     },
     {
+      "from": 2,
+      "to": 6,
+      "name": "G-Mode Morph Blind Movement Through Crumbles and Spikeway",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1, 2],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        "canOffScreenMovement",
+        {"or": [
+          "Bombs",
+          "SpringBall",
+          {"ammo": {"type": "PowerBomb", "count": 6}}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Fall into the pit while being careful to only touch one of the crumble blocks.",
+        "Bounce up through the camera scroll blocks to overload PLMs with Spring Ball, Bombs, or 6 Power Bombs.",
+        "Move horizontally to fall through the crumble blocks that haven't been touched.",
+        "Carefully fall to not touch the spikes on the right, then roll through the spikeway.",
+        "After the camera stops scrolling, move another 2-3 tiles then exit G-Mode.",
+        "Make small jumps to reset the camera then quickly kill the Beetom as it jumps at Samus."
+      ],
+      "devNote": [
+        "This can easily be done with fewer Power Bombs by moving horizontally through the camera scroll blocks while midair,",
+        "but the blind movement would be more annoying while risking accidentally touching the other crumble blocks."
+      ]
+    },
+    {
       "from": 3,
       "to": 2,
       "name": "Etecoon E-Tank Beetom Clip",
@@ -360,18 +398,11 @@
       "to": 2,
       "name": "Etecoon E-Tank X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canLeftDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [3],
-          "mustStayPut": true
-        }},
-        {"adjacentRunway": {
-          "fromNode": 3,
-          "usedTiles": 0.5,
-          "overrideRunwayRequirements": true,
-          "useFrames": 200
-        }}
+        "canXRayClimb"
       ],
       "note": "Climb up 1 screen.",
       "devNote": "In truth this goes to node 1, but there's no need to make a link for this since movement between 1 and 2 is free (via 5)."
@@ -434,6 +465,19 @@
         "Maintain IFrames by using X-Ray whenever a thorn would deal damage.",
         "Move by alternating between X-Ray turnarounds and normal turnarounds.",
         "Simply crouch again following any accidental X-Ray Standups."
+      ]
+    },
+    {
+      "from": 3,
+      "to": 6,
+      "name": "G-Mode Morph Through Spikeway",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [3],
+          "mode": "any",
+          "artificialMorph": true
+        }}
       ]
     },
     {
@@ -685,11 +729,15 @@
       "name": "Etecoon Beetom Tricky Dodge (Left to Right)",
       "notable": true,
       "requires": [
-        "canTrickyJump"
+        "canTrickyJump",
+        {"obstaclesNotCleared": ["B"]}
       ],
       "clearsObstacles": ["A"],
       "reusableRoomwideNotable": "Etecoon Beetom Tricky Dodge",
-      "devNote": "Although this won't kill the Beetoms, it will remove them as an obstacle.",
+      "devNote": [
+        "Although this won't kill the Beetoms, it will remove them as an obstacle.",
+        "This strat is not possible when coming blindly from above, as the Beetom will instantly grab Samus."
+      ],
       "note": [
         "Wait for the first Beetom to get stuck under the first platform, then get to the first farm.",
         "If the second Beetom is making this farm difficult to use, it may be easier to use the next farm.",

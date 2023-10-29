@@ -194,7 +194,7 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
 print()
 
 # regions
-print(" REGIONS")
+print(" ROOMS")
 room_validator = Draft7Validator(
     schema=schemas["m3"]["room"],
     resolver=RefResolver(
@@ -208,7 +208,7 @@ for region in os.listdir(os.path.join(".", "region")):
         for subregion in os.listdir(os.path.join(".", "region", region)):
             if os.path.isdir(os.path.join(".", "region", region, subregion)):
                 if "roomDiagrams" not in subregion:
-                    print("   " + subregion)
+                    print("   " + subregion.capitalize())
                     for roomFileName in os.listdir(os.path.join(".", "region", region, subregion)):
                         if ".json" in roomFileName:
                             roomName = roomFileName.replace(".json", "")
@@ -386,6 +386,6 @@ if bail:
     for errorSet in errors:
         for error in errorSet:
             pass
-            # print(error)
+            print(error)
     print("🔴Something fucked up! Bailing!")
     exit(1)

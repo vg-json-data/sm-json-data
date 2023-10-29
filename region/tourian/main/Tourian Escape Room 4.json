@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 242,
   "name": "Tourian Escape Room 4",
   "area": "Tourian",
@@ -14,20 +15,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001ab28",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Tourian Escape Room 4 Left Door (to Escape Room 3)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "gModeImmobile": {
         "requires": [
           {"enemyDamage": {
@@ -59,21 +46,21 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001ab34",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Tourian Escape Room 4 Right Door (to Climb)",
-          "length": 25,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 3,
+      "name": "Tourian Escape Room 4 Bottom of Shaft",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "This node represents being at the bottom of the shaft with the acid just starting to rise."
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Acid Filling the Right Runway",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -95,7 +82,20 @@
   "strats": [
     {
       "from": 1,
-      "to": 2,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 3,
       "name": "Base",
       "notable": false,
       "requires": [
@@ -103,28 +103,15 @@
           "HiJump",
           "SpaceJump",
           "canWalljump",
-          {"and": [
-            "h_canIBJ",
-            "h_canCrouchJumpDownGrab"
-          ]}
-        ]},
-        {"or": [
-          "canCarefulJump",
-          "ScrewAttack",
-          "Morph",
-          {"enemyDamage": {
-            "enemy": "Tourian Space Pirate (all)",
-            "type": "contact",
-            "hits": 1
-          }}
+          "h_canIBJ"
         ]}
       ],
-      "devNote": "IBJ can be used to avoid wall jumps before the acid starts rising, but a crouch jump down grab is needed near the right door."
+      "note": "The pirates are free to kill, although they take some time."
     },
     {
       "from": 1,
-      "to": 2,
-      "name": "G-Mode Morph PB Pirate Kill",
+      "to": 3,
+      "name": "G-Mode Morph Power Bomb Pirate Kill",
       "notable": false,
       "requires": [
         {"comeInWithGMode": {
@@ -133,48 +120,164 @@
           "artificialMorph": true
         }},
         "h_canArtificialMorphIBJ",
-        {"ammo": {"type": "PowerBomb", "count": 10}},
-        "h_canCrouchJumpDownGrab"
+        {"ammo": {"type": "PowerBomb", "count": 10}}
       ],
       "note": [
         "IBJ and use 10 PBs to kill the pirates and get to the top. Exit gmode and fall to the bottom.",
-        "Quickly climb the platforms - there is a route that doesn't need wall jumps, but a crouch jump down grab is needed to get to the final platform."
+        "Note that there is a path up to the right that doesn't need wall jumps, but a crouch jump down grab is needed to get to the final platform."
       ]
     },
     {
       "from": 2,
-      "to": 1,
-      "name": "Protected Shaft Climb",
+      "to": 2,
+      "name": "Leave with Runway",
       "notable": false,
       "requires": [
+        {"obstaclesNotCleared": ["A"]},
         {"or": [
+          "canCarefulJump",
+          "ScrewAttack",
+          "Morph",
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"or": [
+          "canDodgeWhileShooting",
+          "Morph",
+          {"enemyKill": {
+            "enemies": [
+              [
+                "Tourian Space Pirate (all)",
+                "Tourian Space Pirate (all)"
+              ]
+            ],
+            "explicitWeapons": ["Plasma", "ScrewAttack", "Missile", "Super"]
+          }},
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "laser",
+            "hits": 8
+          }},
           {"and": [
-            "canConsecutiveWalljump",
-            {"or": [
-              "ScrewAttack",
-              "canWalljumpWithCharge"
-            ]}
+            "Ice",
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 6
+            }}
           ]},
           {"and": [
-            "SpaceJump",
-            "HiJump",
             {"or": [
-              "ScrewAttack",
-              "canPseudoScrew"
-            ]}
+              "Wave",
+              "Spazer"
+            ]},
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 3
+            }}
+          ]},
+          {"and": [
+            "Wave",
+            "Spazer",
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 2
+            }}
           ]}
         ]}
       ],
-      "note": [
-        "Use Screw Attack or a Pseudo Screw to avoid Space Pirate attacks while climbing the central shaft.",
-        "The Screw Attack effect is not active when Samus is preparing to Walljump."
-      ]
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 26,
+          "openEnd": 1
+        }
+      }
     },
     {
       "from": 2,
-      "to": 1,
-      "name": "Reverse Tourian Escape Room 4 Dodge While Climbing",
-      "notable": true,
+      "to": 2,
+      "name": "Leave with Runway, Race the Acid",
+      "notable": false,
+      "requires": [
+        "canCarefulJump",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "canDodgeWhileShooting"
+          ]},
+          {"enemyKill": {
+            "enemies": [
+              [
+                "Tourian Space Pirate (all)",
+                "Tourian Space Pirate (all)"
+              ]
+            ],
+            "explicitWeapons": [
+              "Plasma",
+              "ScrewAttack",
+              "Missile",
+              "Super",
+              "PowerBomb"
+            ]
+          }},
+          {"and": [
+            {"or": [
+              "Ice",
+              "Wave",
+              "Spazer"
+            ]},
+            {"or": [
+              "Morph",
+              "canDodgeWhileShooting"
+            ]}
+          ]},
+          {"and": [
+            "Ice",
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 6
+            }}
+          ]},
+          {"and": [
+            {"or": [
+              "Wave",
+              "Spazer"
+            ]},
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 3
+            }}
+          ]},
+          {"and": [
+            "Wave",
+            "Spazer",
+            {"enemyDamage": {
+              "enemy": "Tourian Space Pirate (all)",
+              "type": "laser",
+              "hits": 2
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 26,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
       "requires": [
         {"or": [
           "canCarefulJump",
@@ -184,14 +287,76 @@
             "enemy": "Tourian Space Pirate (all)",
             "type": "contact",
             "hits": 1
-          }},
-          {"canComeInCharged": {
-            "framesRemaining": 180,
-            "fromNode": 2,
-            "shinesparkFrames": 0,
-            "unusableTiles": 22
           }}
-        ]},
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Kill Pirates With Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "devNote": [
+        "There are 19 unusable tiles in this runway.",
+        "It is not worthwhile to Shinespark into the room, because that would require more energy than the Pirates would deal."
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Protected Shaft Climb With Screw Attack",
+      "notable": false,
+      "requires": [
+        "ScrewAttack",
+        {"or": [
+          "canConsecutiveWalljump",
+          {"and": [
+            "SpaceJump",
+            "HiJump"
+          ]}
+        ]}
+      ],
+      "note": [
+        "Use Screw Attack to avoid Space Pirate attacks while climbing the central shaft.",
+        "The Screw Attack effect is not active when Samus is preparing to Walljump."
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Protected Shaft Climb With PseudoScrew",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"and": [
+            "canConsecutiveWalljump",
+            "canWalljumpWithCharge"
+          ]},
+          {"and": [
+            "SpaceJump",
+            "HiJump",
+            "canPseudoScrew"
+          ]}
+        ]}
+      ],
+      "note": [
+        "Use Pseudo Screw to avoid Space Pirate attacks while climbing the central shaft.",
+        "The Screw Attack effect is not active when Samus is preparing to Walljump."
+      ]
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "name": "Reverse Tourian Escape Room 4 Dodge While Climbing",
+      "notable": true,
+      "requires": [
         {"or": [
           "canCarefulJump",
           "ScrewAttack",
@@ -223,6 +388,31 @@
         "The right-side pirates can be killed while going down to prevent having to dodge their lasers during the climb.",
         "Alternatively, jump and force the pirates to shoot just before starting to climb."
       ]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "HiJump",
+          "SpaceJump",
+          "canWalljump",
+          "h_canCrouchJumpDownGrab"
+        ]},
+        {"or": [
+          "canCarefulJump",
+          "ScrewAttack",
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "IBJ can be used to avoid wall jumps before the acid starts rising, but a crouch jump down grab is needed near the right door."
     }
   ]
 }

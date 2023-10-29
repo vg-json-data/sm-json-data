@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 199,
   "name": "West Sand Hall",
   "area": "Maridia",
@@ -136,11 +137,11 @@
       "requires": [
         {"canComeInCharged": {
           "fromNode": 1,
-          "framesRemaining": 0,
-          "shinesparkFrames": 98
-        }}
+          "framesRemaining": 0
+        }},
+        {"shinespark": {"frames": 98}}
       ],
-      "note": "Frame cost assumes no Gravity"
+      "devNote": "Frame cost assumes no Gravity"
     },
     {
       "from": 1,
@@ -160,6 +161,14 @@
           "HiJump",
           "Gravity",
           "canSpringBallJumpMidAir"
+        ]},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
         ]}
       ]
     },
@@ -175,12 +184,12 @@
     {
       "from": 1,
       "to": 5,
-      "name": "Suitless",
+      "name": "Suitless SpringBall Jump",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        "canSpringBallJumpMidAir",
+        "canTrickySpringBallJump",
         "canPlayInSand"
       ]
     },
@@ -192,19 +201,20 @@
       "requires": [
         "canSuitlessMaridia",
         "canTrickyJump",
-        "canBombJumpOnSand",
         "canSandfallBounce",
+        "h_canUseMorphBombs",
         {"or": [
           "canSandIBJ",
           {"and": [
             "HiJump",
-            "canMidAirMorph"
+            "can3HighMidAirMorph"
           ]}
         ]}
       ],
       "note": [
         "Time a bomb to hit Samus when she is morphed, 1 pixel into the sand, inside a sandfall, and moving horizontally.",
-        "There is a setup using a sand IBJ to get the right timing, and another setup using a very fast jump morph with HiJump."
+        "There is a setup using a Sand IBJ to rise up the sandfall from the floor and Sandfall Bounce with the correct timing.",
+        "An alternate setup places the bomb before entering the sand and jumps into it with a very fast jump morph, using HiJump."
       ]
     },
     {
@@ -328,11 +338,11 @@
       "requires": [
         {"canComeInCharged": {
           "fromNode": 2,
-          "framesRemaining": 0,
-          "shinesparkFrames": 98
-        }}
+          "framesRemaining": 0
+        }},
+        {"shinespark": {"frames": 98}}
       ],
-      "note": "Frame cost assumes no Gravity"
+      "devNote": "Frame cost assumes no Gravity"
     },
     {
       "from": 2,
@@ -345,7 +355,8 @@
           "mode": "any",
           "artificialMorph": false
         }},
-        "h_canNavigateUnderwater"
+        "h_canNavigateUnderwater",
+        "canCarefulJump"
       ]
     },
     {
@@ -354,24 +365,51 @@
       "name": "Base",
       "notable": false,
       "requires": [
-        "Gravity"
+        "Gravity",
+        "SpaceJump"
       ]
     },
     {
       "from": 2,
       "to": 4,
-      "name": "Suitless HiJump",
+      "name": "Gravity Platforming (Right to Center)",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"or": [
+          "ScrewAttack",
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 4,
+      "name": "Suitless HiJump (Right to Center)",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        "canPlayInSand"
+        "canPlayInSand",
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
       ]
     },
     {
       "from": 2,
       "to": 4,
-      "name": "Suitless",
+      "name": "Suitless Itemless (Right to Center)",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
@@ -386,16 +424,29 @@
       "name": "Base",
       "notable": false,
       "requires": [
+        {"enemyDamage": {
+          "enemy": "Evir",
+          "type": "particle",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "name": "Evir Dodge",
+      "notable": false,
+      "requires": [
+        "canPrepareForNextRoom",
+        "canPlayInSand",
+        "canTrickyJump",
         {"or": [
-          "canPrepareForNextRoom",
-          {"enemyDamage": {
-            "enemy": "Evir",
-            "type": "particle",
-            "hits": 1
-          }}
+          "Gravity",
+          "HiJump",
+          "canSandfallBounce"
         ]}
       ],
-      "note": "Evirs will shoot Samus upon entering the room.  It can be avoided by starting on the right side of the entrance and moving left."
+      "note": "Enter on the right side of the transition and move left to avoid damage."
     },
     {
       "from": 4,
@@ -415,6 +466,14 @@
           "HiJump",
           "Gravity",
           "canSpringBallJumpMidAir"
+        ]},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
         ]}
       ]
     },
@@ -425,24 +484,48 @@
       "notable": false,
       "requires": [
         "Gravity",
-        {"or": [
-          "SpaceJump",
-          "canPlayInSand",
-          "canUseFrozenEnemies",
-          "canTrickyJump"
-        ]}
-      ],
-      "devNote": "Tricky for avoiding damage while platforming."
+        "SpaceJump"
+      ]
     },
     {
       "from": 4,
       "to": 2,
-      "name": "Suitless",
+      "name": "Gravity Platforming (Center to Right)",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"or": [
+          "canPlayInSand",
+          "canUseFrozenEnemies",
+          "canCarefulJump"
+        ]},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
+      ]
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "name": "Suitless Platforming (Center to Right)",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
-        "HiJump"
+        "HiJump",
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
       ]
     },
     {
@@ -455,8 +538,24 @@
         "canPlayInSand",
         "canTrickyJump",
         "canCrouchJump",
-        "canSpringBallJumpMidAir",
-        "canStationaryLateralMidAirMorph"
+        "canTrickySpringBallJump",
+        "canStationaryLateralMidAirMorph",
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Evir"]],
+            "explicitWeapons": [
+              "Super",
+              "Missile",
+              "PowerBombPeriphery",
+              "Plasma"
+            ]
+          }},
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
       ],
       "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
       "note": [
@@ -479,7 +578,7 @@
       "note": [
         "From the sand fall, quickly get onto the left platform to prevent the right side Evir from lowering too far.",
         "Freeze the right Evir, then jump on the sand to the right while shooting ice over the first Evir to also freeze the second.",
-        "After crossing with both Evirs frozen and high, let them lower just enough to use them as platforms to jump through to the right door.",
+        "Freezing the first Evir very high up would also work.",
         "As a backup, it may be possible to make them rise again by hitting them with a PB - place the PB in the air to avoid double hitting and killing them."
       ]
     },
@@ -510,7 +609,7 @@
     {
       "from": 4,
       "to": 5,
-      "name": "Gravity platforming",
+      "name": "Gravity Platforming (Center to Left)",
       "notable": false,
       "requires": [
         "Gravity",
@@ -521,13 +620,11 @@
           "canCarefulJump"
         ]},
         {"or": [
-          "canCarefulJump",
-          "ScrewAttack",
-          "Ice",
-          {"enemyKill": {
-            "enemies": [["Evir"]],
-            "explicitWeapons": ["Plasma", "Super", "PowerBombPeriphery"]
-          }},
+          {"and": [
+            "ScrewAttack",
+            "canCarefulJump"
+          ]},
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Evir",
             "type": "particle",
@@ -539,12 +636,20 @@
     {
       "from": 4,
       "to": 5,
-      "name": "Suitless",
+      "name": "Suitless Platforming (Center to Left)",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        "canPlayInSand"
+        "canPlayInSand",
+        {"or": [
+          "canTrickyJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
       ]
     },
     {
@@ -557,8 +662,24 @@
         "canPlayInSand",
         "canTrickyJump",
         "canCrouchJump",
-        "canSpringBallJumpMidAir",
-        "canStationaryLateralMidAirMorph"
+        "canTrickySpringBallJump",
+        "canStationaryLateralMidAirMorph",
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Evir"]],
+            "explicitWeapons": [
+              "Super",
+              "Missile",
+              "PowerBombPeriphery",
+              "Plasma"
+            ]
+          }},
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
       ],
       "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
       "note": [
@@ -580,7 +701,32 @@
       ],
       "note": [
         "Freeze the Evir quickly before it descends and use it to get to the platforms.",
-        "Getting a good jump while on the right side of the floating block can get Samus to the rightmost block.",
+        "Getting a good jump while on the right side of the floating block can get Samus to the leftmost block.",
+        "With a clean jump off of the sand, Samus can then get onto the final vertical pillar."
+      ]
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "name": "West Sand Hall Suitless Damage Boost (Center to Left)",
+      "notable": true,
+      "requires": [
+        "canSuitlessMaridia",
+        "canPlayInSand",
+        "canTrickyJump",
+        "canCrouchJump",
+        "canNeutralDamageBoost",
+        {"enemyDamage": {
+          "enemy": "Evir",
+          "type": "particle",
+          "hits": 1
+        }}
+      ],
+      "note": [
+        "Use the projectile from a fully submerged Evir to boost Samus into the sandfall, providing just enough height to make the first and hardest jump.",
+        "Time the projectile to hit Samus when at the maximum height from a jump.",
+        "The hit must be on the right side of Samus and with no inputs held, but also hold forward during the damage knockback to move through the sandfall.",
+        "Getting a good jump while on the right side of the next floating block can get Samus to the leftmost block.",
         "With a clean jump off of the sand, Samus can then get onto the final vertical pillar."
       ]
     },
@@ -623,18 +769,35 @@
       "notable": false,
       "requires": [
         "Gravity",
+        "SpaceJump"
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Gravity Platforming (Left to Center)",
+      "notable": false,
+      "requires": [
+        "Gravity",
         {"or": [
-          "SpaceJump",
           "HiJump",
           "canPreciseWalljump",
           "canPlayInSand"
+        ]},
+        {"or": [
+          "canTrickyJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
         ]}
       ]
     },
     {
       "from": 5,
       "to": 4,
-      "name": "Suitless",
+      "name": "Suitless Platforming (Left to Center)",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
@@ -645,12 +808,7 @@
           "canSpringBallJumpMidAir"
         ]},
         {"or": [
-          "canCarefulJump",
-          "Ice",
-          {"enemyKill": {
-            "enemies": [["Evir"]],
-            "explicitWeapons": ["Plasma", "Super", "PowerBombPeriphery"]
-          }},
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Evir",
             "type": "particle",
@@ -669,7 +827,7 @@
         "canPlayInSand",
         "canTrickyJump",
         "canCrouchJump",
-        "canSpringBallJumpMidAir",
+        "canTrickySpringBallJump",
         "canStationaryLateralMidAirMorph"
       ],
       "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",

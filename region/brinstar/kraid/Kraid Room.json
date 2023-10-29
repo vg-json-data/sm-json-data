@@ -1,6 +1,7 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 84,
-  "name": "Kraid's Room",
+  "name": "Kraid Room",
   "area": "Brinstar",
   "subarea": "Kraid",
   "playable": true,
@@ -9,44 +10,14 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Kraid's Room Left Door (to Eye Room)",
+      "name": "Kraid Room Left Door (to Eye Room)",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x00191ce",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Kraid Room Left Door (to Eye Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 22,
-          "framesRemaining": 90,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "locks": [
         {
-          "name": "Kraid's Left Grey Lock (to Eye Room)",
+          "name": "Kraid Left Grey Lock (to Eye Room)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -62,44 +33,14 @@
     },
     {
       "id": 2,
-      "name": "Kraid's Room Right Door (to Varia)",
+      "name": "Kraid Room Right Door (to Varia)",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x00191da",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Kraid's Room Right Door (to Varia)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 22,
-          "framesRemaining": 90,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "locks": [
         {
-          "name": "Kraid's Right Grey Lock (to Varia)",
+          "name": "Kraid Right Grey Lock (to Varia)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -176,10 +117,76 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 0
+        }},
+        "canShinechargeMovement",
+        "f_DefeatedKraid"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      },
+      "devNote": "An X-Mode strat is likely possible but not included. It would require the doors unlocked and canRiskPermanentLossOfAccess."
+    },
+    {
+      "from": 1,
       "to": 3,
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 0
+        }},
+        "canShinechargeMovement",
+        "f_DefeatedKraid"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      },
+      "devNote": "An X-Mode strat is likely possible but not included. It would require the doors unlocked and canRiskPermanentLossOfAccess."
     },
     {
       "from": 2,
@@ -206,7 +213,10 @@
       "name": "Prepared with Space Jump",
       "notable": false,
       "requires": [
-        "canPrepareForNextRoom",
+        {"or": [
+          "canPrepareForNextRoom",
+          "h_KraidCameraFix"
+        ]},
         "SpaceJump"
       ],
       "note": "Being prepared and space jumping through the room can prevent a thorn hit."

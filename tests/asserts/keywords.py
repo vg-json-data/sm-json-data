@@ -343,22 +343,17 @@ with open(
     cheatSheetJSON = json.load(cheatSheetFile)
 
 print("")
-print("Check Regions")
+print("Check Rooms")
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
             roomPath = os.path.join(r, filename)
             with open(roomPath, encoding="utf-8") as roomFile:
                 roomJSON = json.load(roomFile)
-            roomPath = os.path.join(r, filename)
-            with open(roomPath, encoding="utf-8") as regionFile:
-                roomJSON = json.load(regionFile)
                 flattened_dict = [
                     flatten(d, '.') for d in [roomJSON]
                 ][0]
                 # print(flattened_dict)
-                # check rooms
-
                 room = roomJSON
                 roomName = room["name"]
                 area = room["area"]

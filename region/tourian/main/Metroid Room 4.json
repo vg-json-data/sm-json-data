@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 229,
   "name": "Metroid Room 4",
   "area": "Tourian",
@@ -14,20 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9f0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Metroid Room 4 Top Left Door (to Metroid Room 3)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -113,6 +100,19 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Already Cleared",
       "notable": false,
@@ -191,8 +191,11 @@
       "notable": false,
       "requires": [
         {"or": [
-          "ScrewAttack",
-          "Ice"
+          "Ice",
+          {"and": [
+            "ScrewAttack",
+            "canDodgeWhileShooting"
+          ]}
         ]}
       ]
     },
@@ -202,7 +205,23 @@
       "name": "Harder Evade",
       "notable": false,
       "requires": [
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        "Morph"
+      ],
+      "note": "Run under the top Metroid then roll beneath the second and third."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Metroid Room 4 Top Metroid Avoid",
+      "notable": true,
+      "requires": [
+        "canMetroidAvoid",
+        "canCarefulJump"
+      ],
+      "note": [
+        "Avoid all of the Rinkas and Metroids with no equipment and taking no damage.",
+        "One way to do this is to bait the top Rinkas to fire upwards, and then carefully spinjump around each corner as the Metroid below passes by."
       ]
     },
     {
@@ -211,11 +230,6 @@
       "name": "Tank the Damage",
       "notable": false,
       "requires": [
-        {"enemyDamage": {
-          "enemy": "Rinka",
-          "type": "contact",
-          "hits": 1
-        }},
         {"metroidFrames": 256}
       ],
       "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
@@ -321,18 +335,29 @@
       "notable": false,
       "requires": [
         {"or": [
-          "ScrewAttack",
-          "Ice"
+          "Ice",
+          {"and": [
+            "ScrewAttack",
+            "canDodgeWhileShooting"
+          ]}
         ]}
       ]
     },
     {
       "from": 2,
       "to": 1,
-      "name": "Harder Evade",
-      "notable": false,
+      "name": "Metroid Room 4 Bottom Metroid Avoid",
+      "notable": true,
       "requires": [
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        "canDodgeWhileShooting",
+        "canCarefulJump"
+      ],
+      "note": [
+        "Avoid all of the Rinkas and Metroids with no equipment and taking no damage.",
+        "Begin by shooting the bottom Metroid hold it in place, and wait right below the first ledge.",
+        "Once the middle Metroid passes by, jump up and shoot any Rinkas that are in the way.",
+        "Repeat for the next ledge, clear any Rinkas, and then run to the door."
       ]
     },
     {
@@ -348,7 +373,25 @@
         }},
         {"metroidFrames": 256}
       ],
-      "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
+      "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage.",
+      "devNote": "Avoiding Rinkas is more difficult than getting hit, so it is not important to know to want to get hit."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "f_KilledMetroidRoom4",
+        {"shinespark": {"frames": 1, "excessFrames": 1}}
+      ],
+      "devNote": [
+        "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark.",
+        "This requires the Metroids to be killed, because otherwise Samus will be grabbed on entry, and the other 2->1 strats won't work."
+      ]
     }
   ]
 }

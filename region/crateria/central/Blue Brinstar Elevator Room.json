@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 306,
   "name": "Blue Brinstar Elevator Room",
   "area": "Crateria",
@@ -13,21 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018b92",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Blue Brinstar Elevator Room Door (to Pit Room)",
-          "length": 13,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -35,38 +22,6 @@
       "nodeType": "door",
       "nodeSubType": "elevator",
       "nodeAddress": "0x0018b9e",
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 130,
-          "usedTiles": 33,
-          "strats": [
-            {
-              "name": "Come In Charged",
-              "notable": false,
-              "requires": [
-                {"canComeInCharged": {
-                  "framesRemaining": 180,
-                  "fromNode": 1,
-                  "shinesparkFrames": 0
-                }}
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "framesRemaining": 130,
-          "usedTiles": 14,
-          "strats": [
-            {
-              "name": "In-Room Shortcharge",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "leaveWithGMode": [
         {
           "leavesWithArtificialMorph": false,
@@ -91,10 +46,67 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 130
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Shinecharged, In-Room Shortcharge",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 13,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 1},
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 0
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 130
+        }
+      }
     },
     {
       "from": 2,

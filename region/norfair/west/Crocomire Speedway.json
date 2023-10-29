@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 120,
   "name": "Crocomire Speedway",
   "area": "Norfair",
@@ -14,26 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193ae",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crocomire Speedway Top Left Door (to Crocomire Escape)",
-          "length": 7,
-          "gentleUpTiles": 4,
-          "endingUpTiles": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 110}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -41,24 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193a2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crocomire Speedway Far Left Door (to Crumble Shaft)",
-          "length": 45,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 300}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -67,24 +32,6 @@
       "nodeSubType": "green",
       "nodeAddress": "0x00193d2",
       "doorEnvironments": [{"physics": "air"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 100,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_heatProof",
-                {"obstaclesCleared": ["A"]}
-              ],
-              "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Crocomire Speedway Green Lock (to Crocomire)",
@@ -107,43 +54,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193c6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crocomire Speedway Bottom Right Door (to Acid Snakes tunnel)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 50}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 60,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_heatProof",
-                {"obstaclesCleared": ["A"]}
-              ],
-              "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 5,
@@ -151,24 +62,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193ba",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crocomire Speedway Top Right Door (to Save)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 90}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 6,
@@ -219,7 +113,27 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
+  "reusableRoomwideNotable": [
+    {
+      "name": "Croc Speedway Reverse Spark",
+      "note": "Spark left through the speed blocks through Croc Speedway. Then run to the right and back to get speed to go through the rest."
+    }
+  ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1,
+          "gentleUpTiles": 4
+        }
+      }
+    },
     {
       "from": 1,
       "to": 5,
@@ -227,8 +141,45 @@
       "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
-        {"heatFrames": 150}
+        {"heatFrames": 130}
       ]
+    },
+    {
+      "from": 1,
+      "to": 5,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 0,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 140}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 70
+        }
+      },
+      "devNote": "FIXME: Entering with too little run speed causes Samus to 'trip', so the runway cannot reliably be used for short shortcharges."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1,
+          "steepUpTiles": 6
+        }
+      },
+      "devNote": "45 tiles is roughly in front of the first red pirate."
     },
     {
       "from": 2,
@@ -238,9 +189,47 @@
       "requires": [
         "h_canNavigateHeatRooms",
         "SpeedBooster",
-        {"heatFrames": 400}
+        {"heatFrames": 380}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "from": 3,
+      "to": 2,
+      "name": "Croc Speedway Reverse Spark (From Croc Door)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 84, "excessFrames": 10}},
+        {"heatFrames": 760}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Croc Speedway Reverse Spark",
+      "note": [
+        "Spark left through the speed blocks through Croc Speedway.",
+        "Then run to the right and back to get speed to go through the rest.",
+        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+      ]
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 6, "excessFrames": 6}},
+        {"heatFrames": 120}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
       "from": 3,
@@ -251,6 +240,99 @@
         "h_canNavigateHeatRooms",
         {"heatFrames": 50}
       ]
+    },
+    {
+      "from": 3,
+      "to": 6,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 6}},
+        {"heatFrames": 85}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "name": "Croc Speedway Reverse Speedball",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canSpeedball",
+        {"heatFrames": 570}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Break the Speedway Speed blocks by jumping over the gap with speed and continuing through the room in mockball.",
+      "devNote": "FIXME: You can enter through 3 and speedball through the speedway."
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "name": "Croc Speedway Reverse Spark Near SpeedBlocks",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 84, "excessFrames": 10}},
+        {"heatFrames": 760}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Croc Speedway Reverse Spark",
+      "note": [
+        "Spark left through the speed blocks through Croc Speedway.",
+        "Then run to the right and back to get speed to go through the rest.",
+        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+      ]
+    },
+    {
+      "from": 4,
+      "to": 2,
+      "name": "Croc Speedway Reverse Spark Through Door",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"shinespark": {"frames": 94, "excessFrames": 10}},
+        {"heatFrames": 700}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Croc Speedway Reverse Spark",
+      "note": [
+        "Spark left through the speed blocks through Croc Speedway.",
+        "Then run to the right and back to get speed to go through the rest.",
+        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+      ]
+    },
+    {
+      "from": 4,
+      "to": 4,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
     },
     {
       "from": 4,
@@ -269,8 +351,105 @@
       "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
-        {"heatFrames": 200}
+        {"heatFrames": 160}
       ]
+    },
+    {
+      "from": 5,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 130}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1,
+          "gentleUpTiles": 4
+        }
+      }
+    },
+    {
+      "from": 5,
+      "to": 1,
+      "name": "Right Side Climb",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "HiJump",
+          "canPreciseWalljump"
+        ]},
+        {"heatFrames": 140}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 1,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 160}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 30
+        }
+      }
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Croc Speedway Reverse Spark (From Save Room)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canShinechargeMovementComplex",
+        "canTrickyJump",
+        "canMidairShinespark",
+        {"enemyDamage": {
+          "enemy": "Cacatac",
+          "type": "spike",
+          "hits": 1
+        }},
+        {"shinespark": {"frames": 92, "excessFrames": 10}},
+        {"heatFrames": 900}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Croc Speedway Reverse Spark",
+      "note": [
+        "The timer is tight, so run through the Cacatacs and mid-air spark left through the speed blocks.",
+        "Then run to the right and back to get speed to go through the rest.",
+        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+      ]
+    },
+    {
+      "from": 5,
+      "to": 5,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      }
     },
     {
       "from": 5,
@@ -293,67 +472,20 @@
       "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
-        {"heatFrames": 250}
+        {"heatFrames": 215}
       ]
     },
     {
       "from": 6,
       "to": 2,
-      "name": "Croc Speedway Reverse Spark",
-      "notable": true,
+      "name": "Base",
+      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["A"]},
         "SpeedBooster",
-        {"heatFrames": 700},
-        {"or": [
-          {"canComeInCharged": {
-            "fromNode": 3,
-            "inRoomPath": [3, 6],
-            "framesRemaining": 60,
-            "shinesparkFrames": 84,
-            "excessShinesparkFrames": 45
-          }},
-          {"canComeInCharged": {
-            "fromNode": 4,
-            "inRoomPath": [4, 6],
-            "framesRemaining": 180,
-            "shinesparkFrames": 84,
-            "excessShinesparkFrames": 45
-          }},
-          {"canComeInCharged": {
-            "fromNode": 4,
-            "inRoomPath": [4, 6],
-            "framesRemaining": 0,
-            "shinesparkFrames": 94,
-            "excessShinesparkFrames": 45
-          }}
-        ]}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Spark left through the speed blocks through Croc Speedway. Then run to the right and back to get speed to go through the rest.",
-      "devNote": "FIXME: There are a lot of health values that would put Samus just above the crumble blocks leading into spikes. The second pirate can also cause problems."
-    },
-    {
-      "from": 6,
-      "to": 2,
-      "name": "Croc Speedway Reverse Speedball",
-      "notable": true,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "canMockball",
-        "canCarefulJump",
-        "SpeedBooster",
-        {"heatFrames": 570},
-        {"canComeInCharged": {
-          "fromNode": 4,
-          "inRoomPath": [4, 6],
-          "framesRemaining": 180,
-          "shinesparkFrames": 0,
-          "unusableTiles": 1
-        }}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Break the Speedway Speed blocks by jumping over the gap with speed and continuing through the room in mockball."
+        {"heatFrames": 500}
+      ]
     },
     {
       "from": 6,
@@ -367,6 +499,26 @@
     },
     {
       "from": 6,
+      "to": 3,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"obstaclesCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      },
+      "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
+    },
+    {
+      "from": 6,
       "to": 4,
       "name": "Base",
       "notable": false,
@@ -377,6 +529,27 @@
     },
     {
       "from": 6,
+      "to": 4,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"obstaclesCleared": ["A"]},
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
+    },
+    {
+      "from": 6,
       "to": 5,
       "name": "Base",
       "notable": false,
@@ -384,6 +557,31 @@
         "h_canNavigateHeatRooms",
         {"heatFrames": 300}
       ]
+    },
+    {
+      "from": 6,
+      "to": 5,
+      "name": "Quick Platforming Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"obstaclesCleared": ["A"]},
+        "canShinechargeMovementComplex",
+        "canFastWalljumpClimb",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 12}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Move very quickly to bring a shinespark from the speedway up to the Save Room door.",
+        "Preclear the Cacatacs, and it may help to not run while platforming if HiJump is not available."
+      ],
+      "devNote": "FIXME: FastWalljumpClimb mainly included for difficulty placement.  Fast movement is needed for this strat but a walljump is not needed."
     }
   ]
 }

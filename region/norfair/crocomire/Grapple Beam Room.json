@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 128,
   "name": "Grapple Beam Room",
   "area": "Norfair",
@@ -14,21 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019522",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Grapple Room Top Right Door (to Grapple Tutorial 1)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -36,21 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019516",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Grapple Bottom Right Door (to Jump Room)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -65,10 +38,78 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 3,
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 40}}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Enter Shinecharged Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 13
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 40}}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "X-Ray Climb",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "note": "Climb up 2 screens."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 0
+        }
+      }
     },
     {
       "from": 2,
@@ -96,53 +137,6 @@
           "h_canFly"
         ]}
       ]
-    },
-    {
-      "from": 3,
-      "to": 1,
-      "name": "Shinespark",
-      "notable": false,
-      "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "inRoomPath": [2, 3],
-          "framesRemaining": 20,
-          "shinesparkFrames": 40
-        }}
-      ]
-    },
-    {
-      "from": 3,
-      "to": 1,
-      "name": "X-Ray Climb",
-      "notable": false,
-      "requires": [
-        "h_canRightDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [2],
-          "mustStayPut": false
-        }},
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 2,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]}
-      ],
-      "note": "Climb up 2 screens."
     },
     {
       "from": 3,

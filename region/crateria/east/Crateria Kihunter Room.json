@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 24,
   "name": "Crateria Kihunter Room",
   "area": "Crateria",
@@ -14,22 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x0018a2a",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crateria Kihunter Room Left Door (to Crateria Tube)",
-          "length": 33,
-          "steepUpTiles": 5,
-          "steepDownTiles": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -56,36 +41,6 @@
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018a36",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crateria Kihunter Room Right Door (to Moat)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 60,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Crateria Kihunter Room Right Yellow Lock (to Moat)",
@@ -148,13 +103,13 @@
             "name": "Get Hit by Thawing Sciser",
             "notable": false,
             "requires": [
-              "canTrickyUseFrozenEnemies",
+              "canWallIceClip",
               "canDownwardGModeSetup",
               {"ammo": {"type": "Super", "count": 1}}
             ],
             "note": [
               "Run from the ledge into the open doorway while hitting the frozen Crab as it thaws and the door transition simultaneously.",
-              "Note that this requires a pixel perfect freeze, a small pixel starting window, and a tight timing. It then has a 50% success rate due to collision oscillation."
+              "Note that this requires a pixel perfect freeze, a small pixel starting window, and has tight timing. It then has a 50% success rate due to collision oscillation."
             ]
           }
         ]}
@@ -180,6 +135,21 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 34,
+          "openEnd": 0,
+          "steepUpTiles": 5,
+          "steepDownTiles": 2
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Base",
       "notable": false,
@@ -191,6 +161,39 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 0,
+          "steepUpTiles": 2,
+          "steepDownTiles": 5
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 65
+        }
+      }
     },
     {
       "from": 2,
@@ -210,7 +213,21 @@
       "to": 3,
       "name": "Base",
       "notable": false,
-      "requires": []
+      "requires": [
+        {"or": [
+          "canCameraManip",
+          "h_canUsePowerBombs",
+          {"enemyDamage": {
+            "enemy": "Sciser",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "note": [
+        "Jump and aim down to lower the camera to see where the crabs are.",
+        "Alternatively use a Power Bomb to kill them or risk tanking a hit."
+      ]
     },
     {
       "from": 3,
@@ -218,6 +235,20 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 2, "excessFrames": 2}}
+      ],
+      "note": "Enter on the right side of the doorway to reduce the amount of energy used.",
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     }
   ]
 }

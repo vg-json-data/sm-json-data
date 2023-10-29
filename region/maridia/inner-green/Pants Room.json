@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 220,
   "name": "Pants Room",
   "area": "Maridia",
@@ -122,19 +123,11 @@
       "to": 2,
       "name": "Pants Room Left-Side X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        "h_canLeftDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [1],
-          "mustStayPut": true
-        }},
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 0.5,
-          "overrideRunwayRequirements": true,
-          "useFrames": 200
-        }},
+        "canXRayClimb",
         "canBePatient"
       ],
       "note": [
@@ -174,31 +167,11 @@
       "to": 2,
       "name": "Pants Room Right-Side X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canRightDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [3],
-          "mustStayPut": true
-        }},
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 3,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 3,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]},
+        "canXRayClimb",
         "canBePatient"
       ],
       "note": [
@@ -251,16 +224,15 @@
           {"canComeInCharged": {
             "fromNode": 1,
             "inRoomPath": [1, 4],
-            "framesRemaining": 150,
-            "shinesparkFrames": 65
+            "framesRemaining": 150
           }},
           {"canComeInCharged": {
             "fromNode": 3,
             "inRoomPath": [3, 4],
-            "framesRemaining": 150,
-            "shinesparkFrames": 65
+            "framesRemaining": 150
           }}
         ]},
+        {"shinespark": {"frames": 65}},
         {"enemyDamage": {
           "enemy": "Menu",
           "type": "contact",
@@ -387,9 +359,7 @@
       "requires": [
         "Gravity",
         "Grapple",
-        "canPlayInSand",
-        "h_canJumpIntoIBJ",
-        "canTrickyJump"
+        "canSandIBJ"
       ],
       "note": "Wait for a good jump out of the sand to begin the IBJ with.  A stationary spinjump can help."
     },
@@ -402,7 +372,7 @@
         "Gravity",
         "Grapple",
         "SpringBall",
-        "h_canIBJ"
+        "h_canJumpIntoIBJ"
       ],
       "note": "Springball can keep Samus out of the sand.  Place the first bomb right after Samus begins falling back towards the sand."
     },
@@ -513,26 +483,43 @@
     {
       "from": 5,
       "to": 2,
-      "name": "Base",
+      "name": "Space Jump",
       "notable": false,
       "requires": [
         "Gravity",
+        "SpaceJump",
         {"or": [
-          "canConsecutiveWalljump",
-          "SpaceJump"
-        ]},
-        {"or": [
+          "ScrewAttack",
+          "canPseudoScrew",
           {"enemyDamage": {
             "enemy": "Menu",
             "type": "contact",
             "hits": 1
-          }},
-          "ScrewAttack",
-          "canStaggeredWalljump",
-          "Charge"
+          }}
         ]}
       ],
-      "note": "The swarm of Menus will attack Samus at the top of the room.",
+      "note": "The swarm of Menus will attack Samus at the top of the room. Tank them or kill them with Screw or Pseudo Screw."
+    },
+    {
+      "from": 5,
+      "to": 2,
+      "name": "Wall Jump",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canConsecutiveWalljump",
+        {"or": [
+          "ScrewAttack",
+          "canStaggeredWalljump",
+          "canWalljumpWithCharge",
+          {"enemyDamage": {
+            "enemy": "Menu",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "note": "The swarm of Menus will attack Samus at the top of the room. Tank them, carefully dodge them, or kill them with Screw or Pseudo Screw.",
       "devNote": "The Menus prevent a reliable IBJ."
     },
     {
@@ -558,7 +545,7 @@
           }},
           "ScrewAttack",
           "canStaggeredWalljump",
-          "Charge"
+          "canPseudoScrew"
         ]}
       ],
       "note": [

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 76,
   "name": "Alpha Power Bomb Room",
   "area": "Brinstar",
@@ -13,38 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00190ea",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Alpha Power Bombs Door (to Caterpillar Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 100,
-          "usedTiles": 33,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Samus Eater",
-              "notable": false,
-              "requires": [
-                "canSamusEaterStandUp",
-                {"samusEaterFrames": 160}
-              ]
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -82,8 +52,40 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged (Samus Eater)",
+      "notable": false,
+      "requires": [
+        "canSamusEaterStandUp",
+        {"samusEaterFrames": 160},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
-      "name": "Damageless",
+      "name": "Avoid Boyon Damage",
       "notable": false,
       "requires": [
         {"or": [
@@ -103,16 +105,23 @@
           {"and": [
             "ScrewAttack",
             "canCarefulJump"
-          ]},
-          {"and": [
-            "canCarefulJump",
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 1,
-              "shinesparkFrames": 0
-            }}
           ]}
         ]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Avoid Boyon Damage (Blue Jump)",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canCarefulJump"
       ]
     },
     {

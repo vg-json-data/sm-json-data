@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 239,
   "name": "Tourian Escape Room 1",
   "area": "Tourian",
@@ -14,54 +15,6 @@
       "nodeSubType": "closedWall",
       "nodeAddress": "0x001aae0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Tourian Escape Room 1 Right Door (to Mother Brain)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Diagonal Shot Runway - Tourian Escape Room 1 Right Door (to Mother Brain)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canPrepareForNextRoom",
-                {"or": [
-                  "Wave",
-                  "Spazer"
-                ]}
-              ],
-              "note": "Upon entry, immediately shoot diagonal Wave or Spazer shot at the bottom gate. Charge beam can help buffer the shot.",
-              "devNote": "FIXME: Run speed may also make this runway always work."
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Broken Gates - Tourian Escape Room 1 Right Door (to Mother Brain)",
-          "length": 20,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [],
-              "note": "This longer runway requires the gates to be shot open."
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Tourian Escape 1 Lock (to Mother Brain)",
@@ -85,25 +38,24 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001aaec",
-      "doorEnvironments": [{"physics": "air"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 21,
-          "framesRemaining": 170,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 21,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "from": 1,
       "to": 2,
@@ -117,6 +69,40 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 21,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 170
+        }
+      },
+      "devNote": [
+        "It is possible to run in from the right while shooting the first gate, then quickly leave charged through the bottom door,",
+        "but it's not really easier than a 21 tile Shinecharge."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 4, "excessFrames": 4}}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     }
   ]
 }

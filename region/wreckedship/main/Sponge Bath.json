@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 164,
   "name": "Sponge Bath",
   "area": "Wrecked Ship",
@@ -14,43 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a2d0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Sponge Bath Left Door (to Main Shaft)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Submerged Runway - Sponge Bath Left Door (to Main Shaft)",
-          "length": 20,
-          "steepUpTiles": 3,
-          "strats": [
-            {
-              "name": "Gravity",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            },
-            {
-              "name": "Unpowered",
-              "notable": false,
-              "requires": [
-                {"not": "f_DefeatedPhantoon"},
-                "canRiskPermanentLossOfAccess"
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -80,21 +44,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a2dc",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Sponge Bath Right Door (to Spiky Death Room)",
-          "length": 8,
-          "steepDownTiles": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -129,6 +78,41 @@
     }
   ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway, Full Length",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "Gravity",
+          {"and": [
+            {"not": "f_DefeatedPhantoon"},
+            "canRiskPermanentLossOfAccess"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 21,
+          "openEnd": 0,
+          "steepUpTiles": 3
+        }
+      }
+    },
     {
       "from": 1,
       "to": 1,
@@ -229,32 +213,50 @@
     {
       "from": 1,
       "to": 2,
-      "name": "Shinespark",
+      "name": "Shinespark, Come in Charging",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        {"or": [
-          {"and": [
-            "canMidairShinespark",
-            {"canComeInCharged": {
-              "fromNode": 1,
-              "framesRemaining": 30,
-              "shinesparkFrames": 39,
-              "excessShinesparkFrames": 10
-            }}
-          ]},
-          {"and": [
-            {"or": [
-              "canShinechargeMovement",
-              "canWaterShineCharge"
-            ]},
-            {"canComeInCharged": {
-              "fromNode": 1,
-              "framesRemaining": 180,
-              "shinesparkFrames": 7,
-              "excessShinesparkFrames": 2
-            }}
-          ]}
-        ]}
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 7, "excessFrames": 2}}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Shinespark, Come in Charging, Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 10,
+          "openEnd": 0,
+          "steepDownTiles": 1
+        }
+      },
+      "requires": [
+        "canWaterShineCharge",
+        {"shinespark": {"frames": 7, "excessFrames": 2}}
+      ],
+      "devNote": "The 17 submerged tiles behave as 7 tiles with high run speed. The 3 steep down tiles behave as approximately 1."
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Shinespark, Come in Charged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "canMidairShinespark",
+        {"shinespark": {"frames": 39, "excessFrames": 10}}
       ]
     },
     {
@@ -262,21 +264,21 @@
       "to": 2,
       "name": "Exterior Speedjump",
       "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 3
+        }
+      },
       "requires": [
         "canSuitlessMaridia",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 3,
-          "inRoomPath": [1, 2],
-          "physics": ["normal"]
-        }},
-        "SpeedBooster",
+        "canCarefulJump",
         {"or": [
           "canWalljump",
           "HiJump"
         ]}
       ],
-      "note": "A bit finicky for shorter runways, but exactly 3 tiles works."
+      "note": "Requires at least 3 tiles to work, but some longer lengths don't work."
     },
     {
       "from": 1,
@@ -325,10 +327,9 @@
         "canStutterWaterShineCharge",
         {"canShineCharge": {
           "usedTiles": 33,
-          "shinesparkFrames": 7,
-          "excessShinesparkFrames": 2,
           "openEnd": 2
-        }}
+        }},
+        {"shinespark": {"frames": 7, "excessFrames": 2}}
       ],
       "note": "Start at least 2 tiles from the water line, and stutter just before entering the water in order to charge a spark in room."
     },
@@ -338,6 +339,20 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 9,
+          "openEnd": 1,
+          "steepDownTiles": 2
+        }
+      }
     },
     {
       "from": 2,

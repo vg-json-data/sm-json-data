@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 196,
   "name": "East Cactus Alley Room",
   "area": "Maridia",
@@ -32,7 +33,6 @@
       "canLeaveCharged": [
         {
           "framesRemaining": 0,
-          "shinesparkFrames": 10,
           "usedTiles": 33,
           "openEnd": 2,
           "strats": [
@@ -41,13 +41,20 @@
               "notable": false,
               "requires": [
                 "h_canXMode",
+                "h_XModeSpikeHit",
+                "h_XModeSpikeHit",
+                {"or": [
+                  "h_XModeSpikeHit",
+                  "canStationarySpinJump"
+                ]},
                 "Gravity",
                 "HiJump",
                 "SpaceJump",
                 "canShinechargeMovementComplex",
                 "canMidairShinespark",
-                {"spikeHits": 3}
-              ]
+                {"shinespark": {"frames": 10}}
+              ],
+              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
             }
           ]
         }
@@ -88,13 +95,19 @@
               "notable": false,
               "requires": [
                 "h_canXMode",
+                "h_XModeSpikeHit",
+                "h_XModeSpikeHit",
+                {"or": [
+                  "h_XModeSpikeHit",
+                  "canStationarySpinJump"
+                ]},
                 "Gravity",
                 "HiJump",
                 "SpaceJump",
                 "canShinechargeMovementComplex",
-                "canMidairShinespark",
-                {"spikeHits": 3}
-              ]
+                "canMidairShinespark"
+              ],
+              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
             }
           ]
         }
@@ -102,7 +115,7 @@
     },
     {
       "id": 3,
-      "name": "East Cactus Alley Junction (Bottom Left)",
+      "name": "East Cactus Alley Junction (Left of Morph Tunnel)",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
@@ -115,6 +128,12 @@
     {
       "id": 5,
       "name": "East Cactus Alley Junction (Bottom Middle)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 6,
+      "name": "East Cactus Alley Junction (Right of Morph Tunnel)",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -136,10 +155,17 @@
     },
     {
       "id": "e3",
-      "groupName": "East Cactus Alley Top Cacatacs",
+      "groupName": "East Cactus Alley Top Right Cacatacs",
       "enemyName": "Cacatac",
       "quantity": 2,
       "homeNodes": [4]
+    },
+    {
+      "id": "e4",
+      "groupName": "East Cactus Alley Top Left Cacatac",
+      "enemyName": "Cacatac",
+      "quantity": 1,
+      "betweenNodes": [5, 6]
     }
   ],
   "strats": [
@@ -212,7 +238,7 @@
     },
     {
       "from": 1,
-      "to": 5,
+      "to": 6,
       "name": "G-Mode Morph",
       "notable": false,
       "requires": [
@@ -223,7 +249,17 @@
         }},
         "h_canNavigateUnderwater",
         {"or": [
-          "Bombs",
+          "SpringBall",
+          "h_canArtificialMorphBombHorizontally"
+        ]},
+        {"or": [
+          {"and": [
+            "Bombs",
+            {"or": [
+              "Gravity",
+              "SpringBall"
+            ]}
+          ]},
           {"ammo": {"type": "PowerBomb", "count": 1}},
           {"enemyDamage": {
             "enemy": "Cacatac",
@@ -235,12 +271,10 @@
           "SpringBall",
           {"and": [
             "Gravity",
-            "Bombs"
-          ]},
-          {"and": [
-            "Gravity",
-            "h_canArtificialMorphBombHorizontally",
-            {"ammo": {"type": "PowerBomb", "count": 1}}
+            {"or": [
+              "Bombs",
+              {"ammo": {"type": "PowerBomb", "count": 1}}
+            ]}
           ]}
         ]}
       ],
@@ -352,14 +386,39 @@
     {
       "from": 2,
       "to": 4,
+      "name": "Suitless HiJump SpringBall Jump",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "HiJump",
+        "h_canMaxHeightSpringBallJump",
+        "canTrickyJump",
+        {"or": [
+          "canStationaryLateralMidAirMorph",
+          {"and": [
+            "canJumpIntoIBJ",
+            "h_canBombHorizontally"
+          ]}
+        ]}
+      ],
+      "note": [
+        "SpringBall jump just as Samus exits the water to reach the distant ledge.",
+        "To get enough horizontal distance, either use a Stationary Lateral Mid-Air Morph with a crouch jump for extra height, or spin jump out before morphing.",
+        "Or SpringBall jump part of the way over and land on a Bomb explosion to cross the rest of the distance."
+      ],
+      "devNote": "canStationaryLateralMidAirMorph is not strictly required but better describes the difficulty."
+    },
+    {
+      "from": 2,
+      "to": 4,
       "name": "Shinespark",
       "notable": false,
       "requires": [
         {"canComeInCharged": {
           "fromNode": 2,
-          "framesRemaining": 20,
-          "shinesparkFrames": 20
-        }}
+          "framesRemaining": 20
+        }},
+        {"shinespark": {"frames": 20}}
       ]
     },
     {
@@ -370,14 +429,19 @@
       "requires": [
         "Gravity",
         "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        {"or": [
+          "h_XModeSpikeHit",
+          "canStationarySpinJump"
+        ]},
         {"canShineCharge": {
           "usedTiles": 33,
-          "openEnd": 2,
-          "shinesparkFrames": 25,
-          "excessShinesparkFrames": 5
+          "openEnd": 2
         }},
-        {"spikeHits": 3}
-      ]
+        {"shinespark": {"frames": 25, "excessFrames": 5}}
+      ],
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
     },
     {
       "from": 2,
@@ -487,27 +551,11 @@
       "to": 4,
       "name": "X-Ray Climb Space Jump",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canRightDoorXRayClimb",
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 2,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]},
+        "canXRayClimb",
         "SpaceJump"
       ],
       "note": [
@@ -641,39 +689,31 @@
     },
     {
       "from": 3,
-      "to": 5,
-      "name": "Suitless",
+      "to": 6,
+      "name": "Base",
       "notable": false,
       "requires": [
-        "canSuitlessMaridia",
-        "Morph"
-      ],
-      "note": [
-        "This requires taking off Gravity to do a mid-air morph.",
-        "And possibly removing Gravity to jump over spikes, But a tricky jump would work too.",
-        "There is a way to get across without taking any damage from spikes or Cacatacs, although it's a bit tricky."
+        "h_canNavigateUnderwater",
+        {"or": [
+          "h_canUseSpringBall",
+          {"and": [
+            "Gravity",
+            "h_canBombThings"
+          ]}
+        ]}
       ]
     },
     {
       "from": 3,
-      "to": 5,
-      "name": "Gravity",
+      "to": 6,
+      "name": "Suitless Bootless",
       "notable": false,
       "requires": [
-        "Gravity",
+        "canSuitlessMaridia",
         "Morph",
-        {"or": [
-          "SpaceJump",
-          "canTrickyJump",
-          "h_canHBJ",
-          {"spikeHits": 1}
-        ]}
+        "canDisableEquipment"
       ],
-      "note": [
-        "This requires taking off Gravity to do a mid-air morph.",
-        "And possibly removing Gravity to jump over spikes, But a tricky jump would work too.",
-        "There is a way to get across without taking any damage from spikes or Cacatacs, although it's a bit tricky."
-      ]
+      "note": "This can be done by turning off Gravity and HiJump to do a mid-air morph through the morph tunnel."
     },
     {
       "from": 4,
@@ -688,113 +728,6 @@
       "name": "Base",
       "notable": false,
       "requires": []
-    },
-    {
-      "from": 5,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "Gravity",
-        "Morph",
-        {"or": [
-          "SpaceJump",
-          "canCarefulJump",
-          "h_canResetFallSpeed",
-          "canSuitlessMaridia",
-          "h_canHBJ",
-          {"enemyDamage": {
-            "enemy": "Cacatac",
-            "hits": 1,
-            "type": "spike"
-          }}
-        ]},
-        {"or": [
-          "SpaceJump",
-          "canWalljump",
-          "HiJump",
-          "h_canIBJ",
-          "h_canHBJ",
-          {"and": [
-            "canSuitlessMaridia",
-            "canCarefulJump"
-          ]},
-          "h_canSpringBallBombJump",
-          {"spikeHits": 1}
-        ]}
-      ],
-      "note": "It is possible to jump over the spikes by disabling Gravity."
-    },
-    {
-      "from": 5,
-      "to": 3,
-      "name": "Cacatac Boost",
-      "notable": false,
-      "requires": [
-        "Gravity",
-        "Morph",
-        "canHorizontalDamageBoost",
-        "canIframeSpikeJump",
-        {"enemyDamage": {
-          "enemy": "Cacatac",
-          "hits": 1,
-          "type": "contact"
-        }}
-      ],
-      "note": [
-        "Jump into the ceiling Cacatac and damage boost onto the platform between spike pits.",
-        "Use IFrames to cross the second set of spikes."
-      ]
-    },
-    {
-      "from": 5,
-      "to": 3,
-      "name": "Suitless HiJump",
-      "notable": false,
-      "requires": [
-        "canSuitlessMaridia",
-        "Morph",
-        "HiJump",
-        {"or": [
-          "canCarefulJump",
-          "canWalljump",
-          "SpaceJump",
-          "canSpringBallJumpMidAir",
-          {"and": [
-            "h_canIBJ",
-            "canBombJumpWaterEscape"
-          ]},
-          {"spikeHits": 1}
-        ]}
-      ],
-      "note": [
-        "It is possible to jump over all of the spikes.",
-        "Turn off HiJump to jump under the hanging platform and avoid spikes."
-      ]
-    },
-    {
-      "from": 5,
-      "to": 3,
-      "name": "Suitless Springball",
-      "notable": false,
-      "requires": [
-        "canSuitlessMaridia",
-        "canSpringBallJumpMidAir",
-        {"or": [
-          "HiJump",
-          "canCarefulJump",
-          {"and": [
-            "canSpaceJumpWaterBounce",
-            "canWalljump"
-          ]},
-          {"and": [
-            "h_canIBJ",
-            "canBombJumpWaterEscape"
-          ]},
-          {"spikeHits": 1}
-        ]}
-      ],
-      "note": "It is possible to jump over all of the spikes."
     },
     {
       "from": 5,
@@ -845,6 +778,212 @@
         "canUnderwaterWalljump",
         "canSpaceJumpWaterBounce"
       ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "name": "Cacatac Alley HiJumpless Double SpringBall Jump and Bomb-Grapple-Jump",
+      "notable": true,
+      "requires": [
+        "canBombGrappleJump",
+        "canDoubleSpringBallJumpMidAir",
+        "h_canMaxHeightSpringBallJump"
+      ],
+      "note": [
+        "1) Crouch jump and then SpringBall jump.",
+        "2) Bomb-Grapple-Jump using the distant Cacatac who is above the water.",
+        "3) SpringBall jump again just as Samus exits the water."
+      ]
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"or": [
+          "SpaceJump",
+          "h_canHBJ",
+          "h_canResetFallSpeed",
+          {"enemyDamage": {
+            "enemy": "Cacatac",
+            "hits": 1,
+            "type": "spike"
+          }}
+        ]},
+        {"or": [
+          "SpaceJump",
+          "canWalljump",
+          "HiJump",
+          "h_canIBJ",
+          "h_canHBJ",
+          "h_canSpringBallBombJump",
+          {"spikeHits": 1}
+        ]}
+      ]
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "name": "Cacatac Boost",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canHorizontalDamageBoost",
+        "canIframeSpikeJump",
+        {"enemyDamage": {
+          "enemy": "Cacatac",
+          "hits": 1,
+          "type": "contact"
+        }}
+      ],
+      "note": [
+        "Jump into the ceiling Cacatac and damage boost onto the platform between spike pits.",
+        "Use IFrames to cross the second set of spikes."
+      ]
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "name": "Suitless HiJump",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "HiJump",
+        {"spikeHits": 1},
+        {"or": [
+          "canWalljump",
+          "canSpaceJumpWaterEscape",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "h_canJumpIntoIBJ",
+            "SpringBall"
+          ]},
+          {"and": [
+            "h_canIBJ",
+            "canBombJumpWaterEscape"
+          ]},
+          {"spikeHits": 1}
+        ]}
+      ],
+      "devNote": [
+        "The first spike pit on the right is considered unavoidable, as if the player has Gravity and HiJump, the jump is quite tricky.",
+        "In that scenario, the player will hit the spikes or need the strat with canDisableEquipment."
+      ]
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "name": "Suitless Bootless Jump",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "canDisableEquipment",
+        "canCarefulJump",
+        {"or": [
+          "Gravity",
+          "HiJump",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "note": "This can be done by turning off Gravity and HiJump to jump over both spike pits."
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "name": "Suitless Springball",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "canSpringBallJumpMidAir",
+        {"spikeHits": 1},
+        {"or": [
+          "canTrickySpringBallJump",
+          {"and": [
+            "canWalljump",
+            "canSpaceJumpWaterBounce"
+          ]},
+          {"and": [
+            "h_canJumpIntoIBJ",
+            "SpringBall"
+          ]},
+          {"and": [
+            "h_canIBJ",
+            "canBombJumpWaterEscape"
+          ]},
+          {"spikeHits": 1}
+        ]}
+      ],
+      "note": "This can be done by turning off Gravity and HiJump to jump over both spike pits.",
+      "devNote": [
+        "This strat is only used if the player doesn't have canCarefulJump, because otherwise the Suitless Bootless strat will be used,",
+        "because canSpringBallJumpMidAir requires canDisableEquipment."
+      ]
+    },
+    {
+      "from": 6,
+      "to": 3,
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Morph"
+      ]
+    },
+    {
+      "from": 6,
+      "to": 5,
+      "name": "Suitless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        {"or": [
+          {"spikeHits": 1},
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canWalljump",
+              "h_canCrouchJumpDownGrab",
+              "canSpaceJumpWaterEscape"
+            ]}
+          ]},
+          {"and": [
+            "h_canIBJ",
+            "canBombJumpWaterEscape"
+          ]}
+        ]},
+        {"or": [
+          {"spikeHits": 1},
+          "HiJump"
+        ]}
+      ]
+    },
+    {
+      "from": 6,
+      "to": 5,
+      "name": "Gravity",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"or": [
+          "SpaceJump",
+          "h_canHBJ",
+          {"spikeHits": 1}
+        ]}
+      ]
+    },
+    {
+      "from": 6,
+      "to": 5,
+      "name": "Suitless Bootless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "canDisableEquipment",
+        "canCarefulJump"
+      ],
+      "note": "This can be done by turning off Gravity and HiJump to jump over both spike pits."
     }
   ]
 }

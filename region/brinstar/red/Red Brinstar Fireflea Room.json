@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 67,
   "name": "Red Brinstar Fireflea Room",
   "area": "Brinstar",
@@ -14,20 +15,6 @@
       "nodeSubType": "red",
       "nodeAddress": "0x001905a",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Red Firefleas Left Door (to X-Ray)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Red Firefleas Red Lock (to X-Ray)",
@@ -42,56 +29,6 @@
             }
           ]
         }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 13,
-          "openEnd": 0,
-          "framesRemaining": 0,
-          "shinesparkFrames": 0,
-          "initiateRemotely": {
-            "initiateAt": 2,
-            "mustOpenDoorFirst": true,
-            "pathToDoor": [
-              {
-                "destinationNode": 1,
-                "strats": ["In-Room Shinespark"]
-              }
-            ]
-          },
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "note": [
-            "Requires opening the door, then going to the middle of the room to use the really small runway.",
-            "ShinesparkFrames are at 0 because the shinespark frames are accounted for in the path to door."
-          ]
-        },
-        {
-          "usedTiles": 33,
-          "openEnd": 2,
-          "framesRemaining": 0,
-          "shinesparkFrames": 50,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "canIframeSpikeJump",
-                {"spikeHits": 2},
-                {"or": [
-                  "SpaceJump",
-                  {"spikeHits": 2}
-                ]}
-              ]
-            }
-          ]
-        }
       ]
     },
     {
@@ -100,61 +37,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019066",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Red Firefleas Right Door (to Red Tower)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 13,
-          "openEnd": 0,
-          "framesRemaining": 0,
-          "shinesparkFrames": 50,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovementComplex",
-                "canMidairShinespark"
-              ],
-              "note": "Requires opening the door, then going to pit in the middle of the room to use the really small runway."
-            }
-          ]
-        },
-        {
-          "usedTiles": 33,
-          "openEnd": 2,
-          "framesRemaining": 40,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                "h_canXMode",
-                {"spikeHits": 2}
-              ],
-              "note": [
-                "Jump from the entry runway to bounce onto spikes for XMode.",
-                "Store a spark in XMode and use that to shinepark across the room.",
-                "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."
-              ]
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -188,7 +71,65 @@
       "homeNodes": [2]
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Left Door Open",
+      "obstacleType": "inanimate"
+    }
+  ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Open the Door",
+      "notable": false,
+      "requires": [],
+      "clearsObstacles": ["A"],
+      "devNote": "A doorUnlockedAtNode requirement is not included, since it is implicitly included in the exitCondition of strats that rely on this."
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Spark (X-Mode)",
+      "notable": false,
+      "requires": [
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        "canIframeSpikeJump",
+        {"or": [
+          "SpaceJump",
+          "h_XModeSpikeHit"
+        ]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 50}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Use the Spikes in the center of the room to build a Shinespark with X-Mode.",
+        "There are sections of the room where using more complex movement can be used to save a Spike hit when X-Moding."
+      ],
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+    },
     {
       "from": 1,
       "to": 2,
@@ -204,20 +145,42 @@
     {
       "from": 1,
       "to": 2,
-      "name": "Shinespark",
+      "name": "Shinespark (Come In With Spark)",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0,
-          "shinesparkFrames": 150,
-          "excessShinesparkFrames": 57
+        {"shinespark": {
+          "frames": 146,
+          "excessFrames": 60
         }}
       ],
       "note": "Enter the door high to avoid a frame perfect spike hit.",
       "devNote": [
         "FIXME: There is one frame where ending the spark early puts you over spikes with no avoiding them, unless you entered the room at top of door.",
         "Which frame is determined by actual shinesparkFrames and shinespark velocity."
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Shinespark (Come In Shinecharging)",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 142,
+          "excessFrames": 60
+        }}
+      ],
+      "devNote": [
+        "FIXME: With canShinesparkMovement you can jump out a bit before sparking, but it may not be worth modeling."
       ]
     },
     {
@@ -267,55 +230,123 @@
     {
       "from": 2,
       "to": 1,
-      "name": "Shinespark",
+      "name": "Shinespark (Come in With Spark)",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 0,
-          "shinesparkFrames": 146,
-          "excessShinesparkFrames": 6
-        }}
+        {"shinespark": {"frames": 146, "excessFrames": 6}}
       ]
     },
     {
       "from": 2,
       "to": 1,
-      "name": "In-Room Shinespark",
+      "name": "Shinespark (Come in Shinecharging)",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 143, "excessFrames": 6}}
+      ],
+      "devNote": [
+        "FIXME: With canShinesparkMovement you can move left a bit further before sparking, but it may not be worth modeling."
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark (In-Room Runway)",
       "notable": false,
       "requires": [
         "canMidairShinespark",
         "canShinechargeMovementComplex",
         {"canShineCharge": {
           "usedTiles": 13,
-          "openEnd": 0,
-          "shinesparkFrames": 107,
-          "excessShinesparkFrames": 6
-        }}
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 107, "excessFrames": 6}}
       ],
-      "note": "Use the really small runway in a pit in the middle of the room."
+      "note": "Use the really small runway in the pit in the middle of the room."
     },
     {
       "from": 2,
       "to": 1,
-      "name": "XMode Shinespark",
+      "name": "Leave With Spark (In-Room Runway)",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canMidairShinespark",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 13,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 107}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Use the really small runway in the pit in the middle of the room. The door must be already opened."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark (X-Mode)",
       "notable": false,
       "requires": [
         "canMidairShinespark",
         "h_canXMode",
+        {"spikeHits": 2},
         {"canShineCharge": {
           "usedTiles": 33,
-          "openEnd": 2,
-          "shinesparkFrames": 146,
-          "excessShinesparkFrames": 6
+          "openEnd": 2
         }},
-        {"spikeHits": 1}
+        {"shinespark": {"frames": 146, "excessFrames": 6}}
       ],
       "note": [
-        "Jump from the entry runway to bounce onto spikes for XMode.",
-        "Store a spark in XMode and use that to shinepark across the room.",
-        "Bumping a solid tile before activating XMode will remove dash state, preventing shinecharging."
-      ]
+        "Jump from the runway near the right door to bounce onto spikes for X-Mode.",
+        "Store a spark in X-Mode and use that to shinepark across the room.",
+        "Bumping a solid tile before activating X-Mode will remove dash state, preventing shinecharging."
+      ],
+      "devNote": "Omitting leniency spikeHits, since the firefleas provide an opportunity to farm after a failed attempt."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Leave With Spark (X-Mode)",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canMidairShinespark",
+        "h_canXMode",
+        {"spikeHits": 1},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 146}},
+          {"and": [
+            "SpaceJump",
+            {"shinespark": {"frames": 50}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Jump from the runway near the right door to bounce onto spikes for X-Mode.",
+        "Store a spark in X-Mode and use that to shinepark across the room.",
+        "Bumping a solid tile before activating X-Mode will remove dash state, preventing shinecharging.",
+        "The left door must have been opened previously, in order to shinespark through it."
+      ],
+      "devNote": "Omitting leniency spikeHits, since the firefleas provide an opportunity to farm after a failed attempt."
     },
     {
       "from": 2,
@@ -489,6 +520,62 @@
           "mustStayPut": false
         }},
         {"refill": ["Energy", "PowerBomb"]}
+      ]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave With Spark (In-Room Runway)",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 13,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 50}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Requires opening the door, then going to the pit in the middle of the room to use the really small runway."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinecharged (X-Mode)",
+      "notable": false,
+      "requires": [
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      },
+      "note": [
+        "Store a spark in X-Mode and use that to leave with a shinecharge."
       ]
     }
   ]

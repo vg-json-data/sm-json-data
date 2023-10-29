@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 21,
   "name": "Green Pirates Shaft",
   "area": "Crateria",
@@ -13,21 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c5e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Pirates Shaft Top Right Door (to Gauntlet E-Tank)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -35,21 +22,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c3a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Pirates Shaft Middle Right Door (to Terminator)",
-          "length": 8,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -57,21 +30,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c46",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Pirates Shaft Bottom Left Door (to Lower Mushrooms)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
@@ -80,20 +39,6 @@
       "nodeSubType": "red",
       "nodeAddress": "0x0018c52",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Pirates Shaft Bottom Right Door (to Statues Hallway)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "locks": [
         {
           "name": "Green Pirates Shaft Red Lock (to Statues Hallway)",
@@ -152,10 +97,36 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 8,
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 9,
+          "openEnd": 1
+        }
+      }
     },
     {
       "from": 2,
@@ -224,36 +195,44 @@
       "to": 9,
       "name": "Xray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canRightDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [2],
-          "mustStayPut": true
-        }},
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 2,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]}
+        "canXRayClimb"
       ],
       "note": [
         "Climb until the camera fully shows Samus on the bottom of the screen.  Shoot up to clear the shot blocks and resume climbing until you can walk out to the left.",
         "Fix the camera by shooting the floor shot block and jumping down."
       ]
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Leave with Runway, Open Both Doors",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 4}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
     },
     {
       "from": 3,
@@ -267,18 +246,11 @@
       "to": 9,
       "name": "X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canLeftDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [3],
-          "mustStayPut": true
-        }},
-        {"adjacentRunway": {
-          "fromNode": 3,
-          "usedTiles": 0.5,
-          "overrideRunwayRequirements": true,
-          "useFrames": 200
-        }},
+        "canXRayClimb",
         {"or": [
           {"enemyDamage": {
             "enemy": "Green Space Pirate (standing)",
@@ -350,34 +322,42 @@
     },
     {
       "from": 4,
+      "to": 4,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 4,
+      "to": 4,
+      "name": "Leave with Runway, Open Both Doors",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 3}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 4,
       "to": 9,
       "name": "X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canRightDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [4],
-          "mustStayPut": true
-        }},
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 4,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 4,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]},
+        "canXRayClimb",
         {"or": [
           {"enemyDamage": {
             "enemy": "Green Space Pirate (standing)",

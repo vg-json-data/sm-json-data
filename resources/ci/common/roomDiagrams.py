@@ -307,33 +307,32 @@ def make_clean(rootPath):
                     area = ""
                     subarea = ""
                     subsubarea = ""
-                    if "rooms" in regionJSON:
-                        for room in regionJSON["rooms"]:
-                            areaPath = os.path.dirname(os.path.join(r, filename)).split(os.sep)
-                            area = room["area"]
-                            subarea = room["subarea"]
-                            subsubarea = (room["subsubarea"] if ("subsubarea" in room) else subsubarea)
-                            areaSlug = areaPath[-1]
-                            subareaSlug = os.path.splitext(filename)[0]
-                            roomIDs[str(room["id"])] = {
-                                "name": room["name"],
-                                "area": area,
-                                "subarea": subarea,
-                                "areaSlug": areaSlug,
-                                "subareaSlug": subareaSlug,
-                                "doors": 0
-                            }
-                            for node in room["nodes"]:
-                                if node["nodeType"] == "door" and node["nodeSubType"] != "elevator":
-                                    roomIDs[str(room["id"])]["doors"] += 1
-                            if subsubarea != "":
-                                roomIDs[str(room["id"])]["subsubsarea"] = subsubarea
-                        msg = f"> Reading {area}/{subarea}"
+                    rooms = regionJSON["rooms"] if "rooms" in regionJSON else [regionJSON]
+                    for room in rooms:
+                        areaPath = os.path.dirname(os.path.join(r, filename)).split(os.sep)
+                        area = room["area"]
+                        subarea = room["subarea"]
+                        subsubarea = (room["subsubarea"] if ("subsubarea" in room) else subsubarea)
+                        areaSlug = areaPath[-1]
+                        subareaSlug = os.path.splitext(filename)[0]
+                        roomIDs[str(room["id"])] = {
+                            "name": room["name"],
+                            "area": area,
+                            "subarea": subarea,
+                            "areaSlug": areaSlug,
+                            "subareaSlug": subareaSlug,
+                            "doors": 0
+                        }
+                        for node in room["nodes"]:
+                            if node["nodeType"] == "door" and node["nodeSubType"] != "elevator":
+                                roomIDs[str(room["id"])]["doors"] += 1
                         if subsubarea != "":
-                            msg += f"/{subsubarea}"
-                        # print(msg)
-                    else:
-                        print(f"!!! {os.path.join(r,filename)} has no rooms!")
+                            roomIDs[str(room["id"])]["subsubsarea"] = subsubarea
+                    msg = f"> Reading {area}/{subarea}"
+                    if subsubarea != "":
+                        msg += f"/{subsubarea}"
+                    msg += f"/{room['name']}"
+                    print(msg)
             if ".png" in filename and "region_" in filename:
                 # Region Image
                 print(f" > Opening {filename}")
@@ -439,7 +438,7 @@ def make_clean(rootPath):
 make_clean(rootPath)
 # lift_pathways(rootPath)
 # test_pathways(rootPath)
-search_doorways(rootPath)
+# search_doorways(rootPath)
 
 # No 53, 72, 73, 221
 # End is 242

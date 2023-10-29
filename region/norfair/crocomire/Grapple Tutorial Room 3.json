@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 131,
   "name": "Grapple Tutorial Room 3",
   "area": "Norfair",
@@ -14,21 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00194b6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Grapple Tutorial Room 3 Left Door (to Grapple Tutorial 2)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -36,40 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00194c2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Grapple Tutorial Room 3 Right Door (to Shaft)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Grapple Tutorial Room 3 Right Door (to Shaft)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"or": [
-                  "h_canGreenGateGlitch",
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ],
-              "clearsObstacles": ["A"]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -118,6 +72,19 @@
     {
       "from": 1,
       "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
       "name": "Gamet Farm",
       "notable": false,
       "requires": [
@@ -127,15 +94,28 @@
     {
       "from": 1,
       "to": 3,
-      "name": "Shinespark",
+      "name": "Enter Shinesparking",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0,
-          "shinesparkFrames": 56,
-          "excessShinesparkFrames": 1
-        }}
+        {"shinespark": {"frames": 56, "excessFrames": 1}}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Enter Building Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 54, "excessFrames": 1}}
       ]
     },
     {
@@ -179,27 +159,36 @@
     {
       "from": 1,
       "to": 3,
-      "name": "Speedy SpringBall Jump",
+      "name": "Careful SpringBall Bounce",
       "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 4,
+          "speedBooster": "any"
+        }
+      },
       "requires": [
-        "h_canUseSpringBall",
+        "canCarefulJump",
         "canMockball",
-        {"or": [
-          {"and": [
-            "canCarefulJump",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 4
-            }}
-          ]},
-          {"and": [
-            "canTrickyJump",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 2
-            }}
-          ]}
-        ]}
+        "canSpringBallBounce"
+      ],
+      "note": "With enough run speed, jump over the first moat and MockBall into a regular springball jump over the second moat."
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "name": "Tricky SpringBall Bounce",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "canTrickyJump",
+        "canMockball",
+        "canSpringBallBounce"
       ],
       "note": "With enough run speed, jump over the first moat and MockBall into a regular springball jump over the second moat."
     },
@@ -235,16 +224,29 @@
     {
       "from": 1,
       "to": 4,
-      "name": "Speedy Jump",
+      "name": "Speed Jump",
       "notable": false,
       "requires": [
+        "SpeedBooster",
+        "canTrickyJump",
         {"or": [
-          "SpeedBooster",
-          {"adjacentRunway": {
-            "fromNode": 1,
-            "usedTiles": 2
-          }}
-        ]},
+          "canWalljump",
+          "canLateralMidAirMorph"
+        ]}
+      ]
+    },
+    {
+      "from": 1,
+      "to": 4,
+      "name": "Little Run Speed Jump",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
         "canTrickyJump",
         {"or": [
           "canWalljump",
@@ -257,12 +259,14 @@
       "to": 4,
       "name": "Full Run Speed Jump",
       "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 4,
+          "speedBooster": "any"
+        }
+      },
       "requires": [
-        "canCarefulJump",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 4
-        }}
+        "canCarefulJump"
       ]
     },
     {
@@ -301,6 +305,34 @@
         "canTrickyJump"
       ],
       "note": "Wait for the water to be rising and perform a max height SpringBall Jump."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Limited Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Full Runway",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      }
     },
     {
       "from": 2,

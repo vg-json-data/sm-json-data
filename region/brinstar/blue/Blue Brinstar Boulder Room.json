@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 42,
   "name": "Blue Brinstar Boulder Room",
   "area": "Brinstar",
@@ -13,36 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018fee",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Boulder Room Left Door (to Billy Mays)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 0
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 19,
-          "framesRemaining": 100,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -50,63 +22,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018fe2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Boulder Room Right Door (to Ceiling E-Tank)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 19,
-          "framesRemaining": 80,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                "Gravity"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 19,
-          "framesRemaining": 50,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Boulder Room Shinecharge into PreOpened Door",
-              "notable": true,
-              "requires": [
-                "canShinechargeMovement",
-                "canCarefulJump"
-              ],
-              "note": [
-                "Shoot the bridge to see where it ends.",
-                "Opening the door requires a shot that is fired while Samus has some momentum from running to the right.",
-                "Charge a spark running left then run off right into a preopened door."
-              ],
-              "devNote": [
-                "Using the second openEnd means you cannot make it to the door in time.",
-                "Could attach `canMomentumShot` tech if that gets added.",
-                "Emphasis on Careful.  There is no jump."
-              ]
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -119,6 +35,36 @@
     }
   ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Charged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      }
+    },
     {
       "from": 1,
       "to": 2,
@@ -163,6 +109,54 @@
       "note": "Shoot open the door and jump through it without going into the water below."
     },
     {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Charged (with Gravity)",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "openEnd": 2
+        }},
+        "canShinechargeMovement",
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Leave Charged (Suitless)",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement",
+        "canCarefulJump"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "note": [
+        "Shoot the bridge to see where it ends.",
+        "Opening the door requires a shot that is fired while Samus has some momentum from running to the right.",
+        "Charge a spark running left then run off right into a preopened door."
+      ],
+      "devNote": [
+        "Using the second openEnd means you cannot make it to the door in time.",
+        "Could attach `canMomentumShot` tech if that gets added.",
+        "Emphasis on Careful.  There is no jump."
+      ]
+    },
+    {
       "from": 2,
       "to": 1,
       "name": "Base",
@@ -196,7 +190,7 @@
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
-        "canSpringBallJumpMidAir"
+        "canTrickySpringBallJump"
       ]
     },
     {
@@ -204,14 +198,14 @@
       "to": 1,
       "name": "Boulder Room Jump Through the Door",
       "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 1
+        }
+      },
       "requires": [
         "canCarefulJump",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "inRoomPath": [2, 1],
-          "physics": ["normal"]
-        }},
         "canWalljump"
       ],
       "note": "A doorsill with an open end is really all the room that's needed on the other side."
@@ -222,6 +216,7 @@
       "name": "Boulder Room Doorsill Jump",
       "notable": false,
       "requires": [
+        {"doorUnlockedAtNode": 2},
         "canPreciseWalljump",
         "canCarefulJump",
         {"or": [
@@ -231,8 +226,7 @@
           "Morph"
         ]}
       ],
-      "note": "It's not even necessary to jump through the door, the in-room doorsill gives enough running room to make it up.",
-      "devNote": "FIXME This assumes the door can be opened, which may not be possible."
+      "note": "It's not even necessary to jump through the door, the in-room doorsill gives enough running room to make it up."
     },
     {
       "from": 2,
@@ -253,12 +247,13 @@
       "to": 1,
       "name": "G-Mode Direct Doorsill Jump",
       "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        }
+      },
+      "requires": [
         "canPreciseWalljump",
         "canCarefulJump",
         {"or": [
@@ -275,16 +270,30 @@
       "to": 1,
       "name": "G-Mode Morph Spring Ball IBJ",
       "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphJumpIntoIBJ",
         "canBombHorizontally"
       ],
       "note": "Starting an IBJ from spring ball with no other items is not very precise, it just takes a bit of an odd timing."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
     }
   ]
 }

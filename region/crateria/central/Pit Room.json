@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 12,
   "name": "Pit Room",
   "area": "Crateria",
@@ -14,36 +15,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x0018b7a",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Pit Room Left Door (to Climb)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [],
-              "note": "The door is grey unless Samus has Morph and Missiles, even if Zebes is awake."
-            }
-          ],
-          "openEnd": 1,
-          "usableComingIn": false
-        },
-        {
-          "name": "Runway Left of Bomb Blocks - Pit Room Left Door (to Climb)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [],
-              "note": "The door is grey unless Samus has Morph and Missiles, even if Zebes is awake."
-            }
-          ],
-          "openEnd": 1,
-          "usableComingIn": true
-        }
-      ],
       "locks": [
         {
           "name": "Pit Room Left Grey Lock (to Climb)",
@@ -75,21 +46,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x0018b86",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Pit Room Right Door (to Elevator)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "gModeImmobile": {
         "requires": [
           {"enemyDamage": {
@@ -186,6 +142,34 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway, Broken Floor",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Base",
       "notable": false,
@@ -209,16 +193,18 @@
       "to": 3,
       "name": "Temporary Blue",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        "canTemporaryBlue",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 1,
-          "shinesparkFrames": 0
-        }}
+        "canTemporaryBlue"
       ],
       "clearsObstacles": ["A"],
-      "note": "Breaking the side blocks can be done with a shinespark, or by moving into them once past the solid blocks."
+      "note": "Breaking the side blocks can be done with a shinespark, or by moving into them once past the solid blocks.",
+      "devNote": "FIXME: Add chain strat with x-ray turnaround and a 7 tile runway."
     },
     {
       "from": 1,
@@ -287,6 +273,19 @@
     {
       "from": 2,
       "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
       "name": "Space Pirate Farm",
       "notable": false,
       "requires": [
@@ -298,6 +297,38 @@
         }},
         {"refill": ["Energy", "Missile"]}
       ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "name": "Full Room Temporary Blue",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canTemporaryBlue",
+        "canCarefulJump",
+        {"or": [
+          "canChainTemporaryBlue",
+          {"and": [
+            "canSpeedball",
+            "canSpringBallBounce",
+            "canSlowShortCharge"
+          ]},
+          {"and": [
+            "canBlueSpaceJump",
+            "canMockball",
+            "canTrickyJump",
+            "canSlowShortCharge"
+          ]}
+        ]}
+      ],
+      "note": "Bring temporary blue from the right side door all the way to the missile location using Springball, SpaceJump, or Morph-UnMorphs.",
+      "devNote": "There is 1 unusable tile in this runway."
     },
     {
       "from": 2,
@@ -332,21 +363,38 @@
           "artificialMorph": true
         }},
         "h_canArtificialMorphBombHorizontally",
-        {"ammo": {"type": "PowerBomb", "count": 3}},
+        {"ammo": {"type": "PowerBomb", "count": 2}},
         {"or": [
-          "canTrickyJump",
-          {"ammo": {"type": "PowerBomb", "count": 1}},
-          {"enemyDamage": {
-            "enemy": "Grey Space Pirate (standing)",
-            "type": "contact",
-            "hits": 1
-          }}
+          {"ammo": {"type": "PowerBomb", "count": 2}},
+          {"and": [
+            "canTrickyJump",
+            {"ammo": {"type": "PowerBomb", "count": 1}}
+          ]},
+          {"and": [
+            "f_ZebesAwake",
+            "canNeutralDamageBoost",
+            "canTrickyJump",
+            {"enemyDamage": {
+              "enemy": "Grey Space Pirate (standing)",
+              "type": "contact",
+              "hits": 1
+            }},
+            {"or": [
+              {"ammo": {"type": "PowerBomb", "count": 1}},
+              {"enemyDamage": {
+                "enemy": "Grey Space Pirate (standing)",
+                "type": "contact",
+                "hits": 2
+              }}
+            ]}
+          ]}
         ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
-        "Be careful not to touch any of the pirates or their spawned lasers.",
+        "Be careful around the pirates and their spawned lasers.",
         "Use Power Bomb horizontal boosts to move toward the left side of the room in artificial morph.",
+        "If the health is available, damage boosts using the pirates can be used to save Power Bombs, but the movements are very precise.",
         "Roll off the third blue platform from the right door and lay a Power Bomb against the left wall to get into range of the bomb blocks.",
         "Unmorph and use X-ray to cancel G-mode. It may be best to do this before the PB explodes, in case PLMs are already overloaded."
       ]

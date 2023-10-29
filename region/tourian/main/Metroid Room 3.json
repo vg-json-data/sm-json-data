@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 228,
   "name": "Metroid Room 3",
   "area": "Tourian",
@@ -14,21 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9d8",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Metroid Room 3 Left Door (to Metroid Room 2)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -37,20 +23,6 @@
             "requires": []
           }
         ]}
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 29,
-          "framesRemaining": 60,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
       ],
       "gModeImmobile": {
         "requires": [
@@ -69,35 +41,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001a9e4",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Metroid Room 3 Right Door (to Metroid Room 4)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 29,
-          "framesRemaining": 0,
-          "shinesparkFrames": 75,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -161,6 +104,42 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "canMetroidAvoid",
+          "Ice",
+          "f_KilledMetroidRoom3"
+        ]},
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 29,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Already Cleared",
       "notable": false,
@@ -218,13 +197,33 @@
     {
       "from": 1,
       "to": 2,
-      "name": "Easy Evade",
+      "name": "Ice Evade",
+      "notable": false,
+      "requires": [
+        "Ice"
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Screw Evade",
       "notable": false,
       "requires": [
         {"or": [
           "ScrewAttack",
-          "Ice"
+          "canPseudoScrew"
+        ]},
+        {"or": [
+          "canDodgeWhileShooting",
+          {"and": [
+            "canCarefulJump",
+            "SpaceJump"
+          ]}
         ]}
+      ],
+      "note": [
+        "Use ScrewAttack or a PseudoScrew to prevent Metroids from attaching to Samus.",
+        "These abilities may also be used to temporarily prevent damage from Metroids if they do attach."
       ]
     },
     {
@@ -239,11 +238,42 @@
     {
       "from": 1,
       "to": 2,
+      "name": "Blue SpaceJump, Into the Room",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canBlueSpaceJump",
+        "canCarefulJump"
+      ],
+      "note": "Jump Immediately upon entry, or before the transition.",
+      "devNote": "There is 1 unusable tile in this runway."
+    },
+    {
+      "from": 1,
+      "to": 2,
       "name": "Tank the Damage",
       "notable": false,
       "requires": [
         {"metroidFrames": 176}
       ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 112, "excessFrames": 6}}
+      ],
+      "devNote": "FIXME: Add strats that come in charged and spark to save energy."
     },
     {
       "from": 2,
@@ -304,13 +334,33 @@
     {
       "from": 2,
       "to": 1,
-      "name": "Easy Evade",
+      "name": "Ice Evade",
+      "notable": false,
+      "requires": [
+        "Ice"
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Screw Evade",
       "notable": false,
       "requires": [
         {"or": [
           "ScrewAttack",
-          "Ice"
+          "canPseudoScrew"
+        ]},
+        {"or": [
+          "canDodgeWhileShooting",
+          {"and": [
+            "canCarefulJump",
+            "SpaceJump"
+          ]}
         ]}
+      ],
+      "note": [
+        "Use ScrewAttack or a PseudoScrew to prevent Metroids from attaching to Samus.",
+        "These abilities may also be used to temporarily prevent damage from Metroids if they do attach."
       ]
     },
     {
@@ -325,11 +375,78 @@
     {
       "from": 2,
       "to": 1,
+      "name": "Blue SpaceJump, Into the Room",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canBlueSpaceJump",
+        "canCarefulJump"
+      ],
+      "devNote": "There is 1 unusable tile in this runway."
+    },
+    {
+      "from": 2,
+      "to": 1,
       "name": "Tank the Damage",
       "notable": false,
       "requires": [
         {"metroidFrames": 176}
       ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 112,
+          "excessFrames": 23
+        }}
+      ],
+      "devNote": "FIXME: Add strats that come in charged and spark to save energy."
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Shinesparking",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "canMetroidAvoid",
+          "Ice",
+          "f_KilledMetroidRoom3"
+        ]},
+        {"canShineCharge": {
+          "usedTiles": 29,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 75}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
     }
   ]
 }

@@ -25,13 +25,13 @@ def restructure_room(room_json):
     del new_room_json["links"]
     return new_room_json
 
-for path in sorted(Path("../region/").glob("**/*.json")):
+for path in sorted(Path("./region/").glob("**/*.json")):
     region_json = json.load(path.open("r"))
     if region_json.get("$schema") != "../../schema/m3-region.schema.json":
         continue
 
     print("Processing", path)
-    base_name = path.name.removesuffix('.json')
+    base_name = path.name.replace(".json", "")
 
     # Create a new directory to hold room files
     region_dir = path.parent / base_name
@@ -46,4 +46,4 @@ for path in sorted(Path("../region/").glob("**/*.json")):
         room_path.write_text(format_json.format(new_room_json, indent=2))
 
     # Delete the original region file:
-    path.unlink()
+    path.rename(path.with_suffix(".off"))

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 227,
   "name": "Metroid Room 2",
   "area": "Tourian",
@@ -14,21 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9c0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Metroid Room 2 Top Right Door (to Metroid Room 1)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -55,21 +41,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001a9cc",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Metroid Room 2 Bottom Right Door (to Metroid Room 3)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -159,6 +130,19 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Already Cleared",
       "notable": false,
@@ -205,7 +189,10 @@
           "enemies": [["Metroid", "Metroid"]],
           "excludedWeapons": ["Super", "Missile"]
         }},
-        "canMetroidAvoid"
+        {"or": [
+          "canMetroidAvoid",
+          "canCameraManip"
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": "An easy way is once Samus is on the top platform, jump and aim down to lower the camera, then place 3 PBs."
@@ -213,13 +200,26 @@
     {
       "from": 1,
       "to": 2,
-      "name": "Easy Evade",
+      "name": "Ice Evade",
       "notable": false,
       "requires": [
+        "Ice"
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "name": "Screw Evade",
+      "notable": false,
+      "requires": [
+        "canDodgeWhileShooting",
         {"or": [
           "ScrewAttack",
-          "Ice"
+          "canPseudoScrew"
         ]}
+      ],
+      "note": [
+        "Use ScrewAttack or a PseudoScrew to prevent Metroids from attaching to Samus."
       ]
     },
     {
@@ -296,22 +296,43 @@
     {
       "from": 2,
       "to": 1,
-      "name": "Easy Evade",
+      "name": "Ice Evade",
       "notable": false,
       "requires": [
-        {"or": [
-          "ScrewAttack",
-          "Ice"
-        ]}
+        "Ice"
       ]
     },
     {
       "from": 2,
       "to": 1,
-      "name": "Harder Evade",
+      "name": "Screw Evade",
       "notable": false,
       "requires": [
+        {"or": [
+          {"and": [
+            "ScrewAttack",
+            "canDodgeWhileShooting"
+          ]},
+          {"and": [
+            "canPseudoScrew",
+            "canPrepareForNextRoom",
+            "canDodgeWhileShooting"
+          ]}
+        ]}
+      ],
+      "note": "Use ScrewAttack or a PseudoScrew to prevent Metroids from attaching to Samus."
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "name": "Metroid Room 2 Bottom Door Metroid Avoid",
+      "notable": true,
+      "requires": [
         "canMetroidAvoid"
+      ],
+      "note": [
+        "Buffer a spinjump towards the door to jump over the top metroid and land on the middle platform.",
+        "Metroids can knocked with Beam shots to clear a path."
       ]
     },
     {
@@ -322,6 +343,33 @@
       "requires": [
         {"metroidFrames": 80}
       ]
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "Ice",
+          {"and": [
+            {"enemyDamage": {
+              "enemy": "Rinka",
+              "type": "contact",
+              "hits": 1
+            }},
+            {"metroidFrames": 22}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "devNote": "FIXME: Is it worth adding a method with avoiding the Metroids?"
     }
   ]
 }

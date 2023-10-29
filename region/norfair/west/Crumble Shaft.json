@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 111,
   "name": "Crumble Shaft",
   "area": "Norfair",
@@ -14,25 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001938a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crumble Shaft Top Right Door (to Ice Beam Gate Room)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 50}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -40,25 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019396",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crumble Shaft Bottom Right Door (to Crocomire Speedway)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -67,6 +32,13 @@
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
       "nodeAddress": "0x78B46"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Obtain the Item while in a Spin Jump State",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -80,6 +52,19 @@
     }
   ],
   "strats": [
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "from": 1,
       "to": 2,
@@ -105,6 +90,20 @@
     {
       "from": 1,
       "to": 3,
+      "name": "Crumble Shaft Top Item Crumble Spin Jump",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canCrumbleJump",
+        "canTrickyJump",
+        {"heatFrames": 150}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Shoot the shot block, then crumble spin jump on the middle platform."
+    },
+    {
+      "from": 1,
+      "to": 3,
       "name": "Space Jump",
       "notable": false,
       "requires": [
@@ -112,20 +111,21 @@
         "SpaceJump",
         {"heatFrames": 150}
       ],
-      "stratProperties": ["spinjump"]
+      "clearsObstacles": ["A"]
     },
     {
       "from": 1,
       "to": 3,
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 60,
-          "shinesparkFrames": 20
-        }},
+        {"shinespark": {"frames": 20}},
         {"heatFrames": 175}
       ]
     },
@@ -137,11 +137,12 @@
       "requires": [
         "h_canNavigateHeatRooms",
         "canPreciseWalljump",
+        "canCameraManip",
         {"heatFrames": 300}
       ],
-      "stratProperties": ["spinjump"],
+      "clearsObstacles": ["A"],
       "note": [
-        "Get the game focus to move down so the middle platform Sova starts moving.",
+        "Jump and aim down to lower the camera so the middle platform Sova starts moving.",
         "Then shoot the shot block and walljump off the left side of the middle platform to reach the item."
       ]
     },
@@ -153,11 +154,12 @@
       "requires": [
         "h_canNavigateHeatRooms",
         "canUseFrozenEnemies",
+        "canCameraManip",
         {"heatFrames": 350}
       ],
-      "stratProperties": ["spinjump"],
+      "clearsObstacles": ["A"],
       "note": [
-        "Get the game focus to move down so the middle platform Sova starts moving.",
+        "Jump and aim down to lower the camera so the middle platform Sova starts moving.",
         "Then freeze it by aiming down, shoot the shot block, and use the Sova as a stable platform."
       ]
     },
@@ -313,13 +315,14 @@
       "to": 1,
       "name": "Crumble Shaft Shinespark Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 60,
-          "shinesparkFrames": 59
-        }},
+        {"shinespark": {"frames": 59}},
         {"heatFrames": 250}
       ],
       "note": "It has to be setup really close to the left side of the right platforms, otherwise it also requires a crumble jump at the top."
@@ -342,32 +345,12 @@
       "to": 1,
       "name": "Crumble Shaft X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        "h_canRightDoorXRayClimb",
-        {"resetRoom": {
-          "nodes": [2],
-          "mustStayPut": true
-        }},
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 2,
-            "usedTiles": 0.5,
-            "overrideRunwayRequirements": true,
-            "physics": ["normal"],
-            "useFrames": 200
-          }},
-          {"and": [
-            "h_canRightDoorXRayClimbFromWater",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 0.5,
-              "overrideRunwayRequirements": true,
-              "physics": ["water"],
-              "useFrames": 200
-            }}
-          ]}
-        ]},
+        "canXRayClimb",
         {"heatFrames": 4000},
         "canBePatient"
       ],
@@ -377,11 +360,30 @@
     {
       "from": 2,
       "to": 2,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 20}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 2,
+      "to": 2,
       "name": "Sova Farm",
       "notable": false,
       "requires": [
         "h_heatProof",
-        "canCrumbleJump",
+        {"or": [
+          "canCrumbleJump",
+          "h_canUseSpringBall"
+        ]},
         {"resetRoom": {
           "nodes": [1, 2],
           "mustStayPut": false
@@ -429,13 +431,14 @@
       "to": 3,
       "name": "Crumble Shaft Shinespark Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 30,
-          "shinesparkFrames": 59
-        }},
+        {"shinespark": {"frames": 59}},
         {"heatFrames": 250}
       ],
       "note": "It is easiest to do a diagonal shinespark up the left wall, then hold left, angle down, and spam shoot to easily grab the item."
@@ -485,7 +488,7 @@
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"previousStratProperty": "spinjump"},
+        {"obstaclesCleared": ["A"]},
         {"heatFrames": 175}
       ],
       "note": "Must have grabbed the item with a spinjump still active."

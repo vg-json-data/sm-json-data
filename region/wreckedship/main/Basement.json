@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schema/m3-room.schema.json",
   "id": 156,
   "name": "Basement",
   "area": "Wrecked Ship",
@@ -14,35 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a2a0",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Basement Left Door (to Map)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -89,19 +61,20 @@
           "devNote": "We could add another jumpway (or two) for the long platform below but it does not yet seem to have an application."
         }
       ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 60,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Frozen Atomic",
+            "notable": false,
+            "requires": [
+              "canUpwardGModeSetup",
+              "canTwoTileSqueeze",
+              "canTrickyUseFrozenEnemies",
+              "f_DefeatedPhantoon"
+            ],
+            "note": "Stand on one frozen Atomic to bring a second Atomic to the correct height to use as a crouch platform."
+          }
+        ]}
       ],
       "gModeImmobile": {
         "requires": [
@@ -121,21 +94,6 @@
       "nodeSubType": "eye",
       "nodeAddress": "0x001a2ac",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Phantoon Eye Door",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Phantoon Eye Lock",
@@ -187,6 +145,54 @@
   "strats": [
     {
       "from": 1,
+      "to": 1,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave with Runway - Phantoon Alive",
+      "notable": false,
+      "requires": [
+        {"not": "f_DefeatedPhantoon"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      },
+      "devNote": "The length is more similar to 5 with 0 open end, than 4 with 1."
+    },
+    {
+      "from": 1,
+      "to": 1,
+      "name": "Leave Charged",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    },
+    {
+      "from": 1,
       "to": 2,
       "name": "Base",
       "notable": false,
@@ -213,6 +219,24 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "from": 2,
+      "to": 2,
+      "name": "Leave Charged",
+      "notable": false,
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      }
     },
     {
       "from": 2,
@@ -249,11 +273,10 @@
       "name": "Basement Speedball (Phantoon Dead)",
       "notable": false,
       "requires": [
-        "canMockball",
+        "canSpeedball",
         "f_DefeatedPhantoon",
         {"canShineCharge": {
           "usedTiles": 33,
-          "shinesparkFrames": 0,
           "openEnd": 2
         }}
       ],
@@ -268,10 +291,9 @@
       "name": "Basement Speedball (Phantoon Alive)",
       "notable": false,
       "requires": [
-        "canMockball",
+        "canSpeedball",
         {"canShineCharge": {
-          "usedTiles": 25,
-          "shinesparkFrames": 0,
+          "usedTiles": 22,
           "openEnd": 0
         }}
       ],
@@ -307,17 +329,19 @@
       "name": "Speedball",
       "notable": false,
       "requires": [
-        "canMockball",
+        "canSpeedball",
         "canCarefulJump",
         "canSlowShortCharge",
         {"canComeInCharged": {
           "framesRemaining": 180,
-          "shinesparkFrames": 0,
           "fromNode": 3,
           "unusableTiles": 2
         }}
       ],
-      "devNote": "A more controlled angle is needed entering the room for this strat."
+      "devNote": [
+        "A more controlled angle is needed entering the room for this strat.",
+        "There are 2 unusable tiles in this runway."
+      ]
     },
     {
       "from": 3,
@@ -348,6 +372,19 @@
         "canOffScreenMovement"
       ],
       "note": "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them. Dodge the enemies while getting to the door."
+    },
+    {
+      "from": 3,
+      "to": 3,
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
     }
   ]
 }

@@ -69,29 +69,41 @@ for region in os.listdir(regionPath):
                                             if stripped != room["name"].lower():
                                                 data["roomIDsByLCRoomName"][stripped] = room["id"]
 
+                                    nukes = [
+                                        "runways",
+                                        "canLeaveCharged",
+                                        "leaveWithGMode",
+                                        "leaveWithGModeSetup",
+                                        "gModeImmobile",
+                                        "viewableNodes",
+                                        "locks",
+                                        "$schema",
+                                        "enemies",
+                                        "obstacles",
+                                        "reusableRoomwideNotable",
+                                        "requires",
+                                        "clearsObstacles",
+                                        "jumpways",
+                                        "gModeRegainMobility",
+                                        "entranceCondition",
+                                        "exitCondition"
+                                    ]
+
                                     if "ceres" in room["area"].lower():
                                         room["area"] = "Ceres"
                                         room["subarea"] = "Ceres"
 
                                     # trim nodes
                                     for [i, node] in enumerate(room["nodes"]):
-                                        for nuke in [
-                                            "runways",
-                                            "canLeaveCharged",
-                                            "leaveWithGMode",
-                                            "leaveWithGModeSetup",
-                                            "gModeImmobile",
-                                            "viewableNodes",
-                                            "locks"
-                                        ]:
+                                        for nuke in nukes:
                                             if nuke in node:
                                                 del node[nuke]
                                         room["nodes"][i] = node
 
                                     # trim room
-                                    if "reusableRoomwideNotable" in room: del room["reusableRoomwideNotable"]
-                                    if "obstacles" in room: del room["obstacles"]
-                                    if "enemies" in room:   del room["enemies"]
+                                    for key in nukes:
+                                        if key in room:
+                                            del room[key]
 
                                     # trim links
                                     if "links" in room:
@@ -100,6 +112,13 @@ for region in os.listdir(regionPath):
                                                 if "strats" in toNode: del toNode["strats"]
                                                 link["to"][j] = toNode
                                             room["links"][i] = link
+
+                                    # trim strats
+                                    if "strats" in room:
+                                        for [i, strat] in enumerate(room["strats"]):
+                                            for key in nukes:
+                                                if key in strat:
+                                                    del strat[key]
 
                                     # add roomDiagram path
                                     sanitizedRoomName = room["name"]
