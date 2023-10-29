@@ -70,7 +70,8 @@
                 {
                   "name": "canSpaceJumpWaterEscape",
                   "requires": [ "canSpaceJumpWaterBounce" ],
-                  "note": "Converting Space Jump Water Bouncing into regular space jumps without Gravity. Typically requires HiJump."
+                  "note": "Using HiJump to escape the waterline during a Space Jump Water Bounce.",
+                  "devNote": "Escaping tidal water without HiJump could be added as a more advanced tech."
                 }
               ]
             }
@@ -85,6 +86,12 @@
             "Disabling HiJump will give more time to perform a mid-air morph.",
             "Disabling Gravity will allow Samus to float farther in water, or jump slower for a mid-air morph.",
             "Beams may need to be disabled to control how enemies are killed (i.e. Remove plasma for canUseFrozenEnemies, or remove ice to effeciently use heat room farm points)."
+          ],
+          "devNote": [
+            "Note that this tech is not applied requiring the item to be not collected with canRiskPermanentLossOfAccess, as this is a low-level tech.",
+            "Instead, it is just listed with alternate options where more items can execute the strat without disabling equipment.",
+            "In the logic, this is not applied to switching off beams, as that is usually intuitive enough for players even without this tech.",
+            "FIXME: It is also not applied to Speedbooster jumps, as that would require a lot of changes to a lot of rooms."
           ]
         },
         {
@@ -220,7 +227,8 @@
                   "name": "can2HighWallMidAirMorph",
                   "requires": [
                     "canPreciseWalljump",
-                    "canWallJumpInstantMorph"
+                    "canWallJumpInstantMorph",
+                    "canDisableEquipment"
                   ],
                   "note" : [
                     "Getting up a 2-tile-high jump in a morph passage by mid-air morphing off of a wall jump. This is easier from an opposite wall.",
@@ -231,12 +239,21 @@
             },
             {
               "name": "can3HighMidAirMorph",
-              "requires": [ "canMidAirMorph" ],
-              "note" : "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room). It's a lot more precise than with more room."
+              "requires": [
+                "canMidAirMorph",
+                "canDisableEquipment"
+              ],
+              "note" : [
+                "A mid-air morph that has to be done within an elevation difference of 3 tiles (with a ceiling removing any extra room).",
+                "It's a lot more precise than with more room. Turn off HiJump before attempting this."
+              ]
             },
             {
               "name": "canRJump",
-              "requires": [ "canMidAirMorph" ],
+              "requires": [
+                "canMidAirMorph",
+                "canDisableEquipment"
+              ],
               "note": [
                 "A technique for mid-air morphing over a two tile wall in air physics, or a one tile wall in water physics.",
                 "The key point is that pausing can be used to morph much faster than double pressing down.",
@@ -279,6 +296,21 @@
           "note": [
             "Maintaining running speed while morphed, by holding jump and down (to crouch) during a lateral jump, then morphing as Samus hits the ground while holding jump and transition from holding down to holding forward.",
             "Sometimes referred to as a Machball."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canSpeedball",
+              "requires": [
+                "canMockball",
+                "SpeedBooster",
+                "canCarefulJump"
+              ],
+              "note": [
+                "Maintain the SpeedBooster effect while rolling as a Morph Ball in order to destroy bomb blocks in Morph tunnels.",
+                "A Speedball involves performing a Mockball at faster speeds and additionally it will help to be able to perform short jumps to reduce the amount of space needed.",
+                "A Speedball can also be used with SpringBall as a way to jump with temporary blue state while maintaining Samus' momentum."
+              ]
+            }
           ]
         },
         {
@@ -450,6 +482,18 @@
           ],
           "extensionTechs": [
             {
+              "name": "canTrickySpringBallJump",
+              "requires": [ "canSpringBallJumpMidAir" ],
+              "note": [
+                "A precise, mid-air spring ball jump. This includes those with a relatively tight pause, jump, and morph, in order to spring ball jump just above shallow water.",
+                "And those which require the jump input to be pressed near the peak of the jump, which cannot be done by buffering the jump out of the pause menu.",
+                "To do this, pause as early as possible before jumping and morphing in order to have as much visibility as possible after equipping Spring Ball to time the second jump.",
+                "This can also be used out of a Spring Wall or from a spin jump, in order to gain more horizontal distance before triggering the second jump.",
+                "This, along with a crouch jump, is also needed in order to perform a maximum height spring ball jump.",
+                "Maximum height jumps primarily have underwater applications, as it enables Samus to barely make it up 7 tiles vertically."
+              ]
+            },
+            {
               "name": "canSpringwall",
               "requires": [
                 "canSpringBallJumpMidAir",
@@ -462,12 +506,25 @@
             },
             {
               "name": "canDoubleSpringBallJumpMidAir",
-              "requires": [ "canSpringBallJumpMidAir" ],
+              "requires": [ "canTrickySpringBallJump" ],
               "note": [
                 "Using a mid-air Spring Ball jump twice during a single jump to gain even more height.",
                 "This consists of a tight variant of mid-air Spring Ball jump, then turning off Spring Ball, then a second mid-air Spring Ball jump all while still climbing upwards.",
                 "This is typically used underwater with HiJump, but it is technically possible in lava without HiJump or to perform more than two Spring Ball jumps in acid."
               ]
+            },
+            {
+              "name": "canUnderwaterBombIntoSpringBallJump",
+              "requires": [ 
+                "canTrickySpringBallJump",
+                "h_canJumpIntoIBJ"
+              ],
+              "note": [
+                "Use the tiny amount of height gain from an underwater Bomb explosion to re-equip Springball and perform a Springball jump.",
+                "This is most often used to get a second SpringBall jump when underwater without HiJump.",
+                "Bombs are required since Power Bombs will prevent pausing."
+              ],
+              "devNote": "Similar to an underwater walljump into springballjump, but that has no applications yet since double springballjump is easier for similar requirements."
             }
           ]
         },
@@ -654,8 +711,19 @@
             },
             {
               "name": "canSandIBJ",
-              "requires": [ "h_canJumpIntoIBJ" ],
-              "note": "The ability to start an IBJ off a jump on sand. It requires precise rapid inputs and can be pretty obnoxious to execute."
+              "requires": [ 
+                "h_canJumpIntoIBJ",
+                "canPlayInSand"
+              ],
+              "note": [
+                "The ability to start an IBJ from sand.",
+                "Jumping from the top of sand into an IBJ takes more precision than a standard jump into IBJ.",
+                "Escaping a shallow sand fall does not require this tech, but there is a section of Maridia's West Sand Hall which would use a Sand IBJ."
+              ],
+              "devNote": [
+                "Escaping a shallow sandfall with bombs falls under canPlayInSand.",
+                "The Sandfall IBJ in West Sandhall for the bounce is specific to one section of one room because the sand depth is different there."
+              ]
             },
             {
               "name": "canDoubleBombJump",
@@ -685,18 +753,6 @@
           ],
           "note": "From a submerged platform, setting up a single bomb jump above the water line to propel Samus up and out of the water.",
           "devNote": "It's recommended to apply a number of tries as leniency here for the PBs version."
-        },
-        {
-          "name": "canBombJumpOnSand",
-          "requires": [ 
-            "canPlayInSand", 
-            "h_canBombThings"
-          ],
-          "note": [
-            "The ability to bomb jump while dealing with the sinking effect of sand physics.",
-            "This is done by placing the bomb on or above the top of the sand line and then jumping again to land on the bomb explosion,",
-            "or by rising out of the sand using Bombs inside of a sandfall to then land on the bomb that is at the sand line."
-          ]
         }
       ]
     },
@@ -1053,6 +1109,20 @@
           ]
         },
         {
+          "name": "canSpeedKeep",
+          "requires": [
+            "SpeedBooster",
+            "canBounceBall",
+            "canIframeSpikeJump"
+          ],
+          "note": [
+            "The ability to retain the Dash counter and momentum by frame perfectly unmorphing before taking damage from spikes.",
+            "It is necessary to bounce while in Morph Ball, either by falling or by taking damage, to set the correct fall state for a SpeedKeep.",
+            "This allows for charging a Shinespark or Temporary Blue using a shorter runway if there is a stretch of spikes available.",
+            "It is also possible to use multiple SpeedKeeps to build up the Dash counter without travelling much distance in a room by applying canChainTemporaryBlue movements."
+          ]
+        },
+        {
           "name": "canBlueSpaceJump",
           "requires": [
             "SpeedBooster",
@@ -1242,6 +1312,17 @@
                 "Ability to setup an R-mode or G-mode through a downward door.",
                 "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition.",
                 "This is typically done using quicksand, clipping into the floor, or using a thawing frozen wall crawler."
+              ]
+            },
+            {
+              "name": "canUpwardGModeSetup",
+              "requires": [ "canEnterRMode" ],
+              "note": [
+                "Ability to setup an R-mode or G-mode through an upward door.",
+                "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition.",
+                "This is typically done by using an enemy as a platform beneath the door and instantly standing up by pressing forward while crouched.",
+                "Getting Samus into the crouch position can usually be down by spinjumping (beneath the transition tiles) then aiming down to stand on the enemy.",
+                "Unmorphing when on top of the enemy will also put Samus in a crouch."
               ]
             }
           ]

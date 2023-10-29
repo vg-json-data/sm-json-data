@@ -1,8 +1,56 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://raw.githubusercontent.com/miketrethewey/sm-json-data/master/schema/m3-region.schema.json",
-
+  "id": "https://raw.githubusercontent.com/vg-json-data/sm-json-data/master/schema/m3-region.schema.json",
   "definitions": {
+    "runway": {
+      "$id": "#/definitions/runway",
+      "type": "object",
+      "required": ["length"],
+      "additionalProperties": false,
+      "properties": {
+        "length": {
+          "$id": "#/definitions/runway/properties/length",
+          "type": "number",
+          "title": "Length",
+          "minimum": 0,
+          "maximum": 45,
+          "description": "Horizontal length of the runway in tiles."
+        },
+        "openEnd": {
+          "$id": "#/definitions/runway/properties/openEnd",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "title": "Number of Open Ends",
+          "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+          "default": 1
+        },
+        "gentleUpTiles": {
+          "$id": "#/definitions/runway/properties/gentleUpTiles",
+          "type": "integer",
+          "title": "Gentle Up Tiles",
+          "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards"
+        },
+        "gentleDownTiles": {
+          "$id": "#/definitions/runway/properties/gentleDownTiles",
+          "type": "integer",
+          "title": "Gentle Down Tiles",
+          "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards"
+        },
+        "steepUpTiles": {
+          "$id": "#/definitions/runway/properties/steepUpTiles",
+          "type": "integer",
+          "title": "Steep Up Tiles",
+          "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards"
+        },
+        "steepDownTiles": {
+          "$id": "#/definitions/runway/properties/steepDownTiles",
+          "type": "integer",
+          "title": "Steep Down Tiles",
+          "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards"
+        }
+      }
+    },
     "strat": {
       "$id": "#/definitions/strat",
       "type": "object",
@@ -51,11 +99,413 @@
           "type": "string",
           "description": "Reference to a roomwide reusable strat. Must match the name of a reusableRoomwideNotable in the room."
         },
+        "entranceCondition": {
+          "$id": "#/definitions/strat/properties/entranceCondition",
+          "type": "object",
+          "title": "Entrance Condition",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "maxProperties": 1,
+          "properties": {
+            "comeInRunning": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInRunning",
+              "type": "object",
+              "title": "Come In Running",
+              "description": "Represents a requirement to run in through this door with speed in a specified range.",
+              "required": [
+                "speedBooster",
+                "minTiles"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "speedBooster": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInRunning/properties/speedBooster",
+                  "type": ["boolean", "string"],
+                  "title": "Speed Booster",
+                  "description": "Whether or not this run should be performed with Speed Booster.",
+                  "enum": [
+                    true,
+                    false,
+                    "any"
+                  ]
+                },
+                "minTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInRunning/properties/minTiles",
+                  "type": "number",
+                  "title": "Minimum Speed in Tiles",
+                  "description": "The minimum horizontal speed that will satisfy this cross-room requirement, measured in effective runway tiles with dash held."
+                },
+                "maxTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInRunning/properties/maxTiles",
+                  "type": "number",
+                  "title": "Maximum Speed in Tiles",
+                  "description": "The maximum horizontal speed that will satisfy this cross-room requirement, measured in effective runway tiles with dash held."
+                }
+              }
+            },
+            "comeInJumping": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInJumping",
+              "type": "object",
+              "title": "Come In Jumping",
+              "description": "Represents a requirement that Samus come in by jumping through the door transition.",
+              "required": [
+                "speedBooster",
+                "minTiles"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "speedBooster": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInJumping/properties/speedBooster",
+                  "type": ["boolean", "string"],
+                  "title": "Speed Booster",
+                  "description": "Whether or not this run should be performed with Speed Booster.",
+                  "enum": [
+                    "any"
+                  ]
+                },
+                "minTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInJumping/properties/minTiles",
+                  "type": "number",
+                  "title": "Minimum Speed in Tiles",
+                  "description": "The minimum horizontal speed that will satisfy this condition, measured in effective runway tiles with dash held."
+                },
+                "maxTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInJumping/properties/maxTiles",
+                  "type": "number",
+                  "title": "Maximum Speed in Tiles",
+                  "description": "The maximum horizontal speed that will satisfy this condition, measured in effective runway tiles with dash held."
+                }
+              }
+            },
+            "comeInShinecharging": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging",
+              "type": "object",
+              "title": "Come in Shinecharging",
+              "description": "Represents a requirement to run into the room with enough space to complete a shinecharge in this room.",
+              "required": [
+                "length",
+                "openEnd"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "length": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/length",
+                  "type": "integer",
+                  "title": "Length",
+                  "minimum": 0,
+                  "maximum": 45,
+                  "description": "Length of the runway in the current room that can be used to complete the shinecharge."
+                },
+                "openEnd": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/openEnd",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "title": "Number of Open Ends",
+                  "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+                  "default": 1
+                },
+                "gentleUpTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/gentleUpTiles",
+                  "type": "integer",
+                  "title": "Gentle Up Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running away from the door)"
+                },
+                "gentleDownTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/gentleDownTiles",
+                  "type": "integer",
+                  "title": "Gentle Down Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running away from the door)"
+                },
+                "steepUpTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/steepUpTiles",
+                  "type": "integer",
+                  "title": "Steep Up Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running away from the door)"
+                },
+                "steepDownTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/steepDownTiles",
+                  "type": "integer",
+                  "title": "Steep Down Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running away from the door)"
+                }    
+              }
+            },
+            "comeInShinecharged": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharged",
+              "type": "object",
+              "title": "Come in Shinecharged",
+              "description": "Fulfilled by coming in through this door with a shinespark charge that has at least the given number of frames remaining.",
+              "required": [
+                "framesRequired"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "framesRequired": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharged/properties/framesRequired",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 179,
+                  "title": "Frames Required",
+                  "description": "The minimal number of frames that must be left on the shinespark charge when coming in."
+                }
+              }
+            },
+            "comeInWithSpark": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithSpark",
+              "type": "object",
+              "title": "Come In With Spark",
+              "description": "Represents a requirement that Samus come in by shinesparking through the door.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "comeInStutterShinecharging": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInStutterShinecharging",
+              "type": "object",
+              "title": "Come In Stutter Shinecharging",
+              "description": "Represents that Samus must run through this door with SpeedBooster equipped, immediately after stuttering in the previous room (which must have normal physics). This can be used to set up a short water shinecharge.",
+              "required": ["minTiles"],
+              "additionalProperties": false,
+              "properties": {
+                "minTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInStutterShinecharging/properties/minTiles",
+                  "type": "number",
+                  "title": "Minimum Speed in Tiles",
+                  "description": "The minimum amount of effective runway tiles in other room needed for this strat."
+                }
+              }
+            },
+            "comeInWithBombBoost": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBombBoost",
+              "type": "object",
+              "title": "Come In With Bomb Boost",
+              "description": "Represents that Samus must come through this door with a horizontal bomb boost.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "comeInWithDoorStuckSetup": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithDoorStuckSetup",
+              "type": "object",
+              "title": "Come In With Door Stuck Setup",
+              "description": "Represents that Samus must come through this door in a way that allows getting stuck in the door (e.g. to set up an X-ray climb).",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "comeInSpeedballing": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInSpeedballing",
+              "type": "object",
+              "title": "Come In Speedballing",
+              "description": "Represents that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.",
+              "required": ["runway"],
+              "additionalProperties": false,
+              "properties": {
+                "runway": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInSpeedballing/properties/runway",
+                  "$ref": "#/definitions/runway",
+                  "description": "Runway in the current room that is available to complete the speedball."
+                }
+              }
+            },
+            "comeInWithRMode": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithRMode",
+              "type": "object",
+              "title": "Come in With R-Mode",
+              "description": "Represents that Samus must obtain R-mode coming through this door.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "comeInWithGMode": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode",
+              "type": "object",
+              "title": "Come in With G-Mode",
+              "description": "Represents that Samus must have or obtain G-mode coming through this door.",
+              "required": [
+                "mode",
+                "morphed"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/mode",
+                  "type": "string",
+                  "enum": [
+                    "direct",
+                    "indirect",
+                    "any"
+                  ],
+                  "title": "Mode",
+                  "description": "Whether we must come in with direct G-mode, indirect G-mode, or either"
+                },
+                "morphed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/morphed",
+                  "type": "boolean",
+                  "title": "Artificial Morph",
+                  "description": "If true, then the strat assumes entering in a morphed state, either with artificial morph or by having Morph collected."
+                },
+                "mobility": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithGMode/properties/mobility",
+                  "type": "string",
+                  "enum": [
+                    "mobile",
+                    "immobile",
+                    "any"
+                  ],
+                  "default": "any",
+                  "title": "Mobility",
+                  "description": "Whether Samus must come in mobile, immobile, or either."
+                }
+              }
+            }  
+          }
+        },
         "requires": {
           "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
           "$id": "#/definitions/strat/properties/requires",
           "title": "Strat Requirements",
           "description": "Equipment, tech, and flag requirements to execute this strat."
+        },
+        "exitCondition": {
+          "$id": "#/definitions/strat/properties/exitCondition",
+          "type": "object",
+          "title": "Exit Condition",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "maxProperties": 1,
+          "properties": {
+            "leaveWithRunway": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway",
+              "type": "object",
+              "title": "Leave With Runway",
+              "description": "Represents that Samus can leave through this door using a runway of specified geometry. The specific way that the runway is used depends on the 'entranceCondition' in the next room.",
+              "additionalProperties": false,
+              "required": [
+                "length",
+                "openEnd"
+              ],
+              "properties": {
+                "length": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/length",
+                  "type": "number",
+                  "title": "Length",
+                  "minimum": 0,
+                  "maximum": 45,
+                  "description": "Length of this Runway"
+                },
+                "openEnd": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/openEnd",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "title": "Number of Open Ends",
+                  "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room.",
+                  "default": 1
+                },
+                "gentleUpTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/gentleUpTiles",
+                  "type": "integer",
+                  "title": "Gentle Up Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) upwards (when running towards the door)"
+                },
+                "gentleDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/gentleDownTiles",
+                  "type": "integer",
+                  "title": "Gentle Down Tiles",
+                  "description": "Number of tiles in the runway that gently slope (half a vertical tile) downwards (when running towards the door)"
+                },
+                "steepUpTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/steepUpTiles",
+                  "type": "integer",
+                  "title": "Steep Up Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) upwards (when running towards the door)"
+                },
+                "steepDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/steepDownTiles",
+                  "type": "integer",
+                  "title": "Steep Down Tiles",
+                  "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running towards the door)"
+                },
+                "startingDownTiles": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithRunway/properties/startingDownTiles",
+                  "type": "integer",
+                  "title": "Starting Down Tiles",
+                  "description": "Number of tiles at the start of the runway (away from the door) that slope down, preventing a stutter"
+                }
+              }
+            },
+            "leaveShinecharged": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveShinecharged",
+              "type": "object",
+              "title": "Leave Shinecharged",
+              "description": "Represents that Samus can leave through this door with a shinespark charge.",
+              "required": [
+                "framesRemaining"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "framesRemaining": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveShinecharged/properties/framesRemaining",
+                  "type": "integer",
+                  "title": "Frames Remaining",
+                  "minimum": 1,
+                  "description": "The number of frames remaining in the shinespark charge when leaving the room."
+                }
+              }
+            },
+            "leaveWithSpark": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithSpark",
+              "type": "object",
+              "title": "Leave With Spark",
+              "description": "Represents that Samus can leave through this door with a shinespark.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "leaveWithGModeSetup": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGModeSetup",
+              "type": "object",
+              "title": "Leave With G-Mode Setup",
+              "description": "Represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This is for setting up to enter R-mode or direct G-mode in the next room.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {
+                "knockback": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGModeSetup/properties/knockback",
+                  "type": "boolean",
+                  "default": true,
+                  "title": "Leaves With Knockback",
+                  "description": "If true, then Samus gets knockback frames through the transition."
+                }
+              }
+            },
+            "leaveWithGMode": {
+              "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGMode",
+              "type": "object",
+              "title": "Leave With G-Mode",
+              "description": "Represents that Samus can leave through this door while in G-mode, resulting in indirect G-mode in the next room.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {
+                "morphed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithGMode/properties/morphed",
+                  "type": "boolean",
+                  "title": "Morphed",
+                  "description": "If true, then this strat results in leaving the room in a morphed state, either by maintaining artificial morph or by having the Morph item."
+                }
+              }
+            }
+          }
+        },
+        "gModeRegainMobility": {
+          "$id": "#/definitions/strat/properties/gModeRegainMobility",
+          "type": "object",
+          "description": "Indicates that this strat allows Samus, after entering with G-mode immobile, to regain mobility (by taking knockback from an enemy) while staying in G-mode.",
+          "required": [],
+          "additionalProperties": false,
+          "properties": {}
         },
         "clearsObstacles": {
           "$id": "#/definitions/strat/properties/clearsObstacles",
@@ -65,62 +515,6 @@
           "items": {
             "type": "string",
             "pattern": "^(.*)$"
-          }
-        },
-        "obstacles": {
-          "$id": "#/definitions/strat/properties/obstacles",
-          "type": "array",
-          "title": "Strat obstacles",
-          "description": "DEPRECATED: An array of obstacles that must be destroyed (during the strat or previously) for the strat to be successfully executed. Going forward, 'obstaclesCleared' requirements and 'clearsObstacles' strat property should be used in favor of this 'obstacles' property.",
-          "items": {
-            "$id": "#/definitions/strat/properties/obstacles/items",
-            "type": "object",
-            "required": [
-              "id",
-              "requires"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/id",
-                "type": "string",
-                "title": "Obstacle ID",
-                "description": "The ID of the obstacle that must be destroyed.",
-                "default": "",
-                "examples": ["A", "B"],
-                "pattern": "^(.*)$"
-              },
-              "requires": {
-                "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/requires",
-                "title": "Obstacle Requirements",
-                "description": "Equipment, tech, and flag requirements to destroy this obstacle, on top of requirements defined on the obstacle itself (does not apply if obstacle already destroyed since entering the room)."
-              },
-              "bypass": {
-                "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/bypass",
-                "title": "Obstacle Bypass Requirements",
-                "description": "Equipment, tech, and flag requirements to bypass this obstacle instead of destroying it."
-              },
-              "additionalObstacles": {
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/additionalObstacles",
-                "type": "array",
-                "title": "Additional obstacles",
-                "description": "The IDs of obstacles that are simultaneously destroyed if the containing obstacle is destroyed via this strat.",
-                "items": {
-                  "type": "string",
-                  "pattern": "^(.*)$"
-                }
-              },
-              "note": {
-                "$ref" : "m3-note.schema.json#/definitions/note",
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/note"
-              },
-              "devNote": {
-                "$ref" : "m3-note.schema.json#/definitions/devNote",
-                "$id": "#/definitions/strat/properties/obstacles/items/properties/devNote"
-              }
-            }
           }
         },
         "failures": {
@@ -163,12 +557,6 @@
                 "title": "Softlock",
                 "description": "Indicates whether this failure causes a softlock. If missing, this should be viewed as false."
               },
-              "clearsPreviousNode": {
-                "$id": "#/definitions/strat/properties/failures/items/properties/clearsPreviousNode",
-                "type": "boolean",
-                "title": "Clears Previous Node",
-                "description": "Indicates whether this failure causes the previous node to be overwritten (and set to current node). If the failure leads to a node, Samus lands at that node and that node is also set to the previous node If missing, this should be viewed as false."
-              },
               "note": {
                 "$ref" : "m3-note.schema.json#/definitions/note",
                 "$id": "#/definitions/strat/properties/failures/items/properties/note"
@@ -178,19 +566,6 @@
                 "$id": "#/definitions/strat/properties/failures/items/properties/devNote"
               }
             }
-          }
-        },
-        "stratProperties": {
-          "$id": "#/definitions/strat/properties/stratProperties",
-          "type": "array",
-          "title": "Strat Properties",
-          "description": "A list of strat properties this strat has, which may impact what is doable once the strat's destination is reached.",
-          "examples": ["spinjump"],
-          "items": {
-            "$id": "#/definitions/strat/properties/stratProperties/items",
-            "type": "string",
-            "title": "Strat Property",
-            "description": "An individual property of the strat."
           }
         },
         "note": {
@@ -619,6 +994,7 @@
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways",
                   "type": "array",
                   "title": "Runways",
+                  "description": "DEPRECATED: This node property will be deleted. Use strat properties exitCondition and entranceCondition instead.",
                   "items": {
                     "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items",
                     "type": "object",
@@ -627,18 +1003,17 @@
                     "required": [
                       "name",
                       "length",
-                      "openEnd",
-                      "strats"
+                      "openEnd"
                     ],
                     "properties": {
                       "name": {
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/runways/items/properties/name",
                         "type": "string",
                         "title": "Runway Name",
-                        "description": "A name, unique across the entire game, that identifies this runway",
+                        "description": "A name, unique within the node, that identifies this runway",
                         "default": "",
                         "examples": [
-                          "Base Runway - Landing Site Top Left Door (to Gauntlet)"
+                          "Base Runway"
                         ],
                         "pattern": "^(.*)$"
                       },
@@ -794,7 +1169,7 @@
                   "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged",
                   "type": "array",
                   "title": "Can Leave Charged",
-                  "description": "An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark).",
+                  "description": "DEPRECATED: An array of ways Samus can leave through this door with a shinespark charge (or an active shinespark). This node property will be deleted; the strat property exitCondition/leaveCharged should be used instead.",
                   "items": {
                     "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/items",
                     "type": "object",
@@ -823,12 +1198,6 @@
                         "type": "integer",
                         "title": "Frames Remaining",
                         "description": "The number of frames remaining in the shinespark charge when leaving the room. If this is 0, Samus leaves the room shinesparking."
-                      },
-                      "shinesparkFrames": {
-                        "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/shinesparkFrames",
-                        "type": "integer",
-                        "title": "Shinespark Frames",
-                        "description": "If this requires shinespark out of the room, indicates how many frames that shinespark on the way out will last"
                       },
                       "initiateRemotely": {
                         "$id": "#/properties/rooms/items/properties/nodes/items/properties/canLeaveCharged/properties/initiateRemotely",
@@ -1048,7 +1417,7 @@
                       "$id": "#/properties/rooms/items/properties/nodes/items/properties/gModeImmobile/properties/requires",
                       "$ref": "m3-requirements.schema.json#/definitions/logicalRequirements",
                       "title": "G-Mode Immobile Requirements",
-                      "description": "Logical requirements in order to allow control to be returned to Samus when coming into this door with G-mode immobile"
+                      "description": "DEPRECATED: This node property will be deleted. Use the strat property 'gModeRegainMobility' instead."
                     },
                     "note": {
                       "$ref" : "m3-note.schema.json#/definitions/note",
@@ -1379,12 +1748,6 @@
                 "devNote": {
                   "$ref" : "m3-note.schema.json#/definitions/devNote",
                   "$id": "#/properties/rooms/items/properties/obstacles/items/properties/devNote"
-                },
-                "requires": {
-                  "$ref" : "m3-requirements.schema.json#/definitions/logicalRequirements",
-                  "$id": "#/properties/rooms/items/properties/obstacles/items/properties/requires",
-                  "title": "Absolute Obstacle Requirements",
-                  "description": "Equipment, tech, and flag requirements that are always needed to break this obstacle. Those are applied on top of any requirements specified on an `obstacle` logical element that references this obstacle."
                 }
               }
             }
