@@ -20,6 +20,14 @@ regionPath = os.path.join(
     "region"
 )
 
+def mySort(toSort):
+    ret = toSort
+    if isinstance(toSort, list):
+        ret = sorted(toSort)
+    elif isinstance(toSort, dict):
+        ret = dict(sorted(toSort.items()))
+    return ret
+
 # cycle through regions
 print("> Cycling regions")
 for region in os.listdir(regionPath):
@@ -44,6 +52,7 @@ for region in os.listdir(regionPath):
                             # add the subregion to our notes
                             if os.path.splitext(subregion)[0] not in data["regions"][region]:
                                 data["regions"][region].append(os.path.splitext(subregion)[0])
+                                data["regions"][region] = mySort(data["regions"][region])
                             # open a room file
                             with open(os.path.join(regionPath, region, subregion, roomFileName), "r", encoding="utf-8") as roomFile:
                                 roomJSON = json.load(roomFile)
@@ -55,6 +64,7 @@ for region in os.listdir(regionPath):
                                     data["smooshedRoomNames"].sort()
                                     # add LC'd name to our notes
                                     data["roomIDsByLCRoomName"][room["name"].lower()] = room["id"]
+                                    data["roomIDsByLCRoomName"] = mySort(data["roomIDsByLCRoomName"])
                                     for stripped in [
                                         room["name"].lower(),
                                         "".join([s for s in room["name"].lower() if s.isalnum() or s.isspace()])
@@ -68,6 +78,7 @@ for region in os.listdir(regionPath):
                                                 data["roomIDsByLCRoomName"][stripped[4:]] = room["id"]
                                             if stripped != room["name"].lower():
                                                 data["roomIDsByLCRoomName"][stripped] = room["id"]
+                                            data["roomIDsByLCRoomName"] = mySort(data["roomIDsByLCRoomName"])
 
                                     nukes = [
                                         "runways",
@@ -166,11 +177,13 @@ for region in os.listdir(regionPath):
                                     if subarea.lower() not in data["roomsByRegion"][region]:
                                         data["roomsByRegion"][region][subarea] = {}
                                     data["roomsByRegion"][region][subarea][room["id"]] = room
+                                    data["roomsByRegion"][region][subarea] = mySort(data["roomsByRegion"][region][subarea])
                                     data["roomMetasByID"][room["id"]] = {
                                          "region": region,
                                          "subarea": subarea,
                                          "roomName": room["name"]
                                     }
+                                    data["roomMetasByID"] = mySort(data["roomMetasByID"])
 
 for jsonKey in [
     "regions",
