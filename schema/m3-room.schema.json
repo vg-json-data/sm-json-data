@@ -78,17 +78,17 @@
         }
       ],
       "properties": {
-        "from": {
-          "$id": "#/definitions/strat/properties/from",
-          "type": "integer",
-          "title": "From Node ID",
-          "description": "ID of node within this room where the strat begins"
-        },
-        "to": {
-          "$id": "#/definitions/strat/properties/to",
-          "type": "integer",
-          "title": "To Node ID",
-          "description": "ID of node within this room where the strat ends"
+        "link": {
+          "$id": "#/definitions/strat/properties/link",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "From & to nodes ID where the strat begins and ends.",
+          "items": {
+            "type": "integer",
+            "title": "Node ID",
+            "description": "ID of node within this room where the strat begins or ends"  
+          }
         },
         "name": {
           "$id": "#/definitions/strat/properties/name",
@@ -625,6 +625,7 @@
     "subarea",
     "playable",
     "nodes",
+    "links",
     "strats"
   ],
   "allOf": [
@@ -1618,6 +1619,68 @@
           "devNote": {
             "$ref" : "m3-note.schema.json#/definitions/devNote",
             "$id": "#/properties/nodes/items/properties/devNote"
+          }
+        }
+      }
+    },
+    "links": {
+      "$id": "#/properties/links",
+      "type": "array",
+      "title": "Links; pathways within the Room",
+      "items": {
+        "$id": "#/properties/links/items",
+        "type": "object",
+        "title": "Link",
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "$id": "#/properties/links/items/properties/from",
+            "type": "integer",
+            "title": "This Link originates at this Node ID within the Room",
+            "default": 0,
+            "examples": [
+              1
+            ]
+          },
+          "to": {
+            "$id": "#/properties/links/items/properties/to",
+            "type": [
+              "array",
+              "null"
+            ],
+            "title": "This Link terminates at this Node ID within the Room",
+            "items": {
+              "$id": "#/properties/links/items/properties/to/items",
+              "type": "object",
+              "title": "The Items Schema",
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$id": "#/properties/links/items/properties/to/items/properties/id",
+                  "type": "integer",
+                  "title": "Target Node ID within the Room",
+                  "default": 0,
+                  "examples": [
+                    2
+                  ]
+                },
+                "note": {
+                  "$ref" : "m3-note.schema.json#/definitions/note",
+                  "$id": "#/properties/links/items/properties/to/items/properties/note"
+                },
+                "devNote": {
+                  "$ref" : "m3-note.schema.json#/definitions/devNote",
+                  "$id": "#/properties/links/items/properties/to/items/properties/devNote"
+                }
+              }
+            }
           }
         }
       }

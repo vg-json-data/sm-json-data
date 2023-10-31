@@ -16,13 +16,12 @@ def restructure_room(room_json):
             to_id = to_json["id"]
             for strat in to_json["strats"]:
                 new_strat = {
-                    "from": from_id,
-                    "to": to_id,
+                    "link": [from_id, to_id],
                     **strat,
                 }
                 strat_list.append(new_strat)
+            del to_json["strats"]
     new_room_json["strats"] = strat_list
-    del new_room_json["links"]
     return new_room_json
 
 for path in sorted(Path("../region/").glob("**/*.json")):

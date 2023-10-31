@@ -457,44 +457,36 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             roomData["nodes"]["spawnAts"].append(node["spawnAt"])
 
                     # Document Links
+                    link_set = set()
+                    for link_from in room["links"]:
+                        from_node_id = link_from["from"]
+                        if from_node_id not in roomData["nodes"]["ids"]:                            
+                            msg = f"🔴ERROR: In links, from node {from_node_id} doesn't exist."
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        for link in link_from["to"]:
+                            to_node_id = link["id"]
+                            if to_node_id not in roomData["nodes"]["ids"]:                            
+                                msg = f"🔴ERROR: In links, to node {to_node_id} doesn't exist."
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            link_set.add((from_node_id, to_node_id))
+
                     # Document Link Strats
                     for strat in room["strats"]:
-                        if "from" not in strat:
-                            msg = f"🔴ERROR: Strat is missing From Node:{fromNodeRef}:{strat['name']}"
+                        if "link" not in strat:
+                            msg = f"🔴ERROR: Strat is missing `link` property: {roomRef}:{strat['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
                             continue
-                        fromNode = strat["from"]
-                        fromNodeRef = f"{roomRef}:FromNode[{fromNode}]"
-                        if fromNode not in roomData["nodes"]["ids"]:
-                            msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
+                        link = strat["link"]
+                        linkRef = str(link)
+                        if tuple(strat["link"]) not in link_set:
+                            msg = f"🔴ERROR: Link {linkRef} doesn't exist: {roomRef}:{strat['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-
-                        if "to" not in strat:
-                            msg = f"🔴ERROR: Strat is missing To Node:{fromNodeRef}:{strat['name']}"
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
-                            continue
-                        toNode = strat["to"]
+                        toNode = link[1]
                         roomData["nodes"]["tos"].append(toNode)
-                        toNodeRef = f"{roomRef}:FromNode[{fromNode}]:ToNode[{toNode}]"
-                        if toNode not in roomData["nodes"]["ids"]:
-                            msg = f"🔴ERROR: To Node doesn't exist:{toNodeRef}"
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
-                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
-                        if "entranceCondition" in strat:
-                            if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
-                                msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                        if "exitCondition" in strat:
-                            if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
-                                msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-
 
                     # Validate "enemies"
                     if "enemies" in room:
@@ -624,12 +616,13 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                     # Validate strats
                     for strat in room["strats"]:
-                        if "from" not in strat or "to" not in strat:
-                            # Errors are already generated above if either of these fields is missing.
+                        if "link" not in strat or tuple(strat["link"]) not in link_set:
+                            # Errors are already generated above in this case.
                             continue
-                        fromNode = strat["from"]
+                        link = strat["link"]
+                        fromNode = link[0]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
-                        toNode = strat["to"]
+                        toNode = link[1]
                         paramData = {
                             "key": "linkStrats",
                             "fromNode": fromNode,
@@ -639,8 +632,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "bail": bail
                         }
                         paramData = process_strats([strat], paramData)
-                        showNodes = paramData["showNodes"]
-                        bail = paramData["bail"]
+                        fromNode = link[0]
+                        toNode = link[1]
+                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
+                        if "entranceCondition" in strat:
+                            if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
+                                msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                        if "exitCondition" in strat:
+                            if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
+                                msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
 
                     # Validate GMode objects
                     for gModeObj in gModeObjects:
@@ -668,7 +673,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         msg += f"🟢{area}/{subarea}/{roomName}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
                                                         messages["greens"].append(msg)
                                                         messages["counts"]["greens"] += 1
+
                     # Validate Nodes
+                    showNodes = paramData["showNodes"]
+                    bail = paramData["bail"]
                     for node in room["nodes"]:
                         orphaned = False
                         # If there's no link, call it orphaned
