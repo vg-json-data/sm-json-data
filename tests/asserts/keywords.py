@@ -116,10 +116,12 @@ def process_keyvalue(k, v, metadata):
         isInt = isinstance(v, int)
         isList = isinstance(v, list)
         isEmptyList = isList and len(v) == 0
-        isNumeric = not isFloat and not isInt and not isList and v.isnumeric()
+        isEmptyDict = v == {}
+        isNumeric = not isFloat and not isInt and not isList and not isEmptyDict and v.isnumeric()
         if not isFloat and \
             not isInt and \
             not isEmptyList and \
+            not isEmptyDict and \
             not isNumeric and \
             not isSkip:
             # helpers for value type
