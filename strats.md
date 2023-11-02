@@ -481,7 +481,7 @@ A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` con
 A `comeInWithBombBoost` entrance condition indicates that Samus must come into the room with a horizontal bomb boost. This object has no properties.
 
 A `comeInWithBombBoost` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment. A match comes with the following implicit requirements for actions to be performed in the previous room:
-- A requirement `h_canBombThings`, to be able to use Bombs or a Power Bomb.
+- A requirement `h_canBombThings`, to be able to use Bombs or a Power Bomb, as well as the tech `canBombHorizontally`.
 - If the previous room is heated, a requirement of `{"heatFrames": 100}` is included, for positioning, placing the bomb, and waiting for it to detonate.
 
 #### Example
