@@ -15,21 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d36",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Brinstar Pre-Map Left Door (to Map)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 0
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -56,34 +41,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x0018d42",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Brinstar Pre-Map Right Door (to Green Shaft)",
-          "length": 14,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 17,
-          "framesRemaining": 80,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -171,6 +128,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2}
       ]
     },
@@ -186,6 +144,18 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": []
+    },
     {
       "link": [1, 2],
       "name": "Base",
@@ -203,16 +173,18 @@
       "link": [1, 2],
       "name": "Temporary Blue Bounce",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "canTemporaryBlue",
-        "canSpringBallBounce",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 1,
-          "unusableTiles": 1
-        }}
+        "canSpringBallBounce"
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "devNote": "There is 1 unusable tile in this runway."
     },
     {
       "link": [2, 1],
@@ -229,26 +201,77 @@
     },
     {
       "link": [2, 1],
-      "name": "Speedball",
+      "name": "Speedball (Come In Shinecharging)",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 11,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There are 3 unusable tiles in this runway."
+    },
+    {
+      "link": [2, 1],
+      "name": "Speedball (In-Room)",
       "notable": false,
       "requires": [
-        "canSpeedball",
-        {"or": [
-          {"canComeInCharged": {
-            "framesRemaining": 180,
-            "fromNode": 2,
-            "unusableTiles": 3
-          }},
-          {"and": [
-            "canSlowShortCharge",
-            {"canShineCharge": {
-              "usedTiles": 14,
-              "openEnd": 1
-            }}
-          ]}
-        ]}
+        "canSlowShortCharge",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 1
+        }},
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Run on the upper platform to perform the speedball.",
+      "devNote": "FIXME: This length implies 3 unusable tiles, yet the docs say 5 for a slow speedball in general?"
+    },
+    {
+      "link": [2, 1],
+      "name": "Temporary Blue Bounce",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canTemporaryBlue",
+        "canSpringBallBounce"
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 15,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      }
     },
     {
       "link": [2, 2],
