@@ -15,20 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d4e",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Early Supers Left Door (to Green Shaft)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -46,72 +32,6 @@
       "nodeSubType": "red",
       "nodeAddress": "0x0018d5a",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Early Supers Right Door (to Brinstar Reserve)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 110,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"resetRoom": {
-                  "nodes": [1],
-                  "mustStayPut": true
-                }}
-              ]
-            }
-          ],
-          "initiateRemotely": {
-            "initiateAt": 1,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 2,
-                "strats": ["Speed Through"]
-              }
-            ]
-          }
-        },
-        {
-          "usedTiles": 25,
-          "framesRemaining": 40,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "initiateRemotely": {
-            "initiateAt": 4,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 2,
-                "strats": ["Base"]
-              }
-            ]
-          }
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -180,7 +100,8 @@
       "id": 5,
       "name": "Early Supers Junction (Sidehopper Pit)",
       "nodeType": "junction",
-      "nodeSubType": "junction"
+      "nodeSubType": "junction",
+      "devNote": "FIXME: There doesn't seem to be any use in ever going to this node. Should it be removed?"
     }
   ],
   "obstacles": [
@@ -240,6 +161,7 @@
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 4}
       ]
     },
@@ -253,8 +175,12 @@
     {
       "from": 4,
       "to": [
-        {"id": 1},
-        {"id": 2}
+        {
+          "id": 1,
+          "devNote": "FIXME: A leaveCharged might be possible here from above? If so, it would be very tight."
+        },
+        {"id": 2},
+        {"id": 4}
       ]
     },
     {
@@ -265,6 +191,18 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "requires": []
+    },
     {
       "link": [1, 1],
       "name": "Zeb Farm",
@@ -358,6 +296,42 @@
       ]
     },
     {
+      "link": [1, 2],
+      "name": "Leave Shinecharged (Speed Through)",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 110
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave Shinecharged (Speed Through and Slide Off)",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      },
+      "note": "Gain the shinecharge near the edge of the runway so that you slide off quickly, while shooting the door open."
+    },
+    {
       "link": [1, 3],
       "name": "Base",
       "notable": false,
@@ -375,6 +349,18 @@
       ],
       "clearsObstacles": ["A"],
       "devNote": "There are other ways to get here, but there is no reason to go there, so they are omitted."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": []
     },
     {
       "link": [2, 4],
@@ -444,6 +430,40 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [4, 2],
+      "name": "Leave Shinecharged (Run Above)",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      }
+    },
+    {
+      "link": [4, 2],
+      "name": "Leave Shinecharged (Run Above and Slide Off)",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 70
+        }
+      },
+      "note": "Gain the shinecharge near the edge of the runway so that you slide off quickly."
     },
     {
       "link": [5, 3],
