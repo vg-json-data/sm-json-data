@@ -15,52 +15,6 @@
       "nodeSubType": "green",
       "nodeAddress": "0x0018f3a",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Etecoon E-Tank Top Left Door (to Etecoon Supers)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 20,
-          "framesRemaining": 60,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "No Extra Runway",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ],
-              "note": "Assumes taking some time to build run speed for jumping over the gap."
-            }
-          ]
-        },
-        {
-          "usedTiles": 18,
-          "framesRemaining": 95,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Extra Two Runway Tiles",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ],
-              "note": "Assumes stopping with enough space to jump over the gap without turning around for speed."
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Etecoon E-Tank Green Lock (to Etecoon Supers)",
@@ -83,21 +37,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018f2e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Etecoon E-Tank Top Right Door (to Beetoms)",
-          "length": 20,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -105,50 +45,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018f52",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Etecoon E-Tank Bottom Left Door (to Save)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 20,
-          "framesRemaining": 25,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        },
-        {
-          "usedTiles": 20,
-          "framesRemaining": 50,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Etecoon E-Tank Shinecharge Quick Drop",
-              "notable": true,
-              "requires": [
-                "canShinechargeMovement"
-              ],
-              "note": "Quick drop through the crumble blocks to reach the door faster."
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
@@ -156,22 +53,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018f46",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Etecoon E-Tank Bottom Right Door (to Etecoons)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 5,
@@ -310,12 +192,14 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 5}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 3},
         {"id": 5},
         {"id": 6}
@@ -325,6 +209,7 @@
       "from": 3,
       "to": [
         {"id": 2},
+        {"id": 3},
         {"id": 6}
       ]
     },
@@ -359,16 +244,108 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
+      "requires": [],
+      "devNote": "Using the full length of this runway requires collecting the Energy Tank item."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Full Runway)",
+      "notable": false,
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "openEnd": 0
+        }},
+        "canShinechargeMovement"
+      ],
+      "note": "Assumes taking some time to build run speed for jumping over the gap.",
+      "devNote": "Assumes a closed end on the left, so we aren't requiring running to the point of hanging over the dangerous edge."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Partial Runway)",
+      "notable": false,
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 95
+        }
+      },
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement"
+      ],
+      "note": "Assumes stopping two tiles before the gap, to have enough space run and gain enough speed to jump over the gap without needing to turn around first."
+    },
+    {
       "link": [1, 5],
       "name": "Base",
       "notable": false,
       "requires": []
     },
     {
-      "link": [2, 3],
-      "name": "Base",
+      "link": [2, 2],
+      "name": "Leave With Runway",
       "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 21,
+          "openEnd": 1
+        }
+      },
       "requires": []
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave Shinecharged (Fall Through Crumbles)",
+      "notable": false,
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 25
+        }
+      },
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "openEnd": 1
+        }}
+      ],
+      "devNote": "FIXME: An extra tile could be used if the top-right door is unlocked"
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave Shinecharged (Quick-Drop Through Crumbles)",
+      "notable": false,
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement"
+      ],
+      "note": "Quick dropping through the crumbles allows reaching the door with more shinecharge time remaining.",
+      "devNote": "Should there be a tech for crumble quick drop?"
     },
     {
       "link": [2, 5],
@@ -453,6 +430,18 @@
       "devNote": "In truth this goes to node 1, but there's no need to make a link for this since movement between 1 and 2 is free (via 5)."
     },
     {
+      "link": [3, 3],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
+      "requires": []
+    },
+    {
       "link": [3, 6],
       "name": "Base",
       "notable": false,
@@ -519,6 +508,18 @@
           "artificialMorph": true
         }}
       ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": []
     },
     {
       "link": [4, 4],
