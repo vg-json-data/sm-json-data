@@ -617,11 +617,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 gModeObjects.append(leaveG)
 
                     # Validate strats
+                    previous_link = (0, 0)
                     for strat in room["strats"]:
                         if "link" not in strat or tuple(strat["link"]) not in link_set:
                             # Errors are already generated above in this case.
                             continue
                         link = strat["link"]
+                        if tuple(link) < previous_link:
+                            msg = f"🔴ERROR: Strat with link {list(link)} should come before previous link {list(previous_link)}:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        previous_link = tuple(link) 
                         fromNode = link[0]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
                         toNode = link[1]
