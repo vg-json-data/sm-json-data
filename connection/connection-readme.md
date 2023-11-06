@@ -23,7 +23,6 @@ Each connection has a `type`, which will be one of the following:
 ### direction
 Each connection has a `direction` which indicates how it can be navigated. This can be one of the following:
 * _Forward:_ The connection is one-way. Samus can only go from the first node to the second.
-* _Backward:_ The connection is one-way. Samus can only go from the second node to the first.
 * _Bidirectional:_ The connection is two-way. Samus can use it in both directions.
 
 __Additional Considerations__
