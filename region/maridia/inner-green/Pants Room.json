@@ -15,34 +15,39 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a780",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Pants Room Left Door (to East Sand Hall)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
-      "name": "Pants Room in-Room Transition (to East Pants Room)",
-      "nodeType": "exit",
-      "nodeSubType": "inRoomTransition",
-      "devNote": [
-        "This has no address because this transition doesn't exist in the actual game.",
-        "It's just a way for us to avoid duplicating East Pants Room by pretending Pants Room ends at that point."
-      ]
+      "name": "Pants Room Right Door (to Shaktool)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a798",
+      "doorEnvironments": [{"physics": "air"}],
+      "twinDoorAddresses": [
+        {
+          "roomAddress": "0x7D69A",
+          "doorAddress": "0x001a7bc"
+        }
+      ],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Puyo",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Puyo",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
     },
     {
       "id": 3,
@@ -51,24 +56,7 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a78c",
       "doorEnvironments": [{"physics": "water"}],
-      "note": "The center door that is accessible from the grapple block side",
-      "runways": [
-        {
-          "name": "Base Runway - Pants Room Left Leg Right Door (to East Pants Room)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "note": "The center door that is accessible from the grapple block side"
     },
     {
       "id": 4,
@@ -115,18 +103,32 @@
         "Escaping the water without Gravity is also difficult as Samus must be standing at the water line when jumping for the next part of the grapple jump.",
         "A Grapple Jump can be a spin jump by running briefly before jumping and that can be used to begin Walljumping or Space Jumping."
       ]
+    },
+    {
+      "name": "Pants Room Shinespark",
+      "note": [
+        "Preselect Grapple and be ready to use it when entering the room. Release up or angle up before release grapple so the shinespark does not activate instantly.",
+        "Use the windup frames for a shinespark to extend the duration timer."
+      ]
     }
   ],
   "links": [
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {
           "id": 2,
           "note": "This link is only for the X-Ray climb, which skips the junction altogether."
         },
         {"id": 3},
         {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2}
       ]
     },
     {
@@ -137,6 +139,7 @@
           "id": 2,
           "note": "This link is only for the X-Ray climb, which skips the junction altogether."
         },
+        {"id": 3},
         {"id": 4}
       ]
     },
@@ -169,6 +172,18 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
       "link": [1, 2],
       "name": "Pants Room Left-Side X-Ray Climb",
       "notable": false,
@@ -185,6 +200,32 @@
       ]
     },
     {
+      "link": [1, 2],
+      "name": "Pants Room Shinespark (From the Left)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 150
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        "canShinechargeMovement",
+        "Grapple",
+        {"shinespark": {"frames": 65}},
+        {"enemyDamage": {
+          "enemy": "Menu",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "reusableRoomwideNotable": "Pants Room Shinespark",
+      "note": [
+        "Preselect Grapple and be ready to use it when entering the room. Release up or angle up before release grapple so the shinespark does not activate instantly.",
+        "Use the windup frames for a shinespark to extend the duration timer."
+      ]
+    },
+    {
       "link": [1, 3],
       "name": "Base",
       "notable": false,
@@ -198,6 +239,18 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [3, 1],
@@ -223,6 +276,44 @@
         "This climb is right side of the left room - the room with the breakable grapple block.",
         "Climb up 3 screens."
       ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Pants Room Shinespark (From the Right)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 150
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        "canShinechargeMovement",
+        "Grapple",
+        {"shinespark": {"frames": 65}},
+        {"enemyDamage": {
+          "enemy": "Menu",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "reusableRoomwideNotable": "Pants Room Shinespark",
+      "note": [
+        "Preselect Grapple and be ready to use it when entering the room. Release up or angle up before release grapple so the shinespark does not activate instantly.",
+        "Use the windup frames for a shinespark to extend the duration timer."
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [3, 4],
@@ -253,38 +344,6 @@
         ]}
       ],
       "devNote": "It is easy enough to get out of the sand without tech, because the strats only require briefly entering it, but it is there as turning around at the wrong time will make Samus sink."
-    },
-    {
-      "link": [4, 2],
-      "name": "Pants Room Shinespark",
-      "notable": true,
-      "requires": [
-        "h_canNavigateUnderwater",
-        "canShinechargeMovement",
-        "Grapple",
-        {"or": [
-          {"canComeInCharged": {
-            "fromNode": 1,
-            "inRoomPath": [1, 4],
-            "framesRemaining": 150
-          }},
-          {"canComeInCharged": {
-            "fromNode": 3,
-            "inRoomPath": [3, 4],
-            "framesRemaining": 150
-          }}
-        ]},
-        {"shinespark": {"frames": 65}},
-        {"enemyDamage": {
-          "enemy": "Menu",
-          "type": "contact",
-          "hits": 1
-        }}
-      ],
-      "note": [
-        "Preselect Grapple and be ready to use it when entering the room. Release up or angle up before release grapple so the shinespark does not activate instantly.",
-        "Use the windup frames for a shinespark to extend the duration timer."
-      ]
     },
     {
       "link": [4, 2],
