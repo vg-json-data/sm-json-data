@@ -16,22 +16,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a684",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - East Sand Hall Left Door (to Oasis)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -52,22 +36,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a690",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - East Sand Hall Right Door (to Pants Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -134,6 +102,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {
           "id": 2,
           "devNote": "This link is only for sparking and G-Mode. All other strats should go 1 -> 4 -> 2."
@@ -148,6 +117,7 @@
           "id": 1,
           "devNote": "This link is only for sparking and G-Mode. All other strats should go 2 -> 4 -> 1."
         },
+        {"id": 2},
         {"id": 4}
       ]
     },
@@ -167,32 +137,87 @@
   ],
   "strats": [
     {
-      "link": [1, 2],
-      "name": "Gravity Shinespark",
+      "link": [1, 1],
+      "name": "Leave with Runway",
       "notable": false,
-      "requires": [
-        "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 1
-        }},
-        {"shinespark": {"frames": 58, "excessFrames": 4}}
-      ],
-      "devNote": "Needs to activate the spark in-room because Samus will bonk if sparking through too low."
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [1, 2],
       "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 60
-        }},
-        {"shinespark": {"frames": 71, "excessFrames": 4}}
+        {"shinespark": {"frames": 75, "excessFrames": 7}}
       ],
-      "devNote": "Needs to activate the spark in-room because Samus will bonk if sparking through too low."
+      "note": "Spark through the top of the door to avoid bonking."
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark Into Room",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 61, "excessFrames": 6}}
+      ],
+      "note": "Spark through the top of the door to avoid bonking."
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 51, "excessFrames": 4}}
+      ],
+      "note": "Shinespark midair to avoid bonking. Jump outward before sparking save Energy."
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Shinespark, Careful Slow Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canSlowShortCharge",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 69, "excessFrames": 7}}
+      ],
+      "note": "Gain an extra half-tile of runway by coming in very slowly to prevent falling off.",
+      "devNote": [
+        "If applicable, the heat frames in the adjacent room may be underrepresented, particularly on a longer runway,",
+        "but it shouldn't be too bad because with a longer runway, Samus can just come in fully shinecharged."
+      ]
     },
     {
       "link": [1, 2],
@@ -267,28 +292,35 @@
     },
     {
       "link": [1, 4],
-      "name": "Evir Avoid Suitless",
+      "name": "Suitless HiJump Evir Avoid",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": "any",
+          "minTiles": 3.4375
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "HiJump",
+        "canCarefulJump"
+      ],
+      "note": "By entering the room with run speed, it is possible to jump over the pair of Evirs."
+    },
+    {
+      "link": [1, 4],
+      "name": "Suitless HiJump, Evir Projectile Hit",
       "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        {"or": [
-          {"and": [
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 2.5,
-              "physics": ["normal"]
-            }},
-            "canCarefulJump"
-          ]},
-          {"enemyDamage": {
-            "enemy": "Evir",
-            "type": "particle",
-            "hits": 1
-          }}
-        ]}
-      ],
-      "note": "By entering the room with run speed, it is possible to jump over the pair of Evirs."
+        "canPlayInSand",
+        {"enemyDamage": {
+          "enemy": "Evir",
+          "type": "particle",
+          "hits": 1
+        }}
+      ]
     },
     {
       "link": [1, 4],
@@ -425,31 +457,74 @@
     },
     {
       "link": [2, 1],
-      "name": "Gravity Shinespark",
+      "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 2
-        }},
-        {"shinespark": {"frames": 61, "excessFrames": 4}}
+        {"shinespark": {"frames": 75, "excessFrames": 7}}
       ],
-      "devNote": "Needs to activate the spark in-room because Samus will bonk if sparking through too low."
+      "note": "Spark through the top of the door to avoid bonking."
     },
     {
       "link": [2, 1],
-      "name": "Suitless Shinespark",
+      "name": "Shinespark Into Room",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
+        "Gravity",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 60
-        }},
-        {"shinespark": {"frames": 71, "excessFrames": 4}}
+        {"shinespark": {"frames": 61, "excessFrames": 6}}
       ],
-      "devNote": "Needs to activate the spark in-room because Samus will bonk if sparking through too low."
+      "note": "Spark through the top of the door to avoid bonking."
+    },
+    {
+      "link": [2, 1],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 51, "excessFrames": 4}}
+      ],
+      "note": "Shinespark midair to avoid bonking. Jump outward before sparking save Energy."
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Shinespark, Careful Slow Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canSlowShortCharge",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 69, "excessFrames": 7}}
+      ],
+      "note": "Gain an extra half-tile of runway by coming in very slowly to prevent falling off.",
+      "devNote": [
+        "If applicable, the heat frames in the adjacent room may be underrepresented, particularly on a longer runway,",
+        "but it shouldn't be too bad because with a longer runway, Samus can just come in fully shinecharged."
+      ]
     },
     {
       "link": [2, 1],
@@ -470,6 +545,18 @@
       ],
       "note": "The sand does not impede Samus in G-Mode.",
       "devNote": "Only the last jump needs any items."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [2, 4],
