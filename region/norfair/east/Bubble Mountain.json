@@ -79,21 +79,6 @@
       "nodeSubType": "green",
       "nodeAddress": "0x001958e",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Bubble Mountain Top Right Door (to Bat Cave)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Bubble Mountain Top Right Green Lock (to Bat Cave)",
@@ -920,44 +905,81 @@
       "link": [7, 1],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 7,
-          "framesRemaining": 0
-        }},
         {"shinespark": {"frames": 41, "excessFrames": 2}}
       ],
       "devNote": "Ending the spark earlier takes a hit from the Waver"
     },
     {
       "link": [7, 1],
-      "name": "Shinespark from Cacatac Platform",
+      "name": "Enter Shinecharged and Shinespark from Cacatac Platform",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
       "requires": [
-        "canShinechargeMovement",
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
         "canCarefulJump",
-        {"canComeInCharged": {
-          "framesRemaining": 100,
-          "fromNode": 7
-        }},
-        {"shinespark": {"frames": 30, "excessFrames": 6}},
-        {"or": [
-          "canMidairShinespark",
-          "canTrickyJump",
-          {"enemyDamage": {
-            "enemy": "Cacatac",
-            "type": "spike",
-            "hits": 1
-          }},
-          {"enemyKill": {
-            "enemies": [["Cacatac"]],
-            "excludedWeapons": ["Bombs", "PowerBomb", "Ice", "PowerBeam"]
-          }}
-        ]}
+        {"shinespark": {"frames": 30, "excessFrames": 6}}
       ],
       "note": [
         "Dealing with spikes is up to luck.",
         "It is possible to shoot the Cacatac while jumping towards it."
+      ]
+    },
+    {
+      "link": [7, 1],
+      "name": "Run in and Shinespark from Cacatac Platform",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        "canCarefulJump",
+        {"shinespark": {"frames": 30, "excessFrames": 6}}
+      ],
+      "note": [
+        "Dealing with spikes is up to luck.",
+        "It is possible to shoot the Cacatac while jumping towards it."
+      ]
+    },
+    {
+      "link": [7, 1],
+      "name": "Shinespark from Cacatac Platform Through Door",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        "canTrickyJump",
+        "canHeroShot",
+        {"shinespark": {"frames": 25}},
+        {"or": [
+          "Wave+Spazer",
+          "Plasma",
+          {"ammo": {"type": "Missile", "count": 2}},
+          {"ammo": {"type": "Super", "count": 2}}
+        ]}
+      ],
+      "note": [
+        "Kill the Cacatac and quickly jump over to its platform.",
+        "Shoot towards the top-left door to open it, then follow the shot by jumping over the pit before initiating the shinespark."
       ]
     },
     {
@@ -980,6 +1002,51 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [7, 6],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [7, 6],
+      "name": "Come in Running, Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 55
+        }
+      }
+    },
+    {
+      "link": [7, 7],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [7, 7],
