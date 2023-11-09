@@ -15,24 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019732",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Rising Tide Left Door (to Cathedral)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -40,24 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001973e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Rising Tide Right Door (to Bubble Mountain)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -103,11 +69,24 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "link": [1, 1],
       "name": "Sova Farm",
@@ -126,18 +105,24 @@
       "name": "SpaceJump",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"or": [
-          {"heatFrames": 460},
-          {"and": [
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 2
-            }},
-            {"heatFrames": 370}
-          ]}
-        ]}
+        {"heatFrames": 460}
+      ],
+      "note": "Building runspeed can speed up the room a noticable amount."
+    },
+    {
+      "link": [1, 2],
+      "name": "SpaceJump with Run Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "SpaceJump",
+        {"heatFrames": 370}
       ],
       "note": "Building runspeed can speed up the room a noticable amount."
     },
@@ -180,29 +165,72 @@
       "link": [1, 2],
       "name": "Speedball Roll Under",
       "notable": false,
+      "entranceCondition": {
+        "comeInSpeedballing": {
+          "runway": {
+            "length": 3
+          }
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canSpeedball",
         "canSlowShortCharge",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 1,
-          "unusableTiles": 5
-        }},
         {"heatFrames": 360}
-      ]
+      ],
+      "devNote": "5 Unusable tiles."
     },
     {
       "link": [1, 2],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 2
-        }},
+        {"heatFrames": 210},
+        {"shinespark": {"frames": 90, "excessFrames": 5}}
+      ],
+      "note": [
+        "Spark in line with the top of the door.",
+        "Sparking too low or too high will crash early."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 13
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canMidairShinespark",
+        {"heatFrames": 205},
+        {"shinespark": {"frames": 92, "excessFrames": 5}}
+      ],
+      "note": [
+        "Spark in line with the top of the door.",
+        "Sparking too low or too high will crash early."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Enter Shinesparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canMidairShinespark",
         {"heatFrames": 195},
         {"shinespark": {"frames": 95, "excessFrames": 5}}
       ],
@@ -216,31 +244,73 @@
       "name": "SpaceJump",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"or": [
-          {"and": [
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 2
-            }},
-            {"heatFrames": 390}
-          ]},
-          {"heatFrames": 450}
-        ]}
+        {"heatFrames": 450}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "SpaceJump with Run Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "SpaceJump",
+        {"heatFrames": 390}
       ]
     },
     {
       "link": [2, 1],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 2
-        }},
+        {"heatFrames": 210},
+        {"shinespark": {"frames": 90, "excessFrames": 3}}
+      ],
+      "note": [
+        "Spark in line with the top of the door.",
+        "Sparking too low or too high will crash early."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 13
+        }
+      },
+      "requires": [
+        "canMidairShinespark",
+        {"heatFrames": 205},
+        {"shinespark": {"frames": 92, "excessFrames": 3}}
+      ],
+      "note": [
+        "Spark in line with the top of the door.",
+        "Sparking too low or too high will crash early."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Enter Shinesparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "canMidairShinespark",
         {"heatFrames": 195},
         {"shinespark": {"frames": 95, "excessFrames": 3}}
       ],
@@ -302,6 +372,18 @@
         {"lavaFrames": 240}
       ],
       "note": "Jump to the first long platform then use a the full platform to jump and mockball through the lava."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
     }
   ]
 }
