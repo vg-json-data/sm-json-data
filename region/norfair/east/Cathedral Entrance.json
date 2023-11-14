@@ -15,49 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00192a6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Cathedral Entrance Left Door (to Business Center)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 85}
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Cathedral Entrance Spark Out Left",
-              "notable": true,
-              "requires": [
-                "HiJump",
-                "h_heatProof",
-                "canShinechargeMovementComplex",
-                {"or": [
-                  "canWalljump",
-                  "SpaceJump"
-                ]},
-                {"shinespark": {"frames": 10}}
-              ],
-              "note": "Kill the enemies, break the shot block, then use the bottom to charge a spark. Quickly climb up before the block respawns, and spark through the left door."
-            }
-          ],
-          "devNote": "FIXME The extra amount of reqs for making this a suitless possibility is just too much."
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -66,44 +24,6 @@
       "nodeSubType": "red",
       "nodeAddress": "0x00192b2",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Cathedral Entrance Right Door (to Cathedral)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 85}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Cathedral Entrance Spark Out Right",
-              "notable": true,
-              "requires": [
-                "HiJump",
-                "h_heatProof",
-                "canShinechargeMovementComplex",
-                {"shinespark": {"frames": 10}}
-              ],
-              "note": "Kill the enemies and use the bottom to charge a spark. Quickly climb then spark through the right door."
-            }
-          ],
-          "devNote": "FIXME The extra amount of reqs for making this a suitless possibility is just too much."
-        }
-      ],
       "locks": [
         {
           "name": "Cathedral Entrance Red Lock (to Cathedral)",
@@ -162,12 +82,14 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 3}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 5}
       ]
     },
@@ -177,7 +99,7 @@
         {"id": 1},
         {
           "id": 2,
-          "note": "This link goes straight from 3 to 2 because waiting for the Sova is the same time, regardless of how quickly you can travel through the other nodes"
+          "devNote": "This link goes straight from 3 to 2 because waiting for the Sova is the same time, regardless of how quickly you can travel through the other nodes"
         },
         {"id": 3},
         {"id": 4},
@@ -189,9 +111,10 @@
       "to": [
         {"id": 1},
         {"id": 2},
+        {"id": 3},
         {
           "id": 5,
-          "note": "Node 4 is considered equivalent to 5 (though 5 isn't equivlent to 4)."
+          "devNote": "Node 4 is considered equivalent to 5 (though 5 isn't equivlent to 4)."
         }
       ]
     },
@@ -206,6 +129,18 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
       "link": [1, 3],
       "name": "Base",
       "notable": false,
@@ -213,6 +148,18 @@
         "h_canNavigateHeatRooms",
         {"heatFrames": 150}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [2, 5],
@@ -280,10 +227,17 @@
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
-          "canWalljump",
-          "SpaceJump"
+          "canPreciseWalljump",
+          "SpaceJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canWalljump",
+              "SpeedBooster"
+            ]}
+          ]}
         ]},
-        {"heatFrames": 300}
+        {"heatFrames": 210}
       ]
     },
     {
@@ -414,7 +368,7 @@
       "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
-        {"heatFrames": 100},
+        {"heatFrames": 150},
         {"enemyDamage": {
           "enemy": "Sm. Dessgeega",
           "type": "contact",
@@ -512,6 +466,53 @@
       ]
     },
     {
+      "link": [4, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          "canPreciseWalljump",
+          "canTrickyJump",
+          "SpaceJump"
+        ]},
+        {"heatFrames": 540}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 35}
+      },
+      "note": "Kill the enemies, break the shot block, then use the bottom to charge a spark. Quickly climb up before the block respawns, and continue through the left door."
+    },
+    {
+      "link": [4, 1],
+      "name": "Leave Shinecharged Hero Shot",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        "canHeroShot",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          "canPreciseWalljump",
+          "canTrickyJump",
+          "SpaceJump"
+        ]},
+        {"heatFrames": 310}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 25}
+      },
+      "note": "Kill the enemies, then use the bottom to charge a spark. Shoot the shot block from the ground and follow it up so that it breaks, and continue through the left door."
+    },
+    {
       "link": [4, 2],
       "name": "Shinespark",
       "notable": false,
@@ -547,6 +548,33 @@
       ]
     },
     {
+      "link": [4, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 320}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 60}
+      },
+      "note": "Kill the enemies and use the bottom to charge a spark. Quickly climb then spark through the right door."
+    },
+    
+    {
+      "link": [4, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"heatFrames": 100}
+      ]
+    },
+    {
       "link": [4, 5],
       "name": "Base",
       "notable": false,
@@ -559,11 +587,40 @@
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
-          "HiJump",
-          "SpaceJump"
-        ]},
-        {"heatFrames": 150}
+          {"and": [
+            "HiJump",
+            {"heatFrames": 70}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 125}
+          ]}
+        ]}
       ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Move Assist Leave with Runway",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"heatFrames": 50}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 105}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
     },
     {
       "link": [5, 2],
@@ -614,7 +671,22 @@
       "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
+        "canDodgeWhileShooting",
         {"heatFrames": 350}
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Tank a Hit",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 160},
+        {"enemyDamage": {
+          "enemy": "Sm. Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
       ]
     },
     {
