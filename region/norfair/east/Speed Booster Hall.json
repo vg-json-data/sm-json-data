@@ -18,21 +18,6 @@
       "doorEnvironments": [{"physics": "air"}],
       "runways": [
         {
-          "name": "Base Runway - Speed Booster Hall Left Door (to Bat Cave)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ]
-            }
-          ],
-          "openEnd": 1
-        },
-        {
           "name": "Runway When Running Through - Speed Booster Hall Left Door (to Bat Cave)",
           "length": 45,
           "strats": [
@@ -71,21 +56,6 @@
         }
       ],
       "runways": [
-        {
-          "name": "Base Runway - Speed Booster Hall Right Door (to Speed Booster)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 110}
-              ]
-            }
-          ],
-          "openEnd": 1
-        },
         {
           "name": "Runway When Running Through - Speed Booster Hall Right Door (to Speed Booster)",
           "length": 45,
@@ -132,6 +102,13 @@
       "nodeAddress": "0x78C74"
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Crumble Blocks Broken",
+      "obstacleType": "inanimate"
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -163,6 +140,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
@@ -174,6 +152,18 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "link": [1, 1],
       "name": "Geruta Farm",
@@ -195,56 +185,223 @@
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [1],
-          "nodesToAvoid": [2]
-        }},
+        {"obstaclesNotCleared": ["A"]},
         {"heatFrames": 650}
-      ]
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"heatFrames": 630}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Crumble Bridges Broken",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatProof"
+      ],
+      "devNote": "There is no reason to logically run back through the room this way."
     },
     {
       "link": [1, 2],
       "name": "Speed Run",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [1],
-          "nodesToAvoid": [2]
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        {"heatFrames": 360}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Speed Run and Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
         }},
-        {"and": [
-          "SpeedBooster",
-          {"heatFrames": 360}
-        ]}
-      ]
+        {"heatFrames": 360}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      },
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Speed Run and Leave Running",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        {"heatFrames": 290}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "note": "Shoot from the middle of the second set of crumble blocks from the left."
     },
     {
       "link": [2, 1],
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [2],
-          "nodesToAvoid": [1]
-        }},
+        {"obstaclesNotCleared": ["A"]},
         {"heatFrames": 650}
-      ]
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 1],
+      "name": "Crumble Bridges Broken",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_heatProof",
+          {"and": [
+            {"heatFrames": 690},
+            {"or": [
+              {"ammo": {"type": "Super","count": 3}},
+              {"ammo": {"type": "Missile", "count": 6}},
+              "Plasma",
+              "Spazer",
+              "Wave"
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"and": [
+            "canCarefulJump",
+            {"heatFrames": 420}
+          ]},
+          {"and": [
+            {"heatFrames": 720},
+            {"lavaFrames": 60}
+          ]}
+        ]}
+      ],
+      "devNote": "This can be used for collecting the item without needing to reset the room."
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"heatFrames": 630}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"]
     },
     {
       "link": [2, 1],
       "name": "Speed Run",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [2],
-          "nodesToAvoid": [1]
-        }},
+        {"obstaclesNotCleared": ["A"]},
         "SpeedBooster",
         {"heatFrames": 360}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 1],
+      "name": "Speed Run and Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 360}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      },
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 1],
+      "name": "Speed Run and Leave Running",
+      "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        "canHeroShot",
+        {"heatFrames": 290}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "note": "Shoot while climbing the highest ramp for the shot to open the door."
+    },
+    {
+      "link": [2, 1],
+      "name": "Return Shinespark",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 335},
+        {"shinespark": {"frames": 221}}
+      ],
+      "note": "Align with the right side of a wall or door then turn around and shinespark in order to avoid colliding with a slope.",
+      "devNote": [
+        "There is enough time to visit 3 and return to 2 before performing this strat with the shinespark.",
+        "The obstacle being broken means Samus has run far enough to charge a shinespark."
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [2, 3],
