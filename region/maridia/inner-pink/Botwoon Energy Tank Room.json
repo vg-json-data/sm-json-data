@@ -16,39 +16,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a84c",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Botwoon E-Tank Left Door (to Botwoon)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -82,23 +49,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a870",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Botwoon E-Tank Right Door (to Halfie Climb)",
-          "length": 22,
-          "gentleUpTiles": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -243,11 +193,40 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Puyo Farm",
       "notable": false,
       "requires": [
         {"refill": ["Energy", "Missile", "PowerBomb"]}
       ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
     },
     {
       "link": [1, 2],
@@ -262,6 +241,23 @@
       "requires": [
         "h_canNavigateUnderwater"
       ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Leave with Runway Through the Speed Blocks",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [1, 4],
@@ -298,14 +294,15 @@
     },
     {
       "link": [1, 4],
-      "name": "Suitless Spark",
+      "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
       "requires": [
         "canSuitlessMaridia",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 60
-        }},
         {"shinespark": {
           "frames": 159,
           "excessFrames": 43
@@ -519,44 +516,63 @@
     },
     {
       "link": [4, 1],
-      "name": "Base",
+      "name": "Shinecharge",
       "notable": false,
       "requires": [
         "Gravity",
-        {"or": [
-          {"canComeInCharged": {
-            "fromNode": 4,
-            "framesRemaining": 180
-          }},
-          {"and": [
-            {"canComeInCharged": {
-              "fromNode": 4,
-              "framesRemaining": 80
-            }},
-            {"shinespark": {
-              "frames": 115,
-              "excessFrames": 12
-            }}
-          ]},
-          {"canShineCharge": {
-            "usedTiles": 22,
-            "gentleDownTiles": 4,
-            "openEnd": 1
-          }}
-        ]}
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "gentleDownTiles": 4,
+          "openEnd": 1
+        }}
       ],
       "clearsObstacles": ["A"]
     },
     {
       "link": [4, 1],
-      "name": "Suitless Spark",
+      "name": "Run Through",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 22,
+          "gentleDownTiles": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [4, 1],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"shinespark": {
+          "frames": 115,
+          "excessFrames": 12
+        }}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [4, 1],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 160
+        }
+      },
       "requires": [
         "canSuitlessMaridia",
-        {"canComeInCharged": {
-          "fromNode": 4,
-          "framesRemaining": 160
-        }},
         {"shinespark": {
           "frames": 147,
           "excessFrames": 15
@@ -624,6 +640,19 @@
         "Standing on the edge and spin jumping to the left is much easier than a running jump.",
         "While on the left side of this platform, the Puyo to the left will start moving; carefully kill it."
       ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 23,
+          "gentleUpTiles": 4,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [4, 4],
@@ -722,27 +751,36 @@
       "link": [4, 6],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "Morph",
-        {"or": [
-          {"and": [
-            "canWaterShineCharge",
-            {"canComeInCharged": {
-              "fromNode": 4,
-              "framesRemaining": 180
-            }}
-          ]},
-          {"and": [
-            "canStutterWaterShineCharge",
-            {"adjacentRunway": {
-              "fromNode": 4,
-              "usedTiles": 1.5,
-              "physics": ["normal"],
-              "overrideRunwayRequirements": true,
-              "useFrames": 80
-            }}
-          ]}
-        ]},
+        "canWaterShineCharge",
+        {"shinespark": {"frames": 8}}
+      ],
+      "note": "Shinespark diagonally over the zoa pit or run through the speed blocks and shinespark after turning around.",
+      "devNote": [
+        "This is just a rough estimate of the minimum number of tiles that this runway can represent.",
+        "It is designed for a skill level that won't be able to use canStutterWaterShineCharge."
+      ]
+    },
+    {
+      "link": [4, 6],
+      "name": "Suitless Stutter Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "Morph",
+        "canStutterWaterShineCharge",
         {"shinespark": {"frames": 8}}
       ],
       "note": "Shinespark diagonally over the zoa pit or run through the speed blocks and shinespark after turning around."
