@@ -187,7 +187,6 @@ The `leaveWithMoondance` object has no properties. A regular `canMoondance` or a
   "notable": false,
   "requires": [
     "h_canUseBombs",
-    "h_canThreeTileJumpMorph",
     "canMoondance"
   ],
   "exitCondition": {
