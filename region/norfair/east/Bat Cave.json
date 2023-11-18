@@ -15,25 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197aa",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Bat Cave Left Door (to Bubble Mountain)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 70}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -41,28 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197b6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Bat Cave Right Door (to Speed Booster Hall)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ]
-            }
-          ],
-          "openEnd": 1,
-          "devNote": [
-            "The blocks respawn, so no need to split this in two runways.",
-            "While waiting for respawn would take additional heat frames, the spawner makes that more or less inconsequential."
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -102,6 +63,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2}
       ]
     },
@@ -109,6 +71,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
@@ -122,11 +85,22 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
       "link": [1, 2],
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           "canWalljump",
           "HiJump",
@@ -142,17 +116,53 @@
       "name": "Precise Walljump",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canPreciseWalljump",
+        "canTrickyJump",
         {"heatFrames": 220}
+      ],
+      "note": [
+        "Shoot the Skree and shotblock from the door.",
+        "While avoiding Skree projectiles, jump to the next bubble platform followed by jumping directly up where the shot block used to be."
       ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Enter Running Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 350},
+        {"shinespark": {"frames": 14, "excessFrames": 3}}
+      ],
+      "note": "Shoot diagonally to clear the Skree and shot block before jumping to a closer platform and shinesparking to the above area."
+    },
+    {
+      "link": [1, 2],
+      "name": "Enter Shinecharged and Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 95
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 350},
+        {"shinespark": {"frames": 14, "excessFrames": 3}}
+      ],
+      "note": "Shoot diagonally to clear the Skree and shot block before jumping to a closer platform and shinesparking to the above area."
     },
     {
       "link": [2, 1],
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"heatFrames": 230},
           {"and": [
@@ -168,11 +178,43 @@
       ]
     },
     {
+      "link": [2, 1],
+      "name": "Enter Running and Leave Shinesparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 165},
+        {"shinespark": {"frames": 15}}
+      ],
+      "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
+    },
+    {
+      "link": [2, 1],
+      "name": "Enter Shinecharged and Leave Shinesparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 115
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 165},
+        {"shinespark": {"frames": 15}}
+      ],
+      "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
+    },
+    {
       "link": [2, 3],
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 10}
       ],
       "devNote": [
@@ -185,8 +227,23 @@
       "name": "Base",
       "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      },
+      "devNote": [
+        "The blocks respawn, so no need to split this in two runways.",
+        "While waiting for respawn would take additional heat frames, the spawner makes that more or less inconsequential."
       ]
     },
     {
