@@ -78,6 +78,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
+- _leaveWithMoondance_: This indicates that is is possible to walk through the door with the stored velocity from setting up a Moondance clip.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 
@@ -173,6 +174,28 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
 }
 ```
 
+### Leave With Moondance
+
+A `leaveWithMoondance` exit condition represents that Samus can leave through this door with stored fall speed. A strat with a `leaveWithMoondance` condition should include a `canMoondance` requirement in its `requires` only when in the room where the Moondance is performed and the fall speed is stored.  The `EntranceCondition`: `comeInWithMoondance` can lead to another `leaveWithMoondance` so long as the Moondance state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+
+The `leaveWithMoondance` object has no properties. A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
+
+#### Example
+```json
+{
+  "name": "Leave With Moondance",
+  "notable": false,
+  "requires": [
+    "h_canUseBombs",
+    "h_canThreeTileJumpMorph",
+    "canMoondance"
+  ],
+  "exitCondition": {
+    "leaveWithMoondance": {}
+  }
+}
+```
+
 ### Leave with G-Mode Setup
 
 A `leaveWithGModeSetup` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This sets up the player to enter R-mode or direct G-mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should _not_ be included in the `requires`, as the type/amount of enemy damage is irrelevant since Samus' energy will always reach zero here in order to trigger reserves.
@@ -242,6 +265,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
+- _comeInWithMoondance_: This indicates that Samus must enter the room with fall speed stored from a Moondance, and is able to clip through a floor with a Moonfall.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 
 Each of these properties is described in more detail below.
@@ -538,6 +562,25 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
 - If the previous door environment is water, then `Gravity` is required.
 - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
 
+### Come In With Moondance
+
+A `comeInWithMoondance` entrance condition represents that Samus can enter through this door with stored fall speed. A strat with a `comeInWithMoondance` condition should include a `canMoondance` requirement in its `requires` only when in the room where the clip is executed.  The `comeInWithMoondance` can lead to another `leaveWithMoondance` so long as the Moondance state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+
+The `comeInWithMoondance` object has no properties. A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
+
+#### Example
+```json
+{
+  "name": "Moondance Clip",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInWithMoondance": {}
+  },
+  "requires": [
+    "canMoondance"
+  ]
+}
+```
 ### Come In With R-Mode
 
 A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode while coming through this door.
