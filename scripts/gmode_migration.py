@@ -13,6 +13,41 @@ def get_notes(x, key="note"):
     return notes
 
 
+def create_missing_links(room_json):
+    # Create a dict, keyed by from_node_id, mapping to a set of to_node_ids occurring in strats:
+    strat_link_sets = {}
+    for strat in room_json["strats"]:
+        from_node_id, to_node_id = strat["link"]
+        if from_node_id not in strat_link_sets:
+            strat_link_sets[from_node_id] = set()
+        strat_link_sets[from_node_id].add(to_node_id)
+
+    link_from_map = {}
+    for link_from in room_json["links"]:
+        link_from_map[link_from["from"]] = link_from["to"]
+
+    # Create a dict, keyed by from_node_id, mapping to a set of to_node_ids occurring in links:
+    room_link_sets = {}
+    for room_link_from in room_json["links"]:
+        room_link_set = {link["id"] for link in room_link_from["to"]}
+        room_link_sets[room_link_from["from"]] = room_link_set
+
+    # Add any missing links
+    for from_node_id, to_node_id_set in strat_link_sets.items():
+        if from_node_id not in room_link_sets:
+            new_link_from = {"from": from_node_id, "to": []}
+            link_from_map[from_node_id] = new_link_from
+            room_link_sets[from_node_id] = {}
+            room_json["links"].append(new_link_from)
+        for to_node_id in to_node_id_set:
+            if to_node_id not in room_link_sets[from_node_id]:
+                link_from_map[from_node_id].append({"id": to_node_id})
+                room_link_sets[from_node_id].add(to_node_id)
+    
+    room_json["links"].sort(key=lambda x: x["from"])
+    for link_from in room_json["links"]:
+        link_from["to"].sort(key=lambda x: x["id"])
+
 # Extracts from node and entrance condition from a list of logical requirements containing a comeInWithGMode
 def get_gmode_entrance(requires):
     from_node = None
@@ -186,4 +221,5 @@ for path in sorted(Path("../region/").glob("**/*.json")):
         continue
     print("Processing", path)
     migrate_room(room_json)
+    create_missing_links(room_json)
     path.write_text(format_json.format(room_json, indent=2))
