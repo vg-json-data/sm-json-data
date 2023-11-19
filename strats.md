@@ -6,13 +6,15 @@ Strats are usually presented within an array of strats, where all individual str
 ## Structure
 
 A `strat` can have the following properties:
-  * _name:_ The name of the strat.
-  * _notable:_ Indicates whether the strat is notable.
-  * _reusableRoomwideNotable:_ The name of the reusable roomwide notable strat. This must share an identical name with an entry in the `reusableRoomwideNotable` array and the other strats that are connected to this one. This is only applicable for strats where `notable` is `true`.
+  * _name_: The name of the strat.
+  * _notable_: Indicates whether the strat is notable.
+  * _reusableRoomwideNotable_: The name of the reusable roomwide notable strat. This must share an identical name with an entry in the `reusableRoomwideNotable` array and the other strats that are connected to this one. This is only applicable for strats where `notable` is `true`.
   * _entranceCondition_: Indicates that this strat requires entering through the door transition in a special way, combining with a strat in the previous room.
-  * _requires:_ The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
+  * _requires_: The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
   * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
-  * _clearsObstacles:_ An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
+  * _clearsObstacles_: An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
+  * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
+  * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
   
 These properties are described below in more detail.
 ### Example
@@ -73,7 +75,7 @@ There is some variance in how much downward slopes slow Samus' movement, dependi
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed: door lock bypass strats cannot be combined with strats having an `exitCondition`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed, unless the strat has the `bypassesDoorShell` property set to `true`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
@@ -637,3 +639,21 @@ A `gModeRegainMobility` object has no properties.
   ],
   "gModeRegainMobility": {}
 }
+```
+
+## Bypasses Door Shell
+
+A `bypassesDoorShell` property on a strat indicates that Samus can leave through the door transition in the `to` node
+without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": true` may also have an exit condition, but it is not required to have one.
+
+### Example
+```json
+{
+  "name": "Bypass Door Shell",
+  "notable": false,
+  "requires": [
+    "canWallIceClip"
+  ],
+  "bypassesDoorShell": true
+}
+```
