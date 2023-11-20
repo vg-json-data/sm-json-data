@@ -229,10 +229,10 @@ def migrate_room(room_json):
             new_strats.append(new_strat_json)
         else:
             new_strats.append(strat_json)
-    # for node_json in room_json["nodes"]:
-    #     new_strats.extend(extract_leave_with_gmode_setup_strats(node_json))
-    #     new_strats.extend(extract_leave_with_gmode_strats(node_json))
-    #     new_strats.extend(extract_gmode_immobile_strats(node_json))
+    for node_json in room_json["nodes"]:
+        new_strats.extend(extract_leave_with_gmode_setup_strats(node_json))
+        new_strats.extend(extract_leave_with_gmode_strats(node_json))
+        new_strats.extend(extract_gmode_immobile_strats(node_json))
     new_strats.sort(key=lambda x: x["link"])
     room_json["strats"] = new_strats
 
