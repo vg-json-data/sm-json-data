@@ -15,23 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a834",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Precious Room Top Left Door (to Colosseum)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -40,22 +24,6 @@
       "nodeSubType": "eye",
       "nodeAddress": "0x001a840",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Draygon Eye Door",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "locks": [
         {
           "name": "Draygon Eye Lock",
@@ -86,6 +54,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
         {
           "id": 3,
@@ -96,7 +65,8 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     },
     {
@@ -107,6 +77,18 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "link": [1, 2],
       "name": "Base",
@@ -146,14 +128,30 @@
     },
     {
       "link": [2, 1],
-      "name": "Suited Shinespark",
+      "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "Gravity",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 40
-        }},
+        {"shinespark": {"frames": 40, "excessFrames": 8}}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Shinespark, Come in Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "Gravity",
         {"shinespark": {"frames": 40, "excessFrames": 8}}
       ]
     },
@@ -161,12 +159,13 @@
       "link": [2, 1],
       "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
       "requires": [
         "canSuitlessMaridia",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 60
-        }},
         {"shinespark": {"frames": 40, "excessFrames": 8}}
       ],
       "note": "It takes a bit more time to set up the spark when suitless."
@@ -197,15 +196,14 @@
       "link": [2, 1],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
       "requires": [
         "canStutterWaterShineCharge",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 2,
-          "physics": ["normal"],
-          "overrideRunwayRequirements": true,
-          "useFrames": 80
-        }},
         {"canShineCharge": {
           "usedTiles": 33,
           "openEnd": 2
@@ -291,6 +289,18 @@
         "Gravity",
         "h_canArtificialMorphIBJ"
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
     },
     {
       "link": [3, 1],
