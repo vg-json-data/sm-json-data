@@ -653,6 +653,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                        if strat.get("bypassesDoorShell") == True:
+                            if node_lookup[toNode]["nodeType"] != "door":
+                                msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
 
 
                     # Validate GMode objects
