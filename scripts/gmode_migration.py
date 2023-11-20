@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import copy
+import argparse
 
 import format_json
 
@@ -129,7 +130,8 @@ def extract_leave_with_gmode_strats(node_json):
             try:
                 from_node_id, entrance_condition, filtered_reqs = get_gmode_entrance(strat_json["requires"])
             except Exception as e:
-                print("Skipping leaveWithGMode strat: ", e)
+                strat_name = strat_json["name"]
+                print(f"Skipping leaveWithGMode strat '{strat_name}': {e}")
                 return []
 
             dev_notes = setup_dev_notes + get_notes(strat_json, "devNote")
@@ -180,10 +182,30 @@ def extract_gmode_immobile_strats(node_json):
     return [strat]
 
 
+def count_come_in_with_gmode(req):
+    if isinstance(req, list):
+        return sum(count_come_in_with_gmode(r) for r in req)
+    if isinstance(req, dict):
+        if "comeInWithGMode" in req:
+            return 1
+        if "and" in req:
+            return count_come_in_with_gmode(req["and"])
+        if "or" in req:
+            return count_come_in_with_gmode(req["or"])
+    return 0
+
+
 def extract_come_in_with_gmode_strat(strat_json):
+    cnt = count_come_in_with_gmode(strat_json["requires"])
+    if cnt == 0:
+        return None
+    if cnt > 1:
+        print("Skipping comeInWithGMode in strat '{}': More than one comeInWithGMode".format(strat_json["name"]))
+    
     try:
         from_node_id, entrance_condition, filtered_reqs = get_gmode_entrance(strat_json["requires"])
     except Exception as e:
+        print("Skipping comeInWithGMode in strat '{}': {}".format(strat_json["name"], e))
         return None
     
     new_strat = {
@@ -207,15 +229,19 @@ def migrate_room(room_json):
             new_strats.append(new_strat_json)
         else:
             new_strats.append(strat_json)
-    for node_json in room_json["nodes"]:
-        new_strats.extend(extract_leave_with_gmode_setup_strats(node_json))
-        new_strats.extend(extract_leave_with_gmode_strats(node_json))
-        new_strats.extend(extract_gmode_immobile_strats(node_json))
+    # for node_json in room_json["nodes"]:
+    #     new_strats.extend(extract_leave_with_gmode_setup_strats(node_json))
+    #     new_strats.extend(extract_leave_with_gmode_strats(node_json))
+    #     new_strats.extend(extract_gmode_immobile_strats(node_json))
     new_strats.sort(key=lambda x: x["link"])
     room_json["strats"] = new_strats
 
 
-for path in sorted(Path("../region/").glob("**/*.json")):
+parser = argparse.ArgumentParser()
+parser.add_argument('path', type=Path, help='directory within which to update room JSON files')
+args = parser.parse_args()    
+
+for path in sorted(args.path.glob("**/*.json")):
     room_json = json.load(path.open("r"))
     if room_json.get("$schema") != "../../../schema/m3-room.schema.json":
         continue
