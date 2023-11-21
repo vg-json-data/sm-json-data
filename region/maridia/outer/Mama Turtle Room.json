@@ -14,24 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a408",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mama Turtle Room Door (to Fish Tank)",
-          "length": 18,
-          "gentleDownTiles": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
@@ -82,6 +65,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {
           "id": 2,
           "devNote": "Although most strats from 1->2 wake Mama Turtle, it is free to leave the room from 2->1."
@@ -104,6 +88,19 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 19,
+          "gentleDownTiles": 2,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "link": [1, 2],
       "name": "Grapple",
@@ -161,18 +158,78 @@
     },
     {
       "link": [1, 2],
-      "name": "Charge Outside",
+      "name": "In-Room Shinespark",
       "notable": false,
       "requires": [
         "Gravity",
-        "canShinechargeMovement",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 110
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "gentleUpTiles": 2,
+          "openEnd": 1
         }},
+        "canShinechargeMovement",
+        {"or": [
+          {"shinespark": {"frames": 60, "excessFrames": 5}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 55, "excessFrames": 5}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 50, "excessFrames": 5}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "devNote": "This could have a few more excess frames if not getting on top of the block to go to 2."
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 18,
+          "gentleUpTiles": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"or": [
+          {"shinespark": {"frames": 60, "excessFrames": 5}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 55, "excessFrames": 5}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 50, "excessFrames": 5}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "devNote": "This could have a few more excess frames if not getting on top of the block to go to 2."
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark, Charge Outside",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
         {"shinespark": {"frames": 60}}
       ],
-      "clearsObstacles": ["B"]
+      "clearsObstacles": ["B"],
+      "devNote": "This could have a few more excess frames if not getting on top of the block to go to 2."
     },
     {
       "link": [1, 2],
@@ -240,47 +297,70 @@
       "link": [1, 2],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        {"or": [
-          {"and": [
-            "canWaterShineCharge",
-            {"canComeInCharged": {
-              "fromNode": 1,
-              "framesRemaining": 180
-            }}
-          ]},
-          {"and": [
-            "canStutterWaterShineCharge",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 1.5,
-              "physics": ["normal"],
-              "overrideRunwayRequirements": true,
-              "useFrames": 80
-            }}
-          ]}
-        ]},
+        "canWaterShineCharge",
         "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
         {"or": [
+          {"shinespark": {"frames": 61, "excessFrames": 7}},
           {"and": [
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
-            {"shinespark": {"frames": 61, "excessFrames": 7}}
+            "canMidairShinespark",
+            {"shinespark": {"frames": 56, "excessFrames": 7}}
           ]},
           {"and": [
             "canMidairShinespark",
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
-            {"shinespark": {"frames": 56, "excessFrames": 7}}
+            "HiJump",
+            {"shinespark": {"frames": 52, "excessFrames": 7}}
           ]}
         ]}
       ],
       "clearsObstacles": ["B"],
-      "devNote": "Can save an additional 4 energy with HiJump, and a bit more excess frames if not getting on top of the block to go to 2."
+      "devNote": [
+        "This could have a few more excess frames if not getting on top of the block to go to 2.",
+        "This runway length is just an estimate of the worst case scenario for difficulties that can't use canStutterWaterShineCharge."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Stutter Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 61, "excessFrames": 7}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 56, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 52, "excessFrames": 7}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "devNote": "This could have a few more excess frames if not getting on top of the block to go to 2."
     },
     {
       "link": [1, 2],
@@ -372,16 +452,68 @@
     },
     {
       "link": [1, 3],
-      "name": "Charge Outside",
+      "name": "In-Room Shinespark",
       "notable": false,
       "requires": [
         "Gravity",
-        "canShinechargeMovement",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 80
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "gentleUpTiles": 2,
+          "openEnd": 1
         }},
-        {"shinespark": {"frames": 44}}
+        {"or": [
+          {"shinespark": {"frames": 43, "excessFrames": 4}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 37, "excessFrames": 5}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 32, "excessFrames": 4}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 18,
+          "gentleUpTiles": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"or": [
+          {"shinespark": {"frames": 43, "excessFrames": 4}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 37, "excessFrames": 5}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 32, "excessFrames": 4}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Charge Outside",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"shinespark": {"frames": 43, "excessFrames": 4}}
       ]
     },
     {
@@ -417,47 +549,65 @@
       "link": [1, 3],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        {"or": [
-          {"and": [
-            "canWaterShineCharge",
-            {"canComeInCharged": {
-              "fromNode": 1,
-              "framesRemaining": 180
-            }}
-          ]},
-          {"and": [
-            "canStutterWaterShineCharge",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 1.5,
-              "physics": ["normal"],
-              "overrideRunwayRequirements": true,
-              "useFrames": 80
-            }}
-          ]}
-        ]},
+        "canWaterShineCharge",
         "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
         {"or": [
+          {"shinespark": {"frames": 47, "excessFrames": 5}},
           {"and": [
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
-            {"shinespark": {"frames": 47, "excessFrames": 5}}
+            "canMidairShinespark",
+            {"shinespark": {"frames": 44, "excessFrames": 5}}
           ]},
           {"and": [
             "canMidairShinespark",
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
-            {"shinespark": {"frames": 44, "excessFrames": 5}}
+            "HiJump",
+            {"shinespark": {"frames": 41, "excessFrames": 5}}
           ]}
         ]}
       ],
-      "note": "Requires a little more than 1 tile in the adjacent room.",
-      "devNote": "Can save an additional 3 energy with HiJump."
+      "devNote": "This runway length is just an estimate of the worst case scenario for difficulties that can't use canStutterWaterShineCharge."
+    },
+    {
+      "link": [1, 3],
+      "name": "Suitless Stutter Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 47, "excessFrames": 5}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 44, "excessFrames": 5}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 41, "excessFrames": 5}}
+          ]}
+        ]}
+      ],
+      "note": "Requires at least 2 tiles in the adjacent room."
     },
     {
       "link": [1, 3],
