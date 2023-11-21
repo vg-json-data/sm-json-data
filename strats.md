@@ -80,7 +80,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
-- _leaveWithMoondance_: This indicates that is is possible to walk through the door with the stored velocity from setting up a Moondance clip.
+- _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 
@@ -176,11 +176,15 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
 }
 ```
 
-### Leave With Moondance
+### Leave With Stored Fall Speed
 
-A `leaveWithMoondance` exit condition represents that Samus can leave through this door with stored fall speed. A strat with a `leaveWithMoondance` condition should include a `canMoondance` requirement in its `requires` only when in the room where the Moondance is performed and the fall speed is stored.  The `EntranceCondition`: `comeInWithMoondance` can lead to another `leaveWithMoondance` so long as the Moondance state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave through this door with stored fall speed. A strat with a `leaveWithStoredFallSpeed` condition should include a `canMoondance` requirement in its `requires` only when in the room where the Moondance is performed and the fall speed is stored.  The `EntranceCondition`: `comeInWithStoredFallSpeed` can lead to another `leaveWithStoredFallSpeed` so long as the stored speed state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
 
-The `leaveWithMoondance` object has no properties. A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
+The `leaveWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.  
+
+
+A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
 
 #### Example
 ```json
@@ -192,7 +196,7 @@ The `leaveWithMoondance` object has no properties. A regular `canMoondance` or a
     "canMoondance"
   ],
   "exitCondition": {
-    "leaveWithMoondance": {}
+    "leaveWithStoredFallSpeed": {}
   }
 }
 ```
