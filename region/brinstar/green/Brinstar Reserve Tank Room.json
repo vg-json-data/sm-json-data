@@ -14,22 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d66",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Brinstar Reserve Tank Room Door (to Early Supers)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -68,6 +53,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
         {"id": 3}
       ]
@@ -94,6 +80,18 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
     {
       "link": [1, 2],
       "name": "Base",
@@ -202,27 +200,20 @@
       "link": [3, 4],
       "name": "Brinstar Reserve Temporary Blue",
       "notable": true,
+      "entranceCondition": {
+        "comeInSpeedballing": {
+          "runway": {
+            "length": 4,
+            "openEnd": 1
+          }
+        }
+      },
       "requires": [
         "canSpeedball",
         "canTrickyJump",
         {"or": [
           "canTemporaryBlue",
           "SpringBall"
-        ]},
-        {"or": [
-          {"and": [
-            "canSlowShortCharge",
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 1,
-              "unusableTiles": 2
-            }}
-          ]},
-          {"canComeInCharged": {
-            "framesRemaining": 180,
-            "fromNode": 1,
-            "unusableTiles": 10
-          }}
         ]}
       ],
       "note": [
@@ -231,7 +222,10 @@
       ],
       "devNote": [
         "Speedballing through a door into a pit like this must limit run speed a little bit.",
-        "UnusableTiles doesn't help, but with canTrickyJump and Notable, we can make some assumptions about shortcharge ability."
+        "UnusableTiles doesn't help, but with canTrickyJump and Notable, we can make some assumptions about shortcharge ability.",
+        "FIXME: comeInSpeedballing isn't the right entrance condition, since this strat won't work if you enter already in a speedball.",
+        "Replace this once we have a proper one for this.",
+        "The logic should be sound for now since we also don't yet have a way to model strats that leave already in a speedball."
       ]
     },
     {
