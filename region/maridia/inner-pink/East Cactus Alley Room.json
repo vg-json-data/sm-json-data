@@ -15,50 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a954",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - East Cactus Alley Left Door (to West Cactus Alley)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 0,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeSpikeHit",
-                "h_XModeSpikeHit",
-                {"or": [
-                  "h_XModeSpikeHit",
-                  "canStationarySpinJump"
-                ]},
-                "Gravity",
-                "HiJump",
-                "SpaceJump",
-                "canShinechargeMovementComplex",
-                "canMidairShinespark",
-                {"shinespark": {"frames": 10}}
-              ],
-              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -66,52 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a960",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - East Cactus Alley Right Door (to Halfie Climb)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 80,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeSpikeHit",
-                "h_XModeSpikeHit",
-                {"or": [
-                  "h_XModeSpikeHit",
-                  "canStationarySpinJump"
-                ]},
-                "Gravity",
-                "HiJump",
-                "SpaceJump",
-                "canShinechargeMovementComplex",
-                "canMidairShinespark"
-              ],
-              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
@@ -218,6 +130,18 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Cacatac Farm",
       "notable": false,
       "requires": [
@@ -247,6 +171,34 @@
         }},
         {"refill": ["Super"]}
       ]
+    },
+    {
+      "link": [1, 1],
+      "name": "X-Mode, Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        {"or": [
+          "h_XModeSpikeHit",
+          "canStationarySpinJump"
+        ]},
+        "Gravity",
+        "HiJump",
+        "SpaceJump",
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 10}}
+      ],
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
     },
     {
       "link": [1, 3],
@@ -341,6 +293,18 @@
     },
     {
       "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Cacatac Farm",
       "notable": false,
       "requires": [
@@ -364,6 +328,35 @@
         }},
         {"refill": ["Energy", "Super"]}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "X-Mode, Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        {"or": [
+          "h_XModeSpikeHit",
+          "canStationarySpinJump"
+        ]},
+        "Gravity",
+        "HiJump",
+        "SpaceJump",
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
     },
     {
       "link": [2, 4],
@@ -449,12 +442,27 @@
       "link": [2, 4],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 20
-        }},
-        {"shinespark": {"frames": 20}}
+        "Gravity",
+        {"shinespark": {"frames": 21, "excessFrames": 5}}
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 22, "excessFrames": 5}}
       ]
     },
     {
@@ -502,19 +510,20 @@
       "link": [2, 4],
       "name": "East Cac Alley Cross Room Jump with IBJ",
       "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": false,
+          "minTiles": 2
+        }
+      },
       "requires": [
         "h_canJumpIntoIBJ",
         "h_canBombHorizontally",
         "h_canResetFallSpeed",
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 1.5,
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
       "note": [
-        "Requires a runway of at least 1.5 tiles in the adjacent room, although it is easier with more.",
+        "Requires a runway of at least 2 tiles in the adjacent room, although it is easier with more.",
         "Start the IBJ as far left as possible. The furthest right is just right of the waterfall.",
         "At the top of the IBJ bomb to the left and unmorph to reset fall speed."
       ]
@@ -531,12 +540,7 @@
       },
       "requires": [
         "HiJump",
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 2,
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
       "note": "Requires a runway of at least 1 tile in the adjacent room, although it is easier with more."
     },
