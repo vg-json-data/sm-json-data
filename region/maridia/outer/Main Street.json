@@ -15,37 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a39c",
       "doorEnvironments": [{"physics": "water"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 17,
-          "framesRemaining": 110,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 24,
-          "framesRemaining": 76,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        }
-      ],
       "gModeImmobile": {
         "requires": [
           "never"
@@ -76,37 +45,6 @@
             }
           ],
           "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 17,
-          "framesRemaining": 80,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 24,
-          "framesRemaining": 40,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                "canShinechargeMovement"
-              ]
-            }
-          ]
         }
       ],
       "leaveWithGModeSetup": [
@@ -519,6 +457,68 @@
       "requires": []
     },
     {
+      "link": [3, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 24,
+            "gentleUpTiles": 3,
+            "gentleDownTiles": 3,
+            "openEnd": 1
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 3},
+            {"canShineCharge": {
+              "usedTiles": 25,
+              "gentleUpTiles": 3,
+              "gentleDownTiles": 3,
+              "openEnd": 1
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 76
+        }
+      }
+    },
+    {
+      "link": [3, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 24,
+            "gentleUpTiles": 3,
+            "gentleDownTiles": 3,
+            "openEnd": 1
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 3},
+            {"canShineCharge": {
+              "usedTiles": 25,
+              "gentleUpTiles": 3,
+              "gentleDownTiles": 3,
+              "openEnd": 1
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      }
+    },
+    {
       "link": [3, 3],
       "name": "Sciser Farm",
       "notable": false,
@@ -554,14 +554,73 @@
     },
     {
       "link": [3, 6],
-      "name": "Shinespark",
+      "name": "In-Room Shinespark",
       "notable": false,
       "requires": [
         "Gravity",
-        {"canComeInCharged": {
-          "fromNode": 3,
-          "framesRemaining": 150
-        }},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 24,
+            "gentleUpTiles": 3,
+            "gentleDownTiles": 3,
+            "openEnd": 1
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 3},
+            {"canShineCharge": {
+              "usedTiles": 25,
+              "gentleUpTiles": 3,
+              "gentleDownTiles": 3,
+              "openEnd": 1
+            }}
+          ]}
+        ]},
+        {"or": [
+          {"shinespark": {"frames": 77, "excessFrames": 2}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 50, "excessFrames": 2}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 6],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 24,
+          "gentleUpTiles": 3,
+          "gentleDownTiles": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"or": [
+          {"shinespark": {"frames": 77, "excessFrames": 2}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 50, "excessFrames": 2}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 6],
+      "name": "Shinespark, Come in Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 150
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
         {"shinespark": {"frames": 50, "excessFrames": 2}}
       ],
       "clearsObstacles": ["A"]
@@ -877,14 +936,70 @@
     },
     {
       "link": [3, 9],
-      "name": "Shinespark",
+      "name": "In-Room Shinespark",
       "notable": false,
       "requires": [
         "Gravity",
-        {"canComeInCharged": {
-          "fromNode": 3,
-          "framesRemaining": 100
-        }},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 24,
+            "gentleUpTiles": 3,
+            "gentleDownTiles": 3,
+            "openEnd": 1
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 3},
+            {"canShineCharge": {
+              "usedTiles": 25,
+              "gentleUpTiles": 3,
+              "gentleDownTiles": 3,
+              "openEnd": 1
+            }}
+          ]}
+        ]},
+        {"or": [
+          {"shinespark": {"frames": 76, "excessFrames": 3}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 50, "excessFrames": 3}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [3, 9],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 24,
+          "gentleUpTiles": 3,
+          "gentleDownTiles": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"or": [
+          {"shinespark": {"frames": 76, "excessFrames": 3}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 50, "excessFrames": 3}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [3, 9],
+      "name": "Shinespark, Come in Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "Gravity",
         {"shinespark": {"frames": 58, "excessFrames": 3}}
       ]
     },
@@ -892,14 +1007,15 @@
       "link": [3, 9],
       "name": "Midair Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
       "requires": [
         "Gravity",
         "canShinechargeMovement",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 3,
-          "framesRemaining": 80
-        }},
         {"shinespark": {"frames": 50, "excessFrames": 3}}
       ]
     },
@@ -1253,10 +1369,49 @@
       "requires": []
     },
     {
+      "link": [8, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "startingDownTiles": 1,
+          "steepDownTiles": 2,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 110
+        }
+      }
+    },
+    {
       "link": [8, 2],
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [8, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "startingDownTiles": 1,
+          "steepDownTiles": 2,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      }
     },
     {
       "link": [8, 3],
