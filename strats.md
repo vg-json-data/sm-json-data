@@ -178,25 +178,26 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
 
 ### Leave With Stored Fall Speed
 
-A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave through this door with stored fall speed. A strat with a `leaveWithStoredFallSpeed` condition should include a `canMoondance` requirement in its `requires` only when in the room where the Moondance is performed and the fall speed is stored.  The `EntranceCondition`: `comeInWithStoredFallSpeed` can lead to another `leaveWithStoredFallSpeed` so long as the stored speed state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave through this door with stored fall speed.
 
 The `leaveWithStoredFallSpeed` object has a single property:
-- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.  
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
 
-
-A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
+A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithStoredFallSpeed` condition on the other side of the door.  A strat with a `leaveWithStoredFallSpeed` condition must either include a method of storing fall speed within its requirements, such as a Moondance.  Entering a room with a `comeInWithStoredFallSpeed` condition would also be possible exiting with a `leaveWithStoredFallSpeed` condition so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
 
 #### Example
 ```json
 {
-  "name": "Leave With Moondance",
+  "name": "Moondance to Store Fall Speed",
   "notable": false,
   "requires": [
     "h_canUseBombs",
     "canMoondance"
   ],
   "exitCondition": {
-    "leaveWithStoredFallSpeed": {}
+    "leaveWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
   }
 }
 ```
@@ -567,23 +568,28 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
 - If the previous door environment is water, then `Gravity` is required.
 - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
 
-### Come In With Moondance
+### Come In With Stored Fall Speed
 
-A `comeInWithMoondance` entrance condition represents that Samus can enter through this door with stored fall speed. A strat with a `comeInWithMoondance` condition should include a `canMoondance` requirement in its `requires` only when in the room where the clip is executed.  The `comeInWithMoondance` can lead to another `leaveWithMoondance` so long as the Moondance state is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+A `comeInWithStoredFallSpeed` entrance condition represents that Samus can enter through this door with stored fall speed. 
 
-The `comeInWithMoondance` object has no properties. A regular `canMoondance` or a `canExtendedMoondance` must be stated in the `requires` of the Moondance Clip strat as an Extended Moondance can be Setup in all places where a Moondance may be Setup.
+The `comeInWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
+
+A `comeInWithStoredFallSpeed` entrance condition must match with a `leaveWithStoredFallSpeed` condition on the other side of the door.  The `comeInWithStoredFallSpeed` can lead to another `leaveWithStoredFallSpeed` so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.  A strat with a `comeInWithStoredFallSpeed` condition should only include requirements needed to position Samus for the clip.
+
+*Note*: There is an implicit `canMoonfall` requirement on strats which have the `comeInWithStoredFallSpeed` condition as a means of using the stored fall speed.
 
 #### Example
 ```json
 {
-  "name": "Moondance Clip",
+  "name": "Stored Fall Speed Clip",
   "notable": false,
   "entranceCondtion": {
-    "comeInWithMoondance": {}
+    "comeInWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
   },
-  "requires": [
-    "canMoondance"
-  ]
+  "requires": []
 }
 ```
 ### Come In With R-Mode
