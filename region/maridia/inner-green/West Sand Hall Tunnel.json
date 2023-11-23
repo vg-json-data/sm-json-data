@@ -1,0 +1,338 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 202,
+  "name": "West Sand Hall Tunnel",
+  "area": "Maridia",
+  "subarea": "Inner",
+  "subsubarea": "Green",
+  "playable": true,
+  "roomAddress": "0x7D252",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "West Sand Hall Tunnel Left Door (to Crab Hole)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a528",
+      "doorEnvironments": [{"physics": "water"}],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Sciser",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Sciser",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "West Sand Hall Tunnel Right Door (to West Sand Hall)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a534",
+      "doorEnvironments": [{"physics": "water"}],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Sciser",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Sciser",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "West Sand Hall Tunnel Sciser",
+      "enemyName": "Sciser",
+      "quantity": 1,
+      "homeNodes": [1, 2]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway Both Doors Open",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 2}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Suitless Water Shinecharge, Shinespark Return",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 7}},
+        {"or":[
+          "Wave",
+          "Spazer",
+          "Plasma",
+          {"ammo": { "type": "Missile", "count": 2 }},
+          {"ammo": { "type": "Super", "count": 1 }}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Get the shinecharge while killing the crab, then move towards and shinespark out the left door."
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      },
+      "devNote": "FIXME: Do we need a way to deal with the crab? It seems avoidable unless: a short runway, the next room is a drop off, and you need almost all of the frames."
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or":[
+          "Wave",
+          "Spazer",
+          "Plasma",
+          {"ammo": { "type": "Missile", "count": 2 }},
+          {"ammo": { "type": "Super", "count": 1 }}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      },
+      "note": "Get the shinecharge while killing the crab, then exit the right door."
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      },
+      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway Both Doors Open",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 1}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Suitless Water Shinecharge, Shinespark Return",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        "canCarefulJump",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 7}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Get the shinecharge, carefully jump over the crab and move towards then shinespark out the right door."
+    }
+  ]
+}

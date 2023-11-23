@@ -1,0 +1,181 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 57,
+  "name": "Spore Spawn Room",
+  "area": "Brinstar",
+  "subarea": "Green",
+  "playable": true,
+  "roomAddress": "0x79DC7",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Spore Spawn Room Top Right Door (to Spore Spawn Supers)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0018e4a",
+      "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 2,
+      "name": "Spore Spawn Room Bottom Door (to Spore Spawn Kihunters)",
+      "nodeType": "door",
+      "nodeSubType": "green",
+      "nodeAddress": "0x0018e56",
+      "doorEnvironments": [{"physics": "air"}],
+      "locks": [
+        {
+          "name": "Spore Spawn Room Green Lock (to Spore Spawn Kihunters)",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canOpenGreenDoors"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Spore Spawn",
+      "nodeType": "event",
+      "nodeSubType": "boss",
+      "locks": [
+        {
+          "name": "Spore Spawn Fight",
+          "lockType": "bossFight",
+          "unlockStrats": [
+            {
+              "name": "Charge",
+              "notable": false,
+              "requires": [
+                "Charge"
+              ]
+            },
+            {
+              "name": "Missiles",
+              "notable": false,
+              "requires": [
+                {"resourceCapacity": [{"type": "Missile", "count": 1}]}
+              ],
+              "devNote": "No ammo count because Missiles are farmable here."
+            },
+            {
+              "name": "Supers",
+              "notable": false,
+              "requires": [
+                {"ammo": {"type": "Super", "count": 4}}
+              ],
+              "note": "Spore Spawn's pollen does not drop Supers. The fight requires 4 Supers, where many misses could lead to a softlock."
+            }
+          ]
+        }
+      ],
+      "yields": ["f_DefeatedSporeSpawn"]
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Spore Spawn",
+      "enemyName": "Spore Spawn",
+      "quantity": 1,
+      "homeNodes": [3],
+      "stopSpawn": ["f_DefeatedSporeSpawn"]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "f_DefeatedSporeSpawn"
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 16, "excessFrames": 16}}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "link": [2, 2],
+      "name": "Shinespark, Spore Spawn Dead",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "f_DefeatedSporeSpawn",
+        {"shinespark": {"frames": 3, "excessFrames": 3}}
+      ],
+      "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "f_DefeatedSporeSpawn"
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    }
+  ]
+}

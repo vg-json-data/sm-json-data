@@ -120,6 +120,12 @@ When trying to determine the ammo needed to fulfill an `enemyKill` object, it co
 ### Health Management Objects
 This section contains logical elements that are fulfilled by spending health. Encountering enough of those successively without having a chance to refill can impact the number of e-tanks that are needed to get through.
 
+#### shinespark
+A `shinespark` object represents the need for Samus to spend energy performing a shinespark for a given number of frames. This implicitly requires the `canShinespark` tech. It has the following properties:
+
+* _frames_: The duration of the shinespark in frames, assuming the spark is completed without being interrupted by reaching 29 energy. The shinespark frames equals the amount of energy spent, as a shinespark uses 1 energy per frame. 
+* _excessFrames_: The shinespark duration (in frames) that is not required to complete the objective of the shinespark. Subtracting this from the `frames` defines the lower limit of the shinespark energy cost.
+
 #### acidFrames object
 An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
 
@@ -177,7 +183,7 @@ __Example:__
 ```
 
 #### heatFrames object
-A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit.
+A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
 
 __Example:__
 ```json
@@ -300,6 +306,9 @@ __Example:__
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
 #### adjacentRunway object
+
+_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition` should be used instead.
+
 An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
@@ -352,27 +361,26 @@ __Additional considerations__
 Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
 #### canComeInCharged object
+
+_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition/comeInCharged` should be used instead.
+
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works.
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canComeInCharged` object.
-* _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
+* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works. A value of 180 indicate that Samus must be able to obtain blue speed in the current room.
 * _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
 
 __Example:__
 ```json
 {"canComeInCharged": {
   "fromNode": 4,
-  "framesRemaining": 180,
-  "shinesparkFrames": 75
+  "framesRemaining": 180
 }}
 ```
 
 __Additional considerations__
 
 * A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object implicitly requires the `canShinespark` tech if it has more than 0 `shinesparkFrames`.
 * A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
 The number of framesRemaining in that case is:
   * 180 if there is a usable runway in the destination room
@@ -380,6 +388,8 @@ The number of framesRemaining in that case is:
 * Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
 
 Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
+
+Energy requirements for shinesparking (if applicable) are specified separately using a `shinespark` object.
 
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
@@ -391,8 +401,6 @@ A `canShineCharge` object represents the need for Samus to be able to charge a s
   * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
   * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
 * _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _shinesparkFrames:_ Indicates how many frames the shinespark that will be used lasts. This can be 0 in cases where only the blue suit is needed. During a shinespark, Samus is damaged by 1 every frame, and being able to spend that health is part of of being able to fulfill a `canShineCharge` object.
-* _excessShinesparkFrames:_ Indicates how far beyond a breakable wall or ledge a shinespark will travel, in terms of frames.  This enables shinesparking at a lower health value but will still cost the full `shinesparkFrames` value if that health can be paid.
 
 __Example:__
 ```json
@@ -400,17 +408,18 @@ __Example:__
   "usedTiles": 25,
   "steepUpTiles": 3,
   "steepDownTiles": 3,
-  "shinesparkFrames": 0,
   "openEnd": 1
 }},
 ```
 
 __Additional considerations__
 
-* A `canShineCharge` object implicitly requires the Speed Booster.
-* A `canShineCharge` object implicitly requires the `canShineCharge` tech if it has more than 0 `shinesparkFrames`.
+* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
 #### comeInWithRMode object
+
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithRMode`](strats.md#come-in-with-r-mode) should be used instead.
+
 A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 
@@ -436,6 +445,9 @@ __Additional considerations__
 Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
 
 #### comeInWithGMode object
+
+_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithGMode`](strats.md#come-in-with-g-mode) should be used instead.
+
 A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
 * _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
 * _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).

@@ -1,0 +1,308 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 47,
+  "name": "Brinstar Pre-Map Room",
+  "area": "Brinstar",
+  "subarea": "Green",
+  "playable": true,
+  "roomAddress": "0x79B9D",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Brinstar Pre-Map Left Door (to Map)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x0018d36",
+      "doorEnvironments": [{"physics": "air"}],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Zeela",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Zeela",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Brinstar Pre-Map Right Door (to Green Shaft)",
+      "nodeType": "door",
+      "nodeSubType": "grey",
+      "nodeAddress": "0x0018d42",
+      "doorEnvironments": [{"physics": "air"}],
+      "leaveWithGModeSetup": [
+        {"strats": [
+          {
+            "name": "Get Hit By Zeela or Sidehopper",
+            "notable": false,
+            "requires": []
+          }
+        ]}
+      ],
+      "gModeImmobile": {
+        "requires": [
+          {"enemyDamage": {
+            "enemy": "Sm. Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]
+      },
+      "locks": [
+        {
+          "name": "Brinstar Pre-Map Grey Lock (to Green Shaft)",
+          "lockType": "killEnemies",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "Morph",
+                {"or": [
+                  "h_canBombThings",
+                  {"obstaclesCleared": ["A"]},
+                  {"and": [
+                    "canSlowShortCharge",
+                    "canSpeedball",
+                    {"canShineCharge": {
+                      "usedTiles": 14,
+                      "openEnd": 1
+                    }}
+                  ]}
+                ]}
+              ],
+              "clearsObstacles": ["A"],
+              "note": [
+                "Both sides of the room must be accessed to reach all enemies and unlock the door.",
+                "Beyond that, the enemies can be killed with Power Beam."
+              ]
+            }
+          ],
+          "yields": ["f_ZebesAwake"]
+        }
+      ]
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Bomb Blocks",
+      "obstacleType": "inanimate"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Brinstar Pre-Map Left Zeela",
+      "enemyName": "Zeela",
+      "quantity": 1,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Brinstar Pre-Map Right Zeelas",
+      "enemyName": "Zeela",
+      "quantity": 2,
+      "homeNodes": [2]
+    },
+    {
+      "id": "e3",
+      "groupName": "Brinstar Pre-Map Small Sidehopper",
+      "enemyName": "Sm. Sidehopper",
+      "quantity": 1,
+      "homeNodes": [2]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {
+          "id": 2,
+          "devNote": "FIXME: Node 1 could be used to reset the room, with additional requirements."
+        }
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Morph",
+        {"or": [
+          "h_canBombThings",
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Temporary Blue Bounce",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canTemporaryBlue",
+        "canSpringBallBounce"
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There is 1 unusable tile in this runway."
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Morph",
+        {"or": [
+          "h_canBombThings",
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 1],
+      "name": "Speedball (Come In Shinecharging)",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 11,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There are 3 unusable tiles in this runway."
+    },
+    {
+      "link": [2, 1],
+      "name": "Speedball (In-Room)",
+      "notable": false,
+      "requires": [
+        "canSlowShortCharge",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 1
+        }},
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Run on the upper platform to perform the speedball."
+    },
+    {
+      "link": [2, 1],
+      "name": "Temporary Blue Bounce",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canTemporaryBlue",
+        "canSpringBallBounce"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Use the upper platform to run and gain temporary blue."
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement",
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 15,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "note": "Use the upper platform to gain a shinecharge and carry it out the right door."
+    },
+    {
+      "link": [2, 2],
+      "name": "Zeela & Sidehopper Farm",
+      "notable": false,
+      "requires": [
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }},
+        {"refill": ["Missile", "Super"]}
+      ]
+    }
+  ]
+}

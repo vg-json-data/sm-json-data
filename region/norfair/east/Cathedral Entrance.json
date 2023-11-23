@@ -1,0 +1,748 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 90,
+  "name": "Cathedral Entrance",
+  "area": "Norfair",
+  "subarea": "Upper",
+  "subsubarea": "East",
+  "playable": true,
+  "roomAddress": "0x7A7B3",
+  "roomEnvironments": [{"heated": true}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Cathedral Entrance Left Door (to Business Center)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x00192a6",
+      "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 2,
+      "name": "Cathedral Entrance Right Door (to Cathedral)",
+      "nodeType": "door",
+      "nodeSubType": "red",
+      "nodeAddress": "0x00192b2",
+      "doorEnvironments": [{"physics": "air"}],
+      "locks": [
+        {
+          "name": "Cathedral Entrance Red Lock (to Cathedral)",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canOpenRedDoors"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Cathedral Entrance Junction (Bottom Left)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 4,
+      "name": "Cathedral Entrance Junction (Cleared Central Platform)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "This node is only considered reached if the enemy is clear of platforms, to setup a SpeedBooster strat"
+    },
+    {
+      "id": 5,
+      "name": "Cathedral Entrance Junction (Bottom Right)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Cathedral Entrance Sovas",
+      "enemyName": "Sova",
+      "quantity": 4,
+      "homeNodes": [3],
+      "dropRequires": ["h_heatProof"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Cathedral Entrance Small Dessgeegas",
+      "enemyName": "Sm. Dessgeega",
+      "quantity": 2,
+      "betweenNodes": [3, 5],
+      "dropRequires": ["h_heatProof"]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {
+          "id": 2,
+          "devNote": "This link goes straight from 3 to 2 because waiting for the Sova is the same time, regardless of how quickly you can travel through the other nodes"
+        },
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {
+          "id": 5,
+          "devNote": "Node 4 is considered equivalent to 5 (though 5 isn't equivlent to 4)."
+        }
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 150}
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 5],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 150}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canBombThings",
+        {"heatFrames": 450}
+      ],
+      "note": "Only one bomb is needed after using a spinjump to get into the two tile tunnel."
+    },
+    {
+      "link": [3, 1],
+      "name": "Base with Spring Ball",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "h_canUseSpringBall",
+        {"heatFrames": 375}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Sova Boost",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canNeutralDamageBoost",
+        "Morph",
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "hits": 1,
+          "type": "contact"
+        }},
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "canLateralMidAirMorph",
+            {"heatFrames": 340}
+          ]},
+          {"heatFrames": 2700}
+        ]}
+      ],
+      "note": [
+        "Either race the nearby sova to the morph tunnel or wait for the global Sova to come around.",
+        "Build speed on the lower platform and jump towards the morph tunnel while performing a Midair Morph to reach the Sova in time.",
+        "Guiding the local Sova around through the shot block again can be faster, but is not expected."
+      ],
+      "devNote": "The global Sova is moving while the player reaches this node and this heatFrame count reflects that."
+    },
+    {
+      "link": [3, 1],
+      "name": "Up from Below",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "canPreciseWalljump",
+          "SpaceJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canWalljump",
+              "SpeedBooster"
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 210}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Cathedral Entrance Left Door Frozen Sova Step",
+      "notable": true,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canUseFrozenEnemies",
+        "canTrickyJump",
+        "canCameraManip",
+        {"heatFrames": 1100}
+      ],
+      "note": [
+        "Guide the morph tunnel Sova on top of the shot blocks by keeping it on camera.",
+        "Move the camera away once it is on top of the shot blocks.  It will not move while off camera.",
+        "Stand directly below the OffCamera Sova and fire up and jump to break the shot blocks.",
+        "Either lower its health while guiding it, or as it begins to fall, there is time.",
+        "As it falls, shoot again to freeze it at the right height.",
+        "As a backup, the same Sova can be frozen on the left wall, dropped from the shot blocks again, or frozen on the right wall."
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Frozen Sova",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canUseFrozenEnemies",
+        {"heatFrames": 950}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Cathedral Entrance Sova Morph Only Boost",
+      "notable": true,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canInsaneWalljump",
+        "Morph",
+        "canNeutralDamageBoost",
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "hits": 1,
+          "type": "contact"
+        }},
+        {"heatFrames": 1050}
+      ],
+      "note": [
+        "Use a very well timed and precise walljump into morph to hit the global Sova so that the damage bonks Samus up to the door ledge.",
+        "Aim for the lowest part of slope looking wall tile, where it does not look possible to make contact with a walljump, and fully delay the jump.",
+        "To try again, the Sova loops to the left side wall. Or a Super can knock it off the wall to climb the right side again."
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Sova Farm",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        {"or": [
+          "canWalljump",
+          "SpaceJump",
+          "h_canUseSpringBall"
+        ]},
+        {"refill": ["Energy", "Missile", "Super"]}
+      ],
+      "note": "You can stay on the left part of the room to avoid interacting with the Sm. Desgeegas."
+    },
+    {
+      "link": [3, 4],
+      "name": "Plasma Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Ammo Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyKill": {
+          "enemies": [["Sm. Dessgeega", "Sm. Dessgeega"]],
+          "explicitWeapons": ["Missile", "Super"]
+        }},
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Intermediate Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "Wave",
+          "Spazer"
+        ]},
+        {"heatFrames": 200}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Power Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 350}
+      ]
+    },
+    {
+      "link": [3, 5],
+      "name": "Tank a Hit",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 150},
+        {"enemyDamage": {
+          "enemy": "Sm. Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "link": [3, 5],
+      "name": "Mockball Through",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canMockball",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 500},
+        {"shinespark": {"frames": 22, "excessFrames": 3}}
+      ],
+      "note": "Jump and shoot the block, then quickly run away and back to charge the shinespark and shine through before the block respawns.",
+      "devNote": [
+        "FIXME: Some of the heatFrames should come after the shinespark"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Shinespark With Plasma",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 250},
+        {"shinespark": {"frames": 22, "excessFrames": 3}}
+      ],
+      "note": [
+        "With plasma, it is possible to shoot the block from the ground and immediately shinespark.",
+        "Other beams will disappear off-screen before Samus has moved up enough.",
+        "A charge shot can be used instead, as it moves a bit slower, but there is a relatively small window."
+      ],
+      "devNote": [
+        "FIXME: Some of the heatFrames should come after the shinespark"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Cathedral Entrance Hero Shot Shinespark",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canHeroShot",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 250},
+        {"shinespark": {"frames": 22, "excessFrames": 3}}
+      ],
+      "note": [
+        "It is possible to shoot upwards from the ground then immediately as the shot is leaving the screen, press up and jump to shinespark without delay.",
+        "A Charge shot can help, as it slows down the shot."
+      ],
+      "devNote": [
+        "FIXME: Some of the heatFrames should come after the shinespark"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Cathedral Entrance Speedjump (Right to Left)",
+      "notable": true,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canTrickyDashJump",
+        {"heatFrames": 150}
+      ],
+      "note": [
+        "This is a precise strat which requires maximum run speed.",
+        "Perform a spin jump right next to the left wall.",
+        "Shoot the block as Samus is about to leap through it, and land next to the door.",
+        "A down grab makes this a little easier."
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          "canPreciseWalljump",
+          "canTrickyJump",
+          "SpaceJump"
+        ]},
+        {"heatFrames": 540}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 35}
+      },
+      "note": "Kill the enemies, break the shot block, then use the bottom to charge a spark. Quickly climb up before the block respawns, and continue through the left door."
+    },
+    {
+      "link": [4, 1],
+      "name": "Leave Shinecharged Hero Shot",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        "canHeroShot",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          "canPreciseWalljump",
+          "canTrickyJump",
+          "SpaceJump"
+        ]},
+        {"heatFrames": 310}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 25}
+      },
+      "note": "Kill the enemies, then use the bottom to charge a spark. Shoot the shot block from the ground and follow it up so that it breaks, and continue through the left door."
+    },
+    {
+      "link": [4, 2],
+      "name": "Shinespark",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canWalljump",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 380},
+        {"shinespark": {"frames": 16, "excessFrames": 4}}
+      ],
+      "devNote": [
+        "FIXME: Some of the heatFrames should come after the shinespark"
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Cathedral Entrance Speedjump (Left to Right)",
+      "notable": true,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canTrickyDashJump",
+        "canWalljump",
+        {"heatFrames": 150}
+      ],
+      "note": [
+        "This is a precise strat which requires maximum run speed.",
+        "Jump when passing under the floating platform and barely avoid hitting the rightmost wall.",
+        "Wall jump on the horizontal spire near to the door."
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"heatFrames": 320}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {"framesRemaining": 60}
+      },
+      "note": "Kill the enemies and use the bottom to charge a spark. Quickly climb then spark through the right door."
+    },
+    
+    {
+      "link": [4, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [4, 5],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [5, 2],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"heatFrames": 70}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 125}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Move Assist Leave with Runway",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"heatFrames": 50}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 105}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [5, 2],
+      "name": "MidAir SpringBall",
+      "notable": false,
+      "requires": [
+        "canSpringBallJumpMidAir",
+        {"heatFrames": 200}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "IBJ",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"and": [
+            "h_canIBJ",
+            {"heatFrames": 1020}
+          ]},
+          {"and": [
+            "h_canDoubleBombJump",
+            {"heatFrames": 510}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Jump into IBJ",
+      "notable": false,
+      "requires": [
+        {"or": [
+          {"and": [
+            "h_canJumpIntoIBJ",
+            {"heatFrames": 450}
+          ]},
+          {"and": [
+            "h_canDoubleBombJump",
+            {"heatFrames": 300}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canDodgeWhileShooting",
+        {"heatFrames": 350}
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Tank a Hit",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 160},
+        {"enemyDamage": {
+          "enemy": "Sm. Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Plasma Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Plasma",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Screw Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Ammo Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"enemyKill": {
+          "enemies": [["Sm. Dessgeega", "Sm. Dessgeega"]],
+          "explicitWeapons": ["Missile", "Super"]
+        }},
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Intermediate Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          "Wave",
+          "Spazer"
+        ]},
+        {"heatFrames": 200}
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Power Beam Kill",
+      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 350}
+      ]
+    }
+  ]
+}

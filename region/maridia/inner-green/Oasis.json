@@ -1,0 +1,929 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 198,
+  "name": "Oasis",
+  "area": "Maridia",
+  "subarea": "Inner",
+  "subsubarea": "Green",
+  "playable": true,
+  "roomAddress": "0x7D48E",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Oasis Left Door (to West Sand Hall)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a660",
+      "doorEnvironments": [{"physics": "water"}]
+    },
+    {
+      "id": 2,
+      "name": "Oasis Right Door (to East Sand Hall)",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a66c",
+      "doorEnvironments": [{"physics": "water"}]
+    },
+    {
+      "id": 3,
+      "name": "Oasis Top Door (to Toilet)",
+      "nodeType": "door",
+      "nodeSubType": "green",
+      "nodeAddress": "0x001a678",
+      "doorEnvironments": [{"physics": "water"}],
+      "spawnAt": 4,
+      "locks": [
+        {
+          "name": "Oasis Green Lock (to Toilet)",
+          "lockType": "coloredDoor",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                "h_canOpenGreenDoors"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Oasis Junction (Below Top Door)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 5,
+      "name": "Oasis Bottom Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 6,
+      "name": "Oasis Junction (Above Bomb Blocks)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    }
+  ],
+  "enemies": [],
+  "reusableRoomwideNotable": [
+    {
+      "name": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off.",
+        "Depending on the setup, this may have collision oscillation, making only a 50% success when done correctly."
+      ]
+    },
+    {
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed through the Top Door",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump, and make it all the way through the top door.",
+        "This uses exactly 14 tiles (with no open end) - more rises too fast to do the trick, less does not have the height needed to reach the door.",
+        "Use angle to break spin, then a momentumConservingTurnaround as early as possible, right as you pass the above tile horizontally. Using the background for positioning may help.",
+        "The second momentumConservingTurnaround is as late as possible, just before touching the above platform.",
+        "A third momentumConservingTurnaround is used on the door as it is opening."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 3},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {
+          "id": 4,
+          "note": "One-way link for shinesparks and cross room gravity jumps. Other strats should go 5 -> 6 -> 4."
+        },
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 4},
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway, Open Both Doors",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 2}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Suitless Water Shinecharge, Shinespark Return",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 7}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Get the shinecharge then move towards and shinespark out the left door."
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      },
+      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed through the Top Door (From the Left)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 13.4375
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack",
+        "canMomentumConservingTurnaround"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack and Speed through the Top Door",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump, and make it all the way through the top door.",
+        "This uses exactly 14 tiles (with no open end) - more rises too fast to do the trick, less does not have the height needed to reach the door.",
+        "Use angle to break spin, then a momentumConservingTurnaround as early as possible, right as you pass the above tile horizontally. Using the background for positioning may help.",
+        "The second momentumConservingTurnaround is as late as possible, just before touching the above platform.",
+        "A third momentumConservingTurnaround is used on the door as it is opening."
+      ],
+      "devNote": "This does not have collision oscillation. It is possible to do this without Screw Attack, but is extremely precise."
+    },
+    {
+      "link": [1, 4],
+      "name": "Diagonal Suitless Shinespark to the Top",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "note": "The spark takes Samus directly to the top platform.",
+      "devNote": [
+        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
+        "With Gravity 1 -> 6 -> 4 would be used."
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Suitless Water Shinecharge, Diagonal Shinespark to the Top",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "note": "Spark diagonally through the bomb blocks."
+    },
+    {
+      "link": [1, 4],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed to the Top (From the Left)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 13
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack",
+        "canMomentumConservingTurnaround"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump, and make it to the top.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off."
+      ],
+      "devNote": "This does not have collision oscillation"
+    },
+    {
+      "link": [1, 5],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [1, 6],
+      "name": "Oasis Left-Side X-Ray Climb",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "note": "This is a short climb, only a few tiles."
+    },
+    {
+      "link": [1, 6],
+      "name": "Oasis Cross Room Jump with Screw Attack (From the Left)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 4.4375
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off.",
+        "Even if executed correctly, the trick can fail with 50% probability due to collision oscillation."
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [1, 6],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed (From the Left)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 3
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off.",
+        "Even if executed correctly, the trick can fail with 50% probability due to collision oscillation."
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [1, 6],
+      "name": "Spark to Break the Blocks",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]}
+        ]}
+      ],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "link": [1, 6],
+      "name": "Suitless Water Shinecharge - Spark to Break the Blocks",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]}
+        ]}
+      ],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      },
+      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway, Open Both Doors",
+      "notable": false,
+      "requires": [
+        {"doorUnlockedAtNode": 1}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Suitless Water Shinecharge, Shinespark Return",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 7}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Get the shinecharge and move towards then shinespark out the right door."
+    },
+    {
+      "link": [2, 3],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed through the Top Door (From the Right)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 13.4375
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack",
+        "canMomentumConservingTurnaround"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack and Speed through the Top Door",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump, and make it all the way through the top door.",
+        "This uses exactly 14 tiles (with no open end) - more rises too fast to do the trick, less does not have the height needed to reach the door.",
+        "Use angle to break spin, then a momentumConservingTurnaround as early as possible, right as you pass the above tile horizontally. Using the background for positioning may help.",
+        "The second momentumConservingTurnaround is as late as possible, just before touching the above platform.",
+        "A third momentumConservingTurnaround is used on the door as it is opening."
+      ],
+      "devNote": "This does not have collision oscillation. It is possible to do this without Screw Attack, but is extremely precise."
+    },
+    {
+      "link": [2, 4],
+      "name": "Diagonal Suitless Shinespark to the Top",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "note": "The spark takes Samus directly to the top platform.",
+      "devNote": [
+        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
+        "With Gravity 2 -> 6 -> 4 would be used."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Suitless Water Shinecharge, Diagonal Shinespark to the Top",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "note": "Spark diagonally through the bomb blocks."
+    },
+    {
+      "link": [2, 4],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed to the Top (From the Right)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 13
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack",
+        "canMomentumConservingTurnaround"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump, and make it to the top.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off."
+      ],
+      "devNote": "This does not have collision oscillation"
+    },
+    {
+      "link": [2, 5],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [2, 6],
+      "name": "Oasis Right-Side X-Ray Climb",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "note": "This is a short climb, only a few tiles."
+    },
+    {
+      "link": [2, 6],
+      "name": "Oasis Cross Room Jump with Screw Attack (From the Right)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 4
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off.",
+        "Even if executed correctly, the trick can fail with 50% probability due to collision oscillation."
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [2, 6],
+      "name": "Oasis Cross Room Jump with Screw Attack and Speed (From the Right)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 3
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "ScrewAttack"
+      ],
+      "reusableRoomwideNotable": "Oasis Cross Room Jump with Screw Attack",
+      "note": [
+        "Use Screw Attack to break the bomb block by entering from a non-water room with a spin jump.",
+        "It helps to enter as low as possible and with as much horizontal speed as possible and with HiJump turned off.",
+        "Even if executed correctly, the trick can fail with 50% probability due to collision oscillation."
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [2, 6],
+      "name": "Suitless Water Shinecharge - Spark to Break the Blocks",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]}
+        ]}
+      ],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "link": [2, 6],
+      "name": "Spark to Break the Blocks",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]}
+        ]}
+      ],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [3, 5],
+      "name": "G-Mode Morph Bomb Blocks",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [3],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": [
+          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "Bombs"
+        ]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity"
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Suitless",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "HiJump",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "devNote": [
+        "This isn't requiring canSuitlessMaridia because it reduces the likelihood of entering from the top being a logical softlock.",
+        "Also it's not very elaborate suitless execution"
+      ]
+    },
+    {
+      "link": [4, 6],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [5, 1],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [5, 2],
+      "name": "Base",
+      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [5, 6],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "h_canDestroyBombWalls"
+      ]
+    },
+    {
+      "link": [5, 6],
+      "name": "Suitless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "h_canBombThings"
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [5, 6],
+      "name": "G-Mode Morph Bomb Blocks",
+      "notable": false,
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [1, 2],
+          "mode": "any",
+          "artificialMorph": true
+        }},
+        {"or": [
+          {"ammo": {"type": "PowerBomb", "count": 1}},
+          {"and": [
+            "h_canArtificialMorphIBJ",
+            "Gravity"
+          ]}
+        ]}
+      ],
+      "devNote": "This only breaks the bomb blocks but doesnt get up to 6. However the requirements from here to 6 are less than 6->4."
+    },
+    {
+      "link": [6, 4],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity"
+      ]
+    },
+    {
+      "link": [6, 4],
+      "name": "Suitless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canDownGrab",
+              "canSpringBallJumpMidAir",
+              "canConsecutiveWalljump"
+            ]}
+          ]},
+          "h_canMaxHeightSpringBallJump"
+        ]}
+      ]
+    },
+    {
+      "link": [6, 5],
+      "name": "Base",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "h_canDestroyBombWalls"
+      ]
+    },
+    {
+      "link": [6, 5],
+      "name": "Suitless",
+      "notable": false,
+      "requires": [
+        "h_canBombThings"
+      ],
+      "devNote": [
+        "Doesn't require canSuitlessMaridia because it's so straightforward.",
+        "It's only a separate strat because of how Screw Attack doesn't work."
+      ]
+    }
+  ]
+}

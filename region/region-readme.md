@@ -74,7 +74,7 @@ The `locks` property is an array that contains different ways a node can be lock
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
 * _name:_ A name that identifies the lock. This name must be unique across all locks in the model.
 * _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
-* _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again.
+* _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again. This property is deprecated; the strat property [`bypassesDoorShell`](../strats.md#bypasses-door-shell) should be used instead.
 * _yields:_ Exactly like the `yields` property found directly on a node, the `yields` property is an array of game flags. However, in this case those flags are activated when unlocking a lock.
 
 __Additional considerations__
@@ -94,6 +94,9 @@ The `viewableNodes` property is an array of objects, each of which describing ho
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
 
 #### runways
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveWithRunway` should be used instead.
+
 Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
 * _name:_ A name, unique across the entire model, that identifies the runway
 * _length:_ The number of tiles in the runway
@@ -151,6 +154,9 @@ __Example:__
 ```
 
 #### canLeaveCharged
+
+_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveCharged` should be used instead.
+
 Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
 * The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
@@ -177,7 +183,11 @@ Generating a shinespark charge using the door's runway (assuming the runway has 
 
 Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
 
+In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using a `shinespark` object.
+
 #### leaveWithGModeSetup
+
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGModeSetup`](../strats.md#leave-with-g-mode-setup) should be used instead.
 
 Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
 
@@ -210,6 +220,8 @@ __Example:__
 
 #### leaveWithGMode
 
+_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGMode`](../strats.md#leave-with-g-mode) should be used instead.
+
 Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
 
 * _leavesWithArtificialMorph_: A boolean indicating if these strats exit through the door while in an artificially morphed state (i.e. without the Morph item necessarily having been collected).
@@ -241,7 +253,9 @@ where 0 is replaced with the node ID of the given node, and another where the `f
 
 #### gModeImmobile
 
-This should be populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
+_Note_: This node property is deprecated. The strat property [`gModeRegainMobility`](../strats.md#g-mode-regain-mobility) should be used instead.
+
+This is populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
 
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
@@ -257,10 +271,7 @@ A room can have an array of obstacles. Obstacles are barriers that can be destro
 * To allow proper ammo requirements when passing somewhere multiple times but only needing to break the obstacle once
 * To represent things that can be opened only from one direction, but then can be freely passed once opened (e.g. crumble blocks, green and blue gates)
 
-Clearing an obstacle is done by executing a [strat](../strats.md) that includes the obstacle in its `clearsObstacles` property. An
-`obstaclesCleared` requirement is used to represent that an obstacle must be already cleared in order to execute a strat. The requirements to destroy an obstacle can also be found in a couple other places which are deprecated (and will likely be removed in the future):
-* Some requirements can be placed on the obstacle definition. Those are needed to destroy an obstacle in _all_ situations where the obstacle must be cleared. For the most part, this will be left null unless the requirements are complicated enough that their duplication becomes undesirable.
-* Requirements can be placed on [a strat's obstacles property](../strats.md#obstacles). These represent requirements on the strat for an obstacle to be cleared while executing the strat; if the obstacle is already cleared, then these requirements are not applicable.
+Clearing an obstacle is done by executing a [strat](../strats.md) that includes the obstacle in its `clearsObstacles` property. An `obstaclesCleared` [logical requirement](../logicalRequirements.md) is used to represent that an obstacle must be already cleared in order to execute a strat.
 
 __Additional considerations__ 
 

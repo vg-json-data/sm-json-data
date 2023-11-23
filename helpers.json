@@ -67,12 +67,30 @@
         {
           "name": "h_ShaktoolCameraFix",
           "requires": [ "never" ],
-          "devNote": "In Vanilla, the camera is messed up when entering the right door. Fixing the camera changes the room behavior by allowing the snails to move."
+          "devNote": "In Vanilla, the camera is messed up when entering from the right. Fixing the camera changes the room behavior by allowing the snails to move."
+        },
+        {
+          "name": "h_KraidCameraFix",
+          "requires": [ "never" ],
+          "devNote": "In Vanilla, the camera is fixed to the bottom left tile if Kraid is alive. When entering from the right, Samus will spawn in the middle of the room, likely dropping into the thorns."
+        },
+        {
+          "name": "h_MissileRefillStationAllAmmo",
+          "requires": [ "never" ],
+          "devNote": "In Vanilla, Missile refill stations only refill Missiles. This and 'h_useMissileRefillStation' can be changed if the stations refill Missiles, Supers, and Power Bombs."
         },
         {
           "name": "h_useMissileRefillStation",
           "requires": [
             {"refill": ["Missile"]}
+          ]
+        },
+        {
+          "name": "h_useMissileRefillAllAmmoCrystalFlash",
+          "requires": [
+            "h_MissileRefillStationAllAmmo",
+            "h_can10PowerBombCrystalFlash",
+            {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
           ]
         },
         {
@@ -180,6 +198,18 @@
             {"ammo": {"type": "PowerBomb","count": 10}}
           ],
           "devNote": "1 Power bomb leniency per attempt, 10 leniency attempts."
+        },
+        {
+          "name": "h_XModeSpikeHitLeniency",
+          "requires": [
+            {"spikeHits": 1}
+          ]
+        },
+        {
+          "name": "h_XModeThornHitLeniency",
+          "requires": [
+            {"thornHits": 1}
+          ]
         }
       ]
     },
@@ -194,6 +224,9 @@
               "h_heatProof",
               "canHeatRun"
             ]}
+          ],
+          "devNote": [
+            "This helper is deprecated, as these requirements are now implicitly included in heatFrame requirements."
           ]
         },
         {
@@ -494,10 +527,43 @@
           ]
         },
         {
+          "name": "h_can10PowerBombCrystalFlash",
+          "requires": [
+            "can10PowerBombCrystalFlash",
+            "Morph",
+            {"ammo": { "type": "Missile", "count": 10 }},
+            {"ammo": { "type": "Super", "count": 10 }},
+            {"ammo": { "type": "PowerBomb", "count": 10 }},
+            {"refill": ["Energy"]}
+          ]
+        },
+        {
           "name": "h_canXMode",
           "requires": [
             "canXMode",
             "Morph"
+          ]
+        },
+        {
+          "name": "h_XModeSpikeHit",
+          "requires": [
+            {"spikeHits": 1},
+            "h_XModeSpikeHitLeniency"
+          ],
+          "devNote": [
+            "Some strats require multiple spike hits, in which case h_canSpikeXMode will be included multiple times.",
+            "In this case, the total leniency is the base leniency h_XModeSpikeHitLeniency multiplied by the number of hits."
+          ]
+        },
+        {
+          "name": "h_XModeThornHit",
+          "requires": [
+            {"thornHits": 1},
+            "h_XModeThornHitLeniency"
+          ],
+          "devNote": [
+            "Some strats require multiple thorn hits, in which case h_canThornXMode will be included multiple times.",
+            "In this case, the total leniency is the base leniency h_XModeThornHitLeniency multiplied by the number of hits."
           ]
         },
         {
@@ -522,33 +588,6 @@
           "requires": [
             "canCrouchJump",
             "canTrickySpringBallJump"
-          ]
-        },
-        {
-          "name": "h_canLeftDoorXRayClimb",
-          "requires": [
-            "canXRayClimb",
-            "canStationarySpinJump"
-          ]
-        },
-        {
-          "name": "h_canRightDoorXRayClimb",
-          "requires": [
-            "canXRayClimb",
-            "canRightSideDoorStuck"
-          ]
-        },
-        {
-          "name": "h_canRightDoorXRayClimbFromWater",
-          "requires": [
-            "canXRayClimb",
-            {"or": [
-              "canRightSideDoorStuckFromWater",
-              {"and": [
-                "Gravity",
-                "canRightSideDoorStuck"
-              ]}
-            ]}
           ]
         }
       ]
