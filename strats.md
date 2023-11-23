@@ -271,7 +271,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
-- _comeInWithMoondance_: This indicates that Samus must enter the room with fall speed stored from a Moondance, and is able to clip through a floor with a Moonfall.
+- _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 
 Each of these properties is described in more detail below.
