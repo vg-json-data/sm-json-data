@@ -165,7 +165,8 @@ for region in os.listdir(regionPath):
                                         "region",
                                         region,
                                         "roomDiagrams",
-                                        f"{subarea}_{room['id']}_{sanitizedRoomName}.png"
+                                        # f"{subarea}_{room['id']}_{sanitizedRoomName}.png"
+                                        f"{subarea}_{sanitizedRoomName}_{room['id']}.png"
                                     )
 
                                     if os.path.isfile(roomDiagram):

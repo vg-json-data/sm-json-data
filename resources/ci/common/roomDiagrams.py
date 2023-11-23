@@ -99,7 +99,8 @@ def search_doorways(rootPath):
                         filename
                     )
                 )
-                roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                # roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                roomID = re.match(r"(?:[^\_]*)(?:[\_])(?:[^_]*)(?:[\_])([\d]+)", filename).group(1)
                 room = roomIDs[roomID]
                 if roomID not in [
                     "305",  # Crateria/East/Forgotten Highway Elbow
@@ -214,7 +215,8 @@ def test_pathways(rootPath):
                 pathImg = pathImg.convert("RGBA")
                 cleanImg = Image.open(os.path.join(r, filename).replace("roomPathways", "clean"))
                 cleanImg = cleanImg.convert("RGBA")
-                roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                # roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                roomID = re.match(r"(?:[^\_]*)(?:[\_])(?:[^_]*)(?:[\_])([\d]+)", filename).group(1)
                 if roomID in roomIDs:
                     # areaSlug = roomIDs[roomID]["areaSlug"]
                     # subareaSlug = roomIDs[roomID]["subareaSlug"]
@@ -262,7 +264,8 @@ def lift_pathways(rootPath):
                     )
                 roomImg = Image.open(os.path.join(r, filename))
                 roomImg = roomImg.convert("RGBA")
-                roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                # roomID = re.match(r"(?:[^\_]*)(?:[\_])([\d]+)(?:[\_])(?:[^_]*)", filename).group(1)
+                roomID = re.match(r"(?:[^\_]*)(?:[\_])(?:[^_]*)(?:[\_])([\d]+)", filename).group(1)
                 if roomID in roomIDs:
                     # areaSlug = roomIDs[roomID]["areaSlug"]
                     # subareaSlug = roomIDs[roomID]["subareaSlug"]
@@ -430,7 +433,8 @@ def make_clean(rootPath):
                                         r,
                                         "roomDiagrams",
                                         "clean",
-                                        f"{subareaSlug}_{roomID}_{roomName}.png"
+                                        # f"{subareaSlug}_{roomID}_{roomName}.png"
+                                        f"{subareaSlug}_{roomName}_{roomID}.png"
                                     )
                                 )
                                 cleanIDs.append(roomID)
