@@ -80,6 +80,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
+- _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 
@@ -175,6 +176,32 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
 }
 ```
 
+### Leave With Stored Fall Speed
+
+A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave through this door with stored fall speed.
+
+The `leaveWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
+
+A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithStoredFallSpeed` condition on the other side of the door.  A strat with a `leaveWithStoredFallSpeed` condition must either include a method of storing fall speed within its requirements, such as a Moondance.  Entering a room with a `comeInWithStoredFallSpeed` condition would also be possible exiting with a `leaveWithStoredFallSpeed` condition so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+
+#### Example
+```json
+{
+  "name": "Moondance to Store Fall Speed",
+  "notable": false,
+  "requires": [
+    "h_canUseBombs",
+    "canMoondance"
+  ],
+  "exitCondition": {
+    "leaveWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
+  }
+}
+```
+
 ### Leave with G-Mode Setup
 
 A `leaveWithGModeSetup` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This sets up the player to enter R-mode or direct G-mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should _not_ be included in the `requires`, as the type/amount of enemy damage is irrelevant since Samus' energy will always reach zero here in order to trigger reserves.
@@ -244,6 +271,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
+- _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 
 Each of these properties is described in more detail below.
@@ -540,6 +568,30 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
 - If the previous door environment is water, then `Gravity` is required.
 - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
 
+### Come In With Stored Fall Speed
+
+A `comeInWithStoredFallSpeed` entrance condition represents that Samus can enter through this door with stored fall speed. 
+
+The `comeInWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
+
+A `comeInWithStoredFallSpeed` entrance condition must match with a `leaveWithStoredFallSpeed` condition on the other side of the door.  The `comeInWithStoredFallSpeed` can lead to another `leaveWithStoredFallSpeed` so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.  A strat with a `comeInWithStoredFallSpeed` condition should only include requirements needed to position Samus for the clip.
+
+*Note*: There is an implicit `canMoonfall` requirement on strats which have the `comeInWithStoredFallSpeed` condition as a means of using the stored fall speed.
+
+#### Example
+```json
+{
+  "name": "Stored Fall Speed Clip",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
+  },
+  "requires": []
+}
+```
 ### Come In With R-Mode
 
 A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode while coming through this door.

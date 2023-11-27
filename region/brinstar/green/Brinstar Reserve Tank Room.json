@@ -14,22 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d66",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Brinstar Reserve Tank Room Door (to Early Supers)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -68,8 +53,10 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
-        {"id": 3}
+        {"id": 3},
+        {"id": 4}
       ]
     },
     {
@@ -94,6 +81,23 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": ["h_canCrystalFlash"]
+    },
     {
       "link": [1, 2],
       "name": "Base",
@@ -138,6 +142,38 @@
       "devNote": [
         "There would typically be risk of the logic being incorrect if the player exits g-mode, progresses to the right to get the next item,",
         "then comes back and this obstacle is still set so they can go through the pipe. Fortunately getting the item to the right also requires Morph."
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Brinstar Reserve Temporary Blue",
+      "notable": true,
+      "entranceCondition": {
+        "comeInSpeedballing": {
+          "runway": {
+            "length": 4,
+            "openEnd": 1
+          }
+        }
+      },
+      "requires": [
+        "canSpeedball",
+        "canTrickyJump",
+        {"or": [
+          "canTemporaryBlue",
+          "SpringBall"
+        ]}
+      ],
+      "note": [
+        "Speedball through the morphtunnel and use it to break the bomb blocks in front of the hidden Missile location.",
+        "This can be done using springball, or by unmorphing and using Temporary Blue to bounce through the bomb blocks."
+      ],
+      "devNote": [
+        "Speedballing through a door into a pit like this must limit run speed a little bit.",
+        "UnusableTiles doesn't help, but with canTrickyJump and Notable, we can make some assumptions about shortcharge ability.",
+        "FIXME: comeInSpeedballing isn't the right entrance condition, since this strat won't work if you enter already in a speedball.",
+        "Replace this once we have a proper one for this.",
+        "The logic should be sound for now since we also don't yet have a way to model strats that leave already in a speedball."
       ]
     },
     {
@@ -196,42 +232,6 @@
       "note": [
         "A single very precise jump into the bomb blocks can break both sets of blocks with screw attack. Obtaining the item requires morph, so this strat has no soft lock risk.",
         "Alternatively, tunnel crawl through to break both blocks with multiple, less precise jumps."
-      ]
-    },
-    {
-      "link": [3, 4],
-      "name": "Brinstar Reserve Temporary Blue",
-      "notable": true,
-      "requires": [
-        "canSpeedball",
-        "canTrickyJump",
-        {"or": [
-          "canTemporaryBlue",
-          "SpringBall"
-        ]},
-        {"or": [
-          {"and": [
-            "canSlowShortCharge",
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 1,
-              "unusableTiles": 2
-            }}
-          ]},
-          {"canComeInCharged": {
-            "framesRemaining": 180,
-            "fromNode": 1,
-            "unusableTiles": 10
-          }}
-        ]}
-      ],
-      "note": [
-        "Speedball through the morphtunnel and use it to break the bomb blocks in front of the hidden Missile location.",
-        "This can be done using springball, or by unmorphing and using Temporary Blue to bounce through the bomb blocks."
-      ],
-      "devNote": [
-        "Speedballing through a door into a pit like this must limit run speed a little bit.",
-        "UnusableTiles doesn't help, but with canTrickyJump and Notable, we can make some assumptions about shortcharge ability."
       ]
     },
     {

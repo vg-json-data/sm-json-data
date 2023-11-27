@@ -16,23 +16,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x001a900",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Halfie Climb Top Left Door (to East Cactus Alley)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {
           "knockback": false,
@@ -68,22 +51,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a8dc",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Halfie Climb Bottom Left Door (to Botwoon E-Tank)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
       "leaveWithGModeSetup": [
         {
           "knockback": false,
@@ -103,39 +70,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a8f4",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Halfie Climb Bottom Right Door (to Recharge)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 4,
@@ -144,21 +79,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a8e8",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Halfie Climb Top Right Door (to Colosseum)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {
           "knockback": false,
@@ -193,6 +113,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
         {"id": 3},
         {"id": 4}
@@ -218,6 +139,7 @@
           "devNote": "This link is only for the shinespark. Other strats should go 3 -> 2 -> 1."
         },
         {"id": 2},
+        {"id": 3},
         {
           "id": 4,
           "devNote": "This link is only for the shinespark. Other strats should go 3 -> 2 -> 1 -> 4."
@@ -228,11 +150,29 @@
       "from": 4,
       "to": [
         {"id": 1},
-        {"id": 3}
+        {"id": 3},
+        {"id": 4}
       ]
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": ["h_canCrystalFlash"]
+    },
     {
       "link": [1, 2],
       "name": "Base",
@@ -287,12 +227,27 @@
       "link": [1, 4],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 20
-        }},
-        {"shinespark": {"frames": 25}}
+        "Gravity",
+        {"shinespark": {"frames": 20, "excessFrames": 3}}
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 22, "excessFrames": 5}}
       ]
     },
     {
@@ -444,12 +399,13 @@
       "link": [2, 1],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 30
-        }},
-        {"shinespark": {"frames": 20}}
+        {"shinespark": {"frames": 20, "excessFrames": 3}}
       ]
     },
     {
@@ -502,57 +458,46 @@
       "link": [2, 1],
       "name": "Cross Room Jump",
       "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 1
+        }
+      },
       "requires": [
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 1.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
-      "note": "Only requires a runway of approximately 1.5 tiles in the adjacent room."
-    },
-    {
-      "link": [2, 1],
-      "name": "Cross Room Jump with Turnaround",
-      "notable": false,
-      "requires": [
-        "canCrossRoomJumpIntoWater",
-        "canMomentumConservingTurnaround",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
-      ],
-      "note": "Only requires a runway of approximately 0.5 tiles in the adjacent room."
+      "note": "Only requires a runway of 1 tile in the adjacent room.",
+      "devNote": "This can be done with a shorter runway (closed end) and canMomentumConservingTurnaround, but that type of connection doesn't exist."
     },
     {
       "link": [2, 1],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
       "requires": [
-        {"or": [
-          {"and": [
-            "canWaterShineCharge",
-            {"canComeInCharged": {
-              "fromNode": 2,
-              "framesRemaining": 180
-            }}
-          ]},
-          {"and": [
-            "canStutterWaterShineCharge",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 2,
-              "physics": ["normal"],
-              "overrideRunwayRequirements": true,
-              "useFrames": 80
-            }}
-          ]}
-        ]},
+        "canWaterShineCharge",
+        {"shinespark": {"frames": 20, "excessFrames": 3}}
+      ],
+      "devNote": "This runway length is just an estimate of the worst case scenario for difficulties that can't use canStutterWaterShineCharge."
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Stutter Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
         {"canShineCharge": {
           "usedTiles": 33,
           "openEnd": 2
@@ -582,6 +527,18 @@
     },
     {
       "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Mochtroid Farm",
       "notable": false,
       "requires": [
@@ -605,6 +562,11 @@
         }},
         {"refill": ["Energy", "Missile", "Super"]}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": ["h_canCrystalFlash"]
     },
     {
       "link": [2, 3],
@@ -659,12 +621,13 @@
       "link": [2, 4],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 30
-        }},
-        {"shinespark": {"frames": 39, "excessFrames": 4}}
+        {"shinespark": {"frames": 38, "excessFrames": 3}}
       ]
     },
     {
@@ -736,26 +699,38 @@
       "link": [2, 4],
       "name": "Suitless Water Shinecharge",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
       "requires": [
-        {"or": [
-          {"and": [
-            "canWaterShineCharge",
-            {"canComeInCharged": {
-              "fromNode": 2,
-              "framesRemaining": 180
-            }}
-          ]},
-          {"and": [
-            "canStutterWaterShineCharge",
-            {"adjacentRunway": {
-              "fromNode": 2,
-              "usedTiles": 2,
-              "physics": ["normal"],
-              "overrideRunwayRequirements": true,
-              "useFrames": 80
-            }}
-          ]}
-        ]},
+        "canWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 39, "excessFrames": 4}}
+      ],
+      "devNote": "This runway length is just an estimate of the worst case scenario for difficulties that can't use canStutterWaterShineCharge."
+    },
+    {
+      "link": [2, 4],
+      "name": "Suitless Stutter Water Shinecharge",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
         {"shinespark": {"frames": 39, "excessFrames": 4}}
       ]
     },
@@ -832,14 +807,15 @@
       "link": [3, 2],
       "name": "Halfie Climb Enter with Shinespark from the Bottom Right",
       "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
       "requires": [
         "Morph",
         "canSuitlessMaridia",
         "canUseEnemies",
-        {"canComeInCharged": {
-          "framesRemaining": 100,
-          "fromNode": 3
-        }},
         {"shinespark": {"frames": 91, "excessFrames": 4}}
       ],
       "note": [
@@ -872,6 +848,41 @@
           ]}
         ]}
       ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": ["h_canCrystalFlash"]
     },
     {
       "link": [3, 4],
@@ -949,6 +960,23 @@
           ]}
         ]}
       ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": ["h_canCrystalFlash"]
     }
   ]
 }
