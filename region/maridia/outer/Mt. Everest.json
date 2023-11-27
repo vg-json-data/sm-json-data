@@ -15,23 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a438",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mt. Everest Left Door (to Main Street)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -56,23 +39,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a444",
-      "doorEnvironments": [{"physics": "water"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 160,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
@@ -80,42 +47,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a450",
-      "doorEnvironments": [{"physics": "water"}],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 20,
-          "framesRemaining": 30,
-          "openEnd": 1,
-          "initiateRemotely": {
-            "initiateAt": 10,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 7,
-                "strats": ["Base"]
-              },
-              {
-                "destinationNode": 3,
-                "strats": ["Base"]
-              }
-            ]
-          },
-          "strats": [
-            {
-              "name": "Mt. Everest Bottom Right Charged Drop",
-              "notable": true,
-              "requires": [
-                "Gravity"
-              ],
-              "note": [
-                "Charge on the upper right ledge, and store the spark as Samus walks off the ledge to drop down onto the door.",
-                "Opening the door first and moonfalling can help but is not required."
-              ],
-              "devNote": "It's possible to get 40 frames remaining by opening the door first and dropping with a moonfall, but is it worth putting here?"
-            }
-          ]
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 4,
@@ -124,22 +56,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a468",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mt. Everest Right Door (to Crab Shaft)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -163,38 +79,6 @@
       "nodeAddress": "0x001a42c",
       "doorEnvironments": [{"physics": "water"}],
       "spawnAt": 9,
-      "canLeaveCharged": [
-        {
-          "initiateRemotely": {
-            "initiateAt": 9,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 5,
-                "strats": ["Shinespark"]
-              }
-            ]
-          },
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "devNote": [
-            "In reality, you'd drop down to 2 to charge and then spark out.",
-            "Initiates at 9 rather than 2 because dropping to 2 is expected to be free, and because you need to be at 9 to open the door first.",
-            "MustOpenDoorFirst is still set to false because the door can be opened from 9, no need to actually go to 5.",
-            "Shinespark frames are 0 because those are covered by the Shinespark strat from 9 to 5."
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -617,12 +501,14 @@
             "It is also possible to have a precise amount of energy to fall onto the blocks."
           ]
         },
-        {"id": 10}
+        {"id": 10},
+        {"id": 11}
       ]
     },
     {
       "from": 5,
       "to": [
+        {"id": 1},
         {"id": 4},
         {"id": 6},
         {"id": 9}
@@ -682,6 +568,7 @@
     {
       "from": 10,
       "to": [
+        {"id": 3},
         {"id": 4},
         {"id": 7}
       ]
@@ -701,6 +588,18 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Crystal Flash",
       "requires": ["h_canCrystalFlash"]
     },
@@ -708,13 +607,23 @@
       "link": [1, 4],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 150}}
+        "Gravity",
+        {"shinespark": {"frames": 112, "excessFrames": 7}}
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 143, "excessFrames": 10}}
       ]
     },
     {
@@ -771,6 +680,26 @@
     },
     {
       "link": [1, 9],
+      "name": "Mt. Everest Shinespark Down-Grab to the Grapple Blocks (Left to Top)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "h_canCrouchJumpDownGrab",
+        {"shinespark": {"frames": 56, "excessFrames": 0}}
+      ],
+      "note": "Crouch on the lowest stair, then shinespark horizontally to bonk at the top corner of the grapple block. Down grab to get onto it.",
+      "devNote": [
+        "This is only done suitless, as with Gravity, you can gravity jump up there.",
+        "A similar strat can be done from the top right door, but it doesn't have a nice setup and has to be done midair."
+      ]
+    },
+    {
+      "link": [1, 9],
       "name": "G-Mode Morph IBJ",
       "notable": false,
       "requires": [
@@ -791,17 +720,19 @@
     },
     {
       "link": [2, 1],
-      "name": "Shinespark",
+      "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 5
+        }
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 60}}
+        "canSuitlessMaridia",
+        {"shinespark": {"frames": 62, "excessFrames": 8}}
       ],
-      "note": "Shinespark up left to get all the way up to the door."
+      "note": "Shinespark up left to get all the way up to the door.",
+      "devNote": "Coming in shinesparking can get Samus to 11. With Gravity, that has fewer requirements."
     },
     {
       "link": [2, 1],
@@ -857,6 +788,23 @@
         ]}
       ],
       "note": "This requires three spring ball bomb jumps."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 160
+        }
+      }
     },
     {
       "link": [2, 2],
@@ -1512,13 +1460,30 @@
       "link": [3, 9],
       "name": "Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 5
+        }
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 3,
-          "framesRemaining": 5
-        }},
-        {"shinespark": {"frames": 70}}
+        "Gravity",
+        {"shinespark": {"frames": 62, "excessFrames": 8}}
+      ],
+      "note": "Shinespark up left to get onto the platform below the door. If gravity suit is on, hold right to land on the platform.",
+      "devNote": "FIXME: It is possible to get to this from sparking through the door diagonally, but that is not something the logic can handle."
+    },
+    {
+      "link": [3, 9],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 5
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        {"shinespark": {"frames": 62, "excessFrames": 6}}
       ],
       "note": "Shinespark up left to get onto the platform below the door. If gravity suit is on, hold right to land on the platform.",
       "devNote": "FIXME: It is possible to get to this from sparking through the door diagonally, but that is not something the logic can handle."
@@ -1559,16 +1524,15 @@
     },
     {
       "link": [4, 1],
-      "name": "Base",
+      "name": "Suitless Shinespark",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 4,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 150}}
-      ]
+        {"shinespark": {"frames": 127, "excessFrames": 10}}
+      ],
+      "devNote": "This can be done with Gravity to save Energy, but crossing the room with Gravity and Speedbooster is free."
     },
     {
       "link": [4, 1],
@@ -1622,6 +1586,18 @@
         ]}
       ],
       "note": "This requires two spring ball bomb jumps."
+    },
+    {
+      "link": [4, 4],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [4, 4],
@@ -1722,6 +1698,116 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [4, 11],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 127, "excessFrames": 28}}
+      ],
+      "devNote": "With enough energy, this goes all the way to 1, but with less it stops prematurely at 11."
+    },
+    {
+      "link": [5, 1],
+      "name": "Suitless Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 90
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        {"shinespark": {"frames": 61, "excessFrames": 10}}
+      ],
+      "devNote": "This could be done with Gravity to save Energy, but getting from 5 to 1 with Gravity and SpeedBooster is free."
+    },
+    {
+      "link": [5, 1],
+      "name": "Prepared Suitless Midair Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canMidairShinespark",
+        "canPrepareForNextRoom",
+        {"shinespark": {"frames": 67, "excessFrames": 10}}
+      ],
+      "devNote": "Frames assume you spark before landing on the Grapple blocks."
+    },
+    {
+      "link": [5, 4],
+      "name": "Midair Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 55
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 69, "excessFrames": 6}}
+      ],
+      "devNote": "Frames assume you land on the Grapple blocks before jumping and shinesparking."
+    },
+    {
+      "link": [5, 4],
+      "name": "Prepared Midair Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canMidairShinespark",
+        "canPrepareForNextRoom",
+        {"shinespark": {"frames": 72, "excessFrames": 6}}
+      ],
+      "devNote": "Frames assume you spark before landing on the Grapple blocks."
+    },
+    {
+      "link": [5, 4],
+      "name": "Suitless Midair Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 90
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 86, "excessFrames": 12}}
+      ],
+      "devNote": "Frames assume you land on the Grapple blocks before jumping and shinesparking."
+    },
+    {
+      "link": [5, 4],
+      "name": "Prepared Suitless Midair Shinespark",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 20
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canMidairShinespark",
+        "canPrepareForNextRoom",
+        {"shinespark": {"frames": 93, "excessFrames": 12}}
+      ],
+      "devNote": "Frames assume you spark before landing on the Grapple blocks."
     },
     {
       "link": [5, 4],
@@ -1864,6 +1950,21 @@
         "Gravity"
       ],
       "note": "After entering the room, quickly leave the morph tunnel in order to prevent getting hit by the crab."
+    },
+    {
+      "link": [6, 6],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [
+        "h_EverestMorphTunnelExpanded"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "devNote": "This depends on how far the Morph tunnel is expanded, but this is both the minimum distance and the distance Map Rando has expanded."
     },
     {
       "link": [6, 6],
@@ -2253,39 +2354,11 @@
     },
     {
       "link": [9, 1],
-      "name": "Shinespark",
-      "notable": false,
-      "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 5,
-          "inRoomPath": [5, 9],
-          "framesRemaining": 90
-        }},
-        {"shinespark": {"frames": 65}}
-      ]
-    },
-    {
-      "link": [9, 1],
       "name": "Grapple",
       "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         "Grapple"
-      ]
-    },
-    {
-      "link": [9, 4],
-      "name": "Shinespark",
-      "notable": false,
-      "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 5,
-          "inRoomPath": [5, 9],
-          "framesRemaining": 90
-        }},
-        {"shinespark": {"frames": 90}}
       ]
     },
     {
@@ -2361,6 +2434,9 @@
         }},
         {"shinespark": {"frames": 61}}
       ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
       "devNote": [
         "Implicitly drops down to 2 first.",
         "There is no link directly from 2 to 5 because the door must be opened first.",
@@ -2389,6 +2465,34 @@
       ],
       "note": "Turn off Gravity and HiJump to jump directly here.",
       "devNote": "Gravity can follow 8->11 with no equipment."
+    },
+    {
+      "link": [10, 3],
+      "name": "Mt. Everest Bottom Right Charged Drop",
+      "notable": true,
+      "requires": [
+        "Gravity",
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "gentleUpTiles": 3,
+          "gentleDownTiles": 1,
+          "steepUpTiles": 1,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 30
+        }
+      },
+      "note": [
+        "Charge on the upper right ledge, and store the spark as Samus walks off the ledge to drop down onto the door.",
+        "Opening the door first and moonfalling can help but is not required."
+      ],
+      "devNote": [
+        "It's possible to get 40 frames remaining by opening the door first and dropping with a moonfall, but is it worth putting here?",
+        "A similar strat could be added from 7->3."
+      ]
     },
     {
       "link": [10, 4],
