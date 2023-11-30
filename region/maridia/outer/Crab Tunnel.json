@@ -15,68 +15,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a414",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crab Tunnel Left Door (to Main Street)",
-          "length": 12,
-          "gentleUpTiles": 2,
-          "steepUpTiles": 2,
-          "steepDownTiles": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Crab Tunnel Left Door (to Main Street)",
-          "length": 33,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                {"or": [
-                  {"ammo": {"type": "Super", "count": 1}},
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Stutter Water Shine Charge",
-              "notable": false,
-              "requires": [
-                "canStutterWaterShineCharge",
-                "canShinechargeMovement",
-                {"adjacentRunway": {
-                  "fromNode": 1,
-                  "usedTiles": 2,
-                  "physics": ["air"],
-                  "useFrames": 80
-                }},
-                {"shinespark": {"frames": 10}}
-              ]
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -103,70 +41,6 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x001a420",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crab Tunnel Right Door (to Crab Hole)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 33,
-          "framesRemaining": 70,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Stutter Water Shine Charge",
-              "notable": false,
-              "requires": [
-                "canStutterWaterShineCharge",
-                "canDodgeWhileShooting",
-                "canShinechargeMovement",
-                {"or": [
-                  "h_canGreenGateGlitch",
-                  {"obstaclesCleared": ["A"]}
-                ]},
-                {"resetRoom": {
-                  "nodes": [1],
-                  "nodesToAvoid": [2]
-                }},
-                {"ammo": {"type": "Super", "count": 1}},
-                {"adjacentRunway": {
-                  "fromNode": 1,
-                  "usedTiles": 2,
-                  "physics": ["air"],
-                  "useFrames": 80
-                }}
-              ],
-              "clearsObstacles": ["A"]
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -229,6 +103,56 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "gentleUpTiles": 2,
+          "steepUpTiles": 2,
+          "steepDownTiles": 1,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway (Open Gate)",
+      "notable": false,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"ammo": { "type": "Super", "count": 1 }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 2
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Suitless Stutter Shinecharge, Shinespark Return",
+      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canShinechargeMovement",
+        "canStutterWaterShineCharge",
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Sciser Farm",
       "notable": false,
       "requires": [
@@ -271,6 +195,30 @@
       "note": "The gate will not spawn in indirect g-mode, and can be freely passed."
     },
     {
+      "link": [1, 2],
+      "name": "Crab Tunnel Stutter Shinecharge Through The Gate",
+      "notable": true,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canShinechargeMovementComplex",
+        "canStutterWaterShineCharge",
+        "canDodgeWhileShooting",
+        {"ammo": { "type": "Super", "count": 1 }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 70
+        }
+      },
+      "note": "Requires a very precise stutter where Samus is moving slow enough while near the gate, so she can shoot it and it is fully open before she collides with it."
+    },
+    {
       "link": [2, 1],
       "name": "Green Gate Glitch",
       "notable": false,
@@ -297,6 +245,18 @@
     },
     {
       "link": [2, 2],
+      "name": "Leave with Runway",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Sciser Farm",
       "notable": false,
       "requires": [
@@ -312,6 +272,24 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": ["h_canCrystalFlash"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "notable": false,
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
     }
   ]
 }
