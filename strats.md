@@ -562,6 +562,7 @@ It is assumed that the runway in the current room is level or sloping up; adjust
 Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
 
 A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. A match with a `leaveWithRunway` comes with implicit requirements:
+- A `canSpeedball` tech requirement.
 - A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
   - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
   - Otherwise 14 tiles are needed.
