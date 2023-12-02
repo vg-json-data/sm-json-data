@@ -15,63 +15,6 @@
       "nodeSubType": "grey",
       "nodeAddress": "0x0018e62",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mission Impossible Top Right Door (to Big Pink Upper)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 60,
-          "usedTiles": 16,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"obstaclesCleared": ["A"]},
-                {"resetRoom": {
-                  "nodes": [1],
-                  "mustStayPut": false,
-                  "nodesToAvoid": [3]
-                }}
-              ],
-              "note": "The super block must stay intact.",
-              "devNote": "Spikes cannot be used as openEnds."
-            }
-          ]
-        },
-        {
-          "framesRemaining": 100,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeSpikeHit",
-                "h_XModeSpikeHit",
-                "canShinechargeMovement",
-                {"obstaclesCleared": ["A"]}
-              ],
-              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ],
       "leaveWithGModeSetup": [
         {"strats": [
           {
@@ -115,21 +58,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018e6e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mission Impossible Bottom Right Door (to Big Pink Lower)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -180,6 +109,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
@@ -199,6 +129,82 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Unbroken Super Block)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"obstaclesNotCleared": ["B"]},
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "devNote": "Spikes cannot be used as openEnds."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Spike I-frames, Unbroken Super Block)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"obstaclesNotCleared": ["B"]},
+        {"canShineCharge": {
+          "usedTiles": 23,
+          "openEnd": 0
+        }},
+        {"spikeHits": 1},
+        "canIframeSpikeJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 62
+        }
+      },
+      "note": [
+        "Stand to the right of the center spike",
+        "Run to the left, and continue running left while getting knocked back right by the spike.",
+        "The spike i-frames allow shortcharging while running through the left two spike blocks.",
+        "After gaining a shinecharge, turn back right, run, and jump through the door."
+      ],
+      "devNote": "Spikes cannot be used as openEnds."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (X-Mode)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "SpeedBooster",
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      },
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+    },
     {
       "link": [1, 1],
       "name": "Crystal Flash",
@@ -248,7 +254,8 @@
           "hits": 6
         }}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "devNote": "FIXME: Coming in with blue or sparking may be another way to kill the Hoppers."
     },
     {
       "link": [1, 4],
@@ -418,6 +425,17 @@
         "canXRayClimb"
       ],
       "note": "Climb up 1 screen."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
     },
     {
       "link": [2, 3],
