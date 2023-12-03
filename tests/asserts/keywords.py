@@ -46,6 +46,7 @@ def process_keyvalue(k, v, metadata):
     # keys to ignore for documented reasons
     manualKeys = [
         "clearsObstacles",
+        "resetsObstacles",
         "initiateRemotely",
         "obstaclesCleared",
         "obstaclesNotCleared"
@@ -525,6 +526,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     obstacleErrors = search_for_valid_keyvalue(
                         [
                             "clearsObstacles.",
+                            "resetsObstacles.",
                             "obstaclesCleared.",
                             "obstaclesNotCleared.",
                         ],
