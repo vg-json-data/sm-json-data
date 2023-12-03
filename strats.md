@@ -708,6 +708,8 @@ A `gModeRegainMobility` object has no properties.
 A `bypassesDoorShell` property on a strat indicates that Samus can leave through the door transition in the `to` node
 without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": true` may also have an exit condition, but it is not required to have one.
 
+A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `canSkipDoorLock`.
+
 ### Example
 ```json
 {
