@@ -170,7 +170,6 @@ def extract_gmode_immobile_strats(node_json):
     strat = {
         "link": [node_id, node_id],
         "name": "G-Mode Regain Mobility",
-        "notable": False,
         "requires": immobile["requires"],
         "gModeRegainMobility": {},
     }
@@ -211,10 +210,11 @@ def extract_come_in_with_gmode_strat(strat_json):
     new_strat = {
         "link": [from_node_id, strat_json["link"][1]],
         "name": strat_json["name"],
-        "notable": strat_json["notable"],
-        "entranceCondition": entrance_condition,
-        "requires": filtered_reqs,
     }
+    if strat_json.get("notable") == True:
+        new_strat["notable"] = True
+    new_strat["entranceCondition"] = entrance_condition
+    new_strat["requires"] = filtered_reqs
     for k, v in strat_json.items():
         if k not in new_strat:
             new_strat[k] = v
