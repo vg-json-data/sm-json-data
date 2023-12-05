@@ -20,24 +20,6 @@
           "note": "It has normal physics before the tube is broken, but that can be lost forever."
         }
       ],
-      "runways": [
-        {
-          "name": "Base Runway - Glass Tunnel Left Door (to West Tunnel)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1,
-          "devNote": "The runway is longer with the tube intact, but we'll leave this out because it's gone forever once the tube's broken."
-        }
-      ],
       "leaveWithGMode": [
         {
           "leavesWithArtificialMorph": false,
@@ -177,22 +159,6 @@
           "note": "It has normal physics before the tube is broken, but that can be lost forever."
         }
       ],
-      "runways": [
-        {
-          "name": "Base Runway - Glass Tunnel Bottom Right Door (to Save)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Glass Tunnel Red Lock (to Save)",
@@ -219,24 +185,6 @@
         {
           "physics": "water",
           "note": "It has normal physics before the tube is broken, but that can be lost forever."
-        }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Glass Tunnel Top Right Door (to Boyon Gate Hall)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1,
-          "devNote": "The runway is longer with the tube intact, but we'll leave this out because it's gone forever once the tube's broken."
         }
       ],
       "leaveWithGMode": [
@@ -525,6 +473,7 @@
       "from": 1,
       "to": [
         {"id": 1},
+        {"id": 3},
         {
           "id": 4,
           "note": "This link is only for the cross room jump. Other strats should go 1 -> 5 -> 6 -> 8 -> 4."
@@ -535,6 +484,7 @@
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 3},
         {
           "id": 4,
@@ -546,6 +496,8 @@
     {
       "from": 3,
       "to": [
+        {"id": 1},
+        {"id": 3},
         {
           "id": 4,
           "note": "This link is only for the cross room jump. Other strats should go 3 -> 5 -> 6 -> 8 -> 4."
@@ -597,8 +549,79 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Crystal Flash",
       "requires": ["h_canCrystalFlash"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway, Tube Not Broken",
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      },
+      "devNote": "FIXME: Needs a way to represent that this runway has an 'air' environment."
+    },
+    {
+      "link": [1, 3],
+      "name": "Shinespark Through Room",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"or": [
+          {"shinespark": {"frames": 24}},
+          {"and": [
+            "Gravity",
+            {"shinespark": {"frames": 21}}
+          ]},
+          {"and": [
+            {"not": "f_MaridiaTubeBroken"},
+            "canRiskPermanentLossOfAccess",
+            {"shinespark": {"frames": 21}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "Come In Shinecharging, Leave Shinecharged, Tube Not Broken",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      }
     },
     {
       "link": [1, 4],
@@ -626,6 +649,32 @@
       "requires": []
     },
     {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway, Tube Not Broken",
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "devNote": "FIXME: Needs a way to represent that this runway has an 'air' environment."
+    },
+    {
       "link": [2, 3],
       "name": "G-Mode Deep Stuck X-Ray Climb",
       "notable": false,
@@ -643,11 +692,12 @@
       "link": [2, 3],
       "name": "Shinespark Deep Stuck X-Ray Climb",
       "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 1
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 1
-        }},
         {"shinespark": {"frames": 1, "excessFrames": 1}},
         "canShinesparkDeepStuck",
         "canXRayClimb"
@@ -679,6 +729,77 @@
       "name": "Base",
       "notable": false,
       "requires": []
+    },
+    {
+      "link": [3, 1],
+      "name": "Shinespark Through Room",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"or": [
+          {"shinespark": {"frames": 24}},
+          {"and": [
+            "Gravity",
+            {"shinespark": {"frames": 21}}
+          ]},
+          {"and": [
+            {"not": "f_MaridiaTubeBroken"},
+            "canRiskPermanentLossOfAccess",
+            {"shinespark": {"frames": 21}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [3, 1],
+      "name": "Come In Shinecharging, Leave Shinecharged, Tube Not Broken",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 179
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave with Runway, Tube Not Broken",
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      },
+      "devNote": "FIXME: Needs a way to represent that this runway has an 'air' environment."
     },
     {
       "link": [3, 4],
