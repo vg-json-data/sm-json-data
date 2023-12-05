@@ -182,6 +182,18 @@ __Example:__
 {"energyAtMost": 1}
 ```
 
+#### autoReserveTrigger object
+
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. It has two optional properties:
+
+* _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
+* _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
+
+__Example:__
+```json
+{"autoReserveTrigger": {}}
+```
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
 
