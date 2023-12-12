@@ -289,12 +289,6 @@
       "nodeSubType": "visible",
       "nodeItem": "Missile",
       "nodeAddress": "0x7C265"
-    },
-    {
-      "id": 9,
-      "name": "Wrecked Ship Main Shaft Central Junction",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -323,7 +317,7 @@
       "groupName": "Wrecked Ship Main Shaft Covern",
       "enemyName": "Covern",
       "quantity": 1,
-      "homeNodes": [1, 7, 9],
+      "homeNodes": [1, 3, 4, 7],
       "stopSpawn": ["f_DefeatedPhantoon"]
     },
     {
@@ -336,10 +330,18 @@
     },
     {
       "id": "e3",
-      "groupName": "Wrecked Ship Main Shaft Atomics",
+      "groupName": "Wrecked Ship Main Shaft Top Atomics",
       "enemyName": "Atomic",
-      "quantity": 4,
-      "homeNodes": [9],
+      "quantity": 2,
+      "homeNodes": [4],
+      "spawn": ["f_DefeatedPhantoon"]
+    },
+    {
+      "id": "e4",
+      "groupName": "Wrecked Ship Main Shaft Bottom Atomics",
+      "enemyName": "Atomic",
+      "quantity": 2,
+      "homeNodes": [3],
       "spawn": ["f_DefeatedPhantoon"]
     }
   ],
@@ -348,72 +350,62 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 9}
+        {"id": 4}
       ]
     },
     {
       "from": 2,
       "to": [
         {"id": 2},
-        {"id": 9}
+        {"id": 4}
       ]
     },
     {
       "from": 3,
       "to": [
         {"id": 3},
+        {"id": 5},
         {"id": 6},
-        {"id": 9}
+        {"id": 7},
+        {"id": 8}
       ]
     },
     {
       "from": 4,
       "to": [
+        {"id": 1},
+        {"id": 2},
         {"id": 4},
-        {"id": 9}
+        {"id": 5}
       ]
     },
     {
       "from": 5,
       "to": [
+        {"id": 3},
         {"id": 4},
         {"id": 5},
-        {"id": 8},
-        {"id": 9}
+        {"id": 8}
       ]
     },
     {
       "from": 6,
       "to": [
-        {"id": 6},
-        {"id": 9}
+        {"id": 3},
+        {"id": 6}
       ]
     },
     {
       "from": 7,
       "to": [
-        {"id": 7},
-        {"id": 9}
+        {"id": 3},
+        {"id": 7}
       ]
     },
     {
       "from": 8,
       "to": [
-        {"id": 9}
-      ]
-    },
-    {
-      "from": 9,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 6},
-        {"id": 7},
-        {"id": 8},
-        {"id": 9}
+        {"id": 3}
       ]
     }
   ],
@@ -433,7 +425,7 @@
       ]
     },
     {
-      "link": [1, 9],
+      "link": [1, 4],
       "name": "Base",
       "requires": []
     },
@@ -449,7 +441,7 @@
       }
     },
     {
-      "link": [2, 9],
+      "link": [2, 4],
       "name": "Base",
       "requires": []
     },
@@ -477,6 +469,70 @@
         }
       },
       "devNote": "It is technically possible to reset at 7 and keep the top layer of obstacle B intact by clipping through the blocks"
+    },
+    {
+      "link": [3, 3],
+      "name": "Atomic Farm",
+      "requires": [
+        "f_DefeatedPhantoon",
+        {"or": [
+          "ScrewAttack",
+          "Wave",
+          "Spazer",
+          "Plasma"
+        ]},
+        {"resetRoom": {
+          "nodes": [3],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "Missile"]}
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A", "B", "C"]
+    },
+    {
+      "link": [3, 5],
+      "name": "Base",
+      "requires": [
+        "canWalljump",
+        "HiJump",
+        "h_canFly",
+        "SpeedBooster",
+        "h_canCrouchJumpDownGrab",
+        "canSpringBallJumpMidAir",
+        "h_canSpringBallBombJump",
+        "canUseFrozenEnemies"
+      ]
+    },
+    {
+      "link": [3, 6],
+      "name": "Blocks Already Broken",
+      "requires": [
+        "Morph",
+        {"obstaclesCleared": ["A"]}
+      ]
+    },
+    {
+      "link": [3, 6],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 6],
+      "name": "Power Bombs",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [3, 6],
@@ -525,7 +581,124 @@
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "link": [3, 9],
+      "link": [3, 6],
+      "name": "G-mode Moprh Overload PLMs",
+      "requires": [
+        {"comeInWithGMode": {
+          "fromNodes": [2, 3, 4, 5],
+          "mode": "any",
+          "artificialMorph": true
+        }}
+      ],
+      "note": "Use the camera scroll blocks just left of the bomb blocks, in order to overload PLMs and go through them."
+    },
+    
+    {
+      "link": [3, 7],
+      "name": "Base",
+      "requires": [
+        "Morph"
+      ],
+      "clearsObstacles": ["B"],
+      "note": "From this direction, the shot blocks are fully breakable with Power Beam"
+    },
+    {
+      "link": [3, 7],
+      "name": "Atomic Ice Moonfall Door Lock Skip",
+      "requires": [
+        "f_DefeatedPhantoon",
+        "Morph",
+        {"obstaclesCleared": ["B"]},
+        "canEnemyStuckMoonfall",
+        "canTrickyUseFrozenEnemies"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Lure two Atomics down to the bottom of the room, and freeze them to be able to moonfall between them and aim down.",
+        "After gaining enough speed, press forward to fall down and clip past the door shell below.",
+        "Falling with too much speed can cause Samus to go out of bounds."
+      ]
+    },
+    {
+      "link": [3, 8],
+      "name": "Blocks Already Broken",
+      "requires": [
+        "Morph",
+        {"obstaclesCleared": ["C"]}
+      ]
+    },
+    {
+      "link": [3, 8],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs"
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [3, 8],
+      "name": "Power Bombs",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A", "B", "C"],
+      "note": [
+        "It is possible to use a single Power Bomb to break the bomb blocks going left to the item, right to the door, and shot blocks going down.",
+        "Place the power bomb against the right wall at the top of the stairs between the three obstacles."
+      ]
+    },
+    {
+      "link": [3, 8],
+      "name": "G-mode Overload PLMs",
+      "requires": [
+        "Morph",
+        {"comeInWithGMode": {
+          "fromNodes": [2, 3, 4, 5],
+          "mode": "any",
+          "artificialMorph": false
+        }}
+      ],
+      "note": [
+        "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them.",
+        "Cancel g-mode, morph and move back towards the bomb blocks in order to fix the camera."
+      ]
+    },
+    {
+      "link": [3, 8],
+      "name": "G-mode Morph to Missiles While Blind",
+      "requires": [
+        {"or": [
+          {"comeInWithGMode": {
+            "fromNodes": [2, 4, 5],
+            "mode": "any",
+            "artificialMorph": true
+          }},
+          {"and": [
+            {"comeInWithGMode": {
+              "fromNodes": [3],
+              "mode": "any",
+              "artificialMorph": true
+            }},
+            {"or": [
+              "h_canArtificialMorphIBJ",
+              "h_canArtificialMorphSpringBallBombJump"
+            ]}
+          ]}
+        ]},
+        "canOffScreenMovement"
+      ],
+      "note": [
+        "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them.",
+        "Exit g-mode and travel to the item and back while off screen."
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [4, 2],
       "name": "Base",
       "requires": []
     },
@@ -542,7 +715,43 @@
       }
     },
     {
-      "link": [4, 9],
+      "link": [4, 4],
+      "name": "Atomic Farm",
+      "requires": [
+        "f_DefeatedPhantoon",
+        {"or": [
+          "ScrewAttack",
+          "Wave",
+          "Spazer",
+          "Plasma"
+        ]},
+        {"resetRoom": {
+          "nodes": [1, 2, 4, 5],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "Missile"]}
+      ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A", "B", "C"]
+    },
+    {
+      "link": [4, 5],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [5, 3],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [5, 4],
       "name": "Base",
       "requires": []
     },
@@ -595,9 +804,61 @@
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "link": [5, 9],
+      "link": [6, 3],
       "name": "Base",
-      "requires": []
+      "requires": [
+        "Morph",
+        {"or": [
+          "h_canBombThings",
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [6, 3],
+      "name": "Speedball",
+      "requires": [
+        "canSpeedball",
+        {"canComeInCharged": {
+          "framesRemaining": 180,
+          "fromNode": 6,
+          "unusableTiles": 14
+        }}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There are 14 unusable tiles in this runway."
+    },
+    {
+      "link": [6, 3],
+      "name": "Slow Speedball",
+      "requires": [
+        "canSpeedball",
+        "canSlowShortCharge",
+        {"canComeInCharged": {
+          "framesRemaining": 180,
+          "fromNode": 6,
+          "unusableTiles": 5
+        }}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There are 5 unusable tiles in this runway."
+    },
+    {
+      "link": [6, 3],
+      "name": "Temporary Blue Bounce",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canTemporaryBlue",
+        "canSpringBallBounce"
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "There is 1 unusable tile in this runway."
     },
     {
       "link": [6, 6],
@@ -619,61 +880,63 @@
       "clearsObstacles": ["A"]
     },
     {
-      "link": [6, 9],
-      "name": "Base",
+      "link": [7, 3],
+      "name": "Blocks Already Broken",
+      "requires": [
+        "Morph",
+        {"obstaclesCleared": ["B"]}
+      ],
+      "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
+    },
+    {
+      "link": [7, 3],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs"
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [7, 3],
+      "name": "Shoot the Blocks",
       "requires": [
         "Morph",
         {"or": [
-          "h_canBombThings",
-          {"obstaclesCleared": ["A"]}
+          "Wave",
+          "Spazer"
         ]}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["B"],
+      "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
     },
     {
-      "link": [6, 9],
-      "name": "Speedball",
+      "link": [7, 3],
+      "name": "Power Bomb",
       "requires": [
-        "canSpeedball",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 6,
-          "unusableTiles": 14
-        }}
+        "h_canUsePowerBombs"
       ],
-      "clearsObstacles": ["A"],
-      "devNote": "There are 14 unusable tiles in this runway."
+      "clearsObstacles": ["A", "B"],
+      "note": [
+        "Use a Power Bomb to bounce into the morph tunnel.",
+        "This will break the shot blocks and the Bomb Blocks going to the door to the right."
+      ]
     },
     {
-      "link": [6, 9],
-      "name": "Slow Speedball",
+      "link": [7, 3],
+      "name": "Partial Covern Ice Clip",
+      "notable": true,
       "requires": [
-        "canSpeedball",
-        "canSlowShortCharge",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 6,
-          "unusableTiles": 5
-        }}
+        "Morph",
+        "canUseFrozenEnemies",
+        "canCeilingClip",
+        {"not": "f_DefeatedPhantoon"},
+        "canRiskPermanentLossOfAccess"
       ],
-      "clearsObstacles": ["A"],
-      "devNote": "There are 5 unusable tiles in this runway."
-    },
-    {
-      "link": [6, 9],
-      "name": "Temporary Blue Bounce",
-      "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 2,
-          "openEnd": 0
-        }
-      },
-      "requires": [
-        "canTemporaryBlue",
-        "canSpringBallBounce"
-      ],
-      "clearsObstacles": ["A"],
-      "devNote": "There is 1 unusable tile in this runway."
+      "clearsObstacles": ["B"],
+      "note": [
+        "Use the Covern to partial ceiling clip so your beam can reach the shot block of the ceiling at the end of the Morph tunnel to the left.",
+        "It is possible to mid-air morph to get into the morph tunnel with nothing, from the Covern, the ground, or the stairs below."
+      ]
     },
     {
       "link": [7, 7],
@@ -715,66 +978,7 @@
       "clearsObstacles": ["A", "B"]
     },
     {
-      "link": [7, 9],
-      "name": "Blocks Already Broken",
-      "requires": [
-        "Morph",
-        {"obstaclesCleared": ["B"]}
-      ],
-      "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
-    },
-    {
-      "link": [7, 9],
-      "name": "Bombs",
-      "requires": [
-        "h_canUseMorphBombs"
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "link": [7, 9],
-      "name": "Shoot the Blocks",
-      "requires": [
-        "Morph",
-        {"or": [
-          "Wave",
-          "Spazer"
-        ]}
-      ],
-      "clearsObstacles": ["B"],
-      "note": "Crouch Jump then Morph from the stairs or run and jump then Morph with no movement assists."
-    },
-    {
-      "link": [7, 9],
-      "name": "Power Bomb",
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "clearsObstacles": ["A", "B"],
-      "note": [
-        "Use a Power Bomb to bounce into the morph tunnel.",
-        "This will break the shot blocks and the Bomb Blocks going to the door to the right."
-      ]
-    },
-    {
-      "link": [7, 9],
-      "name": "Partial Covern Ice Clip",
-      "notable": true,
-      "requires": [
-        "Morph",
-        "canUseFrozenEnemies",
-        "canCeilingClip",
-        {"not": "f_DefeatedPhantoon"},
-        "canRiskPermanentLossOfAccess"
-      ],
-      "clearsObstacles": ["B"],
-      "note": [
-        "Use the Covern to partial ceiling clip so your beam can reach the shot block of the ceiling at the end of the Morph tunnel to the left.",
-        "It is possible to mid-air morph to get into the morph tunnel with nothing, from the Covern, the ground, or the stairs below."
-      ]
-    },
-    {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "Blocks Already Broken",
       "requires": [
         "Morph",
@@ -782,7 +986,7 @@
       ]
     },
     {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "Base",
       "requires": [
         "h_canBombThings"
@@ -790,7 +994,7 @@
       "clearsObstacles": ["C"]
     },
     {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "Temporary Blue Bounce (Phantoon Dead)",
       "requires": [
         "f_DefeatedPhantoon",
@@ -814,7 +1018,7 @@
       "devNote": "16 tiles plus conveyor pushback."
     },
     {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "Chain Temporary Blue Bounce (Phantoon Alive)",
       "requires": [
         "Morph",
@@ -832,7 +1036,7 @@
       "devNote": "Defeating Phantoon makes this strat easier."
     },
     {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "Temporary Blue Bounce (Phantoon Alive)",
       "requires": [
         {"not": "f_DefeatedPhantoon"},
@@ -849,7 +1053,7 @@
       "clearsObstacles": ["C"]
     },
     {
-      "link": [8, 9],
+      "link": [8, 3],
       "name": "SpeedBall Out (Phantoon Alive)",
       "requires": [
         {"not": "f_DefeatedPhantoon"},
@@ -862,192 +1066,6 @@
         }}
       ],
       "clearsObstacles": ["C"]
-    },
-    {
-      "link": [9, 1],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [9, 2],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [9, 3],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [9, 4],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [9, 5],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [9, 6],
-      "name": "Blocks Already Broken",
-      "requires": [
-        "Morph",
-        {"obstaclesCleared": ["A"]}
-      ]
-    },
-    {
-      "link": [9, 6],
-      "name": "Bombs",
-      "requires": [
-        "h_canUseMorphBombs"
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [9, 6],
-      "name": "Power Bombs",
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "clearsObstacles": ["A", "B"]
-    },
-    {
-      "link": [9, 6],
-      "name": "G-mode Moprh Overload PLMs",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2, 3, 4, 5],
-          "mode": "any",
-          "artificialMorph": true
-        }}
-      ],
-      "note": "Use the camera scroll blocks just left of the bomb blocks, in order to overload PLMs and go through them."
-    },
-    {
-      "link": [9, 7],
-      "name": "Base",
-      "requires": [
-        "Morph"
-      ],
-      "clearsObstacles": ["B"],
-      "note": "From this direction, the shot blocks are fully breakable with Power Beam"
-    },
-    {
-      "link": [9, 7],
-      "name": "Atomic Ice Moonfall Door Lock Skip",
-      "requires": [
-        "f_DefeatedPhantoon",
-        "Morph",
-        {"obstaclesCleared": ["B"]},
-        "canEnemyStuckMoonfall",
-        "canTrickyUseFrozenEnemies"
-      ],
-      "bypassesDoorShell": true,
-      "note": [
-        "Lure two Atomics down to the bottom of the room, and freeze them to be able to moonfall between them and aim down.",
-        "After gaining enough speed, press forward to fall down and clip past the door shell below.",
-        "Falling with too much speed can cause Samus to go out of bounds."
-      ]
-    },
-    {
-      "link": [9, 8],
-      "name": "Blocks Already Broken",
-      "requires": [
-        "Morph",
-        {"obstaclesCleared": ["C"]}
-      ]
-    },
-    {
-      "link": [9, 8],
-      "name": "Bombs",
-      "requires": [
-        "h_canUseMorphBombs"
-      ],
-      "clearsObstacles": ["C"]
-    },
-    {
-      "link": [9, 8],
-      "name": "Power Bombs",
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "clearsObstacles": ["A", "B", "C"],
-      "note": [
-        "It is possible to use a single Power Bomb to break the bomb blocks going left to the item, right to the door, and shot blocks going down.",
-        "Place the power bomb against the right wall at the top of the stairs between the three obstacles."
-      ]
-    },
-    {
-      "link": [9, 8],
-      "name": "G-mode Overload PLMs",
-      "requires": [
-        "Morph",
-        {"comeInWithGMode": {
-          "fromNodes": [2, 3, 4, 5],
-          "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
-      "note": [
-        "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them.",
-        "Cancel g-mode, morph and move back towards the bomb blocks in order to fix the camera."
-      ]
-    },
-    {
-      "link": [9, 8],
-      "name": "G-mode Morph to Missiles While Blind",
-      "requires": [
-        {"or": [
-          {"comeInWithGMode": {
-            "fromNodes": [2, 4, 5],
-            "mode": "any",
-            "artificialMorph": true
-          }},
-          {"and": [
-            {"comeInWithGMode": {
-              "fromNodes": [3],
-              "mode": "any",
-              "artificialMorph": true
-            }},
-            {"or": [
-              "h_canArtificialMorphIBJ",
-              "h_canArtificialMorphSpringBallBombJump"
-            ]}
-          ]}
-        ]},
-        "canOffScreenMovement"
-      ],
-      "note": [
-        "Use the camera scroll blocks just right of the bomb blocks, in order to overload PLMs and go through them.",
-        "Exit g-mode and travel to the item and back while off screen."
-      ]
-    },
-    {
-      "link": [9, 9],
-      "name": "Atomic Farm",
-      "requires": [
-        "f_DefeatedPhantoon",
-        {"or": [
-          "ScrewAttack",
-          "Wave",
-          "Spazer",
-          "Plasma"
-        ]},
-        {"resetRoom": {
-          "nodes": [1, 2, 3, 4, 5],
-          "mustStayPut": false
-        }},
-        {"refill": ["Energy", "Missile"]}
-      ]
-    },
-    {
-      "link": [9, 9],
-      "name": "Crystal Flash",
-      "requires": [
-        "h_canCrystalFlash"
-      ],
-      "clearsObstacles": ["A", "B", "C"]
     }
   ]
 }
