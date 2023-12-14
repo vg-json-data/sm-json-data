@@ -32,24 +32,6 @@
           ],
           "openEnd": 1
         }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 27,
-          "framesRemaining": 60,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesCleared": ["A"]},
-                {"heatFrames": 750}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
       ]
     },
     {
@@ -86,97 +68,6 @@
             }
           ],
           "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 27,
-          "framesRemaining": 0,
-          "strats": [
-            {
-              "name": "Pre Open Door",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesCleared": ["A"]},
-                {"or": [
-                  "canWalljump",
-                  "canTrickyDashJump",
-                  "HiJump",
-                  "SpaceJump",
-                  "canSpringBallJumpMidAir",
-                  {"and": [
-                    "h_heatProof",
-                    {"or": [
-                      "h_canIBJ",
-                      "canUseFrozenEnemies"
-                    ]}
-                  ]}
-                ]},
-                "canShinechargeMovement",
-                {"heatFrames": 1240},
-                {"shinespark": {"frames": 35}}
-              ],
-              "note": [
-                "Open the door to be able to spark out later.",
-                "Climb up to the missile location and use that runway to build the ShineSpark.",
-                "Then fall back down and spark out."
-              ],
-              "devNote": [
-                "General movement requirements, so mostly safe heatframe count.",
-                "FIXME: This works better as an initiateAt."
-              ]
-            }
-          ],
-          "openEnd": 1
-        },
-        {
-          "framesRemaining": 90,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                "h_canXMode",
-                "h_XModeSpikeHit",
-                "h_XModeSpikeHit",
-                {"or": [
-                  {"and": [
-                    {"enemyKill": {
-                      "enemies": [["Alcoon"]],
-                      "explicitWeapons": [
-                        "Plasma",
-                        "Wave+Spazer",
-                        "ScrewAttack",
-                        "Missile",
-                        "Super"
-                      ]
-                    }},
-                    {"heatFrames": 420}
-                  ]},
-                  {"and": [
-                    {"enemyKill": {
-                      "enemies": [["Alcoon"]],
-                      "explicitWeapons": ["Spazer", "Wave", "PseudoScrew", "PowerBomb"]
-                    }},
-                    {"heatFrames": 530}
-                  ]},
-                  {"and": [
-                    {"enemyKill": {
-                      "enemies": [["Alcoon"]],
-                      "explicitWeapons": ["PowerBeam"]
-                    }},
-                    {"heatFrames": 620}
-                  ]}
-                ]}
-              ],
-              "note": "Clear the Alcoon then bounce into the spike patch.",
-              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
         }
       ]
     },
@@ -244,6 +135,11 @@
       "id": "B",
       "name": "Hotarubi Bomb Blocks",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "C",
+      "name": "Bottom Right Door Opened",
+      "obstacleType": "inanimate"
     }
   ],
   "links": [
@@ -272,6 +168,8 @@
     {
       "from": 4,
       "to": [
+        {"id": 1},
+        {"id": 3},
         {"id": 4},
         {"id": 5},
         {"id": 6}
@@ -398,6 +296,58 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Open Door",
+      "requires": [],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [3, 3],
+      "name": "X-Mode",
+      "requires": [
+        "SpeedBooster",
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        {"or": [
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Alcoon"]],
+              "explicitWeapons": [
+                "Plasma",
+                "Wave+Spazer",
+                "ScrewAttack",
+                "Missile",
+                "Super"
+              ]
+            }},
+            {"heatFrames": 420}
+          ]},
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Alcoon"]],
+              "explicitWeapons": ["Spazer", "Wave", "PseudoScrew", "PowerBomb"]
+            }},
+            {"heatFrames": 530}
+          ]},
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Alcoon"]],
+              "explicitWeapons": ["PowerBeam"]
+            }},
+            {"heatFrames": 620}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      },
+      "note": "Clear the Alcoon then bounce into the spike patch.",
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+    },
+    {
       "link": [3, 7],
       "name": "Base",
       "requires": [
@@ -493,6 +443,73 @@
       "requires": [
         "h_heatProof",
         "canDodgeWhileShooting"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Leave Shinecharged",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 27,
+          "gentleUpTiles": 2,
+          "openEnd": 0
+        }},
+        {"obstaclesCleared": ["A"]},
+        {"heatFrames": 260},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      }
+    },
+    {
+      "link": [4, 3],
+      "name": "Leave Shinecharged - Open Door First",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 27,
+          "gentleUpTiles": 2,
+          "openEnd": 1
+        }},
+        {"obstaclesCleared": ["A", "C"]},
+        {"heatFrames": 390},
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 35}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Open the door to be able to spark out.",
+        "Shinecharge near the missile location, then fall back down and spark out the right door.",
+        "The door must have been opened prior in order to be able to spark out of it."
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Spring Ball Maze - Hero Shot Shinespark through the Right Door",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 27,
+          "gentleUpTiles": 2,
+          "openEnd": 1
+        }},
+        {"obstaclesCleared": ["A"]},
+        {"heatFrames": 370},
+        "canShinechargeMovementComplex",
+        "Wave",
+        "canHeroShot",
+        {"shinespark": {"frames": 31}},
+        {"doorUnlockedAtNode": 3}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Shinecharge near the missile location, then fall down and shoot a wave shot through the large stalactite.",
+        "Shinespark to the right before the wave shot goes off screen, and have it open the door before Samus gets there."
       ]
     },
     {
@@ -1050,6 +1067,16 @@
       "requires": [
         "h_canHeatedCrystalFlash"
       ]
+    },
+    {
+      "link": [7, 7],
+      "name": "Open Right Door",
+      "requires": [
+        "canCarefulJump",
+        {"heatFrames": 200}
+      ],
+      "clearsObstacles": ["C"],
+      "note": "Jump over the Alcoon and shoot open the door, then return."
     }
   ]
 }
