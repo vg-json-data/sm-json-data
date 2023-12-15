@@ -152,38 +152,6 @@ __Example:__
 ]
 ```
 
-#### canLeaveCharged
-
-_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveCharged` should be used instead.
-
-Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
-* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
-  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
-  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
-  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
-  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
-* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
-* _strats:_ An array of [strats](../strats.md), each of which may be executed in order to leave charged. Those all have implicit charging and shinesparking requirements.
-* _initiateRemotely:_ An object for when a `canLeaveCharged` is initiated at a different node that the node being exited. This should be omitted for any `canLeaveCharged` that is initiated at the exited node. This has the following properties:
-  * _initiateAt:_ The node at which the charging operation must start. Samus must visit this node to start the leaving charged process.
-  * mustOpenDoorFirst:_ Indicates whether Samus needs to open the door before starting the leaving charged process. This requires having opened all active locks on the door (if any), and having visited the door (since last entering the room), because it needs to be shot open even if unlocked.
-  * _pathToDoor:_ A list of objects, which describes the path that Samus must follow through the room from the `initiateAt` node to the exited door in order to properly leave charged. This path must end at the exited node. Each object in the path represents one link to follow, and has the following properties:
-    * _destinationNode:_ The ID of the next node to visit, from the previous node in the path (and from the `initiateAt` node if at the first node in the path)
-    * _strats:_ A list of possible strats to follow to go to `destinationNode` These must be names of an actual strat on an actual link from the previous node to the destination node. Samus has to fulfill all requirements of a strat at each link in `pathToDoor` to be able to properly leave charged.
-
-__Additional considerations__
-
-Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible. As such, that is never explicitly defined in a `canLeaveCharged` object. The number of frames remaining in that charge will be:
-* 180 frames if there's a usable runway on the other side
-* Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
-
-Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
-
-In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using a `shinespark` object.
-
 #### leaveWithGModeSetup
 
 _Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGModeSetup`](../strats.md#leave-with-g-mode-setup) should be used instead.
