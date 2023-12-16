@@ -332,18 +332,6 @@ for jsonPath in [
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v, {})
 
-cheatSheetJSON = {}
-with open(
-    os.path.join(
-        ".",
-        "tests",
-        "asserts",
-        "canLeaveCharged.json"
-    ),
-    encoding="utf-8"
-) as cheatSheetFile:
-    cheatSheetJSON = json.load(cheatSheetFile)
-
 print("")
 print("Check Regions")
 for r,d,f in os.walk(os.path.join(".","region")):
@@ -606,7 +594,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["counts"]["reds"] += 1
 
 
-                    # Validate canLeaveCharged
                     # Validate leaveWithGMode
                     gModeObjects = []
                     for node in room["nodes"]:
@@ -683,11 +670,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                                         msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
                                                         messages["reds"].append(msg)
                                                         messages["counts"]["reds"] += 1
-                                                    else:
-                                                        msg = ""
-                                                        msg += f"🟢{area}/{subarea}/{roomName}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
-                                                        messages["greens"].append(msg)
-                                                        messages["counts"]["greens"] += 1
 
                     # Validate Nodes
                     showNodes = paramData["showNodes"]
