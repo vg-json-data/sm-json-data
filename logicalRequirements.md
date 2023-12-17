@@ -346,6 +346,9 @@ __Additional considerations__
 Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
 
 #### adjacentJumpway object
+
+_Note_: This logical requirement is deprecated. The entrance conditions [comeInWithWallJumpBelow](../strats.md#come-in-with-wall-jump-below), [comeInWithSpaceJumpBelow](../strats.md#come-in-with-space-jump-below), and [comeInWithPlatformBelow](../strats.md#come-in-with-platform-below) should be used instead.
+
 An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. Currently supported jumpway types involve jumping up through a vertical doorway. The object has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
 * _jumpwayType:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.

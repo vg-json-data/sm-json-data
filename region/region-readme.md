@@ -121,6 +121,9 @@ Runways on both sides of a door are meant to be combined when determining how mu
 * Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
 
 #### jumpways
+
+_Note_: This node property is deprecated. The exit conditions [leaveWithDoorFrameBelow](../strats.md#leave-with-door-frame-below) [leaveWithPlatformBelow](../strats.md#leave-with-platform-below) should be used instead.
+
 Represents an array of jumpways connected to a door. A jumpway is a wall or platform which Samus can use to carry momentum into the next room. Unlike runways, jumpways do not need to be directly connected to a door, and it is not possible to use a jumpway to run into the neighboring room. Naturally, a jumpway can only be used if interaction with the connected door is possible (no active locks, and interaction requirements fulfilled). Jumpways have the following properties:
 
 * _name:_ A name, which only needs to be unique for the given node.
