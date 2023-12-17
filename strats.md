@@ -274,7 +274,7 @@ A `leaveWithDoorFrameBelow` object has the following property:
 
 - _height_: The number of tiles beneath the door transition (not including the transition tiles) usable for wall-jumping.
 
-In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWalljump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions.
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWalljump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, and then wall-jump back out.
 
 #### Example
 ```json
@@ -299,7 +299,7 @@ A `leaveWithPlatformBelow` object has the following properties:
 - _leftPosition_: This indicates the position of the furthest left usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
 - _rightPosition_: This indicates the position of the furthest right usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
 
-In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used.
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, position at the far end of the runway, and jump out.
 
 #### Example
 ```json
