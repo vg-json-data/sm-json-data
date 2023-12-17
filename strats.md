@@ -86,6 +86,8 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
+- _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
+- _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
 
@@ -264,6 +266,59 @@ and another where the `false` values for `morphed` are replaced with `true`. Her
 
 Aside from the implicit strats, there are a limited amount of `leaveWithGMode` strats possible. Normally entering a room with G-mode (or a G-mode setup) and then leaving with G-mode through a different door is not possible, since door shells cannot be opened while in G-mode. However, some door transitions do not have door shells (e.g. in Crateria Tube, Glass Tunnel, Crab Hole, Big Pink; also elevators and sand transitions), and some door shells are possible to bypass using glitches, so `leaveWithGMode` can be used in these situations.
 
+### Leave With Door Frame Below
+
+A `leaveWithDoorFrameBelow` exit condition represents that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump. A `leaveWithDoorFrameBelow` exit condition can satisfy `comeInWithWallJumpBelow` and `comeInWithSpaceJumpBelow` entrance conditions in the room above.
+
+A `leaveWithDoorFrameBelow` object has the following property:
+
+- _height_: The number of tiles beneath the door transition (not including the transition tiles) usable for wall-jumping.
+
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWalljump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions.
+
+#### Example
+```json
+{
+  "name": "Leave With Door Frame Below",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithDoorFrame": {
+      "height": 2
+    }
+  }
+}
+```
+
+### Leave With Platform Below
+
+A `leaveWithPlatformBelow` exit condition represents that that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed. A `leaveWithPlatformBelow` exit condition can satisfy a `comeInWithPlatformBelow` entrance condition in the room above.
+
+A `leaveWithPlatformBelow` object has the following properties:
+
+- _height_: The number of tiles between the door transition and the platform, not including the transition tiles or platform itself. A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
+- _leftPosition_: This indicates the position of the furthest left usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+- _rightPosition_: This indicates the position of the furthest right usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
+- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
+- _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
+
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used.
+
+#### Example
+```json
+{
+  "name": "Leave With Platform Below",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithDoorFrame": {
+      "height": 7,
+      "leftPosition": -2.5,
+      "rightPosition": 2.5,
+    }
+  }
+}
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
@@ -278,7 +333,11 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
+- _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
+- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
+- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
+- _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
 
@@ -682,6 +741,42 @@ __Example:__
 }
 ```
 
+### Come In With Wall Jump Below
+
+A `comeInWithWallJumpBelow` entrance condition indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
+
+A `comeInWithWallJumpBelow` object has the following property:
+
+- _minHeight_: Minimum height of door frame (tiles below the transition tiles) that will satisfy the condition.
+
+A `comeInWithWallJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door:
+- A match is valid provided the `height` property on the `leaveWithDoorFrameBelow` is at least as large as the `minHeight` property on the `comeInWithWallJumpBelow`.
+
+A `comeInWithWallJumpBelow` implicitly includes a `canWalljump` tech requirement.
+
+### Come In With Space Jump Below
+
+A `comeInWithSpaceJumpBelow` entrance condition indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below. It has no properties.
+
+A `comeInWithSpaceJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door.
+
+A `comeInWithWallJumpBelow` implicitly includes a `SpaceJump` item requirement. If the room below is heated, then a requirement of `{"heatFrames": 30}` is implicitly included.
+
+### Come In With Platform Below
+
+A `comeInWithPlatformBelow` entrance condition indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed. It has the following properties:
+
+* _minHeight:_ Minimum height of the platform below that can satisfy this condition. It expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
+* _maxHeight:_ Maximum height of the platform below that can satisfy this condition. It expresses that the platform must be positioned at most a certain distance below the door transition.
+* _maxLeftPosition:_ Maximum value of "leftPosition" of the platform below that can satisfy this condition. It expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+* _minRightPosition:_ Minimum value of "rightPosition" of the platform below that can satisfy this condition. It expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+
+A `comeInWithPlatformBelow` entrance condition must match with a `leaveWithPlatformBelow` exit condition on the other side of the door. A match is valid provided the `height`, `leftPosition`, and `rightPosition` properties on the `leaveWithDoorFrameBelow` satisfy all applicable constraints indicated by properties in the `comeInWithPlatformBelow`:
+$$\text{minHeight} \leq \text{height} \leq \text{maxHeight}$$
+$$\text{leftPosition} \leq \text{maxLeftPosition}$$
+$$\text{rightPosition} \geq \text{minRightPosition}$$
+
+A `comeInWithPlatformBelow` entrance condition has no implicit requirements.
 
 ## G-Mode Regain Mobility
 
