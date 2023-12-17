@@ -298,9 +298,6 @@ A `leaveWithPlatformBelow` object has the following properties:
 - _height_: The number of tiles between the door transition and the platform, not including the transition tiles or platform itself. A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
 - _leftPosition_: This indicates the position of the furthest left usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
 - _rightPosition_: This indicates the position of the furthest right usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
-- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
-- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
-- _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used.
 
@@ -754,6 +751,21 @@ A `comeInWithWallJumpBelow` entrance condition must match with a `leaveWithDoorF
 
 A `comeInWithWallJumpBelow` implicitly includes a `canWalljump` tech requirement.
 
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Wall Jump",
+  "entranceCondition": {
+    "comeInWithWallJumpBelow": {
+      "minHeight": 2
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
+
 ### Come In With Space Jump Below
 
 A `comeInWithSpaceJumpBelow` entrance condition indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below. It has no properties.
@@ -761,6 +773,19 @@ A `comeInWithSpaceJumpBelow` entrance condition indicates that Samus must come u
 A `comeInWithSpaceJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door.
 
 A `comeInWithWallJumpBelow` implicitly includes a `SpaceJump` item requirement. If the room below is heated, then a requirement of `{"heatFrames": 30}` is implicitly included.
+
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Space Jump",
+  "entranceCondition": {
+    "comeInWithSpaceJumpBelow": {}
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
 
 ### Come In With Platform Below
 
@@ -777,6 +802,24 @@ $$\text{leftPosition} \leq \text{maxLeftPosition}$$
 $$\text{rightPosition} \geq \text{minRightPosition}$$
 
 A `comeInWithPlatformBelow` entrance condition has no implicit requirements.
+
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Standing Jump",
+  "entranceCondition": {
+    "comeInWithPlatformBelow": {
+      "minHeight": 6,
+      "maxHeight": 6,
+      "maxLeftPosition": 1,
+      "minRightPosition": 2
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
 
 ## G-Mode Regain Mobility
 
