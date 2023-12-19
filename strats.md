@@ -772,7 +772,7 @@ A `comeInWithSpaceJumpBelow` entrance condition indicates that Samus must come u
 
 A `comeInWithSpaceJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door.
 
-A `comeInWithWallJumpBelow` implicitly includes a `SpaceJump` item requirement. If the room below is heated, then a requirement of `{"heatFrames": 30}` is implicitly included.
+A `comeInWithSpaceJumpBelow` implicitly includes a `SpaceJump` item requirement. If the room below is heated, then a requirement of `{"heatFrames": 30}` is implicitly included.
 
 __Example:__
 ```json
