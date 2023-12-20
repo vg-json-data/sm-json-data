@@ -105,7 +105,10 @@ def process_keyvalue(k, v, metadata):
         if v not in uniques[kCheck]:
             uniques[kCheck].append(v)
             isSkip = True
-        else:
+        elif kCheck == "nodeAddress" and int(v, 16) in [0x189ca, 0x189d6]:
+            # nodeAddress is normally unique but there are two exceptions in West Ocean for the bridge doors.
+            isSkip = True
+        else:      
             msg = f"🔴ERROR: {k}:{v} not unique!"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
