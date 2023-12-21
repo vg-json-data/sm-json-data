@@ -128,11 +128,19 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge).
 
 `leaveShinecharged` has a single property:
-- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room.
+- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room. A special value "auto" may be used when the strat has a `comeInShinecharged` entrance condition: in this case, the frames remaining when leaving the room depends on how many frames are remaining when entering the room, with the `framesRequired` property of the `comeInShinecharged` indicating the amount of frames by which the shinecharge timer decreases between entering and exiting the room.
 
-A strat with a `leaveShinecharged` condition should include a `canShinecharge` requirement in its `requires`, as this is not implicitly included in the condition.
+A strat with a `leaveShinecharged` condition should either include a `canShinecharge` requirement in its `requires` or have a `comeInShinecharged` entrance condition.
 
 *Note*: Using a runway connected to a door to leave the room with a shinecharge is already covered by `leaveWithRunway`, so `leaveShinecharged` only needs to be used in cases where the shinecharge is obtained in another part of the room and then carried through the door.
+
+#### Position and Momentum Details
+
+A `leaveShinecharged` object does not provide any way to specify Samus' position or momentum through the door transition, but these details can affect the execution of the strat in the next room. Instead, as a way of normalizing these requirements, we make the following assumptions:
+
+- For a horizontal door transition, the `framesRemaining` (and any other strat requirements such as heat frames) should be based on Samus touching the door transition while running, with an unspecified amount of horizontal momentum but no vertical momentum.
+
+- For a vertical door transition, the `framesRemaining` (and other strat requirements) should be based on the worst-case position, among all possible horizontal positions within the door frame, with an unspecified amount of horizontal and vertical momentum. Samus must enter the transition in a normal "jumping" or "falling" pose. For example, entering an upward transition with a jump into mid-air morph would not be valid, because in the next room it would not be possible to control the effects of the jump in the expected way. Breaking spin before the transition would be valid, and it is recommended to do so since it allows reaching the transition more quickly.
 
 #### Example
 ```json
@@ -492,7 +500,15 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
-  
+
+#### Position and Momentum Details
+
+A `comeInShinecharged` object does not provide any way to specify Samus' position or momentum through the door transition, but these details can affect the execution of the strat. As a way of normalizing the requirements, we make the following assumptions:
+
+- For a horizontal door transition, the `framesRequired` (and any other strat requirements such as heat frames) should be based on an assumption that Samus enters the room while running, with an unspecified amount of horizontal momentum. So the requirements should be based on the worst-case scenario, which in most cases means entering the room on the ground but with no momentum.
+
+- For an vertical door transition, the `framesRemaining` (and other strat requirements) should be based on an assumption that Samus can enter through any horizontal position of the doorway (whichever is most favorable), in a jumping or falling pose, but with an unspecified amount of horizontal and vertical momentum. The requirements should be based on the worst-case momentum scenario, which generally means entering the room with no momentum, since any unwanted vertical momentum can be cancelled by releasing jump through the transition.
+
 #### Example
 ```json
 {
