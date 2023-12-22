@@ -23,32 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a648",
-      "doorEnvironments": [{"physics": "water"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Evir Projectile",
-            "notable": false,
-            "requires": [
-              "Gravity"
-            ]
-          },
-          {
-            "name": "Get Hit By Evir Projectile Suitless",
-            "notable": false,
-            "requires": [
-              "canSuitlessMaridia",
-              "canTurnaroundSpinJump",
-              "canTrickyJump"
-            ],
-            "note": [
-              "The Evir won't shoot unless Samus is on the left tile of the platform. Getting to the transition tiles while standing before the projectile can be tricky.",
-              "Either do two quick small spin jumps, one onto it and one back, breaking spin before landing both times,",
-              "or start with Samus' toe barely on the last tile, move left then do a short spin jump to the right, also breaking spin before landing."
-            ]
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
@@ -122,6 +97,8 @@
     {
       "from": 3,
       "to": [
+        {"id": 1},
+        {"id": 2},
         {"id": 4}
       ]
     },
@@ -223,12 +200,13 @@
     {
       "link": [1, 2],
       "name": "G-Mode",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        }
+      },
+      "requires": [
         "h_canNavigateUnderwater",
         {"or": [
           "canCarefulJump",
@@ -463,12 +441,13 @@
     {
       "link": [2, 1],
       "name": "G-Mode",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        }
+      },
+      "requires": [
         "h_canNavigateUnderwater",
         "canCarefulJump"
       ]
@@ -489,6 +468,35 @@
       "name": "Crystal Flash",
       "requires": [
         "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Evir Projectile",
+      "notable": false,
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Evir Projectile Suitless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "canTurnaroundSpinJump",
+        "canTrickyJump"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "The Evir won't shoot unless Samus is on the left tile of the platform. Getting to the transition tiles while standing before the projectile can be tricky.",
+        "Either do two quick small spin jumps, one onto it and one back, breaking spin before landing both times,",
+        "or start with Samus' toe barely on the last tile, move left then do a short spin jump to the right, also breaking spin before landing."
       ]
     },
     {
@@ -543,6 +551,47 @@
       "note": "It is possible to cross this segment with nothing. Cancel spin before hitting the sand, then get a good jump off the sand in multiple places."
     },
     {
+      "link": [3, 1],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        {"or": [
+          "canCarefulJump",
+          "h_canCrouchJumpDownGrab",
+          "HiJump",
+          "Gravity",
+          "canSpringBallJumpMidAir"
+        ]},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
+        ]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater"
+      ]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
       "requires": [
@@ -567,33 +616,6 @@
         ]}
       ],
       "note": "Enter on the right side of the transition and move left to avoid damage."
-    },
-    {
-      "link": [4, 1],
-      "name": "G-Mode",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
-          "mode": "any",
-          "artificialMorph": false
-        }},
-        "h_canNavigateUnderwater",
-        {"or": [
-          "canCarefulJump",
-          "h_canCrouchJumpDownGrab",
-          "HiJump",
-          "Gravity",
-          "canSpringBallJumpMidAir"
-        ]},
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {
-            "enemy": "Evir",
-            "type": "particle",
-            "hits": 1
-          }}
-        ]}
-      ]
     },
     {
       "link": [4, 2],
@@ -690,18 +712,6 @@
         "Freeze the right Evir, then jump on the sand to the right while shooting ice over the first Evir to also freeze the second.",
         "Freezing the first Evir very high up would also work.",
         "As a backup, it may be possible to make them rise again by hitting them with a PB - place the PB in the air to avoid double hitting and killing them."
-      ]
-    },
-    {
-      "link": [4, 2],
-      "name": "G-Mode",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
-          "mode": "any",
-          "artificialMorph": false
-        }},
-        "h_canNavigateUnderwater"
       ]
     },
     {
