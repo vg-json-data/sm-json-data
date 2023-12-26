@@ -906,7 +906,7 @@ If an `unlocksDoors` property is not specified, then it is assumed to be an empt
 
 ### Implicit Unlock Strats
 
-Every door node has an implicit strat from the node to itself, for unlocking the door in a standard way. In an unheated room, this implicit strat has an `unlocksDoors` of the following form:
+By default every door node has an implicit strat from the node to itself, for unlocking the door in a standard way. In an unheated room, this implicit strat has an `unlocksDoors` of the following form:
 
 ```json
 {
@@ -931,3 +931,5 @@ In a heated room, it instead has the form:
   ]
 }
 ```
+
+The implicit unlock strats can be disabled by setting the node property `useImplicitDoorUnlocks` to false.
