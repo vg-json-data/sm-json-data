@@ -79,7 +79,7 @@ There is some variance in how much downward slopes slow Samus' movement, dependi
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed, unless the strat has the `bypassesDoorShell` property set to `true`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
@@ -91,6 +91,8 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
+
+A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `true`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
 
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room.
