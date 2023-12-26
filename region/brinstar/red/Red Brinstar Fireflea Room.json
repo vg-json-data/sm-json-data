@@ -38,6 +38,18 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x0019066",
       "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 3,
+      "name": "Safe Block in the Middle of the Room",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 4,
+      "name": "Small Ledge Below Left Door",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -90,7 +102,14 @@
       "from": 2,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1}
       ]
     }
   ],
@@ -185,14 +204,22 @@
         }
       },
       "requires": [
-        {"shinespark": {
-          "frames": 142,
-          "excessFrames": 60
-        }}
+        {"or":[
+          {"shinespark": {
+            "frames": 142,
+            "excessFrames": 60
+          }},
+          {"and":[
+            "canShinechargeMovement",
+            "canMidairShinespark",
+            {"shinespark": {
+              "frames": 134,
+              "excessFrames": 60
+            }}
+          ]}
+        ]}
       ],
-      "devNote": [
-        "FIXME: With canShinesparkMovement you can jump out a bit before sparking, but it may not be worth modeling."
-      ]
+      "devNote": "FIXME: Could be doable tankless if the shinecharge happened in the previous room and then Samus ran out with more speed."
     },
     {
       "link": [1, 2],
@@ -208,7 +235,7 @@
       ],
       "note": [
         "If you wait long enough, a Waver will arrive. After it turns around to go back to the right, damage boost off of it, then follow it.",
-        "Continue to hit it to get iframes to avoid taking damage from any spikes."
+        "Continue to hit it to get i-frames to avoid taking damage from any spikes."
       ]
     },
     {
@@ -363,66 +390,6 @@
     },
     {
       "link": [2, 1],
-      "name": "Ice and HiJump",
-      "requires": [
-        "canUseFrozenEnemies",
-        "HiJump",
-        "canCarefulJump",
-        {"or": [
-          "canTrickyJump",
-          "canWalljump"
-        ]},
-        {"spikeHits": 3},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ],
-      "note": "Use the Fireflea when it moves to the right to cross the first gap."
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access IBJ",
-      "requires": [
-        "h_canJumpIntoIBJ",
-        {"spikeHits": 5},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access Springwall",
-      "requires": [
-        "canSpringwall",
-        {"spikeHits": 5},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access Speed HiJump",
-      "requires": [
-        "HiJump",
-        {"spikeHits": 4},
-        "SpeedBooster",
-        {"or": [
-          "canTrickyJump",
-          "canWalljump"
-        ]},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 2}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
       "name": "X-Ray Access SpikeJumps with HiJump",
       "notable": true,
       "requires": [
@@ -457,19 +424,6 @@
         "The final jump can either be made by jumping from the bottommost spike stair or from the safe stair.",
         "Setup run speed atop the spike stair by holding forward to be pushed backward.",
         "The safe stair jump is much harder, but can be made without every pixel of runway."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access MidAir Spring Ball",
-      "requires": [
-        "HiJump",
-        {"spikeHits": 4},
-        "canSpringBallJumpMidAir",
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
       ]
     },
     {
@@ -556,6 +510,133 @@
       "name": "Crystal Flash",
       "requires": [
         "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "IBJ",
+      "requires": [
+        "h_canIBJ",
+        {"spikeHits": 1},
+        {"or": [
+          "canBombHorizontally",
+          {"spikeHits": 1}
+        ]}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Tricky Springwall",
+      "requires": [
+        "canSpringwall",
+        "canTrickyJump",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "X-Ray Access Speed HiJump",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "HiJump Spring Ball",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Ice and HiJump",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "HiJump",
+        "canCarefulJump",
+        {"or": [
+          "canTrickyJump",
+          "canWalljump"
+        ]},
+        {"spikeHits": 1}
+      ],
+      "note": "Use the Fireflea when it moves to the right to cross the first gap."
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "requires": [
+        {"spikeHits": 4}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Spike Run",
+      "requires": [
+        "canIframeSpikeJump",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            {"spikeHits": 2}
+          ]},
+          {"spikeHits": 3}
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Ice and HiJump",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "HiJump",
+        "canCarefulJump"
+      ],
+      "note": "Freeze the Waver that gets stuck in the left pit as high as possible in order to avoid a wall jump."
+    },
+    {
+      "link": [4, 1],
+      "name": "Spike IBJ",
+      "requires": [
+        "h_IBJFromSpikes"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "X-Ray Access Springwall",
+      "requires": [
+        "canSpringwall",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Speed HiJump",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        {"or": [
+          "canTrickyJump",
+          "canWalljump"
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Spring Ball Jump",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir",
+        {"or": [
+          "canTrickySpringBallJump",
+          {"and": [
+            "canIframeSpikeJump",
+            {"spikeHits": 1}
+          ]}
+        ]}
       ]
     }
   ]
