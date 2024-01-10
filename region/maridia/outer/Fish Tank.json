@@ -14,16 +14,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a3d8",
-      "doorEnvironments": [{"physics": "water"}],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Skultera",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
@@ -141,6 +132,15 @@
       "homeNodes": [7]
     }
   ],
+  "reusableRoomwideNotable": [
+    {
+      "name": "Fish Tank Top Left Direct Jump",
+      "note": [
+        "Jump into the Top-Left door of the Fish Tank room from the nearby ledge using one of Gravity, HiJump, or SpringBall.",
+        "This requires a very precise jump from the very edge of the ledge and risks falling into the Bottom-Left pit which may be difficult to climb back from."
+      ]
+    }
+  ],
   "links": [
     {
       "from": 1,
@@ -230,6 +230,18 @@
       "requires": [
         "h_canCrystalFlash"
       ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Skultera",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
     },
     {
       "link": [1, 4],
@@ -448,12 +460,13 @@
     {
       "link": [1, 5],
       "name": "G-Mode Morph IBJ",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ",
         "Gravity"
       ],
@@ -668,12 +681,13 @@
     {
       "link": [4, 5],
       "name": "G-Mode Morph IBJ",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ",
         "Gravity"
       ],
@@ -712,21 +726,6 @@
       "note": "Immediately spark after the door transition into the wall just to the right of the top right door."
     },
     {
-      "link": [4, 7],
-      "name": "G-Mode Morph IBJ",
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "h_canArtificialMorphIBJ",
-        "Gravity",
-        "canBombHorizontally"
-      ],
-      "note": "Kill or dodge the fish by the top left door and the one in the middle of the room."
-    },
-    {
       "link": [4, 8],
       "name": "Base",
       "requires": []
@@ -744,7 +743,6 @@
         {"or": [
           "canWalljump",
           "h_canFly",
-          "canTrickyJump",
           "canUseFrozenEnemies",
           "canGravityJump"
         ]}
@@ -752,7 +750,7 @@
     },
     {
       "link": [5, 4],
-      "name": "Suitless",
+      "name": "Suitless Frozen Fish",
       "requires": [
         "canSuitlessMaridia",
         "canUseFrozenEnemies",
@@ -773,26 +771,54 @@
     },
     {
       "link": [5, 4],
-      "name": "Fish Tank Top Left Flatley Jump",
+      "name": "Fish Tank Top Left Direct Jump with Gravity",
       "notable": true,
       "requires": [
-        "canSuitlessMaridia",
-        "canFlatleyJump",
-        {"or": [
-          "canSpringBallJumpMidAir",
-          "HiJump"
-        ]}
+        "Gravity",
+        "canTrickyJump"
       ],
-      "note": "Use a flatley jump with either HiJump or a spring ball jump to get into the top left doorway.",
-      "devNote": "Can be done with a spring ball jump without a flatley jump, but it's obscure and tight."
+      "reusableRoomwideNotable": "Fish Tank Top Left Direct Jump",
+      "note": "Build up run speed and jump at the last moment to reach the door."
     },
     {
       "link": [5, 4],
-      "name": "Wall Hug Turnaround",
+      "name": "Fish Tank Top Left Direct Suitless HiJump",
+      "notable": true,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        "canMomentumConservingTurnaround"
+        "canTrickyJump",
+        {"or": [
+          "canFlatleyJump",
+          "canMomentumConservingTurnaround"
+        ]}
+      ],
+      "reusableRoomwideNotable": "Fish Tank Top Left Direct Jump",
+      "note": [
+        "Jump towards the door with HiJump equipped.",
+        "A Flatley style jump can position Samus over the edge of the ledge, closer to the door.",
+        "Turning around while facing down, just before touching the ceiling, is another way to move Samus a few pixels closer to the door."
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Fish Tank Top Left Direct Suitless Springball Jump",
+      "notable": true,
+      "requires": [
+        "canSuitlessMaridia",
+        "canTrickySpringBallJump",
+        {"or": [
+          "canTrickyJump",
+          "canStationaryLateralMidAirMorph"
+        ]}
+      ],
+      "reusableRoomwideNotable": "Fish Tank Top Left Direct Jump",
+      "note": [
+        "Jump towards the door with a Springball Jump, jumping as late as possible.",
+        "A Flatley style jump can position Samus over the edge of the ledge, closer to the door, allowing for an earlier Springball jump.",
+        "The slight fall from a Flatley Jump helps with the Springball jump, but then Samus must unmorph to extend her hitbox to touch the transition.",
+        "A Stationary Lateral MidAir Morph also helps with this jump.",
+        "Unmorphing after a missed jump can return Samus to the ledge to try again."
       ]
     },
     {

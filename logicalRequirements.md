@@ -319,7 +319,7 @@ This section contains logical elements centered around available running room, a
 
 #### adjacentRunway object
 
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition` should be used instead.
+_Note_: This logical requirement is deprecated. The [strat property](strats.md) `entranceCondition` should be used instead.
 
 An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
@@ -347,7 +347,7 @@ Please note that fulfilling this logical element requires interaction with the d
 
 #### canComeInCharged object
 
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition/comeInCharged` should be used instead.
+_Note_: This logical requirement is deprecated. The entrance condition [`comeInShineharged`](strats.md#come-in-shinecharged) should be used instead.
 
 A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
 * _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
@@ -489,10 +489,11 @@ This section contains logical elements that are affected by Lock type Objects at
 
 #### doorUnlockedAtNode object
 
-A `doorUnlockedAtNode` object represents the need to interact with a Door, usually without travelling through it.  Doors can be unusable if
-a Lock object is present on that Node.  The `doorUnlockedAtNode` object can be fulfilled when either 1) There are no locks on a Door or
-2) All locks on the Door have been unlocked.  Bypassing the Lock does not fulfill this Object requirement.  An example would be opening a Door
-to use the door frame as runway for a jump.
+A `doorUnlockedAtNode` object represents the need for a door to be unlocked, i.e. to be free of a lock such a red, green, yellow, or gray door shell. An example would be if the space in the door frame is needed as runway for a jump or shinecharge. 
+
+In order to support randomizers that may modify door colors, a `doorUnlockedAtNode` requirement should be used when appropriate even if the vanilla door color is blue. If a strat has an `exitCondition`, then there is an implicit `doorUnlockedAtNode` requirement on the destination door node, unless the strat has [`bypassesDoorShell`](strats.md#bypasses-door-shell) set to `true`.
+
+If the door node in a `doorUnlockedAtNode` also appears in the strat's [`unlocksDoors`](strats.md#unlocks-doors) property, then the `doorUnlockedAtNode` may also be fulfilled by unlocking the door as part of executing the strat (as an alternative to having been previously unlocked), and any `requires` for that locked door in the `unlocksDoors` then become part of the requirements for the strat.
 
 __Example:__
 ```json

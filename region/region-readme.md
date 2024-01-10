@@ -44,6 +44,10 @@ __Additional considerations__
 
 Door environments are mandatory on door nodes (except elevators). They are forbidden on all nodes where they're not mandatory.
 
+#### useImplicitDoorUnlocks
+
+By default every door node has an implicit strat from the node to itself, for [unlocking the door](../strats.md#implicit-unlock-strats) in a standard way. This can be disabled by setting the node property `useImplicitDoorUnlocks` to false.
+
 #### spawnAt
 The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
 

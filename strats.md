@@ -16,6 +16,7 @@ A `strat` can have the following properties:
   * _resetsObstacles_: An array containing the ID of obstacles that will be reset (i.e. returned to their original state) by executing this strat.
   * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
   * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
+  * _unlocksDoors_: An array describing possible doors that can be unlocked as part of this strat.
   
 These properties are described below in more detail.
 ### Example
@@ -78,7 +79,7 @@ There is some variance in how much downward slopes slow Samus' movement, dependi
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed, unless the strat has the `bypassesDoorShell` property set to `true`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
@@ -90,6 +91,8 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
+
+A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `true`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
 
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room.
@@ -496,9 +499,9 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
 
 - In order for `comeInShinecharged` to have a valid match with a `leaveShinecharged` condition, the `framesRequired` in the `comeInShinecharged` must be less than or equal to the `framesRemaining` of the `leaveShinecharged` condition. Aside from this, `comeInShinecharged` condition has no implicit requirements when matched with a `leaveShinecharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveShinecharged`. The frame counts in `comeInShinecharged` and `leaveShinecharged` are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts (to increase `framesRequired` or decrease `framesRemaining`).
 
-- A `comeInShinecharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 179 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
+- A `comeInShinecharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 170 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
-  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 10 heat frames are assumed for leaving the room after the shinecharge is obtained.
   - If the previous door environment is water, then `Gravity` is required.
 
 #### Position and Momentum Details
@@ -878,3 +881,55 @@ A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `ca
   "bypassesDoorShell": true
 }
 ```
+
+## Unlocks Doors
+
+An `unlocksDoors` array lists possibilities of doors that can be unlocked as part of executing this strat. The objects in the array have the following properties:
+
+- _nodeId_: The node ID of the door that can be unlocked. If unspecified, it is assumed to be the destination node of the strat.
+- _types_: A list of door unlock types, among "missiles", "super", "powerbomb", and "gray":
+    - "missiles": A door which can be opened using 5 Missiles, e.g. red doors.
+    - "super": A door which can be opened using a single Super, e.g. red or green doors.
+    - "powerbomb": A door which can be opened using a single Power Bomb, e.g. a yellow door.
+    - "gray": A door with a room-specific condition to unlock it.
+    - "ammo": A door which can be opened with ammo. This is a shorthand for ["missiles", "super", "powerbomb"].
+- _requires_: A list of additional logical requirements which must be satisfied in order for the door to be unlocked using this strat. 
+- _useImplicitRequires_: A boolean, true by default, indicating whether standard requirements should be implicitly appended to the `requires` in this object. This can be set this to false if the standard requirements are already accounted for in the strat `requires`, for example if the strat involves using a Power Bomb which would already unlock the door as a side effect, or if it uses a Super as a hero shot to open the door. If this property is set to true, the implicit standard requirements are based on the door type, as follows:
+    - For "missiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 5}}`.
+    - For "super", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
+    - For "powerbomb", the implicit requirement is `h_canUsePowerBombs`.
+    - For "gray", there is no implicit requirement.
+    
+In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `true`.
+
+If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. The case of gray doors only needs to be included in places where the vanilla game has gray doors.
+
+### Implicit Unlock Strats
+
+By default every door node has an implicit strat from the node to itself, for unlocking the door in a standard way. In an unheated room, this implicit strat has an `unlocksDoors` of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Unlock Door",
+  "requires": [],
+  "unlocksDoors": [{"type": "ammo", "requires": []}]
+}
+```
+
+In a heated room, it instead has the form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Unlock Door",
+  "requires": [],
+  "unlocksDoors": [
+    {"type": "missiles", "requires": [{"heatFrames": 50}]},
+    {"type": "super", "requires": []},
+    {"type": "powerbomb", "requires": [{"heatFrames": 110}]}
+  ]
+}
+```
+
+The implicit unlock strats can be disabled by setting the node property `useImplicitDoorUnlocks` to false.
