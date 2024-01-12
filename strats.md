@@ -532,6 +532,16 @@ A `comeInShinecharged` object does not provide any way to specify Samus' positio
 }
 ```
 
+### Come In Shinecharged Jumping
+
+A `comeInShinechargedJumping` entrance condition represents the need for Samus to jump into the room with a shinecharge with a certain amount of time remaining before it would expire. The jump must occur from an air environment on the other side of the door. It has the following property:
+
+- _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
+
+A strat with a `comeInShinechargedJumping` condition should include a `shinespark` requirement in its `requires`.
+
+The conditions for `comeInShinechargedJumping` are the same as for `comeInShinecharged`, with the added condition that the other side of the door must be an air environment.
+
 ### Come In With Spark
 
 A `comeInWithSpark` entrance condition indicates that Samus must shinespark into the room.
