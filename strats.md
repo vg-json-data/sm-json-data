@@ -331,6 +331,7 @@ In a heated room, heat frames must be explicitly included in the strat `requires
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
 
+- _comeInNormally_: This indicates that Samus must come into the room through the specified door, with no other particular requirements.
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
@@ -348,6 +349,22 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
+
+### Come In Normally
+
+A `comeInNormally` entrance condition represents the need for Samus to enter the room through this door, with no other particular requirements. It has no properties.
+
+#### Example
+```json
+{
+  "name": "Come In Normally",
+  "notable": false,
+  "entranceCondition": {
+    "comeInNormally": {}
+  },
+  "requires": []
+}
+```
 
 ### Come In Running
 
