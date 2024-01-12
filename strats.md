@@ -97,7 +97,7 @@ A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, and `comeInWithDoorStuckSetup`, `comeInSpeedballing`. Details are given under the corresponding entrance conditions below.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, and `comeInWithTemporaryBlue`. Details are given under the corresponding entrance conditions below.
 
 `leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details) :
 
@@ -340,6 +340,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
+- _comeInWithTemporaryBlue_: This indicates that Samus must come in by jumping through this door with temporary blue.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
@@ -655,6 +656,16 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
   - Otherwise 14 tiles are needed.
 - If the previous door environment is water, then `Gravity` is required.
 - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
+
+### Come In With Temporary Blue
+
+A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It has no properties.
+
+A `comeInWithTemporaryBlue` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. This comes with implicit requirements for actions to be performed in the previous room:
+  - The tech `canTemporaryBlue` is required.
+  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 200 heat frames are assumed for gaining temporary blue and leaving the room after the shinecharge is obtained.
+  - If the previous door environment is water, then `Gravity` is required.
 
 ### Come In With Stored Fall Speed
 
