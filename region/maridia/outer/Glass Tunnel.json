@@ -90,19 +90,7 @@
               "name": "Base",
               "notable": false,
               "requires": [
-                "h_canUsePowerBombs"
-              ]
-            },
-            {
-              "name": "G-Mode Morph PB",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1, 3],
-                  "mode": "any",
-                  "artificialMorph": true
-                }},
-                {"ammo": {"type": "PowerBomb", "count": 1}}
+                {"obstaclesCleared": ["A"]}
               ]
             }
           ]
@@ -125,21 +113,8 @@
               "name": "Base",
               "notable": false,
               "requires": [
-                "h_canUsePowerBombs"
+                {"obstaclesCleared": ["A"]}
               ]
-            },
-            {
-              "name": "G-Mode Morph PB",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [4],
-                  "mode": "any",
-                  "artificialMorph": true
-                }},
-                {"ammo": {"type": "PowerBomb", "count": 1}}
-              ],
-              "devNote": "Be sure not to overload PLMs with the camera scroll blocks which are next to the tube. It is possible to exit g-mode before the PB goes off to be safe."
             }
           ]
         }
@@ -161,20 +136,10 @@
               "name": "Base",
               "notable": false,
               "requires": [
-                "h_canUsePowerBombs"
-              ]
-            },
-            {
-              "name": "G-Mode Morph PB",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [2],
-                  "mode": "any",
-                  "artificialMorph": true
-                }},
-                {"ammo": {"type": "PowerBomb", "count": 1}},
-                "h_canArtificialMorphMovement"
+                {"or": [
+                  "h_canUsePowerBombs",
+                  {"obstaclesCleared": ["A"]}
+                ]}
               ]
             }
           ]
@@ -182,31 +147,16 @@
       ],
       "yields": ["f_MaridiaTubeBroken"],
       "note": "Represents the area just below the tube; unlocking this node breaks the tube"
-    },
-    {
-      "id": 8,
-      "name": "Maridia Tube Gravity Jump",
-      "nodeType": "event",
-      "nodeSubType": "flag",
-      "locks": [
-        {
-          "name": "Maridia Tube Gravity Jump Event Lock",
-          "lockType": "triggeredEvent",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [],
-              "note": "This requires nothing, as its requirements are instead needed to get to this node."
-            }
-          ]
-        }
-      ],
-      "yields": ["f_MaridiaTubeBroken"],
-      "note": "This node is for triggering a suitless gravity jump while breaking the tube, which can only be done once."
     }
   ],
   "enemies": [],
+  "obstacles": [
+    {
+      "id": "A",
+      "obstacleType": "abstract",
+      "name": "Breaking the Tube"
+    }
+  ],
   "reusableRoomwideNotable": [
     {
       "name": "Glass Tunnel Maridia Tube Clip",
@@ -224,7 +174,7 @@
         {"id": 3},
         {
           "id": 4,
-          "note": "This link is only for the cross room jump. Other strats should go 1 -> 5 -> 6 -> 8 -> 4."
+          "note": "This link is only for the cross room jump. Other strats should go 1 -> 5 -> 6 -> 4."
         },
         {"id": 5}
       ]
@@ -237,7 +187,7 @@
         {"id": 3},
         {
           "id": 4,
-          "note": "This link is only for the cross room jump. Other strats should go 2 -> 7 -> 5 -> 6 -> 8 -> 4."
+          "note": "This link is only for the cross room jump. Other strats should go 2 -> 7 -> 5 -> 6 -> 4."
         },
         {"id": 7}
       ]
@@ -249,7 +199,7 @@
         {"id": 3},
         {
           "id": 4,
-          "note": "This link is only for the cross room jump. Other strats should go 3 -> 5 -> 6 -> 8 -> 4."
+          "note": "This link is only for the cross room jump. Other strats should go 3 -> 5 -> 6 -> 4."
         },
         {"id": 5}
       ]
@@ -267,20 +217,18 @@
       "to": [
         {"id": 1},
         {"id": 3},
+        {"id": 4},
+        {"id": 5},
         {"id": 6},
-        {"id": 7},
-        {
-          "id": 8,
-          "note": "While breaking the tube, gravity jump up to the top door. This can only be attempted once.",
-          "devNote": "This link is only used for getting a gravity jump through the top door while breaking the Maridia Tube."
-        }
+        {"id": 7}
       ]
     },
     {
       "from": 6,
       "to": [
         {"id": 4},
-        {"id": 5}
+        {"id": 5},
+        {"id": 6}
       ]
     },
     {
@@ -288,12 +236,6 @@
       "to": [
         {"id": 2},
         {"id": 5}
-      ]
-    },
-    {
-      "from": 8,
-      "to": [
-        {"id": 4}
       ]
     }
   ],
@@ -455,6 +397,22 @@
       "link": [1, 5],
       "name": "Base",
       "requires": []
+    },
+    {
+      "link": [1, 5],
+      "name": "G-Mode Morph Power Bomb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        {"ammo": {"type": "PowerBomb", "count": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
     },
     {
       "link": [2, 1],
@@ -634,6 +592,23 @@
       "requires": []
     },
     {
+      "link": [2, 7],
+      "name": "G-Mode Morph Power Bomb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        {"ammo": {"type": "PowerBomb", "count": 1}},
+        "h_canArtificialMorphMovement"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
+    },
+    {
       "link": [3, 1],
       "name": "Shinespark Through Room",
       "entranceCondition": {
@@ -785,6 +760,22 @@
       "requires": []
     },
     {
+      "link": [3, 5],
+      "name": "G-Mode Morph Power Bomb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        {"ammo": {"type": "PowerBomb", "count": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
+    },
+    {
       "link": [4, 1],
       "name": "Carry G-Mode Through Tube (Top to Left)",
       "notable": false,
@@ -866,6 +857,26 @@
       "requires": []
     },
     {
+      "link": [4, 6],
+      "name": "G-Mode Morph Power Bomb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        {"ammo": {"type": "PowerBomb", "count": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later.",
+        "Be sure not to overload PLMs with the camera scroll blocks which are next to the tube.",
+        "It is possible to exit G-Mode before the Power Bomb goes off to be safe."
+      ]
+    },
+    {
       "link": [5, 1],
       "name": "Base",
       "requires": []
@@ -874,6 +885,32 @@
       "link": [5, 3],
       "name": "Base",
       "requires": []
+    },
+    {
+      "link": [5, 4],
+      "name": "Breaking the Maridia Tube Gravity Jump",
+      "notable": true,
+      "requires": [
+        "f_MaridiaTubeBroken",
+        {"obstaclesCleared": ["A"]},
+        "canRiskPermanentLossOfAccess",
+        "canSuitlessMaridia",
+        "canTrickyJump"
+      ],
+      "note": [
+        "Jump as the first action after breaking the tube to gravity jump to the top of the room.",
+        "Open the door and go through it during the ascent. This can only be attempted once."
+      ],
+      "devNote": "This strat requires the tube to be broken, while the obstacle being set requires the tube to not yet be broken."
+    },
+    {
+      "link": [5, 5],
+      "name": "Break the Tube with a Power Bomb",
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "link": [5, 6],
@@ -906,44 +943,6 @@
       "name": "Base",
       "requires": [
         "f_MaridiaTubeBroken"
-      ]
-    },
-    {
-      "link": [5, 8],
-      "name": "Breaking the Maridia Tube Gravity Jump",
-      "notable": true,
-      "requires": [
-        {"not": "f_MaridiaTubeBroken"},
-        "canRiskPermanentLossOfAccess",
-        "h_canUsePowerBombs",
-        "canSuitlessMaridia",
-        "canTrickyJump"
-      ],
-      "note": [
-        "Jump as the first action after breaking the tube to gravity jump to the top of the room.",
-        "Open the door and go through it during the ascent. This can only be attempted once."
-      ]
-    },
-    {
-      "link": [5, 8],
-      "name": "G-Mode Morph Breaking the Maridia Tube Gravity Jump",
-      "notable": true,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1, 3],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        {"ammo": {"type": "PowerBomb", "count": 1}},
-        {"not": "f_MaridiaTubeBroken"},
-        "canRiskPermanentLossOfAccess",
-        "canSuitlessMaridia",
-        "canTrickyJump"
-      ],
-      "note": [
-        "Jump as the first action after breaking the tube to gravity jump to the top of the room.",
-        "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later.",
-        "Open the door and go through it during the ascent. This can only be attempted once."
       ]
     },
     {
@@ -1009,6 +1008,15 @@
       ]
     },
     {
+      "link": [6, 6],
+      "name": "Break the Tube with a Power Bomb",
+      "requires": [
+        {"not": "f_MaridiaTubeBroken"},
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
       "link": [7, 2],
       "name": "Base",
       "requires": []
@@ -1018,14 +1026,9 @@
       "name": "Base",
       "requires": [
         "f_MaridiaTubeBroken"
-      ]
-    },
-    {
-      "link": [8, 4],
-      "name": "Base",
-      "requires": [
-        "f_MaridiaTubeBroken"
-      ]
+      ],
+      "resetsObstacles": ["A"],
+      "devNote": "The obstacle is reset, as 7 is too low to jump to 4."
     }
   ]
 }
