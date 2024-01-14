@@ -317,65 +317,6 @@ __Example:__
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
-#### adjacentRunway object
-
-_Note_: This logical requirement is deprecated. The [strat property](strats.md) `entranceCondition` should be used instead.
-
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _physics:_ An optional array that indicates the acceptable physics that can be in effect at the adjacent door. If missing, all physics are acceptable. In addition to the concrete door physics
-"air", "water", "lava", and "acid", the special value "normal" requires the neighboring door
-to have either "air" physics or "water" physics with Gravity.
-* _useFrames:_ An optional property that indicates the number of frames Samus should expect to spend at the adjacent door, being subjected to the door (acid/lava) and room (heat) environments there if applicable.
-* _overrideRunwayRequirements:_ An optional boolean (if missing, assume false). If true, indicates the the requirements on the runway itself don't need to be fulfilled.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
-
-__Example:__
-```json
-{"adjacentRunway": {
-  "fromNode": 3,
-  "usedTiles": 1
-}}
-```
-
-__Additional considerations__
-
-Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
-
-#### canComeInCharged object
-
-_Note_: This logical requirement is deprecated. The entrance condition [`comeInShineharged`](strats.md#come-in-shinecharged) should be used instead.
-
-A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works. A value of 180 indicate that Samus must be able to obtain blue speed in the current room.
-* _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
-
-__Example:__
-```json
-{"canComeInCharged": {
-  "fromNode": 4,
-  "framesRemaining": 180
-}}
-```
-
-__Additional considerations__
-
-* A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
-The number of framesRemaining in that case is:
-  * 180 if there is a usable runway in the destination room
-  * Roughly 175 if there is no usable runway in the destination room
-* Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
-
-Energy requirements for shinesparking (if applicable) are specified separately using a `shinespark` object.
-
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
