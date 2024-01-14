@@ -15,24 +15,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001988e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Fast Rippers Left Door (to Screw Attack)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 200}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
@@ -40,51 +23,7 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001989a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Fast Rippers Right Door (to Fast Pillars Setup Room)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 120}
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Fast Rippers Right Door (to Fast Pillars Setup Room)",
-          "length": 28,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 250},
-                {"enemyDamage": {
-                  "enemy": "Ripper 2 (red)",
-                  "type": "contact",
-                  "hits": 2
-                }},
-                {"or": [
-                  "h_canHeatedGreenGateGlitch",
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ],
-              "clearsObstacles": ["A"],
-              "note": "This longer runway requires the green gate to be open, and usually involves tanking some ripper hits."
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -135,6 +74,31 @@
     }
   ],
   "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [
+        {"heatFrames": 120},
+        {"or": [
+          "Morph",
+          "Ice",
+          "ScrewAttack",
+          {"ammo": {"type": "Super", "count": 2}},
+          {"enemyDamage": {
+            "enemy": "Ripper 2 (red)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "devNote": "This assumes we must wait for the Rippers to pass (or freeze or kill them)."
+    },
     {
       "link": [1, 1],
       "name": "Ripper Farm",
@@ -189,6 +153,40 @@
         }}
       ],
       "note": "The time lost by setting up a few strategic kills is pretty much offset by not having damage recoil."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Gate Closed)",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Gate Open)",
+      "requires": [
+        {"or": [
+          "h_canHeatedGreenGateGlitch",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"enemyDamage": {
+          "enemy": "Ripper 2 (red)",
+          "type": "contact",
+          "hits": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [2, 2],
