@@ -890,7 +890,7 @@ A `gModeRegainMobility` object has no properties.
   "name": "G-Mode Regain Mobility",
   "notable": false,
   "requires": [
-    "f_ZebesAwake",
+    "h_ZebesIsAwake",
     {"enemyDamage": {
       "enemy": "Geemer (blue)",
       "type": "contact",
