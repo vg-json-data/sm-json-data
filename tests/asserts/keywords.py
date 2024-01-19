@@ -63,8 +63,6 @@ def process_keyvalue(k, v, metadata):
         # "groupName",        # !!could check for unique
         # "nodeAddress",      # !!could check for unique
         # "roomAddress",      # !!could check for unique
-        "mobility",         # validated by schema
-        "mode",             # validated by schema
         "jumpwayType",      # validated by schema
         "lockType",         # validated by schema
         "nodeType",         # validated by schema
@@ -77,7 +75,8 @@ def process_keyvalue(k, v, metadata):
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInRunning",  # validated by schema
-        "comeInJumping",    # validated by schema
+        "comeInJumping",    # validated by schema,
+        "comeInWithGMode",    # validated by schema,
         "leaveWithGModeSetup", # validated by schema
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
@@ -631,18 +630,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
-
-                    # Validate leaveWithGMode
-                    gModeObjects = []
-                    for node in room["nodes"]:
-                        if "id" in node:
-                            nodeRef = f"{roomRef}:{node['id']}"
-
-                        # Collect GMode objects
-                        if "leaveWithGMode" in node:
-                            for leaveG in node["leaveWithGMode"]:
-                                gModeObjects.append(leaveG)
-
                     # Validate strats
                     previous_link = (0, 0)
                     for strat in room["strats"]:
@@ -704,29 +691,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-
-
-                    # Validate GMode objects
-                    for gModeObj in gModeObjects:
-                        if "strats" in gModeObj:
-                            parentNodeRef = ""
-                            if "fromNode" in gModeObj:
-                                parentNodeRef = f"{gModeObj['fromNode']}:"
-                            toNodeRef = f"{roomRef}:{parentNodeRef}"
-                            if "id" in gModeObj:
-                                toNodeRef += f"{gModeObj['id']}:"
-                            for strat in gModeObj["strats"]:
-                                stratRef = f"{toNodeRef}{strat['name']}"
-                                if "requires" in strat:
-                                    for req in strat["requires"]:
-                                        if "comeInWithGMode" in req:
-                                            if "fromNodes" in req["comeInWithGMode"]:
-                                                for fromNode in req["comeInWithGMode"]["fromNodes"]:
-                                                    fromNodeRef = f"Node[{stratRef}:{fromNode}]"
-                                                    if fromNode not in roomData["nodes"]["froms"]:
-                                                        msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
-                                                        messages["reds"].append(msg)
-                                                        messages["counts"]["reds"] += 1
 
                     # Validate Nodes
                     showNodes = paramData["showNodes"]
