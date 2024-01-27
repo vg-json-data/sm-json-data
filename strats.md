@@ -171,7 +171,7 @@ A `leaveWithSpark` exit condition represents that Samus can leave through this d
 The `leaveWithSpark` object has the following property:
 - _position_: For a horizontal transition, if specified, this takes two possible values, "top" or "bottom". The value "top" represents that the strat sparks through the doorway high enough to clear a single-tile block level with the bottom of the doorway. The value "bottom" represents that the strat sparks through the doorway low enough to clear a single-tile block level with the top of the doorway. If unspecified, it is understood that the strat can exit through either the top or bottom of the doorway, whichever is needed in the next room.
 
-The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
+The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions. There is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 *Note*: Using a runway connected to a door to leave the room with a shinespark is already covered by `leaveWithRunway`. Likewise `leaveShinecharged` implicitly includes the possibility of leaving the room with a shinespark. It is only necessary to use `leaveWithSpark` in cases where it would not be possible to reach the door before the shinecharge timer expires.
 
@@ -573,11 +573,13 @@ A strat with a `comeInWithSpark` condition should include a `shinespark` require
 A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, or `leaveWithRunway` condition on the other side of the door:
 
 - A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
-- A match with `leaveShinecharged` is always valid and does not come with any implicit requirements.
+- A match with `leaveShinecharged` is always valid.
 - A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInShinecharged`) for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
+
+In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 #### Example
 ```json
