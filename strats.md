@@ -953,7 +953,7 @@ By default every door node has an implicit strat from the node to itself, for un
   "link": [1, 1],
   "name": "Unlock Door",
   "requires": [],
-  "unlocksDoors": [{"type": "ammo", "requires": []}]
+  "unlocksDoors": [{"types": ["ammo"], "requires": []}]
 }
 ```
 
@@ -965,9 +965,9 @@ In a heated room, it instead has the form:
   "name": "Unlock Door",
   "requires": [],
   "unlocksDoors": [
-    {"type": "missiles", "requires": [{"heatFrames": 50}]},
-    {"type": "super", "requires": []},
-    {"type": "powerbomb", "requires": [{"heatFrames": 110}]}
+    {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+    {"types": ["super"], "requires": []},
+    {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
   ]
 }
 ```
