@@ -22,32 +22,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Volcano Room Top Left Door (to Spiky Platforms Tunnel)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001964e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Volcano Room Top Left Door (to Spiky Platforms Tunnel)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 110}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Volcano Room Bottom Left Door (to Kronic Boost Room)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001965a",
@@ -61,28 +44,6 @@
           "physics": "air",
           "entranceNodes": [2],
           "note": "Lava can eventually rise up to this door entering from node 2, but it's possible to have air physics"
-        }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Volcano Room Bottom Left Door (to Kronic Boost Room)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 90},
-                {"resetRoom": {
-                  "nodes": [2],
-                  "mustStayPut": true
-                }}
-              ]
-            }
-          ],
-          "openEnd": 1,
-          "note": "Can't charge in lava, so doesn't work coming in from the top left door"
         }
       ]
     }
@@ -109,6 +70,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {
           "id": 2,
           "note": "The room is heated when entering from bottom but not when entering from top."
@@ -118,15 +80,38 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": false
+        }},
+        "h_canCrystalFlash"
+      ],
+      "devNote": "Resetting the room through node 1 ensures that there is no heat."
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         "Morph",
@@ -150,7 +135,6 @@
     {
       "link": [1, 2],
       "name": "Suitless Volcano Dive",
-      "notable": false,
       "requires": [
         "canSuitlessLavaDive",
         "Morph",
@@ -174,7 +158,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Morph",
@@ -187,8 +170,26 @@
     },
     {
       "link": [2, 1],
+      "name": "Leave with Runway",
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "Morph",
+        {"or": [
+          "canMockball",
+          {"heatFrames": 25}
+        ]},
+        {"heatFrames": 440}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 1],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Morph",
@@ -199,6 +200,34 @@
         ]},
         {"heatFrames": 440}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": true
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }},
+        "h_canHeatedCrystalFlash"
+      ],
+      "devNote": "Resetting the room ensures that the lava is not a factor."
     }
   ]
 }

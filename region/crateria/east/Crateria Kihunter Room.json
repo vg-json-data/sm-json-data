@@ -10,33 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Crateria Kihunter Room Left Door (to Crateria Tube)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018a2a",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Kihunter",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Kihunter (green)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Crateria Kihunter Room Right Door (to Moat)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018a36",
@@ -55,29 +37,11 @@
             }
           ]
         }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Kihunter",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Kihunter (green)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      ]
     },
     {
       "id": 3,
-      "name": "Crateria Kihunter Room Bottom Door (to Elevator)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018a42",
@@ -96,23 +60,6 @@
             }
           ]
         }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Thawing Sciser",
-            "notable": false,
-            "requires": [
-              "canWallIceClip",
-              "canDownwardGModeSetup",
-              {"ammo": {"type": "Super", "count": 1}}
-            ],
-            "note": [
-              "Run from the ledge into the open doorway while hitting the frozen Crab as it thaws and the door transition simultaneously.",
-              "Note that this requires a pixel perfect freeze, a small pixel starting window, and has tight timing. It then has a 50% success rate due to collision oscillation."
-            ]
-          }
-        ]}
       ]
     }
   ],
@@ -160,7 +107,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -172,21 +118,39 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit by Kihunter",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Kihunter (green)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -198,7 +162,6 @@
     {
       "link": [2, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         "canShinechargeMovement",
         {"canShineCharge": {
@@ -217,7 +180,6 @@
     {
       "link": [2, 2],
       "name": "Kihunter and Sciser Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2, 3],
@@ -227,9 +189,29 @@
       ]
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit by Kihunter",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Kihunter (green)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canCameraManip",
@@ -249,13 +231,26 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 3],
+      "name": "Crateria Kihunter Room Ice Moonfall Door Lock Skip",
+      "notable": true,
+      "requires": [
+        "canEnemyStuckMoonfall",
+        "canTrickyUseFrozenEnemies"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Freeze the two Scisers to set up a moonfall between them, and aim down.",
+        "Hold left to move to the right at the correct time, which will set up an automatic turn-around, allowing Samus to clip past the floating platform below, past the door shell, and through the transition.",
+        "The amount of speed required is highly precise."
+      ]
+    },
+    {
+      "link": [3, 3],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -268,7 +263,26 @@
     {
       "link": [3, 3],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Get Hit by Thawing Sciser",
+      "notable": false,
+      "requires": [
+        "canWallIceClip",
+        "canDownwardGModeSetup",
+        {"ammo": {"type": "Super", "count": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "Run from the ledge into the open doorway while hitting the frozen Crab as it thaws and the door transition simultaneously.",
+        "Note that this requires a pixel perfect freeze, a small pixel starting window, and has tight timing. It then has a 50% success rate due to collision oscillation."
+      ]
     }
   ]
 }

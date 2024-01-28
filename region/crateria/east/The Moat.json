@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Moat Left Door (to Kihunters)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018ade",
@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "name": "Moat Right Door (to West Ocean)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018aea",
@@ -26,7 +26,7 @@
     },
     {
       "id": 3,
-      "name": "Missile (Crateria Moat)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -76,7 +76,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -89,12 +88,13 @@
     {
       "link": [1, 1],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -123,8 +123,20 @@
     },
     {
       "link": [1, 2],
+      "name": "Moat SpringBall Bounce, Open Doorway",
+      "notable": true,
+      "requires": [
+        "canSpringBallBounce",
+        "canDisableEquipment",
+        {"doorUnlockedAtNode": 1},
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "reusableRoomwideNotable": "Moat SpringBall Bounce",
+      "note": "Open the door and step as close to the transition as possible. Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
+    },
+    {
+      "link": [1, 2],
       "name": "Moat Continuous Walljump, Run Through the Door",
-      "notable": false,
       "entranceCondition": {
         "comeInRunning": {
           "speedBooster": "any",
@@ -143,9 +155,130 @@
       ]
     },
     {
+      "link": [1, 2],
+      "name": "Moat Continuous Walljump, Open Doorway",
+      "requires": [
+        "canCWJ",
+        "canDisableEquipment",
+        {"doorUnlockedAtNode": 1},
+        {"or": [
+          "canMoonwalk",
+          "Morph",
+          "canXRayTurnaround"
+        ]},
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "note": [
+        "Stand on the farthest pixel into the door possible using moonwalk, X-Ray, or morphball turn around.",
+        "Run towards the water and jump on the last possible frame.",
+        "Perform the CWJ off of the item pedestal to cross to the other side."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-mode Morph IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "Gravity",
+        "h_canArtificialMorphIBJ"
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-mode Morph HBJ or Ceiling Bomb Jump",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphCeilingBombJump",
+          "h_canArtificialMorphHBJ"
+        ]}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Diagonal Spark (Come In Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 130
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 7}}
+      ],
+      "note": [
+        "Run and jump onto the pedestal.",
+        "Jump again to the right, and shinespark diagonally to make it past the water."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave With Spark (Come In Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 140
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canHeroShot",
+        {"shinespark": {"frames": 19}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Run and jump onto the pedestal.",
+        "Jump again to the right to bring the door on-camera.",
+        "Fire a shot mid-air, and activate the shinespark wind-up.",
+        "Wait until the shot hits the door before sparking."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Hero Shot Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        "canHeroShot",
+        {"shinespark": {"frames": 38}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Run and jump, fire a shot mid-air, and activate the shinespark wind-up.",
+        "Wait until the shot is at a specific position before sparking.",
+        "Sparking too late will cause the shot to despawn before reaching the door.",
+        "Sparking too early will cause Samus to bonk the door as it will not yet be open.",
+        "A beam shot, Missile, or Super can be used."
+      ]
+    },
+    {
       "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "canDisableEquipment"
       ],
@@ -154,7 +287,6 @@
     {
       "link": [1, 3],
       "name": "Movement Assist",
-      "notable": false,
       "requires": [
         {"or": [
           "Grapple",
@@ -166,7 +298,6 @@
     {
       "link": [1, 3],
       "name": "Run Through Door",
-      "notable": false,
       "entranceCondition": {
         "comeInRunning": {
           "speedBooster": "any",
@@ -178,15 +309,89 @@
     {
       "link": [2, 1],
       "name": "Pass Below",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
     },
     {
+      "link": [2, 1],
+      "name": "Leave With Spark (Come In Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 90
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Come into the room with a shinecharge, run and jump to the left, firing a shot just before landing on the pedestal.",
+        "Activate the shinespark either just before landing on the pedestal or just afterward (depending on the vertical position needed for the spark)."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Come In Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 23}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "After gaining a shinecharge, run back to the door to make space for a running jump to the left, firing a shot just before landing on the pedestal.",
+        "Activate the shinespark either just before landing on the pedestal or just afterward (depending on the vertical position needed for the spark)."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Hero Shot Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        "canHeroShot",
+        {"shinespark": {"frames": 39}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Run, fire a shot mid-air, jump, and activate a mid-air shinespark to the left.",
+        "Sparking too late will cause the shot to despawn before reaching the door.",
+        "Sparking too early will cause Samus to bonk the door as it will not yet be open.",
+        "A beam shot, Missile, or Super can be used."
+      ]
+    },
+    {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -198,12 +403,13 @@
     {
       "link": [2, 2],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [2, 3],
       "name": "Grapple",
-      "notable": false,
       "requires": [
         "Grapple"
       ]
@@ -211,7 +417,6 @@
     {
       "link": [2, 3],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "SpaceJump"
       ]
@@ -219,7 +424,6 @@
     {
       "link": [2, 3],
       "name": "Gravity",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -235,7 +439,6 @@
     {
       "link": [2, 3],
       "name": "Moat Reverse Jump",
-      "notable": false,
       "requires": [
         "canDisableEquipment",
         "canCarefulJump",
@@ -255,7 +458,6 @@
     {
       "link": [2, 3],
       "name": "Moat Reverse Jump, Run Through Door",
-      "notable": false,
       "entranceCondition": {
         "comeInRunning": {
           "speedBooster": "any",
@@ -274,7 +476,6 @@
     {
       "link": [2, 3],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -287,7 +488,6 @@
     {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["A"]}
       ]
@@ -295,7 +495,6 @@
     {
       "link": [3, 1],
       "name": "Continue Shinespark Left",
-      "notable": false,
       "requires": [
         {"shinespark": {"frames": 19, "excessFrames": 19}},
         {"obstaclesCleared": ["A"]}
@@ -305,7 +504,6 @@
     {
       "link": [3, 2],
       "name": "Grapple",
-      "notable": false,
       "requires": [
         "Grapple",
         {"obstaclesNotCleared": ["A"]}
@@ -314,7 +512,6 @@
     {
       "link": [3, 2],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "SpaceJump",
         {"obstaclesNotCleared": ["A"]}
@@ -323,7 +520,6 @@
     {
       "link": [3, 2],
       "name": "Gravity with Jump Assist",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -347,7 +543,6 @@
     {
       "link": [3, 2],
       "name": "IBJ",
-      "notable": false,
       "requires": [
         "Gravity",
         "h_canIBJ",
@@ -357,7 +552,6 @@
     {
       "link": [3, 2],
       "name": "Gravity Jump",
-      "notable": false,
       "requires": [
         "canGravityJump",
         "canSuitlessMaridia",
@@ -366,42 +560,7 @@
     },
     {
       "link": [3, 2],
-      "name": "Moat SpringBall Bounce, Open Doorway",
-      "notable": true,
-      "requires": [
-        "canSpringBallBounce",
-        "canDisableEquipment",
-        {"doorUnlockedAtNode": 1},
-        {"obstaclesNotCleared": ["A"]}
-      ],
-      "reusableRoomwideNotable": "Moat SpringBall Bounce",
-      "note": "Open the door and step as close to the transition as possible. Run, jump, lateral midair morph on the way down, then bounce off the pedestal to get to the other side."
-    },
-    {
-      "link": [3, 2],
-      "name": "Moat Continuous Walljump, Open Doorway",
-      "notable": false,
-      "requires": [
-        "canCWJ",
-        "canDisableEquipment",
-        {"doorUnlockedAtNode": 1},
-        {"or": [
-          "canMoonwalk",
-          "Morph",
-          "canXRayTurnaround"
-        ]},
-        {"obstaclesNotCleared": ["A"]}
-      ],
-      "note": [
-        "Stand on the farthest pixel into the door possible using moonwalk, X-Ray, or morphball turn around.",
-        "Run towards the water and jump on the last possible frame.",
-        "Perform the CWJ off of the item pedestal to cross to the other side."
-      ]
-    },
-    {
-      "link": [3, 2],
       "name": "Moat Horizontal Bomb Jump",
-      "notable": false,
       "requires": [
         "h_canHBJ",
         {"obstaclesNotCleared": ["A"]}
@@ -410,7 +569,6 @@
     {
       "link": [3, 2],
       "name": "Double Spring Ball Jump",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canDoubleSpringBallJumpMidAir",
@@ -421,24 +579,8 @@
     {
       "link": [3, 2],
       "name": "Moat Ceiling Bomb Jump",
-      "notable": false,
       "requires": [
         "h_canCeilingBombJump",
-        {"obstaclesNotCleared": ["A"]}
-      ]
-    },
-    {
-      "link": [3, 2],
-      "name": "G-mode Morph IBJ",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "Gravity",
-        "h_canArtificialMorphIBJ",
         {"obstaclesNotCleared": ["A"]}
       ]
     }

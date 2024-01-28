@@ -11,53 +11,23 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Nutella Refill Left Door (to Acid Snakes Tunnel)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019786",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Nutella Refill Left Door (to Acid Snakes Tunnel)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Nutella Refill Right Door (so Spiky Acid Snakes Tunnel)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019792",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Nutella Refill Right Door (so Spiky Acid Snakes Tunnel)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Nutella Refill",
+      "name": "Energy Refill",
       "utility": ["energy"],
       "nodeType": "utility",
       "nodeSubType": "energy"
@@ -68,12 +38,16 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
@@ -88,33 +62,165 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharged, Leave Sparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 12}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Jump onto the Refill station before Shinesparking."
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharged, Leave Sparking (crouch jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canCrouchJump",
+        {"shinespark": {"frames": 21}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Crouch before sparking to gain the height to go over the refill station.",
+      "devNote": "A midair shinespark is harder and slower."
+    },
+    {
       "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave Sparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 12}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Jump onto the Refill station before Shinesparking."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave Sparking (crouch jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canCrouchJump",
+        {"shinespark": {"frames": 21}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": "Crouch before sparking to gain the height to go over the refill station.",
+      "devNote": "A midair shinespark is harder and slower."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
     },
     {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 3],
       "name": "Refill",
-      "notable": false,
       "requires": [
         "h_useEnergyRefillStation"
       ]

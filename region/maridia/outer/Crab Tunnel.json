@@ -10,181 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Crab Tunnel Left Door (to Main Street)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a414",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crab Tunnel Left Door (to Main Street)",
-          "length": 12,
-          "gentleUpTiles": 2,
-          "steepUpTiles": 2,
-          "steepDownTiles": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Crab Tunnel Left Door (to Main Street)",
-          "length": 33,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                {"or": [
-                  {"ammo": {"type": "Super", "count": 1}},
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 0,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Stutter Water Shine Charge",
-              "notable": false,
-              "requires": [
-                "canStutterWaterShineCharge",
-                "canShinechargeMovement",
-                {"adjacentRunway": {
-                  "fromNode": 1,
-                  "usedTiles": 2,
-                  "physics": ["air"],
-                  "useFrames": 80
-                }},
-                {"shinespark": {"frames": 10}}
-              ]
-            }
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Sciser",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sciser",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
-      "name": "Crab Tunnel Right Door (to Crab Hole)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a420",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Crab Tunnel Right Door (to Crab Hole)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 33,
-          "framesRemaining": 70,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Stutter Water Shine Charge",
-              "notable": false,
-              "requires": [
-                "canStutterWaterShineCharge",
-                "canDodgeWhileShooting",
-                "canShinechargeMovement",
-                {"or": [
-                  "h_canGreenGateGlitch",
-                  {"obstaclesCleared": ["A"]}
-                ]},
-                {"resetRoom": {
-                  "nodes": [1],
-                  "nodesToAvoid": [2]
-                }},
-                {"ammo": {"type": "Super", "count": 1}},
-                {"adjacentRunway": {
-                  "fromNode": 1,
-                  "usedTiles": 2,
-                  "physics": ["air"],
-                  "useFrames": 80
-                }}
-              ],
-              "clearsObstacles": ["A"]
-            }
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Sciser",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sciser",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "water"}]
     }
   ],
   "obstacles": [
@@ -229,8 +67,56 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "gentleUpTiles": 2,
+          "steepUpTiles": 2,
+          "steepDownTiles": 1,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway (Open Gate)",
+      "requires": [
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          {"ammo": {"type": "Super", "count": 1}}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Suitless Stutter Shinecharge, Shinespark Return",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canShinechargeMovement",
+        "canStutterWaterShineCharge",
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Sciser Farm",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         {"resetRoom": {
@@ -241,9 +127,36 @@
       ]
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Sciser",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sciser",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"ammo": {"type": "Super", "count": 1}},
@@ -255,20 +168,45 @@
     {
       "link": [1, 2],
       "name": "Indirect G-Mode Gate Despawn",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "note": "The gate will not spawn in indirect g-mode, and can be freely passed."
+    },
+    {
+      "link": [1, 2],
+      "name": "Crab Tunnel Stutter Shinecharge Through The Gate",
+      "notable": true,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 1.4375
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        "canShinechargeMovementComplex",
+        "canStutterWaterShineCharge",
+        "canDodgeWhileShooting",
+        {"ammo": {"type": "Super", "count": 1}}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 70
+        }
+      },
+      "note": [
+        "Requires a very precise stutter where Samus is moving slow enough while near the gate, so she can shoot it and it is fully open before she collides with it.",
+        "A runway in the adjacent room of 2 tiles works best - with a longer runway, Samus will be moving too fast."
+      ]
     },
     {
       "link": [2, 1],
       "name": "Green Gate Glitch",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canGreenGateGlitch",
@@ -280,20 +218,29 @@
     {
       "link": [2, 1],
       "name": "Indirect G-Mode Gate Despawn",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "note": "The gate will not spawn in indirect g-mode, and can be freely passed."
     },
     {
       "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Sciser Farm",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         {"resetRoom": {
@@ -302,6 +249,51 @@
         }},
         {"refill": ["Energy", "PowerBomb"]}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Sciser",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sciser",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
     }
   ]
 }

@@ -11,97 +11,45 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Writg Top Left Door (to Mickey Mouse)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019972",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Writg Top Left Door (to Mickey Mouse)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Writg Bottom Left Door (to Pillars)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001998a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Writg Bottom Left Door (to Pillars)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Writg Right Door (to Amphitheatre)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001997e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Writg Right Door (to Amphitheatre)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 85}
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Writg Junction (above Climb)",
+      "name": "Junction Above Bomb Blocks",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 5,
-      "name": "Writg Junction (below Amphitheatre Door)",
+      "name": "Junction Below Top Pirate",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 6,
-      "name": "Writg Junction (Cleared Bottom)",
+      "name": "Bottom Platform Junction With Pirates Killed",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "note": "Represents being on the bottom platform with the pirates dead."
+      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -149,6 +97,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 3},
         {"id": 5}
       ]
@@ -156,6 +105,8 @@
     {
       "from": 2,
       "to": [
+        {"id": 1},
+        {"id": 2},
         {
           "id": 4,
           "note": "This link is for strats that don't require killing the pirates."
@@ -170,6 +121,7 @@
       "from": 3,
       "to": [
         {"id": 1},
+        {"id": 3},
         {"id": 5}
       ]
     },
@@ -177,6 +129,7 @@
       "from": 4,
       "to": [
         {"id": 2},
+        {"id": 4},
         {"id": 5}
       ]
     },
@@ -195,15 +148,33 @@
         {
           "id": 4,
           "note": "This is a one-way link because the way back goes 4 -> 2."
-        }
+        },
+        {"id": 6}
       ]
     }
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 180}
@@ -212,7 +183,6 @@
     {
       "link": [1, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -237,9 +207,68 @@
       "note": "It is possible to get past the pirate without waiting by moving fast enough, or by making it turn around."
     },
     {
+      "link": [2, 1],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_heatProof",
+        "canXRayClimb",
+        "canBeVeryPatient"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 5 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash (Frozen Namihe)",
+      "requires": [
+        "Plasma",
+        "Ice",
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": [
+        "Refreeze the Namihe after laying the Power Bomb, to avoid taking damage."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash (Floating Platform)",
+      "requires": [
+        {"heatFrames": 60},
+        "h_canHeatedCrystalFlash",
+        {"heatFrames": 90},
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }}
+      ],
+      "note": [
+        "Perform the Crystal Flash on the bottom part of the floating platform, to avoid taking damage.",
+        "Afterward, reset the room if needed to manipulate the Pirates."
+      ]
+    },
+    {
       "link": [2, 4],
       "name": "SpaceJump ScrewAttack",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -260,13 +289,13 @@
     {
       "link": [2, 4],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 60
-        }},
         {"shinespark": {"frames": 40, "excessFrames": 3}},
         {"heatFrames": 240}
       ],
@@ -295,7 +324,6 @@
     {
       "link": [2, 4],
       "name": "HiJump, Screw, and PowerBomb",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
@@ -457,7 +485,6 @@
     {
       "link": [2, 6],
       "name": "HeatProof Pirates Kill",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"enemyKill": {
@@ -477,7 +504,6 @@
     {
       "link": [2, 6],
       "name": "Screw Attack Pirates Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -497,7 +523,6 @@
     {
       "link": [2, 6],
       "name": "Charge Plasma Pirates Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -516,7 +541,6 @@
     {
       "link": [2, 6],
       "name": "Supers Pirates Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -548,7 +572,6 @@
     {
       "link": [2, 6],
       "name": "Missiles Pirates Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -566,7 +589,6 @@
     {
       "link": [2, 6],
       "name": "Full Spazer Pirates Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -583,7 +605,6 @@
     {
       "link": [2, 6],
       "name": "Power Bomb Pirates Kill + Bomb Blocks",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -624,7 +645,6 @@
     {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_heatProof"
       ]
@@ -632,7 +652,6 @@
     {
       "link": [3, 1],
       "name": "Kill the Pirate",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -651,7 +670,6 @@
     {
       "link": [3, 1],
       "name": "Avoid the Top Pirate",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -660,9 +678,26 @@
       "note": "Safely clear the shot blocks from the door without drawing fire from the space pirate."
     },
     {
+      "link": [3, 3],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [3, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -684,7 +719,6 @@
     {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 180},
@@ -704,9 +738,15 @@
       "clearsObstacles": ["A"]
     },
     {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 200}
@@ -715,7 +755,6 @@
     {
       "link": [4, 5],
       "name": "HiJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -725,7 +764,6 @@
     {
       "link": [5, 1],
       "name": "Wait for Pirate",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 520}
@@ -734,7 +772,6 @@
     {
       "link": [5, 1],
       "name": "HiJump Pirate Dodge",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -746,7 +783,6 @@
     {
       "link": [5, 1],
       "name": "HJBless Pirate Dodge",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canWallJumpInstantMorph",
@@ -758,7 +794,6 @@
     {
       "link": [5, 1],
       "name": "Fast Pirate Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -789,7 +824,6 @@
     {
       "link": [5, 3],
       "name": "Wait for Pirate",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 520}
@@ -798,7 +832,6 @@
     {
       "link": [5, 3],
       "name": "HiJump Pirate Dodge",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -810,7 +843,6 @@
     {
       "link": [5, 3],
       "name": "HJBless Pirate Dodge",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canInsaneWalljump",
@@ -822,7 +854,6 @@
     {
       "link": [5, 3],
       "name": "Fast Pirate Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -853,7 +884,6 @@
     {
       "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 160}
@@ -862,7 +892,6 @@
     {
       "link": [5, 5],
       "name": "Yellow Space Pirates Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"or": [
@@ -882,9 +911,38 @@
       ]
     },
     {
+      "link": [5, 5],
+      "name": "Crystal Flash (Frozen Namihe)",
+      "requires": [
+        "Plasma",
+        "Ice",
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": [
+        "Refreeze the Namihe after laying the Power Bomb, to avoid taking damage."
+      ]
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash (On Top of Namihe)",
+      "requires": [
+        {"heatFrames": 40},
+        {"enemyDamage": {
+          "enemy": "Namihe",
+          "type": "kago",
+          "hits": 1
+        }},
+        "h_canHeatedCrystalFlash",
+        {"heatFrames": 40}
+      ],
+      "note": [
+        "Perform the Crystal Flash on top of the Namihe.",
+        "At the start of the Crystal Flash, Samus will take one Namihe contact hit (10 energy damage without suits)."
+      ]
+    },
+    {
       "link": [6, 4],
       "name": "IBJ",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canIBJ",
@@ -923,7 +981,6 @@
     {
       "link": [6, 4],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -964,7 +1021,6 @@
     {
       "link": [6, 4],
       "name": "Writg Springwall",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSpringwall",
@@ -987,7 +1043,6 @@
     {
       "link": [6, 4],
       "name": "Writg Hj Walljump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -1013,7 +1068,6 @@
     {
       "link": [6, 4],
       "name": "Writg Hjless Walljump",
-      "notable": false,
       "requires": [
         "canInsaneWalljump",
         "canConsecutiveWalljump",
@@ -1041,6 +1095,13 @@
       "note": [
         "Break the bomb blocks in The Worst Room In The Game with extremely precise walljumps.",
         "Either with a fully delayed max height jump from the wall, or with an instant turnaround after jumping from the lower layer of bomb blocks."
+      ]
+    },
+    {
+      "link": [6, 6],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
       ]
     }
   ]

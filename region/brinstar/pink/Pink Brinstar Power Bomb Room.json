@@ -10,87 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Mission Impossible Top Right Door (to Big Pink Upper)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018e62",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mission Impossible Top Right Door (to Big Pink Upper)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 60,
-          "usedTiles": 16,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"obstaclesCleared": ["A"]},
-                {"resetRoom": {
-                  "nodes": [1],
-                  "mustStayPut": false,
-                  "nodesToAvoid": [3]
-                }}
-              ],
-              "note": "The super block must stay intact.",
-              "devNote": "Spikes cannot be used as openEnds."
-            }
-          ]
-        },
-        {
-          "framesRemaining": 100,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeSpikeHit",
-                "h_XModeSpikeHit",
-                "canShinechargeMovement",
-                {"obstaclesCleared": ["A"]}
-              ],
-              "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Sidehopper",
-            "notable": false,
-            "requires": [],
-            "note": "It's fastest to kill the first hopper safely from inside the doorway, then lure the second one over."
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
           "name": "Mission Impossible Grey Lock (to Big Pink Upper)",
@@ -111,29 +35,15 @@
     },
     {
       "id": 2,
-      "name": "Mission Impossible Bottom Right Door (to Big Pink Lower)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018e6e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Mission Impossible Bottom Right Door (to Big Pink Lower)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Power Bomb (pink Brinstar)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "PowerBomb",
@@ -141,7 +51,7 @@
     },
     {
       "id": 4,
-      "name": "Mission Impossible Top Left Junction",
+      "name": "Top Left Junction",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": "The top left section of the room, where the Super block is"
@@ -172,6 +82,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 4}
       ]
     },
@@ -179,6 +90,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3}
       ]
     },
@@ -199,9 +111,116 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Unbroken Super Block)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"obstaclesNotCleared": ["B"]},
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "devNote": "Spikes cannot be used as openEnds."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Spike I-frames, Unbroken Super Block)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"obstaclesNotCleared": ["B"]},
+        {"canShineCharge": {
+          "usedTiles": 23,
+          "openEnd": 0
+        }},
+        {"spikeHits": 1},
+        "canIframeSpikeJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 62
+        }
+      },
+      "note": [
+        "Stand to the right of the center spike",
+        "Run to the left, and continue running left while getting knocked back right by the spike.",
+        "The spike i-frames allow shortcharging while running through the left two spike blocks.",
+        "After gaining a shinecharge, turn back right, run, and jump through the door."
+      ],
+      "devNote": "Spikes cannot be used as openEnds."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (X-Mode)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "SpeedBooster",
+        "h_canXMode",
+        "h_XModeSpikeHit",
+        "h_XModeSpikeHit",
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 100
+        }
+      },
+      "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Sidehopper",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "It's fastest to kill the first hopper safely from inside the doorway, then lure the second one over."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 4],
       "name": "Tank the Damage while Running Through",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -231,7 +250,6 @@
     {
       "link": [1, 4],
       "name": "Power Beam Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -239,12 +257,12 @@
           "hits": 6
         }}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "devNote": "FIXME: Coming in with blue or sparking may be another way to kill the Hoppers."
     },
     {
       "link": [1, 4],
       "name": "Morph Power Beam Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -260,7 +278,6 @@
     {
       "link": [1, 4],
       "name": "Intermediate Weapon Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -279,7 +296,6 @@
     {
       "link": [1, 4],
       "name": "Morph Intermediate Weapon Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -299,7 +315,6 @@
     {
       "link": [1, 4],
       "name": "Good Weapon Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -319,7 +334,6 @@
     {
       "link": [1, 4],
       "name": "Safe Weapon Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -341,7 +355,6 @@
     {
       "link": [1, 4],
       "name": "Doorway Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"doorUnlockedAtNode": 1},
         "canDodgeWhileShooting",
@@ -372,13 +385,13 @@
     {
       "link": [1, 4],
       "name": "G-Mode Morph Power Bomb Kill",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"ammo": {"type": "PowerBomb", "count": 1}},
         {"or": [
           {"and": [
@@ -400,8 +413,7 @@
     },
     {
       "link": [2, 1],
-      "name": "Pink Brinstar Power Bombs X-Ray Climb",
-      "notable": false,
+      "name": "X-Ray Climb",
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -409,6 +421,35 @@
         "canXRayClimb"
       ],
       "note": "Climb up 1 screen."
+    },
+    {
+      "link": [2, 1],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 1 screen, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
     },
     {
       "link": [2, 3],
@@ -426,13 +467,13 @@
     {
       "link": [2, 3],
       "name": "G-Mode Morph Overload PLMs with Bombs",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "Bombs"
       ],
       "note": "Place Power Bombs against the side of the crumble block until PLMs are overloaded, then go through."
@@ -440,13 +481,13 @@
     {
       "link": [2, 3],
       "name": "G-Mode Morph Direct Overload PLMs with Power Bombs",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"itemNotCollectedAtNode": 3},
         {"ammo": {"type": "PowerBomb", "count": 2}},
         {"or": [
@@ -470,7 +511,6 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -482,6 +522,7 @@
       "requires": [
         "canQuickCrumbleEscape",
         "HiJump",
+        "canPreciseWalljump",
         {"obstaclesCleared": ["A", "B"]}
       ],
       "failures": [
@@ -490,15 +531,12 @@
           "note": "Failure leaves you at 3 with a solid crumble block above."
         }
       ],
-      "note": [
-        "This involves doing a quick-drop through the Crumble block, grabbing the item, and jumping back up before the crumble block reappears.",
-        "Mission Impossible expects that the Sidehoppers are dead. To avoid redundant requirements, they must be killed coming in."
-      ]
+      "note": "This involves doing a quick-drop through the Crumble block, grabbing the item, and jumping back up before the crumble block reappears.",
+      "devNote": "This expects that the Sidehoppers are dead. To avoid redundant requirements, they must be killed coming in."
     },
     {
       "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]}
       ],
@@ -507,7 +545,6 @@
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 1}}
       ],

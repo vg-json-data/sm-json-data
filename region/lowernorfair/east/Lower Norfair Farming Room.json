@@ -11,29 +11,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Ridley Eye Door",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "eye",
       "nodeAddress": "0x00198ca",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Ridley Eye Door",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Ridley Eye Lock",
@@ -53,38 +35,21 @@
     },
     {
       "id": 2,
-      "name": "Lower Norfair Farming Room Right Door (to Plowerhouse)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00198d6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Lower Norfair Farming Room Right Door (to Plowerhouse)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Lower Norfair Farming Room Left Farm Spot",
+      "name": "Left Farm Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 4,
-      "name": "Lower Norfair Farming Room Right Farm Spot",
+      "name": "Right Farm Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -222,6 +187,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
         {"id": 3}
       ]
@@ -230,6 +196,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
         {"id": 4}
       ]
@@ -259,37 +226,59 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"or": [
-          {"and": [
-            "canPrepareForNextRoom",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 5,
-              "physics": ["normal"]
-            }}
-          ]},
-          {"heatFrames": 120}
-        ]},
+        {"heatFrames": 380}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Space Jump (Come in Jumping)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 5,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "SpaceJump",
+        "canPrepareForNextRoom",
         {"heatFrames": 260}
       ]
     },
     {
       "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 1
-        }},
         {"shinespark": {"frames": 57, "excessFrames": 4}},
         {"heatFrames": 230}
       ]
@@ -297,7 +286,6 @@
     {
       "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 135}
@@ -306,40 +294,67 @@
     {
       "link": [2, 1],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 2,
-            "usedTiles": 3,
-            "physics": ["normal"]
-          }},
-          {"heatFrames": 60}
-        ]},
+        {"heatFrames": 320}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Space Jump (Come in Running)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "SpaceJump",
         {"heatFrames": 260}
       ]
     },
     {
       "link": [2, 1],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 2
-        }},
         {"shinespark": {"frames": 59, "excessFrames": 5}},
         {"heatFrames": 190}
       ]
     },
     {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": [
+        "Be careful to avoid damage from the respawning Zebbos.",
+        "They will not spawn if you are close enough to the door."
+      ]
+    },
+    {
       "link": [2, 3],
       "name": "Tricky Jumps",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canTrickyJump",
@@ -350,7 +365,6 @@
     {
       "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 45}
@@ -359,7 +373,6 @@
     {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 145}
@@ -368,7 +381,6 @@
     {
       "link": [3, 3],
       "name": "Heat-proof Zebbo Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"refill": ["Energy", "Missile", "Super"]}
@@ -377,7 +389,6 @@
     {
       "link": [3, 3],
       "name": "Heat-proof Viola Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"resetRoom": {
@@ -390,7 +401,6 @@
     {
       "link": [3, 3],
       "name": "Very Patient Zebbo and Viola Farm",
-      "notable": false,
       "requires": [
         "canPauseAbuse",
         "Grapple",
@@ -403,9 +413,16 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": "Be careful to avoid damage from the respawning Zebbos."
+    },
+    {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -418,7 +435,6 @@
     {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 60}
@@ -427,7 +443,6 @@
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 210}
@@ -436,7 +451,6 @@
     {
       "link": [4, 4],
       "name": "Heat-proof Zebbo Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"refill": ["Energy", "Missile", "Super"]}
@@ -445,7 +459,6 @@
     {
       "link": [4, 4],
       "name": "Heat-proof Viola Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"resetRoom": {
@@ -458,7 +471,6 @@
     {
       "link": [4, 4],
       "name": "Very Patient Zebbo and Viola Farm",
-      "notable": false,
       "requires": [
         "canPauseAbuse",
         "Grapple",
@@ -469,6 +481,14 @@
         }},
         {"refill": ["Energy", "Super", "PowerBomb"]}
       ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": "Be careful to avoid damage from the respawning Zebbos."
     }
   ]
 }

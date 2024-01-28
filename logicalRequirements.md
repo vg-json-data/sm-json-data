@@ -182,6 +182,18 @@ __Example:__
 {"energyAtMost": 1}
 ```
 
+#### autoReserveTrigger object
+
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. It has two optional properties:
+
+* _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
+* _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
+
+__Example:__
+```json
+{"autoReserveTrigger": {}}
+```
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
 
@@ -305,92 +317,6 @@ __Example:__
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
-#### adjacentRunway object
-
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition` should be used instead.
-
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _physics:_ An optional array that indicates the acceptable physics that can be in effect at the adjacent door. If missing, all physics are acceptable. In addition to the concrete door physics
-"air", "water", "lava", and "acid", the special value "normal" requires the neighboring door
-to have either "air" physics or "water" physics with Gravity.
-* _useFrames:_ An optional property that indicates the number of frames Samus should expect to spend at the adjacent door, being subjected to the door (acid/lava) and room (heat) environments there if applicable.
-* _overrideRunwayRequirements:_ An optional boolean (if missing, assume false). If true, indicates the the requirements on the runway itself don't need to be fulfilled.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
-
-__Example:__
-```json
-{"adjacentRunway": {
-  "fromNode": 3,
-  "usedTiles": 1
-}}
-```
-
-__Additional considerations__
-
-Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
-
-#### adjacentJumpway object
-An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. Currently supported jumpway types involve jumping up through a vertical doorway. The object has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _jumpwayType:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.
-* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition (in tiles, not including the transition tiles). Likewise, for a platform  jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
-* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
-* _maxLeftPosition:_ Maximum value of "leftPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
-* _minRightPosition:_ Minimum value of "rightPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
-
-Please refer to the section about jumpways in [the Region documentation](region/region-readme.md) for a more detailed explanation of jumpways. 
-
-__Example:__
-```json
-{"adjacentJumpway": {
-  "jumpwayType": "platformBelow",
-  "fromNode": 2,
-  "minHeight": 9,
-  "maxHeight": 9,
-  "maxLeftPosition": -38.5,
-  "minRightPosition": -7
-}}
-```
-
-__Additional considerations__
-
-Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
-
-#### canComeInCharged object
-
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition/comeInCharged` should be used instead.
-
-A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works. A value of 180 indicate that Samus must be able to obtain blue speed in the current room.
-* _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
-
-__Example:__
-```json
-{"canComeInCharged": {
-  "fromNode": 4,
-  "framesRemaining": 180
-}}
-```
-
-__Additional considerations__
-
-* A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
-The number of framesRemaining in that case is:
-  * 180 if there is a usable runway in the destination room
-  * Roughly 175 if there is no usable runway in the destination room
-* Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
-
-Energy requirements for shinesparking (if applicable) are specified separately using a `shinespark` object.
-
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
@@ -416,74 +342,6 @@ __Additional considerations__
 
 * A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
-#### comeInWithRMode object
-
-_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithRMode`](strats.md#come-in-with-r-mode) should be used instead.
-
-A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
-* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
-
-__Example:__
-```json
-{"comeInWithRMode": {
-  "fromNodes": [1],
-}}
-```
-
-__Additional considerations__
-
-* A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
-* A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
-* A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
-  * The `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
-    * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
-* A `comeInWithRMode` object implicitly requires a reserve trigger.
-  * Therefore Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Samus' reserve energy will become zero.
-
-Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
-
-#### comeInWithGMode object
-
-_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithGMode`](strats.md#come-in-with-g-mode) should be used instead.
-
-A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
-* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
-* _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
-* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room, or to have collected the Morph item.
-* _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
-required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough that knockback frames do not expire until after reserves finish filling.
-__Example:__
-```json
-{"comeInWithGMode": {
-  "fromNodes": [1],
-  "mode": "any",
-  "artificialMorph": false
-}}
-```
-
-__Additional considerations__
-
-* A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
-* A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `artificialMorph` is `true` then it also requires either the `canArtificialMorph` tech or the Morph item.
-* A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
-    * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
-    * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
-  * A `leaveWithGMode` object must satisfy the following requirements in order to match:
-    * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
-    * If `artificialMorph` is `true`, then either the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true` or there is an additional requirement that the Morph item be collected.
-    * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
-* In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and the need to damage down (and possibly drain most of reserves) in the preceding setup:
-  * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
-  * Samus' reserve energy will always become zero.
-
-Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
-
 #### itemNotCollectedAtNode object
 An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
 an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
@@ -504,10 +362,11 @@ This section contains logical elements that are affected by Lock type Objects at
 
 #### doorUnlockedAtNode object
 
-A `doorUnlockedAtNode` object represents the need to interact with a Door, usually without travelling through it.  Doors can be unusable if
-a Lock object is present on that Node.  The `doorUnlockedAtNode` object can be fulfilled when either 1) There are no locks on a Door or
-2) All locks on the Door have been unlocked.  Bypassing the Lock does not fulfill this Object requirement.  An example would be opening a Door
-to use the door frame as runway for a jump.
+A `doorUnlockedAtNode` object represents the need for a door to be unlocked, i.e. to be free of a lock such a red, green, yellow, or gray door shell. An example would be if the space in the door frame is needed as runway for a jump or shinecharge. 
+
+In order to support randomizers that may modify door colors, a `doorUnlockedAtNode` requirement should be used when appropriate even if the vanilla door color is blue. If a strat has an `exitCondition`, then there is an implicit `doorUnlockedAtNode` requirement on the destination door node, unless the strat has [`bypassesDoorShell`](strats.md#bypasses-door-shell) set to `true`.
+
+If the door node in a `doorUnlockedAtNode` also appears in the strat's [`unlocksDoors`](strats.md#unlocks-doors) property, then the `doorUnlockedAtNode` may also be fulfilled by unlocking the door as part of executing the strat (as an alternative to having been previously unlocked), and any `requires` for that locked door in the `unlocksDoors` then become part of the requirements for the strat.
 
 __Example:__
 ```json

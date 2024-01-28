@@ -11,33 +11,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Acid Statue Room Top Right Door (to Main Hall)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019846",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Statue Room Top Right Door (to Main Hall)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 50}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Acid Statue Room Bottom Right Door (to Golden Torizo)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001983a",
@@ -48,23 +30,6 @@
             "Technically it is acid if entering from node 1 and the statue hasn't been cleared, but that doesn't seem worth modeling.",
             "The acid is not there regardless when entering from node 2."
           ]
-        }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Statue Room Bottom Right Door (to Golden Torizo)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
         }
       ]
     },
@@ -96,14 +61,14 @@
     },
     {
       "id": 4,
-      "name": "Acid Statue Room Junction (Above Acid Plug Without Acid)",
+      "name": "Junction Above Acid Plug, Without Acid",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": "Because going here while there is acid is pointless unless traveling from 1 to 3, this node will be considered to only be visitable when the acid is gone"
     },
     {
       "id": 5,
-      "name": "Acid Statue Room Junction (Below Acid Plug)",
+      "name": "Bottom Junction Right of Morph Tunnel",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -130,6 +95,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 3},
         {"id": 4}
       ]
@@ -137,6 +103,7 @@
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 5}
       ]
     },
@@ -144,6 +111,7 @@
       "from": 3,
       "to": [
         {"id": 1},
+        {"id": 3},
         {"id": 4}
       ]
     },
@@ -155,6 +123,7 @@
           "id": 3,
           "devNote": "4 requires that the acid is gone."
         },
+        {"id": 4},
         {"id": 5}
       ]
     },
@@ -162,15 +131,33 @@
       "from": 5,
       "to": [
         {"id": 2},
-        {"id": 4}
+        {"id": 4},
+        {"id": 5}
       ]
     }
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -180,7 +167,6 @@
     {
       "link": [1, 3],
       "name": "Without Acid",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -199,13 +185,11 @@
     {
       "link": [1, 3],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "framesRemaining": 0,
-          "fromNode": 1
-        }},
         {"heatFrames": 125},
         {"shinespark": {"frames": 36}}
       ]
@@ -213,7 +197,6 @@
     {
       "link": [1, 3],
       "name": "Gravityless Acid Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -233,7 +216,6 @@
     {
       "link": [1, 3],
       "name": "Gravity Acid Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -256,7 +238,6 @@
     {
       "link": [1, 3],
       "name": "Wall Pocket Acid Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canPartialFloorClip",
@@ -289,7 +270,6 @@
     {
       "link": [1, 3],
       "name": "Ceiling Bomb Jump",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "h_canCeilingBombJump"
@@ -298,7 +278,6 @@
     {
       "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -306,9 +285,26 @@
       ]
     },
     {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -318,7 +314,6 @@
     {
       "link": [2, 5],
       "name": "Avoid Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -340,7 +335,6 @@
     {
       "link": [2, 5],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyDamage": {
@@ -355,7 +349,6 @@
     {
       "link": [2, 5],
       "name": "Full Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Charge",
@@ -368,13 +361,11 @@
     {
       "link": [2, 5],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "framesRemaining": 0,
-          "fromNode": 2
-        }},
         {"heatFrames": 125},
         {"shinespark": {"frames": 41, "excessFrames": 6}}
       ]
@@ -382,7 +373,6 @@
     {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -392,7 +382,6 @@
     {
       "link": [3, 1],
       "name": "Without Acid",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -400,9 +389,15 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -412,7 +407,6 @@
     {
       "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 250}
@@ -422,7 +416,6 @@
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -438,9 +431,15 @@
       ]
     },
     {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [4, 5],
       "name": "Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -451,7 +450,6 @@
     {
       "link": [4, 5],
       "name": "PowerBombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -462,7 +460,6 @@
     {
       "link": [5, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -472,7 +469,6 @@
     {
       "link": [5, 2],
       "name": "Avoid Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -494,7 +490,6 @@
     {
       "link": [5, 2],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyDamage": {
@@ -516,7 +511,6 @@
     {
       "link": [5, 2],
       "name": "Full Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Charge",
@@ -529,7 +523,6 @@
     {
       "link": [5, 4],
       "name": "Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -549,7 +542,6 @@
     {
       "link": [5, 4],
       "name": "Power Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -569,7 +561,6 @@
     {
       "link": [5, 4],
       "name": "CF Grapple Clip",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "h_canBombThings",
@@ -579,6 +570,13 @@
       ],
       "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down.",
       "devNote": "The extra Power Bomb or bombs is to get through the bomb blocks."
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
     }
   ]
 }

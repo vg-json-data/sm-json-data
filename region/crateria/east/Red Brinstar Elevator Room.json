@@ -10,27 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Red Brinstar Elevator Room Top Door (to Kihunters)",
+      "name": "Top Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018af6",
       "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 2,
-          "requires": []
-        },
-        {
-          "name": "Platform",
-          "jumpwayType": "platformBelow",
-          "height": 6,
-          "leftPosition": -2.5,
-          "rightPosition": 2.5,
-          "requires": []
-        }
-      ],
       "locks": [
         {
           "name": "Red Brinstar Elevator Yellow Lock (to Kihunters)",
@@ -49,28 +33,10 @@
     },
     {
       "id": 2,
-      "name": "Elevator to Red Brinstar",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
-      "nodeAddress": "0x0018b02",
-      "leaveWithGMode": [
-        {
-          "leavesWithArtificialMorph": false,
-          "strats": [
-            {
-              "name": "Carry G-Mode Down the Elevator",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1, 2],
-                  "artificialMorph": false,
-                  "mode": "any"
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "nodeAddress": "0x0018b02"
     }
   ],
   "enemies": [],
@@ -85,7 +51,8 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
@@ -93,19 +60,113 @@
     {
       "link": [1, 1],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Door Frame Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 2
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Platform Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 6,
+          "leftPosition": -2.5,
+          "rightPosition": 2.5
+        }
+      }
     },
     {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 65
+        }
+      },
+      "requires": [
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry G-Mode Down Elevator",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      }
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 85
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Down Elevator",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      }
     }
   ]
 }

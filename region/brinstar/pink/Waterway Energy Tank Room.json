@@ -10,95 +10,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Waterway Door (to Big Pink)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018f8e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Waterway Door (to Big Pink)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 120,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Gravity",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 32,
-          "framesRemaining": 0,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Midair Shinespark",
-              "notable": false,
-              "requires": [
-                "canMidairShinespark",
-                {"shinespark": {"frames": 75}}
-              ]
-            }
-          ],
-          "note": "Charge a shinespark on the dry platform and spark back out."
-        },
-        {
-          "usedTiles": 32,
-          "framesRemaining": 0,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Big Jump Midair Shinespark",
-              "notable": false,
-              "requires": [
-                "canMidairShinespark",
-                "canShinechargeMovement",
-                "canCarefulJump",
-                {"shinespark": {"frames": 62}}
-              ]
-            }
-          ],
-          "note": "Charge a spark going left, then build speed and jump far to the right before sparking."
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zero",
-            "notable": false,
-            "requires": [],
-            "note": "The timing to get hit by these guys is a bit tighter, since they are so slow. Buffering their movement with x-ray can help."
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Energy Tank, Waterway",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "ETank",
       "nodeAddress": "0x787FA"
+    },
+    {
+      "id": 3,
+      "name": "Dry Platform Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -129,7 +59,8 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
@@ -137,13 +68,57 @@
       "to": [
         {"id": 1}
       ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
     }
   ],
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Caterpillar",
+      "requires": [
+        "h_canFrozenEnemyRunway"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Gravity)",
+      "requires": [
+        "Gravity",
+        "SpeedBooster",
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Zero Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"refill": ["PowerBomb"]}
@@ -154,9 +129,27 @@
       ]
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zero",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "The timing to get hit by these guys is a bit tighter, since they are so slow. Buffering their movement with x-ray can help."
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         "SpeedBooster"
@@ -164,64 +157,84 @@
     },
     {
       "link": [1, 2],
-      "name": "Suitless Spark with Space Jump",
-      "notable": false,
+      "name": "Shinespark (Come in Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
       "requires": [
-        "SpaceJump",
-        "canShinechargeMovement",
-        {"canShineCharge": {
-          "usedTiles": 32,
-          "openEnd": 1
-        }},
-        {"shinespark": {"frames": 72, "excessFrames": 10}}
-      ],
-      "note": "Doable without a short charge, since there are 32 tiles (plus one open end) to charge it."
+        "canHorizontalShinespark",
+        {"shinespark": {
+          "frames": 155,
+          "excessFrames": 10
+        }}
+      ]
     },
     {
       "link": [1, 2],
-      "name": "Suitless Spark",
-      "notable": false,
+      "name": "Speedball (Come in With Blue Speed)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 0,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canSpeedball"
+      ],
+      "note": [
+        "Roll through the whole room, breaking the speedblocks.",
+        "The fish enemies will die but some puyos will remain."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Space Jump",
+      "requires": [
+        "SpaceJump"
+      ],
+      "note": "Space Jump across the room, starting from the door, to reach the dry platform."
+    },
+    {
+      "link": [1, 3],
+      "name": "Precise Wall Jump",
       "requires": [
         "canSuitlessMaridia",
-        "canShinechargeMovement",
+        "canPreciseWalljump"
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Bomb Jump",
+      "requires": [
+        "canSuitlessMaridia",
         {"or": [
-          "canWalljump",
           "canBombJumpWaterEscape",
-          {"and": [
-            "canSpringBallJumpMidAir",
-            "canCarefulJump"
-          ]},
-          {"and": [
-            "HiJump",
-            "canSpringBallJumpMidAir"
-          ]},
           {"and": [
             "SpringBall",
             "h_canJumpIntoIBJ"
           ]}
-        ]},
-        {"canShineCharge": {
-          "usedTiles": 32,
-          "openEnd": 1
-        }},
-        {"shinespark": {"frames": 72, "excessFrames": 10}}
-      ],
-      "note": "Doable without a short charge, since there are 32 tiles (plus one open end) to charge it."
+        ]}
+      ]
     },
     {
-      "link": [1, 2],
-      "name": "Frozen Caterpillar",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Spring Ball Jump",
       "requires": [
         "canSuitlessMaridia",
-        "canShinechargeMovement",
+        "canTrickySpringBallJump"
+      ],
+      "note": "Press pause slightly before jumping into morph, in order ensure Samus still has upward momentum when the pause fade-out finishes."
+    },
+    {
+      "link": [1, 3],
+      "name": "Frozen Caterpillar",
+      "requires": [
+        "canSuitlessMaridia",
+        "canBePatient",
         "canTrickyUseFrozenEnemies",
-        {"ammo": {"type": "Super", "count": 1}},
-        {"canShineCharge": {
-          "usedTiles": 32,
-          "openEnd": 1
-        }},
-        {"shinespark": {"frames": 72, "excessFrames": 10}}
+        {"ammo": {"type": "Super", "count": 1}}
       ],
       "note": [
         "Watch a Zero (Caterpillar) climb along the ceiling before knocking it down near the speed blocks.",
@@ -229,44 +242,79 @@
       ]
     },
     {
-      "link": [1, 2],
-      "name": "Shinespark Come in Charged",
-      "notable": false,
-      "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 40
-        }},
-        {"shinespark": {
-          "frames": 155,
-          "excessFrames": 10
-        }}
-      ],
-      "note": "Doable without a wall jump if Samus comes in charged."
-    },
-    {
-      "link": [1, 2],
-      "name": "Speedball",
-      "notable": false,
-      "requires": [
-        "canSpeedball",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 1,
-          "unusableTiles": 1
-        }}
-      ],
-      "note": [
-        "Roll through the whole room breaking the speedblocks.",
-        "The fish enemies will die but some puyos will remain."
-      ]
-    },
-    {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "note": "Speed blocks are ignored here because it's impossible to reach node 2 without breaking them."
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [3, 1],
+      "name": "Leave With Spark",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "openEnd": 1
+        }},
+        "canMidairShinespark",
+        {"shinespark": {"frames": 75}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "note": "Charge a spark on the dry platform, and jump into a mid-air spark across the room and through the door."
+    },
+    {
+      "link": [3, 1],
+      "name": "Leave With Spark (Big Jump)",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement",
+        "canCarefulJump",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 62}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "note": "Charge a spark going left, then build speed and jump far to the right into a mid-air spark across the room and through the door."
+    },
+    {
+      "link": [3, 2],
+      "name": "Suitless Spark",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "openEnd": 1
+        }},
+        "canShinechargeMovement",
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 72, "excessFrames": 10}}
+      ],
+      "note": [
+        "Run from left to right on the dry platform to gain a shinecharge.",
+        "Then fall off and spark to the left to break the speed blocks."
+      ],
+      "devNote": "Doable without a short charge, since there are 32 tiles (plus one open end) to charge it."
     }
   ]
 }

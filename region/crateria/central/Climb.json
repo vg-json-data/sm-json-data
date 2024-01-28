@@ -10,39 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Climb Top Door (to Parlor)",
+      "name": "Top Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018b3e",
-      "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 2,
-          "requires": []
-        },
-        {
-          "name": "Left Platform",
-          "jumpwayType": "platformBelow",
-          "height": 6,
-          "leftPosition": -2.5,
-          "rightPosition": -0.5,
-          "requires": []
-        },
-        {
-          "name": "Right Platform",
-          "jumpwayType": "platformBelow",
-          "height": 6,
-          "leftPosition": 0.5,
-          "rightPosition": 2.5,
-          "requires": []
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Climb Bottom Left Door (from Tourian Escape)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018b6e",
@@ -65,7 +41,7 @@
     },
     {
       "id": 3,
-      "name": "Climb Top Right Door (from Crateria Supers Top)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018b4a",
@@ -88,7 +64,7 @@
     },
     {
       "id": 4,
-      "name": "Climb Middle Right Door (to Crateria Supers Bottom)",
+      "name": "Middle Right Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018b56",
@@ -125,7 +101,7 @@
     },
     {
       "id": 5,
-      "name": "Climb Bottom Right Door (to Pit Room)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018b62",
@@ -149,7 +125,7 @@
     },
     {
       "id": 6,
-      "name": "Climb Main Junction",
+      "name": "Main Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -202,6 +178,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2},
         {"id": 3},
         {"id": 4},
@@ -214,6 +191,7 @@
         {"id": 2},
         {"id": 3},
         {"id": 4},
+        {"id": 5},
         {"id": 6}
       ]
     },
@@ -259,16 +237,49 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Door Frame Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 2
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Platform Below (Left)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 6,
+          "leftPosition": -2.5,
+          "rightPosition": -0.5
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Platform Below (Right)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 6,
+          "leftPosition": 0.5,
+          "rightPosition": 2.5
+        }
+      }
+    },
+    {
       "link": [1, 2],
       "name": "G-Mode through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "note": "Overload PLMs using scroll blocks a few tiles in front of the bomb blocks."
     },
     {
@@ -297,13 +308,13 @@
     {
       "link": [1, 3],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphMovement"
       ],
       "note": "Overload PLMs using the scroll block next to the bomb blocks.",
@@ -312,26 +323,23 @@
     {
       "link": [1, 4],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
-      ],
+          "morphed": true
+        }
+      },
+      "requires": [],
       "note": "Overload PLMs using the scroll block next to the bomb blocks."
     },
     {
       "link": [1, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -343,7 +351,6 @@
     {
       "link": [2, 2],
       "name": "Leave with Extended Runway",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]}
       ],
@@ -357,7 +364,6 @@
     {
       "link": [2, 2],
       "name": "Leave with Extended Runway, Open Both Doors",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         {"doorUnlockedAtNode": 5}
@@ -367,44 +373,47 @@
           "length": 30,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [{"nodeId": 5, "types": ["ammo"], "requires": []}]
     },
     {
       "link": [2, 2],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"],
+      "requires": [
+        "h_canCrystalFlash"
+      ],
       "clearsObstacles": ["A"]
     },
     {
       "link": [2, 3],
-      "name": "Climb Temporary Blue Chain Through Bomb Blocks (Bottom Left to Top)",
+      "name": "Behemoth Spark Top, Come in Shinecharging",
       "notable": true,
-      "requires": [
-        "canChainTemporaryBlue",
-        "canXRayTurnaround",
-        "canTrickyJump",
-        "canBePatient",
-        {"canShineCharge": {
-          "usedTiles": 28,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 14,
           "openEnd": 0
-        }},
-        {"obstaclesCleared": ["A"]}
+        }
+      },
+      "requires": [
+        "Morph",
+        {"shinespark": {"frames": 147}}
       ],
       "clearsObstacles": ["A"],
-      "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
-      "note": "A long Temporary Blue Chain with x-ray turnarounds to climb up and destroy the bomb blocks blocking the top morph tunnel."
+      "reusableRoomwideNotable": "Climb Behemoth Shinespark",
+      "note": "Starting with a crouch, diagonal shinespark to the top to break the bomb blocks to the morph tunnels on the right."
     },
     {
       "link": [2, 3],
       "name": "Climb G-Mode Morph Blind Climb to the Top",
       "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
         "h_canArtificialMorphMovement",
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
         "canOffScreenMovement"
       ],
       "note": [
@@ -415,50 +424,24 @@
     },
     {
       "link": [2, 4],
-      "name": "Climb Temporary Blue Chain Through Bomb Blocks (Bottom Left to Bottom)",
+      "name": "Behemoth Spark Bottom, Come in Shinecharging",
       "notable": true,
-      "requires": [
-        "canChainTemporaryBlue",
-        "canXRayTurnaround",
-        "canTrickyJump",
-        {"canShineCharge": {
-          "usedTiles": 28,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 14,
           "openEnd": 0
-        }},
-        {"obstaclesCleared": ["A"]}
+        }
+      },
+      "requires": [
+        "Morph",
+        {"shinespark": {
+          "frames": 147,
+          "excessFrames": 124
+        }}
       ],
       "clearsObstacles": ["A"],
-      "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
-      "note": "A Temporary Blue Chain with x-ray turnarounds to climb up and destroy the bomb blocks blocking the bottom morph tunnel."
-    },
-    {
-      "link": [2, 4],
-      "name": "Climb Temporary Blue Chain Through Bomb Blocks Without XRay (Bottom Left to Bottom, In-Room)",
-      "notable": true,
-      "requires": [
-        "canChainTemporaryBlue",
-        {"or": [
-          "HiJump",
-          "canTrickySpringBallJump"
-        ]},
-        "canTrickyJump",
-        {"obstaclesCleared": ["A"]},
-        {"or": [
-          {"canShineCharge": {
-            "usedTiles": 18,
-            "openEnd": 0
-          }},
-          {"and": [
-            {"canShineCharge": {
-              "usedTiles": 19,
-              "openEnd": 0
-            }},
-            {"doorUnlockedAtNode": 2}
-          ]}
-        ]}
-      ],
-      "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
-      "note": "A Temporary Blue Chain with movement assists to climb up and destroy the bomb blocks blocking the bottom morph tunnel."
+      "reusableRoomwideNotable": "Climb Behemoth Shinespark",
+      "note": "Diagonal shinespark up the climb to break the bomb blocks to the morph tunnels on the right."
     },
     {
       "link": [2, 4],
@@ -485,14 +468,14 @@
     {
       "link": [2, 4],
       "name": "G-Mode Morph Blind",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
         "h_canArtificialMorphMovement",
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
         "canOffScreenMovement"
       ],
       "note": [
@@ -503,9 +486,101 @@
       ]
     },
     {
+      "link": [2, 5],
+      "name": "Transition with Stored Fall Speed (Shortcharge)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 14,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 15,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 2}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]},
+        {"nodeId": 2, "types": ["missiles", "super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Transition with Stored Fall Speed (Shortcharge, more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 14,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 15,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 2}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]},
+        {"nodeId": 2, "types": ["missiles", "super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Transition with Stored Fall Speed (Screw Fall)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        "ScrewAttack",
+        "Grapple"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Break the Bomb blocks using Screw Attack in a Moonfall, then escape the tiles with Grapple Beam."
+    },
+    {
       "link": [2, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canDestroyBombWalls",
@@ -517,7 +592,6 @@
     {
       "link": [2, 6],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -529,7 +603,6 @@
     {
       "link": [2, 6],
       "name": "Speedbooster",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 14,
@@ -542,7 +615,6 @@
     {
       "link": [2, 6],
       "name": "In Room Shinecharge, Left Side",
-      "notable": false,
       "requires": [
         {"or": [
           {"canShineCharge": {
@@ -563,20 +635,18 @@
     {
       "link": [2, 6],
       "name": "G-Mode through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "note": "Overload PLMs using the scroll blocks immediately in front of the bomb wall"
     },
     {
       "link": [2, 6],
       "name": "Zebes Ablaze",
-      "notable": false,
       "requires": [
         "f_ZebesSetAblaze"
       ],
@@ -586,13 +656,13 @@
     {
       "link": [3, 2],
       "name": "G-Mode through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Bombs",
@@ -611,7 +681,6 @@
     {
       "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -623,18 +692,20 @@
     {
       "link": [3, 3],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [3, 4],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Bombs",
@@ -653,7 +724,6 @@
     {
       "link": [3, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -680,13 +750,13 @@
     {
       "link": [3, 6],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Bombs",
@@ -702,13 +772,13 @@
     {
       "link": [4, 2],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Bombs",
@@ -727,7 +797,6 @@
     {
       "link": [4, 3],
       "name": "Right-Side X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -739,14 +808,33 @@
     },
     {
       "link": [4, 3],
-      "name": "G-Mode Morph",
-      "notable": false,
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+        "canXRayClimb",
+        "canBeVeryPatient"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 7 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Morph"
@@ -761,14 +849,15 @@
       "link": [4, 3],
       "name": "Climb G-Mode Morph Insane IBJ to Top (from Crateria Supers Bottom)",
       "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
         "h_canArtificialMorphIBJ",
-        "canBeVeryPatient",
-        {"comeInWithGMode": {
-          "fromNodes": [4],
-          "mode": "any",
-          "artificialMorph": true
-        }}
+        "canBeVeryPatient"
       ],
       "reusableRoomwideNotable": "Climb G-Mode Morph Insane IBJ to Top",
       "note": [
@@ -779,14 +868,14 @@
     {
       "link": [4, 3],
       "name": "G-Mode Morph IBJ with PBs",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
         "h_canArtificialMorphIBJ",
-        {"comeInWithGMode": {
-          "fromNodes": [4],
-          "mode": "any",
-          "artificialMorph": true
-        }},
         {"ammo": {"type": "PowerBomb", "count": 7}}
       ],
       "note": [
@@ -797,7 +886,6 @@
     {
       "link": [4, 4],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -809,12 +897,13 @@
     {
       "link": [4, 4],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [4, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -841,13 +930,13 @@
     {
       "link": [4, 6],
       "name": "G-Mode Morph through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Bombs",
@@ -862,7 +951,6 @@
     {
       "link": [5, 2],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -874,7 +962,6 @@
     {
       "link": [5, 2],
       "name": "Speedbooster",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 12,
@@ -887,7 +974,6 @@
     {
       "link": [5, 2],
       "name": "In Room Shinecharge, Right Side",
-      "notable": false,
       "requires": [
         {"or": [
           {"canShineCharge": {
@@ -907,20 +993,129 @@
     },
     {
       "link": [5, 2],
-      "name": "G-Mode through Bomb Blocks",
-      "notable": false,
+      "name": "Transition with Stored Fall Speed (Shortcharge)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [5],
-          "mode": "any",
-          "artificialMorph": false
-        }}
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 12,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 13,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 5}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]},
+        {"nodeId": 5, "types": ["missiles", "super"], "requires": []},
+        {"nodeId": 5, "types": ["powerbomb"], "requires": ["never"]}
       ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Transition with Stored Fall Speed (Shortcharge, more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 12,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 13,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 5}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]},
+        {"nodeId": 5, "types": ["missiles", "super"], "requires": []},
+        {"nodeId": 5, "types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Transition with Stored Fall Speed (Screw Fall)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        "ScrewAttack",
+        "Grapple"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Break the Bomb blocks using Screw Attack in a Moonfall, then escape the tiles with Grapple Beam."
+    },
+    {
+      "link": [5, 2],
+      "name": "G-Mode through Bomb Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [5, 3],
+      "name": "Behemoth Spark Top, Come in Shinecharging",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Morph",
+        {"shinespark": {"frames": 147}}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Climb Behemoth Shinespark",
+      "note": "Starting with a crouch, diagonal shinespark to the top to break the bomb blocks to the morph tunnels on the right."
     },
     {
       "link": [5, 3],
       "name": "X-Ray Climb to Break Bomb Block with Screw Attack",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -938,13 +1133,13 @@
     {
       "link": [5, 3],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [5],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "SpringBall",
           "Morph"
@@ -959,12 +1154,13 @@
       "link": [5, 3],
       "name": "Climb G-Mode Morph Insane IBJ to Top (from Pit Room)",
       "notable": true,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [5],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ",
         "canBeVeryPatient"
       ],
@@ -977,14 +1173,14 @@
     {
       "link": [5, 3],
       "name": "G-Mode Morph IBJ with PBs",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
         "h_canArtificialMorphIBJ",
-        {"comeInWithGMode": {
-          "fromNodes": [5],
-          "mode": "any",
-          "artificialMorph": true
-        }},
         {"ammo": {"type": "PowerBomb", "count": 8}}
       ],
       "note": [
@@ -993,10 +1189,31 @@
         "Overload the PLMs at the bottom, if the top bomb block is hit with a PB before PLMs are overloaded, they will remain solid."
       ]
     },
+    
+    {
+      "link": [5, 4],
+      "name": "Behemoth Spark Bottom, Come in Shinecharging",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Morph",
+        {"shinespark": {
+          "frames": 147,
+          "excessFrames": 124
+        }}
+      ],
+      "clearsObstacles": ["A"],
+      "reusableRoomwideNotable": "Climb Behemoth Shinespark",
+      "note": "Diagonal shinespark up the climb to break the bomb blocks to the morph tunnels on the right."
+    },
     {
       "link": [5, 4],
       "name": "X-Ray Climb to Break Bomb Block with Screw Attack",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -1014,13 +1231,13 @@
     {
       "link": [5, 4],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [5],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "Morph",
           {"and": [
@@ -1049,7 +1266,6 @@
     {
       "link": [5, 5],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -1061,7 +1277,6 @@
     {
       "link": [5, 5],
       "name": "Leave with Extended Runway",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]}
       ],
@@ -1075,7 +1290,6 @@
     {
       "link": [5, 5],
       "name": "Leave with Extended Runway, Open Both Doors",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         {"doorUnlockedAtNode": 2}
@@ -1085,24 +1299,22 @@
           "length": 30,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [{"nodeId": 2, "types": ["ammo"], "requires": []}]
     },
     {
       "link": [5, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [6, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [6, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canDestroyBombWalls",
@@ -1114,7 +1326,6 @@
     {
       "link": [6, 2],
       "name": "Zebes Ablaze",
-      "notable": false,
       "requires": [
         "f_ZebesSetAblaze"
       ],
@@ -1124,7 +1335,6 @@
     {
       "link": [6, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -1153,6 +1363,7 @@
         "canChainTemporaryBlue",
         "canXRayTurnaround",
         "canTrickyJump",
+        "canBePatient",
         {"canShineCharge": {
           "usedTiles": 27.5,
           "openEnd": 0
@@ -1166,7 +1377,6 @@
     {
       "link": [6, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -1206,7 +1416,7 @@
     },
     {
       "link": [6, 4],
-      "name": "Climb Temporary Blue Chain Through Bomb Blocks to Bottom",
+      "name": "Climb Temporary Blue Chain Through Bomb Blocks (Bottom Left to Bottom)",
       "notable": true,
       "requires": [
         "canChainTemporaryBlue",
@@ -1223,17 +1433,45 @@
       "devNote": "The runway was reduced by 0.5 tiles, as you can't maintain Temporary Blue directly against a wall."
     },
     {
+      "link": [6, 4],
+      "name": "Climb Temporary Blue Chain Through Bomb Blocks Without XRay (Bottom Left to Bottom, In-Room)",
+      "notable": true,
+      "requires": [
+        "canChainTemporaryBlue",
+        {"or": [
+          "HiJump",
+          "canTrickySpringBallJump"
+        ]},
+        "canTrickyJump",
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 18,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 19,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 2}
+          ]}
+        ]}
+      ],
+      "unlocksDoors": [{"nodeId": 2, "types": ["ammo"], "requires": []}],
+      "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
+      "note": "A Temporary Blue Chain with movement assists to climb up and destroy the bomb blocks blocking the bottom morph tunnel."
+    },
+    {
       "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [6, 6],
       "name": "Space Pirate Farm",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"resetRoom": {
           "nodes": [1, 5],
           "mustStayPut": false
@@ -1248,7 +1486,9 @@
     {
       "link": [6, 6],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"],
+      "requires": [
+        "h_canCrystalFlash"
+      ],
       "clearsObstacles": ["A"]
     }
   ]

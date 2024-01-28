@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Warehouse Entrance Left Door (to Boyon Gate Hall)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001922e",
@@ -18,32 +18,14 @@
     },
     {
       "id": 2,
-      "name": "Elevator to Business Center",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
-      "nodeAddress": "0x0019246",
-      "leaveWithGMode": [
-        {
-          "leavesWithArtificialMorph": false,
-          "strats": [
-            {
-              "name": "Carry G-Mode Down the Elevator",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1],
-                  "artificialMorph": false,
-                  "mode": "any"
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "nodeAddress": "0x0019246"
     },
     {
       "id": 3,
-      "name": "Warehouse Entrance Right Door (to Warehouse Zeelas)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001923a",
@@ -51,7 +33,7 @@
     },
     {
       "id": 4,
-      "name": "Warehouse Entrance Pit Junction",
+      "name": "Junction (Right Pit)",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -99,7 +81,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway, Base",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -111,7 +92,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway, Super Blocks Cleared",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]}
       ],
@@ -124,38 +104,153 @@
       "note": "All 3 Super blocks must be broken for this longer runway to be usable."
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "link": [2, 1],
-      "name": "Base",
-      "notable": false,
-      "requires": []
-    },
-    {
-      "link": [2, 2],
-      "name": "Leave Shinecharged, Come In Shinecharging",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave Shinecharged",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 13,
           "openEnd": 0
         }
       },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
       "exitCondition": {
         "leaveShinecharged": {
           "framesRemaining": 130
         }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave Shinecharged (Short Runway)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0
+        }
       },
+      "requires": [
+        "canStopOnADime",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 170
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry G-Mode Down the Elevator",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
       "requires": []
     },
     {
+      "link": [2, 1],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 45
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 12}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ]
+    },
+    {
       "link": [2, 2],
-      "name": "Leave Shinecharged, Super Blocks Broken",
-      "notable": false,
+      "name": "Leave Shinecharged (Super Blocks Broken)",
       "requires": [
         {"obstaclesCleared": ["A"]},
         {"canShineCharge": {
@@ -170,9 +265,39 @@
       }
     },
     {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 13,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 1},
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 0
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 130
+        }
+      },
+      "unlocksDoors": [
+        {
+          "nodeId": 1,
+          "types": ["ammo"],
+          "requires": []
+        }
+      ]
+    },
+    {
       "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"obstaclesCleared": ["A"]},
@@ -184,7 +309,6 @@
     {
       "link": [2, 4],
       "name": "Morph",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 1}},
         "Morph"
@@ -193,7 +317,6 @@
     {
       "link": [2, 4],
       "name": "Kraid Entrance Wiggle",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 2}},
         {"or": [
@@ -206,7 +329,6 @@
     {
       "link": [2, 4],
       "name": "Kraid Entrance Squeeze",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 2}},
         "canTwoTileSqueeze"
@@ -216,7 +338,6 @@
     {
       "link": [3, 3],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -228,7 +349,6 @@
     {
       "link": [3, 3],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
@@ -243,15 +363,20 @@
       }
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"obstaclesCleared": ["A"]},
@@ -263,7 +388,6 @@
     {
       "link": [4, 2],
       "name": "Morph",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 1}},
         "Morph"
@@ -272,7 +396,6 @@
     {
       "link": [4, 2],
       "name": "Kraid Exit Wiggle",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 2}},
         "canXRayTurnaround"
@@ -282,7 +405,6 @@
     {
       "link": [4, 2],
       "name": "Kraid Exit Squeeze",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 2}},
         "canTwoTileSqueeze"
@@ -292,7 +414,6 @@
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canFly",
@@ -303,7 +424,6 @@
     {
       "link": [4, 3],
       "name": "Jump Over the Pit",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canCarefulJump"
@@ -313,7 +433,6 @@
     {
       "link": [4, 3],
       "name": "Kraid Entrance Walljump",
-      "notable": false,
       "requires": [
         "canPreciseWalljump",
         "canDisableEquipment"
@@ -324,7 +443,6 @@
     {
       "link": [4, 3],
       "name": "Kraid Entrance Speedjump",
-      "notable": false,
       "requires": [
         "canTrickyDashJump"
       ],
@@ -336,7 +454,6 @@
     {
       "link": [4, 3],
       "name": "SpringBall",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canSpringBallBombJump",

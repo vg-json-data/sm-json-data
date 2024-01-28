@@ -170,14 +170,35 @@
               "extensionTechs": [
                 {
                   "name": "canMoondance",
-                  "requires": ["canMoonfall"],
+                  "requires": [
+                    "canMoonfall",
+                    "canBePatient"
+                  ],
                   "note": [
-                    "The ability to perform moonfalls a substantial number of times in a row in order to sink through a solid floor.",
+                    "The ability to perform moonfalls a substantial number of times (176) in a row in order to sink through a solid floor.",
                     "Moondancing requires becoming partially trapped so that the Moonfall ends in a crouch state where pressing forward returns Samus to a stand without losing the built up vertical speed.",
+                    "Samus can become trapped inside of Solid Tiles or Frozen enemies for the purposes of Moondancing.",
+                    "This tech assumes the enemy can be frozen again without it being killed and without a frame perfect refreeze.",
                     "The Moondance speed value setup area does not necessarily need to be the same as where the clip is performed.",
                     "But the speed will be reset if Samus falls, jumps, stands up with the Up button, or takes damage.",
-                    "The solid floor can be many tiles below Samus in which case it may also be necessary to change Samus' hitbox while falling.",
-                    "For a Moondance that requires more speed, Grapple can be used to escape from falling 1 tile into the floor."
+                    "For Moondancing with frozen enemies, it is important to stop one Moonfall before clipping into the floor, at 175 Moonfalls.",
+                    "The solid floor can be many tiles below Samus in which case it may also be necessary to change Samus' hitbox while falling."
+                  ],
+                  "extensionTechs": [
+                    {
+                      "name": "canExtendedMoondance",
+                      "requires": [
+                        "canMoondance",
+                        "Grapple",
+                        "canBeVeryPatient"
+                      ],
+                      "note": [
+                        "Continue the Moondance an additional 146 times to clip an additional tile into the floor when clipping.",
+                        "Every Moonfall will clip Samus 1 tile into the ground and Grapple must be used to return to a standing position.",
+                        "A frozen enemy will need to be repositioned to a lower height at the point when Samus begins clipping into the floor with every Moonfall.",
+                        "The final clip may involve clipping into a floor, and from there Moonfall clipping again to sink through many tiles."
+                      ]
+                    }
                   ]
                 },
                 {
@@ -920,6 +941,20 @@
               "name": "canEscapeEnemyGrab",
               "requires": [],
               "note": "The ability to become grabbed by Draygon or a Beetom and then escape by pressing 60+ inputs."
+            },
+            {
+              "name": "canEnemyExtendRunway",
+              "requires": ["canUseEnemies"],
+              "note": [
+                "The ability to use an enemy to extend the length of a runway.",
+                "This is typically set up with a frozen wall-crawler, but can include other frozen enemies or Snails, Trippers, etc.",
+                "The enemy can be up to 3 pixels higher than the adjacent runway and still have benefits.",
+                "At 3 pixels above the runway, Samus can run off of the enemy and not lose speed, which is often useful for cross-room speedy jumps and jumps into water.",
+                "At 2 pixels above, single-stutter shortcharges often fail and multi-stutters are unreliable.",
+                "At 1 pixel above, multi-stutters are fairly reliable.",
+                "A pixel-perfect positioning is necessary when using an enemy to bridge a gap, where Samus needs to run onto and off of the frozen enemy.",
+                "If the enemy is even 1 pixel lower than the runway, it cannot be used."
+              ]
             }
           ]
         }
@@ -1035,21 +1070,42 @@
         {
           "name": "canShinespark",
           "requires": [ "SpeedBooster" ],
-          "note": "The ability to use the Speed Booster to store a shinecharge, then fly in a direction until an obstacle is hit or Samus gets down to 29 energy.",
+          "note": [
+            "The ability to use the Speed Booster to store a shinecharge, then fly in a direction until an obstacle is hit or Samus gets down to 29 energy.",
+            "Assumes Samus can shinespark vertically or diagonally from the ground."
+          ],
           "extensionTechs": [
             {
-              "name": "canMidairShinespark",
+              "name": "canHorizontalShinespark",
               "requires": [ "canShinespark" ],
-              "note": "The ability to jump and shinespark mid-air: vertically, horizontally, or diagonally.",
-              "devNote": "This is typically not used to simply save energy.",
+              "note": [
+                "The ability to shinespark horizontally from the ground.",
+                "This can be achieved by starting without horizontal momentum and pressing jump and then forward while still holding jump (or repressing jump).",
+                "These inputs can be done in rapid succession or with a short delay.",
+                "Shinesparking in water can be done the same way, but requires a slightly longer delay between the jump and forward presses, and it is particularly important to ensure Samus has no horizontal momentum."
+              ],
               "extensionTechs": [
                 {
-                  "name": "canShinesparkDeepStuck",
-                  "requires": [ "canMidairShinespark" ],
+                  "name": "canMidairShinespark",
+                  "requires": [ "canHorizontalShinespark" ],
                   "note": [
-                    "Activating a shinespark to get deep stuck in a door.",
-                    "This is done by shooting open the door and spin-jumping towards it with a shine charge, then pressing angle up to activate a shinespark on the same frame as getting a wall jump check by moving away from the transition tiles.",
-                    "While going through the transition, hold jump and angle up."
+                    "The ability to jump and shinespark mid-air: vertically, horizontally, or diagonally.",
+                    "Mid-air horizontal sparks are the most tricky.",
+                    "They can be performed by spin jumping, breaking spin, initiating the shinespark without holding jump, then pressing jump and forward.",
+                    "One of the easiest methods is to hold forward the entire time, spin jump, release jump at the desired height, tap either up or the diagonal up angle button,",
+                    "then tap or press jump again (while up/angle is no longer pressed). The timing of the jump after the up/angle is fairly lenient and doesn't need to be rushed.",
+                    "Note that mid-air shinesparks can't be performed from a fall, only from a jump."
+                  ],
+                  "extensionTechs": [
+                    {
+                      "name": "canShinesparkDeepStuck",
+                      "requires": [ "canMidairShinespark" ],
+                      "note": [
+                        "Activating a shinespark to get deep stuck in a door.",
+                        "This is done by shooting open the door and spin-jumping towards it with a shine charge, then pressing angle up to activate a shinespark on the same frame as getting a wall jump check by moving away from the transition tiles.",
+                        "While going through the transition, hold jump and angle up."
+                      ]
+                    }
                   ]
                 }
               ]
@@ -1068,6 +1124,16 @@
                   "note": [
                     "The ability to make multiple movement actions with a shinespark charge timer running to get into position to shinespark.",
                     "This reposition may be necessary to avoid obstacles, conserve energy, etc."
+                  ],
+                  "extensionTechs": [
+                    {
+                      "name": "canShinechargeMovementTricky",
+                      "requires": [ "canShinechargeMovementComplex" ],
+                      "note": [
+                        "The ability to make precise and potentially unintuitive movement actions with a shinespark charge timer running to get into position to shinespark.",
+                        "A common example is using the Shinespark Wind-Up animation to wait for a hero shot to open an off-camera door."
+                      ]
+                    }
                   ]
                 }
               ]
@@ -1334,6 +1400,22 @@
       "description": "A tech not referring to gameplay but to the handling of the model itself.",
       "techs": [
         {
+          "name": "canAwakenZebes",
+          "requires": [],
+          "note": [
+            "Understanding game behavior related to how the planet is awakened.",
+            "The planet is awakened by unlocking any gray door locked by killing enemies in the room (not including bosses or minibosses).",
+            "Pit Room and Baby Kraid Room are two examples where this can be done.",
+            "Awakening the planet causes enemies to spawn in Parlor, Climb, Morph Ball Room, Construction Zone, and Blue Brinstar Energy Tank Room.",
+            "It also causes the item in the left side of Morph Ball Room and in The Final Missile to spawn.",
+            "The item and enemies in Pit Room do not spawn until entering with Morph and Missiles collected, regardless of whether the planet is awake."
+          ],
+          "devNote": [
+            "This tech is for understanding how the planet is awakened and how to utilize that.",
+            "As such, strats that require the planet to not be awakened, with canRiskPermanentLossOfAccess, are also not in logic without this tech."
+          ]
+        },
+        {
           "name": "canRiskPermanentLossOfAccess",
           "requires": [],
           "note": [
@@ -1441,7 +1523,8 @@
           "requires": [],
           "note": [
             "Uses the uninteruptable frames of turning around in order to continue moving after hitting a solid object.",
-            "Can be used to make it through an opening door, or barely just past a ledge."
+            "Can be used to make it through an opening door, or barely just past a ledge.",
+            "It is often beneficial to be in a downward pose when hitting the ceiling, in order to shrink Samus' hitbox to delay contact."
           ]
         },
         {
@@ -1460,6 +1543,14 @@
           "note": [
             "The ability to pause in order to avoid death while reaching 0 energy.",
             "Energy must be obtained before the unpause fade-in finishes."
+          ]
+        },
+        {
+          "name": "canSkipDoorLock",
+          "requires": [],
+          "note": [
+            "The ability to trigger a door transition without opening a door lock in front of it.",
+            "Specific techniques for achieving this are covered in other tech."
           ]
         }
       ]

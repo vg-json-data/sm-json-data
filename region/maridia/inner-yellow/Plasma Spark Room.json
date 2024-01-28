@@ -11,7 +11,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Plasma Spark Room Left Door (to Toilet)",
+      "name": "Left Vertical Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x001a5ac",
@@ -35,74 +35,27 @@
     },
     {
       "id": 2,
-      "name": "Plasma Spark Room Bottom Right Door (to Butterfly Room)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a5a0",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plasma Spark Room Bottom Right Door (to Butterfly Room)",
-          "length": 42,
-          "startingDownTiles": 2,
-          "gentleDownTiles": 2,
-          "steepUpTiles": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
-      "name": "Plasma Spark Room Center Right Door (to Bug Sand Hole)",
+      "name": "Middle Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a5c4",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plasma Spark Room Center Right Door (to Bug Sand Hole)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Plasma Spark Room Top Right Door (to Kassiuz Room)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x001a5b8",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plasma Spark Room Top Right Door (to Kassiuz Room)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Plasma Spark Room Grey Lock (to Kassiuz Room)",
@@ -121,10 +74,15 @@
     },
     {
       "id": 5,
-      "name": "Plasma Spark Room Top Junction",
+      "name": "Top Junction",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "This exists mostly in case it ends up being helpful for handling walljumps later"
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 6,
+      "name": "Hidden Fake Kassiuz Room Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -178,6 +136,7 @@
       "from": 2,
       "to": [
         {"id": 1},
+        {"id": 2},
         {
           "id": 3,
           "devNote": [
@@ -195,13 +154,15 @@
         {"id": 2},
         {"id": 3},
         {"id": 4},
-        {"id": 5}
+        {"id": 5},
+        {"id": 6}
       ]
     },
     {
       "from": 4,
       "to": [
         {"id": 3},
+        {"id": 4},
         {
           "id": 5,
           "devNote": "This link is only for shinesparking. All other strats should go 4 -> 3 -> 5."
@@ -212,7 +173,14 @@
       "from": 5,
       "to": [
         {"id": 1},
+        {"id": 3},
         {"id": 4}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 2}
       ]
     }
   ],
@@ -220,7 +188,6 @@
     {
       "link": [1, 1],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -231,21 +198,27 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [1, 4],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ",
         {"or": [
           "h_canArtificialMorphSpringBallBombJump",
@@ -256,7 +229,6 @@
     {
       "link": [1, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "HiJump",
@@ -284,14 +256,14 @@
     {
       "link": [1, 5],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
       "requires": [
         "canShinechargeMovementComplex",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 120
-        }},
         {"shinespark": {"frames": 37, "excessFrames": 10}},
         {"or": [
           {"enemyDamage": {
@@ -318,13 +290,13 @@
     {
       "link": [1, 5],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           {"and": [
             "h_canArtificialMorphIBJ",
@@ -340,7 +312,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -353,18 +324,16 @@
     },
     {
       "link": [2, 1],
-      "name": "Suitless Jump Assist",
-      "notable": false,
+      "name": "Suitless Spring Ball",
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
-        "canSpringBallJumpMidAir"
+        "canTrickySpringBallJump"
       ]
     },
     {
       "link": [2, 1],
       "name": "Suitless Frozen Skultera",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -374,24 +343,33 @@
     },
     {
       "link": [2, 1],
+      "name": "Shinespark",
+      "requires": [
+        "Gravity",
+        "SpeedBooster",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 90, "excessFrames": 50}}
+      ],
+      "note": [
+        "Start the dash close to the door to help avoid getting hit by the first Owtch.",
+        "Spark up while on the right side of the platform. To avoid the Owtch on the platform, it may help to jump on the left side of the platform then jump again and spark midair above the right side."
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Suitless Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 0.4375
+        }
+      },
       "requires": [
         "canWaterShineCharge",
         "canShinechargeMovementComplex",
         {"or": [
+          {"shinespark": {"frames": 90, "excessFrames": 50}},
           {"and": [
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
-            {"shinespark": {"frames": 90, "excessFrames": 50}}
-          ]},
-          {"and": [
-            {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
-            }},
             {"shinespark": {"frames": 90, "excessFrames": 57}},
             {"or": [
               "canWalljump",
@@ -400,14 +378,7 @@
               "h_canFly"
             ]}
           ]}
-        ]},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "physics": ["normal"],
-          "overrideRunwayRequirements": true,
-          "useFrames": 45
-        }}
+        ]}
       ],
       "note": [
         "Start the dash as close to the door transition as possible to help avoid getting hit by the first Owtch. Store the shine charge while high up on the left slope.",
@@ -417,21 +388,41 @@
     {
       "link": [2, 1],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "Gravity",
         "h_canArtificialMorphIBJ"
       ]
     },
     {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 42,
+          "startingDownTiles": 2,
+          "gentleDownTiles": 2,
+          "steepUpTiles": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity"
       ]
@@ -439,7 +430,6 @@
     {
       "link": [2, 3],
       "name": "Suitless Jump Assist",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         {"or": [
@@ -476,13 +466,13 @@
     {
       "link": [2, 3],
       "name": "G-Mode Deep Stuck X-Ray Climb",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        }
+      },
+      "requires": [
         "canXRayClimb"
       ],
       "note": "Climb up 2 screens."
@@ -490,12 +480,12 @@
     {
       "link": [2, 3],
       "name": "Shinespark Deep Stuck X-Ray Climb",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 1
+        }
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 1
-        }},
         {"shinespark": {"frames": 1, "excessFrames": 1}},
         "canShinesparkDeepStuck",
         "canXRayClimb"
@@ -504,51 +494,157 @@
     },
     {
       "link": [2, 3],
-      "name": "G-Mode Morph",
-      "notable": false,
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "Gravity",
-        "h_canArtificialMorphIBJ"
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 2 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
       ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave with Spark",
+      "requires": [
+        "Gravity",
+        "SpeedBooster",
+        {"enemyKill": {
+          "enemies": [["Owtch", "Owtch"]]
+        }},
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 2,
+          "gentleDownTiles": 2,
+          "gentleUpTiles": 2,
+          "steepDownTiles": 1,
+          "steepUpTiles": 1,
+          "startingDownTiles": 1
+        }},
+        {"shinespark": {"frames": 10}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "note": [
+        "Gain a shinecharge by running right-to-left on the underwater runway on the right side of the room.",
+        "Perform quick ledge-grabs to reach the platform in front of the door in time to spark out."
+      ],
+      "devNote": "FIXME: It's technically possible to evade the Owtches without killing them, but it's unclear if this can be done reliably."
+    },
+    {
+      "link": [2, 4],
+      "name": "Shinespark",
+      "requires": [
+        "Gravity",
+        "SpeedBooster",
+        {"or": [
+          "HiJump",
+          "canSpringBallJumpMidAir",
+          "canWalljump",
+          {"and": [
+            "canGravityJump",
+            "canShinechargeMovementTricky"
+          ]}
+        ]},
+        {"enemyKill": {
+          "enemies": [["Owtch", "Owtch"]]
+        }},
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 2,
+          "gentleDownTiles": 2,
+          "gentleUpTiles": 2,
+          "steepDownTiles": 1,
+          "steepUpTiles": 1,
+          "startingDownTiles": 1
+        }},
+        {"shinespark": {"frames": 43, "excessFrames": 3}}
+      ],
+      "note": [
+        "Gain a shinecharge by running right-to-left on the underwater runway on the right side of the room.",
+        "Use HiJump or a Spring Ball jump to quickly exit the water to the left and spark up."
+      ],
+      "devNote": "FIXME: It's technically possible to evade the Owtches without killing them, but it's unclear if this can be done reliably."
     },
     {
       "link": [2, 4],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
-        "Gravity",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "Gravity",
+          {"and": [
+            "canSuitlessMaridia",
+            "HiJump",
+            "SpringBall"
+          ]}
+        ]},
         "h_canArtificialMorphIBJ"
       ]
     },
     {
       "link": [2, 5],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "Gravity",
+          {"and": [
+            "canSuitlessMaridia",
+            "HiJump",
+            "SpringBall"
+          ]}
+        ]},
+        "h_canArtificialMorphIBJ"
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Shinespark",
+      "requires": [
+        "Gravity",
+        "SpeedBooster",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 90, "excessFrames": 11}}
+      ],
+      "note": [
+        "Start the dash close to the door to help avoid getting hit by the first Owtch.",
+        "Spark up while on the right side of the platform. To avoid the Owtch on the platform, it may help to jump on the left side of the platform then jump again and spark midair above the right side."
+      ]
+    },
+    {
+      "link": [2, 5],
       "name": "Suitless Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 0.4375
+        }
+      },
       "requires": [
         "canWaterShineCharge",
         "canShinechargeMovementComplex",
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
-        {"shinespark": {"frames": 90, "excessFrames": 11}},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "physics": ["normal"],
-          "overrideRunwayRequirements": true,
-          "useFrames": 45
-        }}
+        {"shinespark": {"frames": 90, "excessFrames": 11}}
       ],
       "note": [
         "Start the dash as close to the door transition as possible to help avoid getting hit by the first Owtch. Store the shine charge while high up on the left slope.",
@@ -562,13 +658,22 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 3],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [3, 3],
       "name": "Choot Farm",
-      "notable": false,
       "requires": [
         "canBePatient",
         {"resetRoom": {
@@ -579,9 +684,15 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canConsecutiveWalljump",
@@ -592,7 +703,6 @@
     {
       "link": [3, 4],
       "name": "Frozen Choot",
-      "notable": false,
       "requires": [
         "canTrickyUseFrozenEnemies",
         "HiJump",
@@ -608,24 +718,18 @@
     {
       "link": [3, 4],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
       "requires": [
         "canShinechargeMovementComplex",
         {"or": [
+          {"shinespark": {"frames": 43, "excessFrames": 3}},
           {"and": [
             "canMidairShinespark",
-            {"canComeInCharged": {
-              "fromNode": 3,
-              "framesRemaining": 120
-            }},
             {"shinespark": {"frames": 30, "excessFrames": 3}}
-          ]},
-          {"and": [
-            {"canComeInCharged": {
-              "fromNode": 3,
-              "framesRemaining": 120
-            }},
-            {"shinespark": {"frames": 43, "excessFrames": 3}}
           ]}
         ]}
       ],
@@ -637,20 +741,19 @@
     {
       "link": [3, 4],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ"
       ]
     },
     {
       "link": [3, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canConsecutiveWalljump",
@@ -666,7 +769,6 @@
     {
       "link": [3, 5],
       "name": "Screw Kill",
-      "notable": false,
       "requires": [
         {"or": [
           "canConsecutiveWalljump",
@@ -696,7 +798,6 @@
     {
       "link": [3, 5],
       "name": "Carefully Kill Choot",
-      "notable": false,
       "requires": [
         {"or": [
           "canConsecutiveWalljump",
@@ -721,7 +822,6 @@
     {
       "link": [3, 5],
       "name": "Kill Choot and Reclimb",
-      "notable": false,
       "requires": [
         {"or": [
           "canConsecutiveWalljump",
@@ -746,14 +846,14 @@
     {
       "link": [3, 5],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 145
+        }
+      },
       "requires": [
         "canShinechargeMovementComplex",
         "canCarefulJump",
-        {"canComeInCharged": {
-          "fromNode": 3,
-          "framesRemaining": 145
-        }},
         {"shinespark": {"frames": 49}}
       ],
       "note": [
@@ -764,33 +864,66 @@
     {
       "link": [3, 5],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ"
+      ]
+    },
+    {
+      "link": [3, 6],
+      "name": "Plasma Spark X-Ray Climb Into Fake Kassiuz Room",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "note": [
+        "Climb up 2 screens plus 2 tiles, to enter a normally inaccessible area behind the top right door, containing a copy of the bottom half of Kassiuz Room.",
+        "There is a blue door on the other side of the top right door; you will not be able to see it as you will be off-camera, but shoot it open and touch the transition behind it.",
+        "It will lead to the same place as the bottom right door of the room."
       ]
     },
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [4, 4],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [4, 5],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 45
+        }
+      },
       "requires": [
         "canShinechargeMovementComplex",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 4,
-          "framesRemaining": 45
-        }},
         {"shinespark": {"frames": 13}}
       ],
       "note": [
@@ -801,27 +934,43 @@
     {
       "link": [4, 5],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ"
       ]
     },
     {
       "link": [5, 1],
       "name": "Base",
-      "notable": false,
+      "requires": []
+    },
+    {
+      "link": [5, 3],
+      "name": "Base",
       "requires": []
     },
     {
       "link": [5, 4],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [
+        "canPreciseWalljump"
+      ]
+    },
+    {
+      "link": [6, 2],
+      "name": "Bottom Right Door Lock Skip",
+      "requires": [],
+      "bypassesDoorShell": true,
+      "note": "Shoot open and go through the blue door that is off camera to the left to transition into the same room as connects to the bottom right door of this room.",
+      "devNote": [
+        "FIXME: There may be some off camera strats that can utilize this runway, even though it goes the opposite direction as the door transition;",
+        "possibly a very low horizontal momentum cross room jump starting from a door check or bomb boost, or a door stuck or deep stuck setup."
+      ]
     }
   ]
 }

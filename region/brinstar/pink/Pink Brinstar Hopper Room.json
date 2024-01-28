@@ -10,47 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Pink Brinstar Hoppers Left Door (to Big Pink)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018fb2",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Pink Brinstar Hoppers Left Door (to Big Pink)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Hopper",
-            "notable": false,
-            "requires": [],
-            "note": [
-              "This is possible to do without taking a second hit:",
-              "Enter the room in a jump, then shoot down to open the door and land in the doorsill."
-            ]
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
           "name": "Pink Brinstar Hoppers Left Grey Lock (to Big Pink)",
@@ -70,25 +34,11 @@
     },
     {
       "id": 2,
-      "name": "Pink Brinstar Hoppers Right Door (to E-Tank)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018fbe",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Pink Brinstar Hoppers Right Door (to E-Tank)",
-          "length": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
           "name": "Pink Brinstar Hoppers Right Grey Lock (to E-Tank)",
@@ -106,6 +56,13 @@
           "devNote": "Hoppers must be killed, possibly by going to 1 and back."
         }
       ]
+    },
+    {
+      "id": 3,
+      "name": "Top Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Represents being on the Grapple block if going right or to the right of the gate, if going left."
     }
   ],
   "obstacles": [
@@ -141,27 +98,54 @@
       "homeNodes": [1]
     }
   ],
+  "reusableRoomwideNotable": [
+    {
+      "name": "Pink Hoppers Shinespark into the Wall to Ride the Elevator",
+      "note": "Shinesparking horizontally into the wall will trigger the elevator as Samus's echos hit it."
+    }
+  ],
   "links": [
     {
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     }
   ],
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Power Beam Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sm. Sidehopper",
@@ -178,12 +162,12 @@
       "note": [
         "This assumes you don't know you're entering this room, and take a Small Sidehopper hit quickly.",
         "The Small Sidehoppers may deliver more of the hits, but this is an assumed worst case scenario"
-      ]
+      ],
+      "devNote": "FIXME: It is possible to use frozen hoppers as a platform to more easily get up to the Grapple block."
     },
     {
       "link": [1, 1],
       "name": "Intermediate Weapon Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sm. Sidehopper",
@@ -206,7 +190,6 @@
     {
       "link": [1, 1],
       "name": "Fast Weapon Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sm. Sidehopper",
@@ -231,27 +214,38 @@
     },
     {
       "link": [1, 1],
-      "name": "Kill on Entry",
-      "notable": false,
+      "name": "Kill on Entry (Screw Attack)",
       "requires": [
         "canPrepareForNextRoom",
-        {"or": [
-          "ScrewAttack",
-          {"and": [
-            {"canComeInCharged": {
-              "fromNode": 1,
-              "framesRemaining": 0
-            }},
-            {"shinespark": {"frames": 24}}
-          ]},
-          {"canComeInCharged": {
-            "fromNode": 1,
-            "framesRemaining": 180
-          }}
-        ]}
+        "ScrewAttack"
       ],
-      "clearsObstacles": ["A"],
-      "note": "Although there are other ways to kill them on entry, these are done reliably."
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Kill on Entry (Come In With Blue Speed)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 0,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Kill on Entry (Come In With Spark)",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"shinespark": {"frames": 24}}
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "link": [1, 1],
@@ -271,26 +265,25 @@
     {
       "link": [1, 1],
       "name": "G-Mode Indirect to Despawn Gate",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "clearsObstacles": ["B", "C"]
     },
     {
       "link": [1, 1],
       "name": "G-Mode Morph Indirect to Despawn Gate Power Bomb Kill",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"enemyDamage": {
           "enemy": "Sm. Sidehopper",
           "type": "contact",
@@ -303,9 +296,85 @@
       "devNote": "A Power Bomb strat could be included to just kill the Sidehoppers, but it only saves a little energy since you'll need Wave or Supers for the gate."
     },
     {
-      "link": [1, 2],
-      "name": "Base",
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Hopper",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "This is possible to do without taking a second hit:",
+        "Enter the room in a jump, then shoot down to open the door and land in the doorsill."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
+      "link": [1, 2],
+      "name": "IBJ",
+      "requires": [
+        "h_canIBJ",
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "Wave",
+          {"obstaclesCleared": ["B"]}
+        ]}
+      ],
+      "devNote": [
+        "IBJ requires the enemies to be killed",
+        "The reverse gate glitch may be executed earlier from node 1 -> 1."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph Indirect to Despawn Gate with IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphIBJ",
+        {"enemyDamage": {
+          "enemy": "Sm. Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Sidehopper",
+            "type": "contact",
+            "hits": 3
+          }},
+          {"ammo": {"type": "PowerBomb", "count": 1}}
+        ]}
+      ],
+      "clearsObstacles": ["A", "B"],
+      "note": "Kill the Sidehoppers with Bombs or a Power Bomb, then IBJ up onto the Grapple block."
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
       "requires": [
         {"or": [
           "canPrepareForNextRoom",
@@ -327,79 +396,117 @@
             "HiJump",
             "canSpringBallJumpMidAir"
           ]}
-        ]},
-        {"or": [
-          "Wave",
-          {"obstaclesCleared": ["B"]}
         ]}
       ],
-      "clearsObstacles": ["B"],
       "devNote": "The reverse gate glitch may be executed earlier from node 1 -> 1."
     },
     {
-      "link": [1, 2],
+      "link": [1, 3],
       "name": "Speedy Jump Onto Grapple Block",
-      "notable": false,
       "requires": [
         "HiJump",
         "canTrickyJump",
         "SpeedBooster",
-        {"obstaclesCleared": ["A"]},
-        {"or": [
-          "Wave",
-          {"obstaclesCleared": ["B"]}
-        ]}
+        {"obstaclesCleared": ["A"]}
       ],
-      "clearsObstacles": ["B"],
       "note": "Run from the left side to the right, then jump just before or at the end of the runway to get up onto the Grapple block."
     },
     {
-      "link": [1, 2],
+      "link": [1, 3],
       "name": "Spring Ball from the Doorframe",
-      "notable": false,
       "requires": [
         {"doorUnlockedAtNode": 1},
-        "h_canMaxHeightSpringBallJump",
+        "canTrickySpringBallJump",
+        "canTrickyJump",
         {"obstaclesCleared": ["A"]},
-        {"obstaclesNotCleared": ["C"]},
-        {"or": [
-          "Wave",
-          {"obstaclesCleared": ["B"]}
-        ]}
+        {"obstaclesNotCleared": ["C"]}
       ],
-      "clearsObstacles": ["B"],
-      "note": "Perform a very precise maximum height Spring Ball jump from the doorframe onto the Grapple block."
-    },
-    {
-      "link": [1, 2],
-      "name": "IBJ",
-      "notable": false,
-      "requires": [
-        "h_canIBJ",
-        {"obstaclesCleared": ["A"]},
-        {"or": [
-          "Wave",
-          {"obstaclesCleared": ["B"]}
-        ]}
-      ],
-      "clearsObstacles": ["B"],
-      "devNote": [
-        "IBJ requires the enemies to be killed",
-        "The reverse gate glitch may be executed earlier from node 1 -> 1."
+      "note": [
+        "Perform a very precise Spring Ball jump from the doorframe onto the Grapple block.",
+        "A running spin jump or crouch jump can be used."
       ]
     },
     {
-      "link": [1, 2],
-      "name": "G-Mode Morph IBJ",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Speedy Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 6.4375
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+        "canPrepareForNextRoom",
+        "HiJump",
+        "canDisableEquipment",
+        "canCarefulJump"
+      ],
+      "note": "Jump into the room and onto the Grapple block."
+    },
+    {
+      "link": [1, 3],
+      "name": "Tricky Speedy Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 1.4375
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "HiJump",
+        "canTrickyDashJump",
+        "canDisableEquipment"
+      ],
+      "note": "Jump into the room and onto the Grapple block. Requires a runway of only 2 tiles in the adjacent room.",
+      "devNote": "It can be done with no open ends, but it's a fair bit tighter."
+    },
+    {
+      "link": [1, 3],
+      "name": "Cross-Room Spring Ball Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 7
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canTrickySpringBallJump",
+        "canCarefulJump"
+      ],
+      "note": "Perform a Spring Ball jump from a speedy jump in the previous room."
+    },
+    {
+      "link": [1, 3],
+      "name": "Tricky Cross-Room Spring Ball Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": false,
+          "minTiles": 0.4375
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canTrickySpringBallJump",
+        "canTrickyJump"
+      ],
+      "note": [
+        "Perform a very precise Spring Ball jump through the transition and onto the Grapple block.",
+        "A running spin jump or crouch jump can be used."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "G-Mode Morph IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ",
-        "Wave",
         {"enemyDamage": {
           "enemy": "Sm. Sidehopper",
           "type": "contact",
@@ -414,114 +521,367 @@
           {"ammo": {"type": "PowerBomb", "count": 1}}
         ]}
       ],
-      "clearsObstacles": ["A", "B"],
+      "clearsObstacles": ["A"],
       "note": "Kill the Sidehoppers with Bombs or a Power Bomb, then IBJ up onto the Grapple block. Use Wave to get through."
     },
     {
-      "link": [1, 2],
-      "name": "G-Mode Morph Indirect to Despawn Gate with IBJ",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
-          "mode": "indirect",
-          "artificialMorph": true
-        }},
-        "h_canArtificialMorphIBJ",
-        {"enemyDamage": {
-          "enemy": "Sm. Sidehopper",
-          "type": "contact",
-          "hits": 1
-        }},
-        {"or": [
-          {"enemyDamage": {
-            "enemy": "Sidehopper",
-            "type": "contact",
-            "hits": 3
-          }},
-          {"ammo": {"type": "PowerBomb", "count": 1}}
-        ]}
-      ],
-      "clearsObstacles": ["A", "B"],
-      "note": "Kill the Sidehoppers with Bombs or a Power Bomb, then IBJ up onto the Grapple block."
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      }
     },
     {
-      "link": [2, 1],
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Plasma SBA Sidehopper Kill",
+      "requires": [
+        "Charge",
+        "Plasma",
+        "canSpecialBeamAttack",
+        {"ammo": {"type": "PowerBomb", "count": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "This also raises the elevator, but using this method to get up is a bit obscure and would use the notable from 2->3."
+    },
+    {
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
-          "h_canFly"
+          "h_canFly",
+          {"and": [
+            "HiJump",
+            "canSpringBallJumpMidAir"
+          ]}
         ]}
       ],
       "clearsObstacles": ["B"]
     },
     {
-      "link": [2, 1],
+      "link": [2, 3],
       "name": "Ride the Elevator",
-      "notable": false,
+      "requires": [
+        "h_canUseMorphBombs"
+      ],
+      "clearsObstacles": ["B"],
+      "note": "The elevator can be raised by hitting below the shot block with a Bomb."
+    },
+    {
+      "link": [2, 3],
+      "name": "Elevator with Power Bombs or Wave",
       "requires": [
         {"or": [
-          "h_canUseMorphBombs",
+          "h_canUsePowerBombs",
           "Wave"
         ]}
       ],
+      "clearsObstacles": ["A", "B"],
+      "note": "Use a Power Bomb against the left wall or Wave to kill the enemies and ride the elevator."
+    },
+    {
+      "link": [2, 3],
+      "name": "Pink Hoppers Shot Clip to Ride the Elevator",
+      "notable": true,
+      "requires": [
+        {"or": [
+          {"ammo": {"type": "Missile", "count": 1}},
+          {"ammo": {"type": "Super", "count": 1}},
+          "Spazer",
+          {"and": [
+            "Charge",
+            "Plasma"
+          ]},
+          {"and": [
+            "Charge",
+            "Ice",
+            "canSpecialBeamAttack",
+            {"ammo": {"type": "PowerBomb", "count": 1}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "The elevator can be raised by clipping a shot into the floor, shot while falling with the right amount of vertical speed.",
+        "This can be done with a Missile, Super, or charged Spazer or Plasma shot, a well positioned angle Spazer shot while crouched, or an  or Ice SBA."
+      ],
+      "devNote": [
+        "FIXME: Do we need leniency or another tech for this?",
+        "This is only notable as a way to avoid wall jumps."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Speedy HiJump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 7
+        }
+      },
+      "requires": [
+        "HiJump"
+      ],
+      "note": "Jump at the end of the runway in-room. Assumes there is a runway in the adjacent room of at least 7 tiles."
+    },
+    {
+      "link": [2, 3],
+      "name": "Tricky Speedy HiJump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 6
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canTrickyJump"
+      ],
+      "note": "Jump at the very end of the runway in-room. Requires a runway in the adjacent room of at least 6 tiles."
+    },
+    {
+      "link": [2, 3],
+      "name": "Tricky Speedy Spring Ball",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 7
+        }
+      },
+      "requires": [
+        "canTrickySpringBallJump",
+        "canTrickyDashJump"
+      ],
+      "note": "Jump at the very end of the runway in-room. Requires a runway in the adjacent room of at least 7 tiles."
+    },
+    {
+      "link": [2, 3],
+      "name": "Pink Hoppers Screw and Kago to Ride the Elevator",
+      "notable": true,
+      "requires": [
+        "canKago",
+        {"or": [
+          "ScrewAttack",
+          "canPseudoScrew"
+        ]},
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canCrouchJump",
+              "canDownGrab"
+            ]}
+          ]},
+          "canTrickyJump",
+          "Morph"
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Start the elevator ride by using Screw Attack or Pseudo Screw in the hole.",
+        "Kago the elevator to fall back in and hit the elevator again. This is much easier while the elevator is still rising, but can still be done with Morph afterwards.",
+        "Unless HiJump is owned, this will need to be done once more to get high enough to get to the blue gate."
+      ],
+      "devNote": [
+        "FIXME: Add Shinespark strats to get up to the gate, or to spark against the wall to raise the elevator.",
+        "This is only notable as a way to avoid wall jumps."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Shinespark, Come in Shinecharging",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        {"or": [
+          {"shinespark": {"frames": 22, "excessFrames": 4}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 15, "excessFrames": 3}}
+          ]},
+          {"and": [
+            "canMidairShinespark",
+            "HiJump",
+            {"shinespark": {"frames": 12, "excessFrames": 4}}
+          ]}
+        ]}
+      ],
       "clearsObstacles": ["B"]
     },
     {
-      "link": [2, 1],
-      "name": "Elevator with Power Bombs",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Shinespark, Come in Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 1
+        }
+      },
       "requires": [
-        "h_canUsePowerBombs"
+        {"shinespark": {"frames": 22, "excessFrames": 4}}
       ],
-      "clearsObstacles": ["A", "B"],
-      "note": "Using a power bomb against the left wall will kill the enemies and trigger the elevator."
+      "clearsObstacles": ["B"]
     },
     {
-      "link": [2, 1],
-      "name": "G-Mode Morph IBJ",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Pink Hoppers Shinespark into the Wall to Ride the Elevator, Come in Shinecharging",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 1, "excessFrames": 1}}
+      ],
+      "clearsObstacles": ["B"],
+      "reusableRoomwideNotable": "Pink Hoppers Shinespark into the Wall to Ride the Elevator",
+      "note": "Shinesparking horizontally into the wall will trigger the elevator as Samus's echos hit it."
+    },
+    {
+      "link": [2, 3],
+      "name": "Pink Hoppers Shinespark into the Wall to Ride the Elevator, Come in Shinecharged",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 45
+        }
+      },
+      "requires": [
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 1, "excessFrames": 1}}
+      ],
+      "clearsObstacles": ["B"],
+      "reusableRoomwideNotable": "Pink Hoppers Shinespark into the Wall to Ride the Elevator",
+      "note": "Shinesparking horizontally into the wall will trigger the elevator as Samus's echos hit it."
+    },
+    {
+      "link": [2, 3],
+      "name": "Pink Hoppers Shinespark into the Wall to Ride the Elevator, Come in Shinesparking",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 15, "excessFrames": 6}}
+      ],
+      "clearsObstacles": ["B"],
+      "reusableRoomwideNotable": "Pink Hoppers Shinespark into the Wall to Ride the Elevator",
+      "note": "Shinesparking horizontally into the wall will trigger the elevator as Samus's echos hit it."
+    },
+    {
+      "link": [2, 3],
+      "name": "G-Mode Morph IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "h_canArtificialMorphIBJ"
       ],
       "clearsObstacles": ["B"]
     },
     {
-      "link": [2, 1],
+      "link": [2, 3],
       "name": "G-Mode Morph Elevator with Power Bomb",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"ammo": {"type": "PowerBomb", "count": 1}}
       ],
       "clearsObstacles": ["A", "B"],
       "note": "Using a power bomb against the left wall will kill the enemies and trigger the elevator."
     },
     {
-      "link": [2, 2],
-      "name": "Safe Kill",
-      "notable": false,
+      "link": [3, 1],
+      "name": "Dead Sidehoppers",
       "requires": [
-        {"enemyKill": {
-          "enemies": [
-            ["Sidehopper", "Sm. Sidehopper", "Sm. Sidehopper"]
-          ],
-          "explicitWeapons": ["PowerBomb", "ScrewAttack", "Wave"]
-        }}
+        {"obstaclesCleared": ["A"]}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Tank a Hit",
+      "requires": [
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }},
+          {"and": [
+            "canCarefulJump",
+            {"enemyDamage": {
+              "enemy": "Sm. Sidehopper",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]}
+      ],
+      "note": "Jump far to the left in order to hit a small Sidehopper instead of a large one."
+    },
+    {
+      "link": [3, 1],
+      "name": "Screw Kill",
+      "requires": [
+        "ScrewAttack",
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Sm. Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
       ],
       "clearsObstacles": ["A"],
-      "note": "With access to the right side of the room, it's possible to kill the enemies safely with Wave or a PB or screw attack once on the other side."
+      "note": "It is possible to kill the Sidehoppers damageless by jumping into the bottom left corner then quickly spin jumping again."
+    },
+    {
+      "link": [3, 2],
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          "canCarefulJump",
+          "canWalljump",
+          "SpaceJump",
+          "Grapple"
+        ]}
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Open the Gate",
+      "requires": [
+        "Wave"
+      ],
+      "clearsObstacles": ["B"]
     }
   ]
 }

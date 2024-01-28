@@ -11,87 +11,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Butterfly Room Left Door (to Plasma Spark Room)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a750",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Butterfly Room Left Door (to Plasma Spark Room)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zoa",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zoa",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
-      "name": "Butterfly Room Right Door (to West Cactus Alley)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x001a75c",
       "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Butterfly Room Right Door (to West Cactus Alley)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zoa",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zoa",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
           "name": "Butterfly Room Grey Lock (to West Cactus Alley)",
@@ -110,7 +42,7 @@
     },
     {
       "id": 3,
-      "name": "Butterfly Room Top Sand Entrance (from Plasma Beach Quicksand Room)",
+      "name": "Top Sand Entrance",
       "nodeType": "entrance",
       "nodeSubType": "sandpit"
     }
@@ -200,16 +132,46 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Zoa Farm",
-      "notable": false,
       "requires": [
         {"refill": ["Energy", "Missile", "Super"]}
       ]
     },
     {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zoa",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zoa",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity"
       ]
@@ -217,7 +179,6 @@
     {
       "link": [1, 2],
       "name": "Suitless",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump"
@@ -226,7 +187,6 @@
     {
       "link": [1, 2],
       "name": "Frozen Zoa Bridge",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canUseFrozenEnemies",
@@ -237,7 +197,6 @@
     {
       "link": [1, 2],
       "name": "Suitless Bombs",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
@@ -267,7 +226,6 @@
     {
       "link": [1, 2],
       "name": "Butterfly Room Suitless Sand Escape (Left to Right)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "h_canCrouchJumpDownGrab",
@@ -282,28 +240,21 @@
     {
       "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 22, "excessFrames": 12}}
+        {"shinespark": {"frames": 22, "excessFrames": 11}}
       ]
     },
     {
       "link": [1, 2],
       "name": "Cross Room Jump with Bomb Boost",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithBombBoost": {}
+      },
       "requires": [
-        "h_canBombHorizontally",
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 0.5,
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
       "note": [
         "Only requires a runway of approximately 0.5 tiles in the adjacent room.",
@@ -313,7 +264,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity"
       ]
@@ -321,7 +271,6 @@
     {
       "link": [2, 1],
       "name": "Suitless",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump"
@@ -330,7 +279,6 @@
     {
       "link": [2, 1],
       "name": "Frozen Zoa Bridge",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canUseFrozenEnemies",
@@ -341,7 +289,6 @@
     {
       "link": [2, 1],
       "name": "Suitless Bombs",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "h_canUseMorphBombs",
@@ -371,7 +318,6 @@
     {
       "link": [2, 1],
       "name": "Butterfly Room Suitless Sand Escape (Right to Left)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "h_canCrouchJumpDownGrab",
@@ -386,30 +332,21 @@
     {
       "link": [2, 1],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        "h_canNavigateUnderwater",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "inRoomPath": [2, 1],
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 22, "excessFrames": 12}}
+        {"shinespark": {"frames": 22, "excessFrames": 11}}
       ]
     },
     {
       "link": [2, 1],
       "name": "Cross Room Jump with Bomb Boost",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithBombBoost": {}
+      },
       "requires": [
-        "h_canBombHorizontally",
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
       "note": [
         "Only requires a runway of approximately 0.5 tiles in the adjacent room.",
@@ -418,8 +355,18 @@
     },
     {
       "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Zoa Farm",
-      "notable": false,
       "requires": [
         {"refill": ["Energy", "Missile", "Super"]}
       ]
@@ -443,9 +390,29 @@
       "devNote": "The drops will keep Samus at high energy, but 2 hits enemy damage were added as a worst-case scenario where the next-to-last Zoa you kill doesn't give you energy."
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zoa",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zoa",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater"
       ]
@@ -453,7 +420,6 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater"
       ]

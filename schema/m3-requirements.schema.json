@@ -294,6 +294,27 @@
             "title": "Energy at Most",
             "description": "Fulfilled by having Samus' energy drop to a maximum of this value, regardless of how much she had coming in."
           },
+          "autoReserveTrigger": {
+            "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger",
+            "type": "object",
+            "title": "Auto-reserve Trigger",
+            "description": "Fulfilled by taking damage to trigger auto-reserves, which results in Samus' energy becoming equal to the initial reserve energy, and reserve energy becoming zero.",
+            "additionalProperties": false,
+            "properties": {
+              "minReserveEnergy": {
+                "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger/properties/minReserveEnergy",
+                "type": "integer",
+                "description": "Minimum energy in reserves which will satisfy this requirement",
+                "default": 1
+              },
+              "maxReserveEnergy": {
+                "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger/properties/maxReserveEnergy",
+                "type": "integer",
+                "description": "Maximum energy in reserves which will satisfy this requirement",
+                "default": 400
+              }
+            }
+          },
           "spikeHits": {
             "$id": "#/definitions/logicalRequirement/items/properties/spikeHits",
             "type": "integer",
@@ -372,163 +393,6 @@
                   "title": "Resource Count",
                   "description": "The amount of resource capacity that Samus must have."
                 }
-              }
-            }
-          },
-          "adjacentRunway": {
-            "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway",
-            "type": "object",
-            "title": "Adjacent Runway",
-            "description": "DEPRECATED: Fulfilled by being able to come in via a specific door, if the door in the adjacent room has a runway that fulfills the other properties of this logical element. This logical requirement will be deleted; the strat property 'entranceCondition' should be used instead.",
-            "required": [
-              "fromNode",
-              "usedTiles"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which the adjacent runway must be accessed."
-              },
-              "usedTiles": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/usedTiles",
-                "type": "number",
-                "title": "Used Tiles",
-                "description": "The number of effective tiles the runway in the adjacent room must have."
-              },
-              "inRoomPath": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/inRoomPath",
-                "type": "array",
-                "title": "In-Room Path",
-                "description": "The path of nodes that must have been followed by the player since entering the room in order for this adjacentRunway to be usable.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/inRoomPath/items",
-                  "type": "integer",
-                  "title": "In-Room Path node",
-                  "description": "The ID of a node that is part of this path"
-                }
-              },
-              "physics": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics",
-                "type": "array",
-                "title": "Appropriate Physics",
-                "description": "An optional array describing which physics are acceptable in order for this adjacentRunway to be usable. All physics are acceptable if this is missing.",
-                "minItems": 1,
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics/items",
-                  "$ref" : "m3-room.schema.json#/definitions/physics",
-                  "description": "A physics that is acceptable in order for this adjacentRunway to be usable."
-                }
-              },
-              "useFrames":{
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/useFrames",
-                "type": "integer",
-                "title": "Use Frames",
-                "description": "An optional value that indicates a number of frames that Samus must spend at the adjacent runway. She should take appropriate damage according to that door's environment (acid/lava) and that room's environment (heat) when applicable.",
-                "minimum": 1
-              },
-              "overrideRunwayRequirements": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/overrideRunwayRequirements",
-                "type": "boolean",
-                "title": "Override Runway Requirements",
-                "description": "An optional value that indicates whether logical requirements on the runway itself d be ignored. If missing, this should be interpreted as false."
-              }
-            }
-          },
-          "adjacentJumpway": {
-            "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway",
-            "type": "object",
-            "title": "Adjacent Jumpway",
-            "description": "Fulfilled by the adjacent room having a jumpway with specified characteristics.",
-            "required": [
-              "fromNode",
-              "jumpwayType"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which Samus must enter."
-              },
-              "jumpwayType": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/jumpwayType",
-                "$ref": "m3-room.schema.json#/properties/nodes/items/properties/jumpways/items/properties/jumpwayType",
-                "title": "Jumpway Type",
-                "description": "Type of jumpway required in the adjacent room."
-              },
-              "minHeight": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minHeight",
-                "type": "number",
-                "title": "Minimum Height",
-                "description": "Minimum height of jumpway that will satisfy the requirement."
-              },
-              "maxHeight": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxHeight",
-                "type": "number",
-                "title": "Maximum Height",
-                "description": "Maximum height of jumpway that will satisfy the requirement."
-              },
-              "maxLeftPosition": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxLeftPosition",
-                "type": "number",
-                "title": "Maximum Left Position",
-                "description": "Maximum value of the jumpway leftPosition that will satisfy the requirement."
-              },
-              "minRightPosition": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minRightPosition",
-                "type": "number",
-                "title": "Minimum Right Position",
-                "description": "Minimum value of the jumpway rightPosition that will satisfy the requirement."
-              }
-            }
-          },
-          "canComeInCharged": {
-            "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged",
-            "type": "object",
-            "title": "Can Come in Charged",
-            "description": "DEPRECATED: Fulfilled by being able to come into the room via a specific door, with a shinespark charge that has at least a number of frames remaining. This logical requirement will be deleted; the strat property 'entranceCondition' should be used instead.",
-            "required": [
-              "fromNode",
-              "framesRemaining"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which a shinespark charge must be carried."
-              },
-              "inRoomPath": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/inRoomPath",
-                "type": "array",
-                "title": "In-Room Path",
-                "description": "The path of nodes that must have been followed by the player since entering the room in order for this canComeInCharged to be usable.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/inRoomPath/items",
-                  "type": "integer",
-                  "title": "In-Room Path node",
-                  "description": "The ID of a node that is part of this path"
-                }
-              },
-              "framesRemaining": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/framesRemaining",
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 180,
-                "title": "Frames Remaining",
-                "description": "The number of frames that must be left on the shinespark charge when coming in."
-              },
-              "unusableTiles": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/unusableTiles",
-                "type": "number",
-                "minimum": 0,
-                "title": "Unusable Tiles",
-                "description": "The number of contiguous tiles that are part of the runway but cannot be used to charge this shinespark."
               }
             }
           },
@@ -661,85 +525,6 @@
                 "type": "boolean",
                 "title": "Must Stay Put",
                 "description": "Indicates that no other node but the entry node may be visited in order to fulfill this logical element. Must not be defined when it is intended to be false, unless there are no nodes or obstacles to avoid."
-              }
-            }
-          },
-          "comeInWithRMode": {
-            "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode",
-            "type": "object",
-            "title": "Come in With R-Mode",
-            "description": "Fulfilled by being able to come into the room via one of a specific set of doors to obtain R-mode (not including G-mode). This implicitly requires the tech canEnterRMode as well as XRayScope and ReserveTank items.",
-            "required": [
-              "fromNodes"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNodes": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode/properties/fromNodes",
-                "type": "array",
-                "title": "From Nodes",
-                "description": "A list of in-room node IDs, through one of which we must obtain R-mode (not including G-mode) in order to satisfy this logical element",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode/properties/fromNode/items",
-                  "type": "integer",
-                  "title": "From Node",
-                  "description": "The ID of a node through which we may obtain R-mode (not including G-mode) in order to satisfy this logical element"
-                }
-              }
-            }
-          },
-          "comeInWithGMode": {
-            "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode",
-            "type": "object",
-            "title": "Come in With G-Mode",
-            "description": "Fulfilled by being able to come into the room via one of a specific set of doors with G-mode (direct or indirect). This implicitly requires the tech canEnterGMode as well as XRayScope and ReserveTank items and a matching leaveWithGModeSetup (with non-zero reserve energy) or leaveWithGMode property on the neighboring door.",
-            "required": [
-              "fromNodes",
-              "mode",
-              "artificialMorph"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNodes": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/fromNodes",
-                "type": "array",
-                "title": "From Nodes",
-                "description": "A list of in-room node IDs, one of which we must come in through with G-mode in order to satisfy this logical element.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/fromNodes/items",
-                  "type": "integer",
-                  "title": "From Node",
-                  "description": "The ID of a node which we may come in through with G-mode in order to satisfy this logical element."
-                }
-              },
-              "mode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/mode",
-                "type": "string",
-                "enum": [
-                  "direct",
-                  "indirect",
-                  "any"
-                ],
-                "title": "Mode",
-                "description": "Whether we must come in with direct G-mode, indirect G-mode, or either"
-              },
-              "artificialMorph": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/artificialMorph",
-                "type": "boolean",
-                "title": "Artificial Morph",
-                "description": "Whether we must come in with artificial morph (also satisfied by having Morph collected)"
-              },
-              "mobility": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/mobility",
-                "type": "string",
-                "enum": [
-                  "mobile",
-                  "immobile",
-                  "any"
-                ],
-                "default": "any",
-                "title": "Mobility",
-                "description": "Whether Samus must come in mobile, immobile, or either."
               }
             }
           },

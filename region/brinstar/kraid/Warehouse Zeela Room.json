@@ -10,55 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Warehouse Zeelas Top Left Door (to Warehouse Entrance)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001913e",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zeela",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Warehouse Zeelas Bottom Left Door (to E-Tank)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x001914a",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zeela",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
           "name": "Warehouse Zeela Room Grey Lock (to E-Tank)",
@@ -77,40 +41,11 @@
     },
     {
       "id": 3,
-      "name": "Warehouse Zeelas Right Vertical Door (to Kihunters)",
+      "name": "Right Vertical Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019156",
-      "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 8,
-          "requires": []
-        },
-        {
-          "name": "Platform",
-          "jumpwayType": "platformBelow",
-          "height": 9,
-          "leftPosition": -2,
-          "rightPosition": 2,
-          "requires": []
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Frozen Zeela",
-            "notable": false,
-            "requires": [
-              "canUpwardGModeSetup",
-              "canTrickyUseFrozenEnemies",
-              "h_canBombThings"
-            ]
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -148,7 +83,8 @@
     {
       "from": 3,
       "to": [
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     }
   ],
@@ -156,7 +92,6 @@
     {
       "link": [1, 1],
       "name": "Zeela Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2],
@@ -171,7 +106,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -181,21 +115,237 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zeela",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Zeela"]],
+            "explicitWeapons": ["Wave", "Spazer", "Plasma", "Missile", "Super"]
+          }},
+          {"and": [
+            "canKago",
+            {"enemyDamage": {
+              "enemy": "Zeela",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 5}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "note": [
+        "Gain a shinecharging while entering the room, and angle diagonally down to shoot the block.",
+        "While falling, kill the Zeela or perform a Kago through it.",
+        "Quickly reach the door below and spark out."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 165
+        }
+      },
+      "requires": [
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Zeela"]],
+            "explicitWeapons": ["Wave", "Spazer", "Plasma", "Missile", "Super"]
+          }},
+          {"and": [
+            "canKago",
+            {"enemyDamage": {
+              "enemy": "Zeela",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 4}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "note": [
+        "Enter with a shinecharge, jumping and aiming down and shoot the block.",
+        "While falling, kill the Zeela or perform a Kago through it.",
+        "Quickly reach the door below and spark out."
+      ],
+      "devNote": [
+        "FIXME: Add faster strat that morphs and takes a neutral damage boost off the Zeela and then down-backs."
+      ]
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "The camera will be messed up, so you will need to move blindly to get into position.",
+        "Don't wait too long or the Zeela will hit you.",
+        "Climb up 1 screen, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"enemyKill": {
+          "enemies": [["Zeela"]],
+          "explicitWeapons": ["Wave", "Plasma"]
+        }},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 2}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "note": [
+        "Enter with a shinecharge, and move up toward the door above.",
+        "Use Wave or Plasma to shoot open the door from below while killing the approaching Zeelas."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 160
+        }
+      },
+      "requires": [
+        {"enemyKill": {
+          "enemies": [["Zeela"]],
+          "explicitWeapons": ["Wave", "Plasma"]
+        }},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 2}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "note": [
+        "Enter with a shinecharge, and move up toward the door above.",
+        "Use Wave or Plasma to shoot open the door from below while killing the approaching Zeelas."
+      ]
     },
     {
       "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -205,9 +355,29 @@
       }
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zeela",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -215,7 +385,6 @@
     {
       "link": [2, 3],
       "name": "Through Door Speedball",
-      "notable": false,
       "entranceCondition": {
         "comeInSpeedballing": {
           "runway": {
@@ -229,7 +398,6 @@
     {
       "link": [2, 3],
       "name": "Temporary Blue Bounce",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 3,
@@ -245,21 +413,19 @@
     {
       "link": [2, 3],
       "name": "G-Mode Morph Overload PLMs",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
-      ],
+          "morphed": true
+        }
+      },
+      "requires": [],
       "note": "Wiggle back and forth to get through the bomb blocks before the Zeela hits Samus.",
       "devNote": "This is off camera, but doesnt require canOffScreenMovement because of its simplicity."
     },
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
@@ -267,19 +433,74 @@
     {
       "link": [3, 2],
       "name": "G-Mode Morph Overload PLMs",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "canOffScreenMovement"
       ],
       "note": [
         "Wiggle back and forth to get through the bomb blocks while avoiding the off screen Zeela.",
         "Unmorph and exit G-Mode then quickly run back and forth to fix the camera or go through the door."
       ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Zeela Ice Clip Door Lock Skip",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "h_canNonTrivialCeilingClip"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Freeze a Zeela at a precise distance below the door in order to jump up and clip through the door shell.",
+        "The pixel window is larger and higher with Morph and an X-Ray stand-up."
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Door Frame Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 8
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Platform Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -2,
+          "rightPosition": 2
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Frozen Zeela",
+      "notable": false,
+      "requires": [
+        "canUpwardGModeSetup",
+        "canTrickyUseFrozenEnemies",
+        "h_canBombThings"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
     }
   ]
 }

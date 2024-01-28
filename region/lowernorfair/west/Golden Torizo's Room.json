@@ -11,92 +11,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Golden Torizo Room Left Door (to Acid Statue)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019876",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Golden Torizo Room Left Door (to Acid Statue)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Golden Torizo Room Right Door (to Screw Attack)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0019882",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Golden Torizo Room Right Door (to Screw Attack)",
-          "length": 28,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"or": [
-                  "f_DefeatedGoldenTorizo",
-                  {"obstaclesNotCleared": ["A"]}
-                ]},
-                {"heatFrames": 280}
-              ]
-            },
-            {
-              "name": "Golden Torizo Run Under Jump",
-              "notable": true,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesCleared": ["A"]},
-                {"heatFrames": 415}
-              ],
-              "note": "Wait for GT to appear on screen and run towards it, or wait for GT to jump back on its own."
-            }
-          ],
-          "openEnd": 0,
-          "usableComingIn": true
-        },
-        {
-          "name": "GT Active, Short Runway - Golden Torizo Room Right Door (to Screw Attack)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesCleared": ["A"]},
-                {"enemyDamage": {
-                  "enemy": "Golden Torizo",
-                  "type": "contact",
-                  "hits": 1
-                }},
-                {"heatFrames": 385}
-              ],
-              "note": "Wait to take a hit from GT and run through it, or if it jumps back Samus can run below the jump.",
-              "devNote": "It's kinda vague where GT will be in a practical situation.  This assumes GT just finished standing up."
-            }
-          ],
-          "openEnd": 1,
-          "usableComingIn": false
-        }
-      ],
       "locks": [
         {
           "name": "Golden Torizo Room Grey Lock (to Screw Attack)",
@@ -115,7 +42,7 @@
     },
     {
       "id": 3,
-      "name": "Missile (Golden Torizo)",
+      "name": "Top Left Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -123,7 +50,7 @@
     },
     {
       "id": 4,
-      "name": "Super Missile (Golden Torizo)",
+      "name": "Hidden Right Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Super",
@@ -408,7 +335,7 @@
     },
     {
       "id": 6,
-      "name": "GT Arena Junction (GT Fight Not Triggered)",
+      "name": "Golden Torizo Arena Junction (Fight Not Started)",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "viewableNodes": [
@@ -490,6 +417,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 3},
         {"id": 6}
       ]
@@ -497,6 +425,7 @@
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 5}
       ]
     },
@@ -504,12 +433,14 @@
       "from": 3,
       "to": [
         {"id": 1},
+        {"id": 3},
         {"id": 6}
       ]
     },
     {
       "from": 4,
       "to": [
+        {"id": 4},
         {"id": 5},
         {"id": 6}
       ]
@@ -541,6 +472,24 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 3],
       "name": "GT Crumble Jump to Left Item",
       "notable": true,
@@ -567,7 +516,6 @@
     {
       "link": [1, 3],
       "name": "Spring Ball",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canUseSpringBall",
@@ -577,7 +525,6 @@
     {
       "link": [1, 3],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -587,13 +534,11 @@
     {
       "link": [1, 3],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0
-        }},
         {"heatFrames": 150},
         {"shinespark": {"frames": 17, "excessFrames": 3}}
       ]
@@ -601,16 +546,58 @@
     {
       "link": [1, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 200}
       ]
     },
     {
+      "link": [2, 2],
+      "name": "Leave With Runway (GT Dead)",
+      "requires": [
+        "f_DefeatedGoldenTorizo"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (GT Alive)",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"heatFrames": 415}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 0
+        }
+      },
+      "note": "Wait to run under Golden Torizo as it jumps."
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        {"or": [
+          "canPrepareForNextRoom",
+          "f_DefeatedGoldenTorizo"
+        ]},
+        "h_canHeatedCrystalFlash"
+      ],
+      "note": [
+        "If entering from the right door with Golden Torizo not yet defeated, come in already morphed, Crystal Flash immediately, then morph and roll under Golden Torizo."
+      ]
+    },
+    {
       "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 50}
@@ -644,7 +631,6 @@
     {
       "link": [3, 1],
       "name": "Spring Ball",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canUseSpringBall",
@@ -654,7 +640,6 @@
     {
       "link": [3, 1],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -662,18 +647,30 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [3, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 200}
       ]
     },
     {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 100}
@@ -683,7 +680,6 @@
     {
       "link": [4, 6],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"obstaclesNotCleared": ["A"]},
@@ -693,7 +689,6 @@
     {
       "link": [5, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 50}
@@ -702,7 +697,6 @@
     {
       "link": [5, 4],
       "name": "Power Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
@@ -724,7 +718,6 @@
     {
       "link": [5, 4],
       "name": "Space Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -735,7 +728,6 @@
     {
       "link": [5, 4],
       "name": "Speed HiJump Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -748,7 +740,6 @@
     {
       "link": [5, 4],
       "name": "GT Supers Screw Walljump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -807,7 +798,6 @@
     {
       "link": [5, 4],
       "name": "GT Supers IBJ",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_DefeatedGoldenTorizo",
@@ -820,7 +810,6 @@
     {
       "link": [5, 4],
       "name": "Instant Morph Bomb Placement.",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "h_canUseMorphBombs",
@@ -852,7 +841,6 @@
     {
       "link": [6, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 50}
@@ -861,7 +849,6 @@
     {
       "link": [6, 4],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -879,7 +866,6 @@
     {
       "link": [6, 4],
       "name": "HiJump and Speed",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -893,7 +879,6 @@
     {
       "link": [6, 4],
       "name": "Walljump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -914,7 +899,6 @@
     {
       "link": [6, 4],
       "name": "Springball Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"not": "f_DefeatedGoldenTorizo"},
@@ -942,7 +926,6 @@
     {
       "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "clearsObstacles": ["A"]
     }

@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Morph Ball Room Left Door (to Green Hill Zone)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018e9e",
@@ -36,14 +36,14 @@
     },
     {
       "id": 2,
-      "name": "Blue Brinstar Elevator to Crateria",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
       "nodeAddress": "0x0018eb6"
     },
     {
       "id": 3,
-      "name": "Morph Ball Room Right Door (to Construction Zone)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018eaa",
@@ -51,7 +51,7 @@
     },
     {
       "id": 4,
-      "name": "Morphing Ball",
+      "name": "Right Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Morph",
@@ -63,7 +63,7 @@
     },
     {
       "id": 5,
-      "name": "Power Bomb (blue Brinstar)",
+      "name": "Left Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "PowerBomb",
@@ -78,7 +78,7 @@
               "notable": false,
               "requires": [
                 {"or": [
-                  "f_ZebesAwake",
+                  "h_ZebesIsAwake",
                   "h_AllItemsSpawned"
                 ]}
               ]
@@ -90,7 +90,7 @@
     },
     {
       "id": 6,
-      "name": "Morph Ball Room Junction (Right of Sidehoppers)",
+      "name": "Junction (Left of Morph Tunnel)",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -159,6 +159,7 @@
       "from": 4,
       "to": [
         {"id": 2},
+        {"id": 4},
         {"id": 5}
       ]
     },
@@ -182,8 +183,9 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
-      "requires": [],
+      "requires": [
+        {"obstaclesCleared": ["C"]}
+      ],
       "exitCondition": {
         "leaveWithRunway": {
           "length": 4,
@@ -194,7 +196,6 @@
     {
       "link": [1, 1],
       "name": "Leave Charged",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["C"]},
         "canShinechargeMovement",
@@ -205,7 +206,7 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 80
+          "framesRemaining": 135
         }
       },
       "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
@@ -213,9 +214,8 @@
     {
       "link": [1, 1],
       "name": "G-Mode Setup - Get Hit By Sidehopper",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake"
+        "h_ZebesIsAwake"
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
@@ -224,21 +224,27 @@
     {
       "link": [1, 1],
       "name": "G-Mode Regain Mobility",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
           "type": "contact",
           "hits": 1
         }},
-        "f_ZebesAwake"
+        "h_ZebesIsAwake"
       ],
       "gModeRegainMobility": {}
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 5],
       "name": "Room Entry Speedball",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 2,
@@ -258,7 +264,6 @@
     {
       "link": [1, 5],
       "name": "G-Mode Morph Overload PLMs Zebes Asleep",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "any",
@@ -266,8 +271,7 @@
         }
       },
       "requires": [
-        {"not": "f_ZebesAwake"},
-        "canRiskPermanentLossOfAccess"
+        "h_ZebesNotAwake"
       ],
       "clearsObstacles": ["D"],
       "note": "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door."
@@ -275,7 +279,6 @@
     {
       "link": [1, 5],
       "name": "G-Mode Overload PLMs Indirect",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "indirect",
@@ -313,7 +316,6 @@
     {
       "link": [1, 5],
       "name": "G-Mode Morph Overload PLMs Direct",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "direct",
@@ -353,7 +355,6 @@
     {
       "link": [1, 6],
       "name": "Run Through",
-      "notable": false,
       "requires": [
         {"or": [
           {"enemyDamage": {
@@ -368,7 +369,6 @@
     {
       "link": [1, 6],
       "name": "Power Beam Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -381,7 +381,6 @@
     {
       "link": [1, 6],
       "name": "Quick Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -414,7 +413,6 @@
     {
       "link": [1, 6],
       "name": "Spark into Room",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -426,7 +424,6 @@
     {
       "link": [1, 6],
       "name": "Kill on Entry",
-      "notable": false,
       "requires": [
         "canPrepareForNextRoom",
         {"or": [
@@ -453,7 +450,6 @@
     {
       "link": [1, 6],
       "name": "Power Bomb Sidehopper Kill and Bomb Blocks",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -485,7 +481,6 @@
     {
       "link": [1, 6],
       "name": "Medium Sidehopper Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -502,10 +497,8 @@
     {
       "link": [1, 6],
       "name": "Free Passage",
-      "notable": false,
       "requires": [
-        {"not": "f_ZebesAwake"},
-        "canRiskPermanentLossOfAccess"
+        "h_ZebesNotAwake"
       ],
       "clearsObstacles": ["C"],
       "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
@@ -513,7 +506,6 @@
     {
       "link": [2, 2],
       "name": "Leave Charged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 30,
@@ -530,25 +522,21 @@
     {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 2],
       "name": "Carry G-Mode Up the Elevator",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "any",
@@ -565,7 +553,6 @@
     {
       "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -577,7 +564,6 @@
     {
       "link": [3, 3],
       "name": "Leave Charged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 30,
@@ -587,14 +573,13 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 100
+          "framesRemaining": 130
         }
       }
     },
     {
       "link": [3, 5],
       "name": "G-Mode Morph Power Bomb the Blocks",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "any",
@@ -611,7 +596,6 @@
     {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
@@ -624,7 +608,6 @@
     {
       "link": [4, 2],
       "name": "Careful Jump",
-      "notable": false,
       "requires": [
         "canCarefulJump"
       ]
@@ -632,15 +615,21 @@
     {
       "link": [4, 2],
       "name": "Crouch Jump Down Grab",
-      "notable": false,
       "requires": [
         "h_canCrouchJumpDownGrab"
       ]
     },
     {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
       "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -652,7 +641,6 @@
     {
       "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -664,7 +652,6 @@
     {
       "link": [5, 5],
       "name": "Power Bomb Blocks While in Artificial Morph from the Left",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["D"]},
         {"ammo": {"type": "PowerBomb", "count": 1}},
@@ -680,7 +667,6 @@
     {
       "link": [5, 6],
       "name": "Blocks Already Broken",
-      "notable": false,
       "requires": [
         "Morph",
         {"obstaclesCleared": ["A"]}
@@ -689,7 +675,6 @@
     {
       "link": [5, 6],
       "name": "Bomb the Blocks",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ],
@@ -698,7 +683,6 @@
     {
       "link": [5, 6],
       "name": "Morph Ball Room Speedball (Right to Left)",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["B"]},
         {"canShineCharge": {
@@ -716,7 +700,6 @@
     {
       "link": [6, 1],
       "name": "Laugh at Dead Sidehoppers",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["C"]}
       ]
@@ -724,7 +707,6 @@
     {
       "link": [6, 1],
       "name": "Tank the damage",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -736,7 +718,6 @@
     {
       "link": [6, 1],
       "name": "Safe Sidehopper Power Beam Kill",
-      "notable": false,
       "requires": [
         "Morph",
         {"obstaclesCleared": ["A"]}
@@ -748,10 +729,8 @@
     {
       "link": [6, 1],
       "name": "Free Passage",
-      "notable": false,
       "requires": [
-        {"not": "f_ZebesAwake"},
-        "canRiskPermanentLossOfAccess"
+        "h_ZebesNotAwake"
       ],
       "clearsObstacles": ["C"],
       "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
@@ -759,7 +738,6 @@
     {
       "link": [6, 5],
       "name": "Blocks Already Broken",
-      "notable": false,
       "requires": [
         "Morph",
         {"obstaclesCleared": ["A"]}
@@ -768,7 +746,6 @@
     {
       "link": [6, 5],
       "name": "Bomb the Blocks",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ],
@@ -777,7 +754,6 @@
     {
       "link": [6, 5],
       "name": "Morph Ball Room Speedball (Left to Right)",
-      "notable": false,
       "requires": [
         "canSpeedball",
         {"obstaclesCleared": ["C"]},

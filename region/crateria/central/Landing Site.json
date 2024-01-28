@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Landing Site Top Left Door (to Gauntlet)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001892e",
@@ -34,7 +34,7 @@
     },
     {
       "id": 2,
-      "name": "Landing Site Bottom Left Door (to Parlor)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018916",
@@ -42,7 +42,7 @@
     },
     {
       "id": 3,
-      "name": "Landing Site Top Right Door (to Power Bombs)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x001893a",
@@ -79,7 +79,7 @@
     },
     {
       "id": 4,
-      "name": "Landing Site Bottom Right Door (to Crateria Tube)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x0018922",
@@ -154,7 +154,7 @@
     },
     {
       "id": 7,
-      "name": "Landing Site Junction (Gauntlet Ledge)",
+      "name": "Junction (Left Ledge Below Bomb Blocks)",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": "Represents the ledge on the way to gauntlet, but on the right side of the bomb blocks."
@@ -202,6 +202,7 @@
       "from": 2,
       "to": [
         {"id": 2},
+        {"id": 4},
         {"id": 5},
         {"id": 8}
       ]
@@ -222,6 +223,7 @@
           "id": 1,
           "devNote": "This link is only for sparking, blue space jump, and G-mode. All other strats should go 4 -> 5 -> 7 -> 1."
         },
+        {"id": 2},
         {"id": 3},
         {"id": 4},
         {"id": 5},
@@ -268,7 +270,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -280,7 +281,6 @@
     {
       "link": [1, 1],
       "name": "Open Door",
-      "notable": false,
       "requires": [
         {"doorUnlockedAtNode": 1}
       ],
@@ -289,13 +289,14 @@
     {
       "link": [1, 1],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"],
+      "requires": [
+        "h_canCrystalFlash"
+      ],
       "clearsObstacles": ["A"]
     },
     {
       "link": [1, 4],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -313,14 +314,13 @@
     {
       "link": [1, 4],
       "name": "G-Mode through Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
       "note": [
         "Overload the scroll PLMs which are one tile to the left of the bomb blocks leading to Gauntlet.",
         "Then pass through the bomb blocks (which will have become air).",
@@ -334,7 +334,6 @@
     {
       "link": [1, 7],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canDestroyBombWalls",
@@ -346,14 +345,14 @@
     {
       "link": [1, 8],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        "Bombs",
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
+          "morphed": true
+        }
+      },
+      "requires": [
+        "Bombs"
       ],
       "note": [
         "Overload the scroll PLMs which are one tile to the left of the bomb blocks leading to Gauntlet.",
@@ -366,7 +365,6 @@
     {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -376,27 +374,73 @@
       }
     },
     {
+      "link": [2, 4],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        "SpeedBooster"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          "SpeedBooster",
+          {"and": [
+            "ScrewAttack",
+            "Grapple"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Break the Bomb blocks using Screw Attack in a Moonfall or SpeedBooster."
+    },
+    {
       "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 8],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
-      ]
+          "morphed": true
+        }
+      },
+      "requires": []
     },
     {
       "link": [3, 1],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 30,
@@ -405,6 +449,7 @@
         }
       },
       "requires": [
+        "canHorizontalShinespark",
         {"shinespark": {
           "frames": 125,
           "excessFrames": 33
@@ -415,7 +460,6 @@
     {
       "link": [3, 1],
       "name": "Shinespark through Door",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["C"]},
         {"shinespark": {"frames": 125}},
@@ -438,12 +482,15 @@
       "exitCondition": {
         "leaveWithSpark": {}
       },
-      "devNote": "The Gauntlet Entrance door must be open, so the connecting room at 3 cannot be used."
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "devNote": [
+        "The Gauntlet Entrance door must be open, so the connecting room at 3 cannot be used.",
+        "Unlocking the door is free since the obstacle C cleared means that any lock was already taken care of."
+      ]
     },
     {
       "link": [3, 1],
       "name": "Direct Jump to Gauntlet Entrance",
-      "notable": false,
       "requires": [
         "SpeedBooster",
         {"or": [
@@ -505,7 +552,6 @@
     {
       "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -518,12 +564,12 @@
     {
       "link": [3, 3],
       "name": "Gauntlet Wraparound Shot",
-      "notable": false,
       "requires": [
         "canCameraManip",
         "canWrapAroundShot",
         {"doorUnlockedAtNode": 1}
       ],
+      "unlocksDoors": [{"nodeId": 1, "types": ["ammo"], "requires": ["never"]}],
       "clearsObstacles": ["C"],
       "note": [
         "Open the Gauntlet Entrance door by shooting a charged Wave shot through the right wall to wrap around to hit the door.",
@@ -534,31 +580,31 @@
     {
       "link": [3, 3],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [3, 8],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
-      ]
+          "morphed": true
+        }
+      },
+      "requires": []
     },
     {
       "link": [4, 1],
       "name": "Shinespark",
-      "notable": false,
       "requires": [
+        "canHorizontalShinespark",
         {"canShineCharge": {
           "usedTiles": 19,
           "steepUpTiles": 2,
@@ -575,7 +621,6 @@
     {
       "link": [4, 1],
       "name": "Shinespark through Door",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["C"]},
         {"shinespark": {"frames": 125}},
@@ -588,12 +633,15 @@
       ],
       "exitCondition": {
         "leaveWithSpark": {}
-      }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "devNote": [
+        "Unlocking the door is free since the obstacle C cleared means that any lock was already taken care of."
+      ]
     },
     {
       "link": [4, 1],
       "name": "Big Jump Midair Shinespark",
-      "notable": false,
       "requires": [
         "canMidairShinespark",
         "canShinechargeMovementComplex",
@@ -603,7 +651,13 @@
           "steepDownTiles": 1,
           "openEnd": 2
         }},
-        {"shinespark": {"frames": 95, "excessFrames": 33}}
+        {"or": [
+          {"shinespark": {"frames": 95, "excessFrames": 33}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 87, "excessFrames": 33}}
+          ]}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
@@ -613,8 +667,40 @@
     },
     {
       "link": [4, 1],
+      "name": "Big Jump Midair Shinespark Through Door",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        "canMidairShinespark",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 19,
+          "steepUpTiles": 2,
+          "steepDownTiles": 1,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"shinespark": {"frames": 96}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 88}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": [
+        "Store the spark on the right side of the ledge.  Run left and do a big jump towards the gauntlet door and then midair spark at the right time.",
+        "The lines in the background make for a good way to measure height."
+      ],
+      "devNote": [
+        "Unlocking the door is free since the obstacle C cleared means that any lock was already taken care of."
+      ]
+    },
+    {
+      "link": [4, 1],
       "name": "Landing Site Blue Space Jump (Mid)",
-      "notable": false,
       "requires": [
         "canBlueSpaceJump",
         {"canShineCharge": {
@@ -637,8 +723,7 @@
         {"canShineCharge": {
           "usedTiles": 33,
           "openEnd": 2
-        }},
-        {"shinespark": {"frames": 95, "excessFrames": 33}}
+        }}
       ],
       "clearsObstacles": ["A"],
       "note": [
@@ -649,7 +734,6 @@
     {
       "link": [4, 1],
       "name": "Blue Springball Jump",
-      "notable": false,
       "requires": [
         "canTrickySpringBallJump",
         "canLateralMidAirMorph",
@@ -665,9 +749,65 @@
       ]
     },
     {
+      "link": [4, 2],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "steepDownTiles": 3,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 25,
+            "steepDownTiles": 3,
+            "openEnd": 0
+          }},
+          {"and": [
+            "ScrewAttack",
+            "Grapple"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Break the Bomb blocks using Screw Attack in a Moonfall or SpeedBooster."
+    },
+    {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canFly"
       ]
@@ -675,7 +815,6 @@
     {
       "link": [4, 3],
       "name": "Shinespark",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 19,
@@ -689,7 +828,6 @@
     {
       "link": [4, 3],
       "name": "SpeedyJump Into SpringballJump",
-      "notable": false,
       "requires": [
         "canTrickyDashJump",
         "HiJump",
@@ -699,13 +837,13 @@
     {
       "link": [4, 3],
       "name": "G-Mode Deep Stuck X-Ray Climb",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        }
+      },
+      "requires": [
         "canXRayClimb",
         "canBePatient"
       ],
@@ -714,7 +852,6 @@
     {
       "link": [4, 3],
       "name": "Shinespark Deep Stuck X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 1
@@ -749,9 +886,27 @@
       "devNote": "FIXME: Requires a way to take damage."
     },
     {
+      "link": [4, 3],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        "canBeVeryPatient"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 3 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
       "link": [4, 4],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -767,32 +922,29 @@
     {
       "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [4, 8],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        "h_canArtificialMorphMovement",
-        {"comeInWithGMode": {
-          "fromNodes": [4],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphMovement"
       ]
     },
     {
       "link": [5, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [5, 3],
       "name": "Shinespark",
-      "notable": false,
       "requires": [
         {"or": [
           {"and": [
@@ -816,7 +968,6 @@
     {
       "link": [5, 4],
       "name": "Over the Top",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
@@ -829,7 +980,6 @@
     {
       "link": [5, 4],
       "name": "Through the Blocks",
-      "notable": false,
       "requires": [
         {"or": [
           "SpeedBooster",
@@ -842,7 +992,6 @@
     {
       "link": [5, 5],
       "name": "Refill",
-      "notable": false,
       "requires": [
         {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
       ]
@@ -850,13 +999,11 @@
     {
       "link": [5, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [5, 7],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canFly",
@@ -871,7 +1018,6 @@
     {
       "link": [5, 7],
       "name": "Gauntlet Walljumps",
-      "notable": false,
       "requires": [
         "canDelayedWalljump",
         {"or": [
@@ -883,13 +1029,11 @@
     {
       "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [7, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
@@ -905,7 +1049,6 @@
     {
       "link": [7, 1],
       "name": "HiJump",
-      "notable": false,
       "requires": [
         "HiJump",
         {"or": [
@@ -930,7 +1073,6 @@
     {
       "link": [7, 1],
       "name": "Springball",
-      "notable": false,
       "requires": [
         "canSpringBallJumpMidAir",
         {"or": [
@@ -943,7 +1085,6 @@
     {
       "link": [7, 1],
       "name": "Shinespark",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 33,
@@ -956,31 +1097,37 @@
         ]}
       ],
       "clearsObstacles": ["A"],
-      "devNote": "This is for sparking from 5 -> 1."
+      "note": "Shinespark diagonally from the small hill left of the ship to break part way into the hidden bomb wall, then use Bombs or another means to continue to the left."
     },
     {
       "link": [7, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [8, 1],
       "name": "G-Mode Morph Power Bomb",
-      "notable": false,
       "requires": [
         "h_canArtificialMorphIBJ",
         {"ammo": {"type": "PowerBomb", "count": 1}}
       ],
       "note": [
         "Using IBJ to reach the Gauntlet entrance bomb blocks, place a Power Bomb and it will hit but not break the blocks.",
-        "After unmorphing and using X-Ray to cancel G-mode, the blocks will be broken, allowing Samus to pass through."
+        "Then IBJ up to to the left, unmorph and use X-Ray to cancel G-mode, the blocks will be broken, allowing Samus to pass through."
       ]
+    },
+    {
+      "link": [8, 1],
+      "name": "G-Mode Morph Screw Attack",
+      "requires": [
+        "h_canArtificialMorphIBJ",
+        "ScrewAttack"
+      ],
+      "note": "IBJ up to to the top left of the room. Use X-Ray to cancel G-mode, then fall with Screw Attack to break the bomb blocks."
     },
     {
       "link": [8, 3],
       "name": "G-Mode Morph IBJ",
-      "notable": false,
       "requires": [
         "h_canArtificialMorphIBJ"
       ]
@@ -988,16 +1135,15 @@
     {
       "link": [8, 4],
       "name": "G-Mode Morph Power Bomb",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "PowerBomb", "count": 1}}
       ],
-      "clearsObstacles": ["B"]
+      "clearsObstacles": ["B"],
+      "note": "Place a Power Bomb then quickly exit G-Mode before it explodes to break the bomb blocks."
     },
     {
       "link": [8, 4],
       "name": "G-Mode Morph IBJ",
-      "notable": false,
       "requires": [
         "h_canArtificialMorphIBJ"
       ],

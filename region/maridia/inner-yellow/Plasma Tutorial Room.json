@@ -11,119 +11,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Plasma Tutorial Room Left Door (to Kassiuz Room)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a540",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plasma Tutorial Room Left Door (to Kassiuz Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with no Enemies - Plasma Tutorial Room Left Door (to Kassiuz Room)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 0
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Puyo",
-            "notable": false,
-            "requires": [
-              "canBePatient"
-            ],
-            "note": "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          "canBePatient",
-          {"enemyDamage": {
-            "enemy": "Puyo",
-            "type": "contact",
-            "hits": 1
-          }}
-        ],
-        "note": "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Plasma Tutorial Room Right Door (to Plasma)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a54c",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plasma Tutorial Room Right Door (to Plasma)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with no Enemies - Plasma Tutorial Room Right Door (to Plasma)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 0
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Puyo",
-            "notable": false,
-            "requires": [
-              "canBeVeryPatient"
-            ],
-            "note": "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          "canBeVeryPatient",
-          {"enemyDamage": {
-            "enemy": "Puyo",
-            "type": "contact",
-            "hits": 1
-          }}
-        ],
-        "note": "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
-      }
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -146,34 +46,243 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
   "strats": [
     {
       "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway (Both Doors Open)",
+      "requires": [
+        {"doorUnlockedAtNode": 2}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Puyo Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
-          "nodes": [1],
+          "nodes": [1, 2],
           "mustStayPut": false
         }},
         {"refill": ["Energy", "Missile", "PowerBomb"]}
       ]
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Puyo",
+      "notable": false,
+      "requires": [
+        "canBePatient"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        "canBePatient",
+        {"enemyDamage": {
+          "enemy": "Puyo",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "note": "It takes between 1-2 minutes for the Puyos to wake up and get to the doorway."
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 155
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharging, Leave Shinecharged, Plasma Kill",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Plasma",
+        "canDodgeWhileShooting"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 155
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 21}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 155
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharging, Leave Shinecharged, Plasma Kill",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Plasma",
+        "canDodgeWhileShooting"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 155
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 21}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway (Both Doors Open)",
+      "requires": [
+        {"doorUnlockedAtNode": 1}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Puyo",
+      "notable": false,
+      "requires": [
+        "canBeVeryPatient"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        "canBeVeryPatient",
+        {"enemyDamage": {
+          "enemy": "Puyo",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "note": "It takes approximately 3 minutes for the Puyos to wake up and get to the doorway."
     }
   ]
 }

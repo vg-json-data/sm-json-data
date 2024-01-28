@@ -11,54 +11,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Lava Dive Left Door (to Elevator)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00196de",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Lava Dive Left Door (to Elevator)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Lava Dive Right Door (to Kronic Boost Room)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00196d2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Lava Dive Right Door (to Kronic Boost Room)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 85}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -75,21 +40,57 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2}
       ]
     },
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged",
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 1
+        }},
+        {"heatFrames": 225}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 140
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Gravity",
@@ -105,7 +106,6 @@
     {
       "link": [1, 2],
       "name": "Reverse Lava Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -116,7 +116,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Gravity",
@@ -133,6 +132,12 @@
       "link": [2, 1],
       "name": "Lava Dive Shinespark",
       "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "Gravity",
@@ -140,11 +145,8 @@
           "h_lavaProof",
           "canSuitlessLavaDive"
         ]},
+        "canShinechargeMovementTricky",
         "canHorizontalDamageBoost",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 180
-        }},
         {"shinespark": {"frames": 33}},
         {"heatFrames": 420},
         {"lavaFrames": 175},
@@ -163,7 +165,6 @@
     {
       "link": [2, 1],
       "name": "Lava Dive Gravity Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -178,7 +179,6 @@
     {
       "link": [2, 1],
       "name": "Hjless Lava Dive Gravity Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canGravityJump",
@@ -241,7 +241,6 @@
     {
       "link": [2, 1],
       "name": "Double IBJ with Ice Plasma",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Gravity",
@@ -265,7 +264,6 @@
     {
       "link": [2, 1],
       "name": "Springwall",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -283,19 +281,15 @@
     {
       "link": [2, 1],
       "name": "Double Springball Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
         "HiJump",
         "canDoubleSpringBallJumpMidAir",
-        "canUseEnemies",
-        "canCameraManip",
-        {"heatFrames": 1050},
-        {"lavaFrames": 850}
+        {"heatFrames": 620},
+        {"lavaFrames": 460}
       ],
       "note": [
-        "Stand aligned with the above platform with the camera scrolled left.",
+        "Stand one platform below the bottommost right-side Namihe and Double SpringBall Jump while holding left.",
         "Avoid the first Namihe flame and the higher flames will not spawn in time to get in the way so long as they were not made active on the way down."
       ]
     },
@@ -317,7 +311,12 @@
     {
       "link": [2, 1],
       "name": "Lava Dive BounceBall",
-      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 4,
+          "speedBooster": false
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -325,12 +324,6 @@
         "canBounceBall",
         "canUseEnemies",
         "HiJump",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 4,
-          "inRoomPath": [2, 1],
-          "physics": ["normal"]
-        }},
         {"heatFrames": 900},
         {"lavaFrames": 700}
       ],
@@ -343,7 +336,6 @@
     {
       "link": [2, 1],
       "name": "Lava Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -359,6 +351,12 @@
       "link": [2, 1],
       "name": "Hjless Lava Dive BounceBall",
       "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 4,
+          "speedBooster": false
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -368,12 +366,6 @@
         "canFastWalljumpClimb",
         "canUseEnemies",
         "canCameraManip",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 4,
-          "inRoomPath": [2, 1],
-          "physics": ["normal"]
-        }},
         {"heatFrames": 1000},
         {"lavaFrames": 850},
         {"enemyDamage": {
@@ -392,6 +384,12 @@
       "link": [2, 1],
       "name": "Hjless Lava Dive",
       "notable": true,
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 4,
+          "speedBooster": false
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -400,12 +398,6 @@
         "canFastWalljumpClimb",
         "canUseEnemies",
         "canCameraManip",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 4,
-          "inRoomPath": [2, 1],
-          "physics": ["normal"]
-        }},
         {"heatFrames": 1100},
         {"lavaFrames": 1000},
         {"enemyDamage": {
@@ -418,6 +410,24 @@
         "Use the bottommost right side namihe to generate a flame and walk with it to the bottommost left namihe head",
         "Use a turnaround animation as Samus is hit by the flame to cancel out knockback frames.",
         "While invulnerability frames are active, walljump up the spikes either 2 or 3 times and jump accross to catch the middle wall and climb from there."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
       ]
     }
   ]

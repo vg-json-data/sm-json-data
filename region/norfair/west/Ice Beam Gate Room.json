@@ -11,7 +11,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Ice Beam Gate Room Top Left Door (to Ice Tutorial)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019312",
@@ -21,7 +21,7 @@
     },
     {
       "id": 2,
-      "name": "Ice Beam Gate Room Center Left Door (to Ice Beam Acid Room)",
+      "name": "Middle Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001931e",
@@ -29,7 +29,7 @@
     },
     {
       "id": 3,
-      "name": "Ice Beam Gate Room Bottom Left Door (to Crumble Shaft)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019336",
@@ -37,7 +37,7 @@
     },
     {
       "id": 4,
-      "name": "Ice Beam Gate Room Right Door (to Business Center)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001932a",
@@ -45,13 +45,19 @@
     },
     {
       "id": 5,
-      "name": "Ice Beam Gate Room Junction (Below Top Crumbles)",
+      "name": "Junction Below Top Crumble Blocks",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 6,
-      "name": "Ice Beam Gate Room Junction (Above Crumbles)",
+      "name": "Top Left Door Spawn At Junction (Above Crumble Blocks)",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 7,
+      "name": "Junction Below Power Bomb Blocks",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -71,6 +77,11 @@
       "id": "C",
       "name": "Power Bomb blocks",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "D",
+      "name": "Lower enemies",
+      "obstacleType": "enemies"
     }
   ],
   "enemies": [
@@ -109,16 +120,16 @@
       "to": [
         {"id": 1},
         {"id": 2},
-        {"id": 3},
         {"id": 4},
-        {"id": 5}
+        {"id": 5},
+        {"id": 7}
       ]
     },
     {
       "from": 3,
       "to": [
-        {"id": 2},
-        {"id": 3}
+        {"id": 3},
+        {"id": 7}
       ]
     },
     {
@@ -141,13 +152,20 @@
         {"id": 1},
         {"id": 5}
       ]
+    },
+    {
+      "from": 7,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 7}
+      ]
     }
   ],
   "strats": [
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -157,15 +175,20 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 1],
       "name": "Ice Beam Gate Room X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -175,9 +198,26 @@
       "note": "Climb up 2 screens."
     },
     {
+      "link": [2, 1],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 2 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["C"]}
       ],
@@ -192,7 +232,6 @@
     {
       "link": [2, 2],
       "name": "Leave with Runway Floor Blocks Destroyed",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -204,71 +243,22 @@
     {
       "link": [2, 2],
       "name": "Power Bomb the Blocks",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
       "clearsObstacles": ["A", "B", "C"]
     },
     {
-      "link": [2, 3],
-      "name": "Tank Enemy Damage",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Crystal Flash",
       "requires": [
-        {"obstaclesCleared": ["C"]},
-        {"enemyDamage": {
-          "enemy": "Mella",
-          "type": "contact",
-          "hits": 1
-        }},
-        {"enemyDamage": {
-          "enemy": "Sm. Dessgeega",
-          "type": "contact",
-          "hits": 1
-        }}
-      ]
-    },
-    {
-      "link": [2, 3],
-      "name": "Kill Enemies",
-      "notable": false,
-      "requires": [
-        {"obstaclesCleared": ["C"]},
-        {"or": [
-          "Spazer",
-          "Plasma",
-          "ScrewAttack",
-          "Wave",
-          {"and": [
-            "canDodgeWhileShooting",
-            "h_canUsePowerBombs"
-          ]},
-          {"and": [
-            "canDodgeWhileShooting",
-            "canTrickyJump"
-          ]}
-        ]}
+        "h_canCrystalFlash"
       ],
-      "devNote": "Dessgeegas will drop Power Bombs so you can use multiple while getting most of them back."
-    },
-    {
-      "link": [2, 3],
-      "name": "Shortcharge",
-      "notable": false,
-      "requires": [
-        {"obstaclesCleared": ["C"]},
-        {"canShineCharge": {
-          "usedTiles": 18,
-          "openEnd": 0,
-          "gentleDownTiles": 3,
-          "gentleUpTiles": 2
-        }}
-      ]
+      "clearsObstacles": ["A", "B", "C"]
     },
     {
       "link": [2, 4],
       "name": "Mockball",
-      "notable": false,
       "entranceCondition": {
         "comeInRunning": {
           "minTiles": 11,
@@ -283,7 +273,6 @@
     {
       "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUseMorphBombs",
@@ -296,80 +285,23 @@
     {
       "link": [2, 5],
       "name": "Power Bomb",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
       "clearsObstacles": ["A", "B", "C"]
     },
     {
-      "link": [3, 2],
+      "link": [2, 7],
       "name": "Base",
-      "notable": false,
       "requires": [
-        {"or": [
-          "Spazer",
-          "Plasma",
-          "ScrewAttack",
-          "Wave",
-          {"and": [
-            "canDodgeWhileShooting",
-            "h_canUsePowerBombs"
-          ]},
-          {"and": [
-            "canDodgeWhileShooting",
-            "canTrickyJump"
-          ]}
-        ]},
-        {"or": [
-          "h_canUsePowerBombs",
-          {"obstaclesCleared": ["C"]}
-        ]}
-      ],
-      "clearsObstacles": ["A", "B", "C"],
-      "note": [
-        "Avoiding damage from all enemies with just Power Beam is tricky, but doable.",
-        "Placing the Power Bomb high can break the bomb blocks in the morph tunnel above."
-      ]
-    },
-    {
-      "link": [3, 2],
-      "name": "Come in Shinecharging",
-      "notable": false,
-      "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 6,
-          "openEnd": 0,
-          "steepDownTiles": 2
-        }
-      },
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "clearsObstacles": ["A", "B", "C"],
-      "note": [
-        "Placing the Power Bomb high can break the bomb blocks in the morph tunnel above."
+        {"obstaclesCleared": ["C"]}
       ]
     },
     {
       "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
-        {"or": [
-          "Spazer",
-          "Plasma",
-          "ScrewAttack",
-          "Wave",
-          {"and": [
-            "canDodgeWhileShooting",
-            "h_canUsePowerBombs"
-          ]},
-          {"and": [
-            "canDodgeWhileShooting",
-            "canTrickyJump"
-          ]}
-        ]}
+        {"obstaclesCleared": ["D"]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -380,8 +312,7 @@
     },
     {
       "link": [3, 3],
-      "name": "Sova, Mella, and Sm. Desgeega Farm",
-      "notable": false,
+      "name": "Sova, Mella, and Sm. Dessgeega Farm",
       "requires": [
         {"or": [
           "ScrewAttack",
@@ -393,9 +324,119 @@
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        {"or": [
+          {"obstaclesCleared": ["D"]},
+          {"enemyDamage": {
+            "enemy": "Sm. Dessgeega",
+            "type": "contact",
+            "hits": 1
+          }},
+          {"enemyKill": {
+            "enemies": [["Sm. Dessgeega"]],
+            "explicitWeapons": [
+              "Missile",
+              "Super"
+            ]
+          }}
+        ]},
+        "h_canCrystalFlash"
+      ],
+      "note": "Kill some or all of the enemies before Crystal Flashing."
+    },
+    {
+      "link": [3, 7],
+      "name": "Enemies Already Killed",
+      "requires": [
+        {"obstaclesCleared": ["D"]}
+      ]
+    },
+    {
+      "link": [3, 7],
+      "name": "Enemy Kill",
+      "requires": [
+        {"or": [
+          "Spazer",
+          "Plasma",
+          "ScrewAttack",
+          "Wave",
+          {"and": [
+            "canDodgeWhileShooting",
+            "h_canUsePowerBombs"
+          ]},
+          {"enemyKill": {
+            "enemies": [["Sm. Dessgeega"], ["Sm. Dessgeega"]],
+            "explicitWeapons": [
+              "Missile",
+              "Super"
+            ]
+          }},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"enemyDamage": {
+              "enemy": "Sm. Dessgeega",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]},
+          {"enemyDamage": {
+            "enemy": "Sm. Dessgeega",
+            "type": "contact",
+            "hits": 2
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "link": [3, 7],
+      "name": "Careful Kill",
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        "canPrepareForNextRoom",
+        "canStopOnADime"
+      ],
+      "clearsObstacles": ["D"],
+      "note": [
+        "Avoiding damage from all enemies with just Power Beam is tricky, but doable.",
+        "Enter the room holding angle to remove momentum and avoid getting hit by the Dessgeega."
+      ]
+    },
+    {
+      "link": [3, 7],
+      "name": "Tank Enemy Damage",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Mella",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"enemyDamage": {
+          "enemy": "Sm. Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "link": [3, 7],
+      "name": "Come in Shinecharging",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0,
+          "steepDownTiles": 2
+        }
+      },
+      "requires": [],
+      "clearsObstacles": ["D"]
+    },
+    {
       "link": [4, 2],
       "name": "Speed Through",
-      "notable": false,
       "requires": [
         "SpeedBooster"
       ]
@@ -403,7 +444,6 @@
     {
       "link": [4, 2],
       "name": "Speed Through and Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 33,
@@ -420,7 +460,6 @@
     {
       "link": [4, 2],
       "name": "Ice Beam Mockball",
-      "notable": false,
       "requires": [
         "canMockball"
       ]
@@ -428,7 +467,6 @@
     {
       "link": [4, 4],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -438,9 +476,15 @@
       }
     },
     {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [5, 2],
       "name": "Screw or Bombs",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUseMorphBombs",
@@ -453,7 +497,6 @@
     {
       "link": [5, 2],
       "name": "Power Bomb",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
@@ -462,7 +505,6 @@
     {
       "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUseMorphBombs",
@@ -474,7 +516,6 @@
     {
       "link": [5, 4],
       "name": "Power Bombs",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
@@ -483,7 +524,6 @@
     {
       "link": [6, 1],
       "name": "Space Jump Retreat",
-      "notable": false,
       "requires": [
         "canPrepareForNextRoom",
         "SpaceJump"
@@ -492,7 +532,6 @@
     {
       "link": [6, 1],
       "name": "WallJump Retreat",
-      "notable": false,
       "requires": [
         "canPrepareForNextRoom",
         "canWalljump"
@@ -501,7 +540,6 @@
     {
       "link": [6, 1],
       "name": "Crumble Jump Retreat",
-      "notable": false,
       "requires": [
         "canCrumbleJump"
       ]
@@ -509,7 +547,6 @@
     {
       "link": [6, 1],
       "name": "SpringBall Retreat",
-      "notable": false,
       "requires": [
         "h_canUseSpringBall"
       ],
@@ -518,8 +555,189 @@
     {
       "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [7, 2],
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "h_canFly",
+          "canSpringBallJumpMidAir"
+        ]}
+      ]
+    },
+    {
+      "link": [7, 2],
+      "name": "Shinespark",
+      "requires": [
+        {"obstaclesCleared": ["C", "D"]},
+        "SpeedBooster",
+        "canShinechargeMovement",
+        {"or": [
+          {"shinespark": {"frames": 19, "excessFrames": 4}},
+          {"and": [
+            "canShinechargeMovementComplex",
+            "canMidairShinespark",
+            {"shinespark": {"frames": 6, "excessFrames": 4}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [7, 2],
+      "name": "Ice Beam Gate Room Frozen Sova Platform",
+      "notable": true,
+      "requires": [
+        "h_canUsePowerBombs",
+        "canTrickyUseFrozenEnemies"
+      ],
+      "clearsObstacles": ["A", "B", "C"],
+      "note": [
+        "Place a Power Bomb to break the Power Bomb blocks and the bomb blocks, without killing the global Sova.",
+        "Wait 30-50 seconds for the Sova to get into position to be used as a platform."
+      ],
+      "devNote": "This is only notable with wall jumps disabled."
+    },
+    {
+      "link": [7, 2],
+      "name": "Ice Beam Gate Room Sova Boost",
+      "notable": true,
+      "requires": [
+        "h_canUsePowerBombs",
+        "canCrouchJump",
+        "canCarefulJump",
+        "canNeutralDamageBoost",
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "hits": 1,
+          "type": "contact"
+        }}
+      ],
+      "clearsObstacles": ["A", "B", "C"],
+      "note": [
+        "Place a Power Bomb to break the Power Bomb blocks and the bomb blocks, without killing the global Sova.",
+        "Wait 30-50 seconds for the Sova to get into position.",
+        "Crouch jump, morph, and hold right against the wall, hitting the Sova from below while near the peak of Samus's jump.",
+        "Continue holding right to pass through the Sova and onto the ledge above."
+      ],
+      "devNote": [
+        "This is only notable with wall jumps disabled.",
+        "FIXME: Consider also adding a Mella version of this strat. It takes longer to setup but allows retrying.",
+        "The Mella version does slightly less damage.",
+        "With either the Mella or Sova, you could kill it and collect its drop after getting onto the ledge; for the Sova you'd have to wait for it to come back around."
+      ]
+    },
+    {
+      "link": [7, 3],
+      "name": "Enemies Already Killed",
+      "requires": [
+        {"obstaclesCleared": ["D"]}
+      ]
+    },
+    {
+      "link": [7, 3],
+      "name": "Enemy Kill",
+      "requires": [
+        {"or": [
+          "Spazer",
+          "Plasma",
+          "ScrewAttack",
+          "Wave",
+          {"and": [
+            "canDodgeWhileShooting",
+            "h_canUsePowerBombs"
+          ]},
+          {"enemyKill": {
+            "enemies": [["Sm. Dessgeega"], ["Sm. Dessgeega"]],
+            "explicitWeapons": [
+              "Missile",
+              "Super"
+            ]
+          }},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"enemyDamage": {
+              "enemy": "Sm. Dessgeega",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]},
+          {"enemyDamage": {
+            "enemy": "Sm. Dessgeega",
+            "type": "contact",
+            "hits": 2
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "link": [7, 3],
+      "name": "Careful Kill",
+      "requires": [
+        "canDodgeWhileShooting",
+        "canCarefulJump"
+      ],
+      "clearsObstacles": ["D"],
+      "note": "Avoiding damage from all enemies with just Power Beam is tricky, but doable."
+    },
+    {
+      "link": [7, 3],
+      "name": "Tank Enemy Damage",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Mella",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"enemyDamage": {
+          "enemy": "Sm. Dessgeega",
+          "type": "contact",
+          "hits": 1
+        }}
+      ]
+    },
+    {
+      "link": [7, 3],
+      "name": "Shortcharge Kill",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 0,
+          "gentleDownTiles": 3,
+          "gentleUpTiles": 2
+        }}
+      ]
+    },
+    {
+      "link": [7, 3],
+      "name": "Mockball",
+      "requires": [
+        "canMockball",
+        "canCarefulJump"
+      ],
+      "note": "With a fast mockball, it is possible to roll under all of the enemies."
+    },
+    {
+      "link": [7, 7],
+      "name": "Power Bomb",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A", "B", "C"],
+      "note": "Placing the Power Bomb high enough will also break the bomb blocks in the ceiling."
+    },
+    {
+      "link": [7, 7],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["C"]
     }
   ]
 }

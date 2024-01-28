@@ -44,6 +44,10 @@ __Additional considerations__
 
 Door environments are mandatory on door nodes (except elevators). They are forbidden on all nodes where they're not mandatory.
 
+#### useImplicitDoorUnlocks
+
+By default every door node has an implicit strat from the node to itself, for [unlocking the door](../strats.md#implicit-unlock-strats) in a standard way. This can be disabled by setting the node property `useImplicitDoorUnlocks` to false.
+
 #### spawnAt
 The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
 
@@ -74,7 +78,6 @@ The `locks` property is an array that contains different ways a node can be lock
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
 * _name:_ A name that identifies the lock. This name must be unique across all locks in the model.
 * _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
-* _bypassStrats:_ The `bypassStrats` property is an array of [strats](../strats.md), each of which may be executed in order to bypass this specific lock, without deactivating it. This allows interaction with the node once, but the lock remains active for future interactions. An unlock or bypass strat will need to be executed again to interact with the node again. This property is deprecated; the strat property [`bypassesDoorShell`](../strats.md#bypasses-door-shell) should be used instead.
 * _yields:_ Exactly like the `yields` property found directly on a node, the `yields` property is an array of game flags. However, in this case those flags are activated when unlocking a lock.
 
 __Additional considerations__
@@ -92,170 +95,6 @@ The `viewableNodes` property is an array of objects, each of which describing ho
 
 #### yields
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
-
-#### runways
-
-_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveWithRunway` should be used instead.
-
-Represents an array of runways connected to a door. A runway is a series of tiles directly connected to a door, which Samus can use to gather momentum and carry it into the next room. Naturally, this can only be done if interaction with the connected door is possible (no active locks and interaction requirements fulfilled). Runways have the following properties:
-* _name:_ A name, unique across the entire model, that identifies the runway
-* _length:_ The number of tiles in the runway
-* The following properties further define the tiles in `length`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running towards the door, and must be reversed when Samus is coming into the room.
-  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
-  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
-  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
-  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
-  * _endingUpTiles:_  Indicates how many tiles slope upwards getting into the door. A stutter can't be executed on those tiles when starting a run within the room, starting from the door.
-* _openEnd:_ Any runway that is used to gain momentum has two ends (although in the case of actual `runway`s one of those ends is always a door transition). An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging ( 0 or 1).
-* _usableComingIn:_ If this property is present and false, the runway cannot be used in combination with an adjacent runway when entering the room. This will often be due to the presence of an enemy or obstacle that cannot be taken care of without breaking momentum.
-* _strats:_ An array of [strats](../strats.md), each of which may be executed in order to use this runway. If none of the strats can be executed, the runway cannot be used.
-
-__Additional considerations__
-
-Runways on both sides of a door are meant to be combined when determining how much room is available to charge a shinespark. However, some rules are intended to be applied when doing that calculation:
-* In the origin room, the longest runway whose requirements are met can be used (as long as the connected door can be interacted with).
-* In the destination room, the longest runway whose requirements are met _and whose `usableComingIn` property is `true`_ can be used. This property is used to represent the fact that some runways need Samus to do something to open them up, which can't be done while running in.
-  * However, runways in the destination room that are not `usableComingIn` can still be used. They just cannot be added to the runway on the other side (and must be used alone). There may be situations where that option provides the longest available running space.
-* If slope tiles are part of the calculations, up and down tiles must be reversed in the destination room, since runway slope tiles are always defined how they are encountered when running towards the door.
-* Because of how door transitions work, _the first runway tile when entering a room is not used to gain momentum_. So, two runways of 10 tiles each must only add up to a 19-tile runway.
-* Storing a shinespark after entering a room through a door requires some runway space. How much space is needed depends on Samus' momentum, which depends on how many tiles the logic options expect Samus to use. This is because short charging reduces not only the number of tiles needed to achieve a charge, but also the momentum at which that charge is achieved. Because of this, even a runway that is `usableComingIn` may be too short to be used if Samus has too much momentum. This project will not define how many tiles the destination runway needs to have to be used, but this should generally be between 3 and 6-7 tiles, depending on the minimum runway length required to achieve a spark.
-
-#### jumpways
-Represents an array of jumpways connected to a door. A jumpway is a wall or platform which Samus can use to carry momentum into the next room. Unlike runways, jumpways do not need to be directly connected to a door, and it is not possible to use a jumpway to run into the neighboring room. Naturally, a jumpway can only be used if interaction with the connected door is possible (no active locks, and interaction requirements fulfilled). Jumpways have the following properties:
-
-* _name:_ A name, which only needs to be unique for the given node.
-* _jumpwayType:_ One of two possible types: "doorFrameBelow" or "platformBelow".
-  * "doorFrameBelow" applies to a vertical door leading upwards and represents the door frame below the door, which can be used, for example, to perform a wall jump up through the doorway.
-  * "platformBelow" applies to a vertical door leading upwards and represents a platform below the door, which can be used to jump up through the doorway.
-* _height:_ For "doorFrameBelow" jumpways, this represents the vertical length, in number of tiles, of the door frame surface that is usable for wall jumping (not including door transition tiles themselves). For "platformBelow", it represents the number of tiles between the door transition and the part of the platform where the jump would occur (not including the door transition tiles or platform tiles themselves). A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
-* _leftPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest left tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
-* _rightPosition:_ Applicable only to "platformBelow" jumpways, this indicates the position of the furthest right tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
-* _requires:_ Logical requirements for this jumpway to be used.
-
-__Example:__
-```json
-"jumpways": [
-  {
-    "name": "Door frame",
-    "jumpwayType": "doorFrameBelow",
-    "height": 3,
-    "requires": [{"heatFrames": 120}]
-  },
-  {
-    "name": "Platform",
-    "jumpwayType": "platformBelow",
-    "height": 9,
-    "leftPosition": -3.5,
-    "rightPosition": 3.5,
-    "requires": [{"heatFrames": 120}]
-  }
-]
-```
-
-#### canLeaveCharged
-
-_Note_: This node property is deprecated. The [strat property](../strats.md) `exitCondition/leaveCharged` should be used instead.
-
-Represents the possibility for Samus to charge a shinespark without using the door's runway, and then carry that charge through the door. This is an array of `canLeaveCharge` objects which have the following properties:
-* _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction for the associated strats.
-  * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
-  * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
-  * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
-  * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
-* _openEnd:_ Any runway that is used to gain momentum has two ends. An open end is when a platform drops off into nothingness, as opposed to ending against a wall. Since those offer a bit more room, this property indicates the number of open ends that are available for charging (between 0 and 2).
-* _framesRemaining:_ The maximum number of frames that Samus should be expected to have left on the shinespark charge when leaving the room. A value of 0 indicates that she should only be expected to shinespark through the door.
-* _strats:_ An array of [strats](../strats.md), each of which may be executed in order to leave charged. Those all have implicit charging and shinesparking requirements.
-* _initiateRemotely:_ An object for when a `canLeaveCharged` is initiated at a different node that the node being exited. This should be omitted for any `canLeaveCharged` that is initiated at the exited node. This has the following properties:
-  * _initiateAt:_ The node at which the charging operation must start. Samus must visit this node to start the leaving charged process.
-  * mustOpenDoorFirst:_ Indicates whether Samus needs to open the door before starting the leaving charged process. This requires having opened all active locks on the door (if any), and having visited the door (since last entering the room), because it needs to be shot open even if unlocked.
-  * _pathToDoor:_ A list of objects, which describes the path that Samus must follow through the room from the `initiateAt` node to the exited door in order to properly leave charged. This path must end at the exited node. Each object in the path represents one link to follow, and has the following properties:
-    * _destinationNode:_ The ID of the next node to visit, from the previous node in the path (and from the `initiateAt` node if at the first node in the path)
-    * _strats:_ A list of possible strats to follow to go to `destinationNode` These must be names of an actual strat on an actual link from the previous node to the destination node. Samus has to fulfill all requirements of a strat at each link in `pathToDoor` to be able to properly leave charged.
-
-__Additional considerations__
-
-Generating a shinespark charge using the door's runway (assuming the runway has enough tiles for it), and carrying it into the next door, is implicitly assumed to be possible. As such, that is never explicitly defined in a `canLeaveCharged` object. The number of frames remaining in that charge will be:
-* 180 frames if there's a usable runway on the other side
-* Roughly 175 frames if there's no usable runway on the other side (meaning the charge must be stored while entering the door)
-
-Much like using runways, a `canLeaveCharged` can only be executed if the associated door can be interacted with.
-
-In cases where `canLeaveCharged` represents shinesparking out of the room, energy requirements for the shinespark are specified separately using a `shinespark` object.
-
-#### leaveWithGModeSetup
-
-_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGModeSetup`](../strats.md#leave-with-g-mode-setup) should be used instead.
-
-Represents the ability to exit through the door while taking damage during the transition, in a pose such that X-Ray can be used on the first frame of control in the next room. Under certain conditions, taking damage in this way can be used to set up R-mode or G-mode in the next room. 
-
-The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work.
-
-The node property `leaveWithGModeSetup` is an array of objects each of which has two properties:
-
-* _knockback_: A boolean indicating if Samus gets knockback frames through the transition. If not specified, this is assumed to be `true`.
-Cases where this would be false include taking damage from Beetoms and Mochtroids. Without knockback frames, it is only possible to
-enter G-mode immobile, in which case an enemy will be needed in the next room to provide knockback to return control to Samus.
-* _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while taking damage.
-
-__Example:__
-```json
-{
-  "leaveWithGModeSetup": [
-    {
-      "knockback": false,
-      "strats": [
-        {
-          "name": "Get Hit By Beetom",
-          "notable": false,
-          "requires": [],
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### leaveWithGMode
-
-_Note_: This node property is deprecated. The strat-level exit condition [`leaveWithGMode`](../strats.md#leave-with-g-mode) should be used instead.
-
-Represents the ability to exit through the door while in G-mode. This is an array of objects which have the following properties:
-
-* _leavesWithArtificialMorph_: A boolean indicating if these strats exit through the door while in an artificially morphed state (i.e. without the Morph item necessarily having been collected).
-* _strats_: An array of [strats](../strats.md), each of which may be executed to leave through the door while in G-mode with the given conditions.
-
-The only known way to enter G-mode is to have or obtain G-mode while entering the room. Therefore, each strat in a `leaveWithGMode` object will need to include a `comeInWithGMode` requirement. Since it is not possible to shoot open doors while in G-mode, and only the door behind Samus remains open in direct G-mode, the only way to leave with G-mode through a different door is in cases where there is no door cap (e.g. elevators, sand, tunnels) or if there is some way to bypass the door cap.
-
-A `leaveWithGMode` object does not need to be included for strats which simply turn around and immediately exit back through the same door. Specifically, for every door node without a `spawnAt` property, there are two implicit `leaveWithGMode` objects, one of the form
-
-```json
-{"leaveWithGMode": {
-  "leavesWithArtificialMorph": false,
-  "strats": {
-    "name": "Base",
-    "notable": false,
-    "requires": [
-      {"comeInWithGMode": {
-        "fromNodes": [0],
-        "mode": "direct",
-        "artificialMorph": false,
-        "immobile": false
-      }}
-    ]
-  }
-}}
-```
-
-where 0 is replaced with the node ID of the given node, and another where the `false` values in `leavesWithArtificialMorph` and `artificialMorph` are replaced with `true`. Here we are referring to nodes with `"nodeType": "door"`, which excludes sand entrances (which instead have `"nodeType": "entrance"`).
-
-#### gModeImmobile
-
-_Note_: This node property is deprecated. The strat property [`gModeRegainMobility`](../strats.md#g-mode-regain-mobility) should be used instead.
-
-This is populated if there is an enemy in the room that will eventually hit Samus at the location where she spawns when coming into the room through this door. Being hit by such an enemy will restore control to Samus after entering the room with G-mode immobile. This object contains `requires` which are logical requirements for Samus to take the enemy hit. This should include an `enemyDamage` requirement to account for the damage that Samus takes.
 
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.

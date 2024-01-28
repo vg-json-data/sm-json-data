@@ -10,23 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Warehouse E-Tank Right Door (to Zeelas)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0019162",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {
-          "knockback": false,
-          "strats": [
-            {
-              "name": "Get Hit By Beetom",
-              "notable": false,
-              "requires": []
-            }
-          ]
-        }
-      ],
       "locks": [
         {
           "name": "Warehouse E-Tank Grey Lock (to Zeelas)",
@@ -47,7 +35,7 @@
     },
     {
       "id": 2,
-      "name": "Energy Tank, Kraid",
+      "name": "Hidden Ceiling Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "ETank",
@@ -89,7 +77,6 @@
     {
       "link": [1, 1],
       "name": "Beetom Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1],
@@ -115,7 +102,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -125,9 +111,99 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Leave With Runway - Single Frozen Beetom",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "h_canFrozenEnemyRunway",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "note": "Freeze a single Beetom to extend the runway. Freeze any Beetoms that latch onto Samus to minimize taking damage."
+    },
+    {
+      "link": [1, 1],
+      "name": "Warehouse Energy Tank Frozen Beetom Runway",
+      "notable": true,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "canTrickyJump",
+        "h_canFrozenEnemyRunway",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 6
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Freeze multiple Beetoms to extend the runway. Continually refreeze the ones that are in a good position while manipulating the rest.",
+        "This assumes three extra tiles of runway, which can be accomplished with two perfectly placed Beetoms, three adjacent ones, or four which are partially overlapping."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"or": [
+          "canPrepareForNextRoom",
+          {"enemyDamage": {
+            "enemy": "Beetom",
+            "type": "contact",
+            "hits": 2
+          }}
+        ]},
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "10 Power Bomb Crystal Flash",
+      "requires": [
+        {"or": [
+          "canPrepareForNextRoom",
+          {"enemyDamage": {
+            "enemy": "Beetom",
+            "type": "contact",
+            "hits": 2
+          }}
+        ]},
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": false
+        }},
+        "h_can10PowerBombCrystalFlash"
+      ],
+      "devNote": "Resetting the room could be required to farm a bit of energy to get above health-bomb range, to ensure a Power Bomb drop."
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Beetom",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {
+          "knockback": false
+        }
+      }
+    },
+    {
       "link": [1, 2],
       "name": "Kill the Beetoms",
-      "notable": false,
       "requires": [
         {"or": [
           {"enemyKill": {
@@ -141,7 +217,6 @@
     {
       "link": [1, 2],
       "name": "Freeze the Beetoms",
-      "notable": false,
       "requires": [
         "Ice"
       ]
@@ -149,7 +224,6 @@
     {
       "link": [1, 2],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Beetom",
@@ -161,7 +235,6 @@
     {
       "link": [1, 2],
       "name": "Tricky Evade",
-      "notable": false,
       "requires": [
         "canTrickyJump",
         {"enemyDamage": {
@@ -178,13 +251,13 @@
     {
       "link": [1, 2],
       "name": "G-Mode Morph Kill the Beetoms",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           {"ammo": {"type": "PowerBomb", "count": 1}},
           {"and": [
@@ -210,7 +283,6 @@
     {
       "link": [2, 1],
       "name": "Kill the Beetoms",
-      "notable": false,
       "requires": [
         {"or": [
           {"enemyKill": {
@@ -224,7 +296,6 @@
     {
       "link": [2, 1],
       "name": "Freeze the Beetoms",
-      "notable": false,
       "requires": [
         "Ice"
       ]
@@ -232,7 +303,6 @@
     {
       "link": [2, 1],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Beetom",

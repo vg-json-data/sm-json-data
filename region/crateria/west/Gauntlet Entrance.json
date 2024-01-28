@@ -10,69 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Gauntlet Entrance Left Door (to E-Tank)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018952",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get hit by Waver",
-            "notable": false,
-            "requires": [
-              "h_canDestroyBombWalls"
-            ]
-          },
-          {
-            "name": "Get hit by Waver, Break Blocks with Speed",
-            "notable": false,
-            "entranceCondition": {
-              "comeInShinecharging": {
-                "length": 6,
-                "openEnd": 1,
-                "steepUpTiles": 1,
-                "steepDownTiles": 1
-              }
-            },
-            "requires": [],
-            "devNote": "FIXME: It is possible to come in from the opposite door with a shinecharge, Add come in charged."
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Gauntlet Entrance Right Door (to Landing Site)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018946",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get hit by Waver",
-            "notable": false,
-            "requires": [
-              "h_canDestroyBombWalls"
-            ]
-          },
-          {
-            "name": "Get hit by Waver, Break Blocks with Speed",
-            "notable": false,
-            "entranceCondition": {
-              "comeInShinecharging": {
-                "length": 6,
-                "openEnd": 1,
-                "steepUpTiles": 1,
-                "steepDownTiles": 1
-              }
-            },
-            "requires": [],
-            "devNote": "FIXME: It is possible to come in from the opposite door with a shinecharge, Add come in charged."
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "obstacles": [
@@ -129,7 +79,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -143,7 +92,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Spark, Yapping Maw Alive",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -158,7 +106,9 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
       "note": [
         "It is possible to run through the Yapping Maw while it is attacking a different direction.",
@@ -168,7 +118,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Spark, Yapping Maw Dead",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -185,13 +134,14 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       }
     },
     {
       "link": [1, 1],
       "name": "Leave with Spark, Yapping Maw Frozen",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -206,19 +156,77 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
       "note": "Freeze the Yapping Maw while it is in the air, extended."
     },
     {
       "link": [1, 1],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get hit by Waver",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "h_canUseMorphBombs",
+          "ScrewAttack"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get hit by Waver, Using a Power Bomb",
+      "notable": false,
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [], "useImplicitRequires": false}
+      ],
+      "note": [
+        "Place a Power Bomb near the door, then wait for the Waver to get into position to hit Samus through the transition.",
+        "The Waver only moves while on camera, and needs to move around the region several times before being set up properly."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get hit by Waver, Break Blocks with Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 1,
+          "steepUpTiles": 1,
+          "steepDownTiles": 1
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "devNote": [
+        "Freeing the Waver with a shinespark is not reliable, and depends on when and where the shinespark starts.",
+        "Most of these strats kill the Wavers or set up situations where they can't reach the door."
+      ]
     },
     {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "ScrewAttack"
       ],
@@ -227,7 +235,6 @@
     {
       "link": [1, 2],
       "name": "Gauntlet Entrance with Bombs (Left to Right)",
-      "notable": false,
       "requires": [
         "h_canUseMorphBombs"
       ],
@@ -236,7 +243,6 @@
     {
       "link": [1, 2],
       "name": "Power Bomb Gauntlet Entrance (Left to Right)",
-      "notable": false,
       "requires": [
         "Morph",
         {"ammo": {"type": "PowerBomb", "count": 3}}
@@ -246,7 +252,6 @@
     {
       "link": [1, 2],
       "name": "Enter Shinesparking",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -257,7 +262,6 @@
     {
       "link": [1, 2],
       "name": "Midair Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 50
@@ -273,7 +277,6 @@
     {
       "link": [1, 2],
       "name": "Low Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 37
@@ -281,6 +284,7 @@
       },
       "requires": [
         "canShinechargeMovement",
+        "canHorizontalShinespark",
         {"shinespark": {"frames": 70}},
         {"or": [
           "Morph",
@@ -322,9 +326,27 @@
       "devNote": "TODO: There is a blue SpringBall strat to investigate."
     },
     {
+      "link": [1, 2],
+      "name": "G-Mode Setup - Get hit by Waver, Using Power Bombs",
+      "notable": false,
+      "requires": [
+        "Morph",
+        {"ammo": { "type": "PowerBomb", "count": 3}}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": [
+        "This is harder when crossing the room and easier if the right door can be used to reset the room, but it will cost one extra Power Bomb.",
+        "One method is to place a Power Bomb near the first bomb wall, killing the first Waver, but keeping the second, global Waver.",
+        "Wait for the global Waver to make a couple of passes before going to the left, where Samus can safely place a second Power Bomb by the next wall.",
+        "Wait again before placing the third Power Bomb, as the Waver will soon be returning. After the third bomb, wait at the right door for the setup."
+      ]
+    },
+    {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "ScrewAttack"
       ],
@@ -333,7 +355,6 @@
     {
       "link": [2, 1],
       "name": "Gauntlet Entrance with Bombs (Right to Left)",
-      "notable": false,
       "requires": [
         "h_canUseMorphBombs"
       ],
@@ -342,7 +363,6 @@
     {
       "link": [2, 1],
       "name": "Power Bomb Gauntlet Entrance (Right to Left)",
-      "notable": false,
       "requires": [
         "Morph",
         {"ammo": {"type": "PowerBomb", "count": 3}}
@@ -352,7 +372,6 @@
     {
       "link": [2, 1],
       "name": "Enter in Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -363,7 +382,6 @@
     {
       "link": [2, 1],
       "name": "Wait for Acid Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 6,
@@ -404,9 +422,27 @@
       "devNote": "TODO: There is a blue SpringBall strat to investigate."
     },
     {
+      "link": [2, 1],
+      "name": "G-Mode Setup - Get hit by Waver, Using Power Bombs",
+      "notable": false,
+      "requires": [
+        "Morph",
+        {"ammo": { "type": "PowerBomb", "count": 3}},
+        "canBePatient"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": [
+        "This is harder when crossing the room and easier if the left door can be used to reset the room, but it will cost one extra Power Bomb.",
+        "Place a Power Bomb near the first and third bomb walls. One Waver will be alive by the fifth wall, which will only move while on camera.",
+        "Get it to move to the right in order to safely Power Bomb the final set of walls. Follow the Waver around the room a few times in order to get it to the left doorway."
+      ]
+    },
+    {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -420,7 +456,6 @@
     {
       "link": [2, 2],
       "name": "Leave with Spark, Yapping Maw Alive",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -434,14 +469,15 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
       "devNote": "The yapping maw prevents use of an extra runway tile because it will move to grab Samus"
     },
     {
       "link": [2, 2],
       "name": "Leave with Spark, Yapping Maw Dead",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -458,7 +494,9 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       }
     },
     {
@@ -479,7 +517,9 @@
         }}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
       "note": [
         "Jump towards the yapping maw before it is on screen so it moves up.",
@@ -490,7 +530,60 @@
     {
       "link": [2, 2],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get hit by Waver",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "h_canUseMorphBombs",
+          "ScrewAttack"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get hit by Waver, Using a Power Bomb",
+      "notable": false,
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "Place a Power Bomb near the door, then wait for the Waver to get into position to hit Samus through the transition.",
+        "The Waver only moves while on camera, and needs to move around the region several times before being set up properly."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get hit by Waver, Break Blocks with Speed",
+      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 1,
+          "steepUpTiles": 1,
+          "steepDownTiles": 1
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "devNote": [
+        "Freeing the Waver with a shinespark is not reliable, and depends on when and where the shinespark starts.",
+        "Most of these strats kill the Wavers or set up situations where they can't reach the door."
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "../../../schema/m3-room.schema.json",
   "id": 55,
-  "name": "Noob Bridge aka A Bridge Too Far",
+  "name": "Noob Bridge",
   "area": "Brinstar",
   "subarea": "Green",
   "playable": true,
@@ -10,65 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Noob Bridge Left Door (to Green Hill Zone)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018efe",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela",
-            "notable": false,
-            "requires": [
-              "canBeVeryPatient"
-            ],
-            "note": "Wait for the slow global Zeelas. They take almost 4 minutes to get there."
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zeela",
-            "type": "contact",
-            "hits": 1
-          }},
-          "canBeVeryPatient"
-        ],
-        "note": "Wait for the slow global Zeelas. They take almost 4 minutes to get there."
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Noob Bridge Right Door (to Red Tower)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x0018f0a",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela",
-            "notable": false,
-            "requires": [
-              "canBePatient"
-            ],
-            "note": "Wait for the slow global Zeelas. They take almost 2 minutes to get there."
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zeela",
-            "type": "contact",
-            "hits": 1
-          }},
-          "canBePatient"
-        ],
-        "note": "Wait for the slow global Zeelas. They take almost 2 minutes to get there."
-      },
       "locks": [
         {
           "name": "Noob Bridge Green Lock (to Red Tower)",
@@ -129,7 +83,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -140,8 +93,22 @@
     },
     {
       "link": [1, 1],
+      "name": "Leave With Runway - Frozen Zeela",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        "canBeVeryPatient"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "note": "Wait for the slow global Zeelas. They take almost 4 minutes to get there."
+    },
+    {
+      "link": [1, 1],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 33,
@@ -158,7 +125,6 @@
     {
       "link": [1, 1],
       "name": "Cacatac and Zeela Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2],
@@ -168,21 +134,51 @@
       ]
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zeela",
+      "notable": false,
+      "requires": [
+        "canBeVeryPatient"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": "Wait for the slow global Zeelas. They take almost 4 minutes to get there."
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }},
+        "canBeVeryPatient"
+      ],
+      "gModeRegainMobility": {},
+      "note": "Wait for the slow global Zeelas. They take almost 4 minutes to get there."
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -193,8 +189,22 @@
     },
     {
       "link": [2, 2],
+      "name": "Leave With Runway - Frozen Zeela",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        "canBePatient"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "note": "Wait for the slow global Zeelas. They take almost 2 minutes to get there."
+    },
+    {
+      "link": [2, 2],
       "name": "Leave Shinecharged (Bridge Runway)",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 33,
@@ -211,7 +221,6 @@
     {
       "link": [2, 2],
       "name": "Leave Shinecharged (Floor Runway)",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 20,
@@ -221,9 +230,35 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 100
+          "framesRemaining": 140
         }
       }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zeela",
+      "notable": false,
+      "requires": [
+        "canBePatient"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": "Wait for the slow global Zeelas. They take almost 2 minutes to get there."
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }},
+        "canBePatient"
+      ],
+      "gModeRegainMobility": {},
+      "note": "Wait for the slow global Zeelas. They take almost 2 minutes to get there."
     }
   ]
 }

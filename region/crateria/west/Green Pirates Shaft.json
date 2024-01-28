@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Green Pirates Shaft Top Right Door (to Gauntlet E-Tank)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c5e",
@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "name": "Green Pirates Shaft Middle Right Door (to Terminator)",
+      "name": "Middle Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c3a",
@@ -26,7 +26,7 @@
     },
     {
       "id": 3,
-      "name": "Green Pirates Shaft Bottom Left Door (to Lower Mushrooms)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c46",
@@ -34,7 +34,7 @@
     },
     {
       "id": 4,
-      "name": "Green Pirates Shaft Bottom Right Door (to Statues Hallway)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "red",
       "nodeAddress": "0x0018c52",
@@ -57,7 +57,7 @@
     },
     {
       "id": 5,
-      "name": "Missile (Crateria gauntlet left)",
+      "name": "Left Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -65,7 +65,7 @@
     },
     {
       "id": 6,
-      "name": "Missile (Crateria gauntlet right)",
+      "name": "Right Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -73,15 +73,30 @@
     },
     {
       "id": 8,
-      "name": "Green Pirates Shaft Junction (Items)",
+      "name": "Junction Between Items",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 9,
-      "name": "Green Pirates Shaft Middle Junction",
+      "name": "Junction Below Items",
       "nodeType": "junction",
       "nodeSubType": "junction"
+    },
+    {
+      "id": 10,
+      "name": "G-Mode Morph Junction (Middle Right Door)",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Represents being at the middle right door with G-Mode Morph (artificial morph)"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Power Bomb Blocks",
+      "obstacleType": "inanimate",
+      "devNote": "This obstacle only needs to be tracked for morphless strats, because with Morph, Samus can fall through the crumble blocks."
     }
   ],
   "enemies": [
@@ -107,7 +122,8 @@
       "to": [
         {"id": 2},
         {"id": 4},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -115,7 +131,8 @@
       "to": [
         {"id": 3},
         {"id": 4},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -124,7 +141,8 @@
         {"id": 2},
         {"id": 3},
         {"id": 4},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -151,7 +169,17 @@
       "from": 9,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 10,
+      "to": [
+        {"id": 2},
+        {"id": 4},
+        {"id": 9}
       ]
     }
   ],
@@ -159,7 +187,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -171,18 +198,18 @@
     {
       "link": [1, 1],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
+      "requires": [
+        "h_canCrystalFlash"
+      ]
     },
     {
       "link": [1, 8],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -194,7 +221,6 @@
     {
       "link": [2, 2],
       "name": "Green Pirate Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [2, 3, 4],
@@ -212,12 +238,41 @@
     {
       "link": [2, 2],
       "name": "Crystal Flash",
-      "requires": ["h_canCrystalFlash"]
-    },    
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Beetom",
+      "notable": false,
+      "requires": [
+        "h_canUsePowerBombs",
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Beetom",
+            "type": "contact",
+            "hits": 2
+          }},
+          {"and": [
+            "Ice",   
+            {"enemyDamage": {
+              "enemy": "Beetom",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {
+          "knockback": false
+        }
+      }
+    },
     {
       "link": [2, 4],
-      "name": "Tank the Damage",
-      "notable": false,
+      "name": "Tank the Damage (Use I-Frames to Reduce Damage)",
       "requires": [
         {"enemyDamage": {
           "enemy": "Green Space Pirate (standing)",
@@ -229,7 +284,6 @@
     {
       "link": [2, 4],
       "name": "Kill the Pirates",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -249,7 +303,6 @@
     {
       "link": [2, 9],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ]
@@ -257,7 +310,6 @@
     {
       "link": [2, 9],
       "name": "Xray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -270,9 +322,49 @@
       ]
     },
     {
+      "link": [2, 9],
+      "name": "G-Mode Morph Crystal Flash, Reserve Trigger, Up to the Beetoms",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphCrystalFlash",
+        {"autoReserveTrigger": {}},
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Green Space Pirate (standing)"]]
+          }},
+          {"enemyDamage": {
+            "enemy": "Green Space Pirate (standing)",
+            "type": "laser",
+            "hits": 3
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Crystal Flash then damage down on the Pirates to Reserve trigger to exit G-Mode.",
+        "To prevent freeing the Beetoms, the Power Bomb needs to be placed on the left platform just below the door.",
+        "To prevent extra hits after the trigger, kill the Pirate when Samus is low on Energy, then finish damaging down using its invisible lasers." 
+      ]
+    },
+    {
+      "link": [2, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": []
+    },
+    {
       "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -284,7 +376,6 @@
     {
       "link": [3, 3],
       "name": "Leave with Runway, Open Both Doors",
-      "notable": false,
       "requires": [
         {"doorUnlockedAtNode": 4}
       ],
@@ -293,18 +384,115 @@
           "length": 14,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [{"nodeId": 4, "types": ["ammo"], "requires": []}]
     },
     {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [3, 4],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 160
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Come In Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 21
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 55
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
     },
     {
       "link": [3, 9],
       "name": "X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -339,10 +527,49 @@
       ]
     },
     {
-      "link": [4, 2],
-      "name": "Tank the Damage",
-      "notable": false,
+      "link": [3, 10],
+      "name": "G-Mode Morph Pirate Kill",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": [
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          {"and": [
+            "SpringBall",
+            {"ammo": { "type": "PowerBomb", "count": 2}},
+            {"or": [
+              "HiJump",
+              {"ammo": { "type": "PowerBomb", "count": 1}},
+              "canJumpIntoIBJ"
+            ]}
+          ]}
+        ]}
+      ],
+      "note": [
+        "With Spring Ball, it is possible to save a Power Bomb by placing it high on the first jump and bouncing on it on the second,",
+        "but this doesn't save anything if breaking the Power Bomb blocks."
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Tank the Damage (Get Hit by Each Pirate)",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Green Space Pirate (standing)",
+          "type": "contact",
+          "hits": 5
+        }}
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Tank the Damage (Use I-Frames to Reduce Damage)",
+      "requires": [
+        "canCarefulJump",
         {"enemyDamage": {
           "enemy": "Green Space Pirate (standing)",
           "type": "contact",
@@ -353,7 +580,6 @@
     {
       "link": [4, 2],
       "name": "Kill the Pirates",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -371,15 +597,142 @@
       ]
     },
     {
+      "link": [4, 2],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"enemyKill": {
+          "enemies": [["Green Space Pirate (standing)"]],
+          "explicitWeapons": [
+            "Charge",
+            "Ice",
+            "Wave",
+            "Spazer",
+            "Plasma",
+            "Missile",
+            "Super"
+          ]
+        }}
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Enter with G-mode direct and kill the bottom Pirate.",
+        "Back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 2 screens, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [4, 3],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 160
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Come In Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 10
+        }
+      },
+      "requires": [
+        {"shinespark": {
+          "frames": 21
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 55
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
     },
     {
       "link": [4, 4],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -391,7 +744,6 @@
     {
       "link": [4, 4],
       "name": "Leave with Runway, Open Both Doors",
-      "notable": false,
       "requires": [
         {"doorUnlockedAtNode": 3}
       ],
@@ -400,12 +752,12 @@
           "length": 14,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [{"nodeId": 3, "types": ["ammo"], "requires": []}]
     },
     {
       "link": [4, 9],
       "name": "X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -436,37 +788,60 @@
         "X-Ray climb about 2.5 screen lengths, until the camera shows Samus' helmet on the bottom of the screen.",
         "Shoot up to clear the shot blocks and resume climbing until you can walk out to the left.",
         "Fix the camera by shooting the floor shot block and jumping down.",
-        "The pirate will attack while climbing past it."
+        "The bottom pirate will attack while climbing past it."
+      ]
+    },
+    {
+      "link": [4, 10],
+      "name": "G-Mode Morph Pirate Kill",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          {"and": [
+            "SpringBall",
+            {"ammo": { "type": "PowerBomb", "count": 2}},
+            {"or": [
+              "HiJump",
+              {"ammo": { "type": "PowerBomb", "count": 1}},
+              "canJumpIntoIBJ"
+            ]}
+          ]}
+        ]}
+      ],
+      "note": [
+        "With Spring Ball, it is possible to save a Power Bomb by placing it high on the first jump and bouncing on it on the second,",
+        "but this doesn't save anything if breaking the Power Bomb blocks."
       ]
     },
     {
       "link": [5, 8],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [6, 8],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [8, 5],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [8, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
       "link": [8, 9],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
@@ -512,9 +887,11 @@
     {
       "link": [9, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "Morph"
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]}
       ]
     },
     {
@@ -559,6 +936,341 @@
         "4) Destroy the shot block and refresh Ice on both Beetoms.",
         "5) Moonfall between the Beetoms until Samus clips downward, while holding a button to automatically change animation pose (Angle-aim or Up)"
       ]
+    },
+    {
+      "link": [9, 2],
+      "name": "G-Mode Setup - Get Hit By Beetom",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 4
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {
+          "knockback": false
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [9, 2],
+      "name": "Leave with Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 4
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [9, 2],
+      "name": "Leave with Extended Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canExtendedMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 4
+        }},
+        "h_ExtendedMoondanceBeetomLeniency"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [9, 3],
+      "name": "G-Mode Setup - Get Hit By Beetom",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"or": [
+          {"and": [
+            {"enemyKill": {
+              "enemies": [
+                [
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)"
+                ],
+                [
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)"
+                ]
+              ]
+            }},
+            {"or": [
+              {"enemyDamage": {
+                "enemy": "Beetom",
+                "type": "contact",
+                "hits": 8
+              }},
+              {"and": [
+                "canTrickyJump",
+                "canEscapeEnemyGrab",
+                {"enemyDamage": {
+                  "enemy": "Beetom",
+                  "type": "contact",
+                  "hits": 5
+                }}
+              ]}
+            ]}
+          ]},
+          {"and": [
+            {"enemyDamage": {
+              "enemy": "Beetom",
+              "type": "contact",
+              "hits": 5
+            }},
+            {"enemyDamage": {
+              "enemy": "Green Space Pirate (standing)",
+              "type": "contact",
+              "hits": 3
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {
+          "knockback": false
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": "It is possible to shake the beetom off near the right door, then lure it down to the bottom without taking more hits (or to kill the Pirates with Bombs).",
+      "devNote": "If starting the room at the bottom, this requires killing the pirates twice, but it's probably not worth fixing."
+    },
+    {
+      "link": [9, 3],
+      "name": "Leave with Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 10
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [9, 3],
+      "name": "Leave with Extended Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canExtendedMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 10
+        }},
+        "h_ExtendedMoondanceBeetomLeniency"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": "Carefully Moondance where the floor is supported by more tiles."
+    },
+    {
+      "link": [9, 4],
+      "name": "G-Mode Setup - Get Hit By Beetom",
+      "notable": false,
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"or": [
+          {"and": [
+            {"enemyKill": {
+              "enemies": [
+                [
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)"
+                ],
+                [
+                  "Green Space Pirate (standing)",
+                  "Green Space Pirate (standing)"
+                ]
+              ]
+            }},
+            {"or": [
+              {"enemyDamage": {
+                "enemy": "Beetom",
+                "type": "contact",
+                "hits": 8
+              }},
+              {"and": [
+                "canTrickyJump",
+                "canEscapeEnemyGrab",
+                {"enemyDamage": {
+                  "enemy": "Beetom",
+                  "type": "contact",
+                  "hits": 5
+                }}
+              ]}
+            ]}
+          ]},
+          {"and": [
+            {"enemyDamage": {
+              "enemy": "Beetom",
+              "type": "contact",
+              "hits": 5
+            }},
+            {"enemyDamage": {
+              "enemy": "Green Space Pirate (standing)",
+              "type": "contact",
+              "hits": 3
+            }}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {
+          "knockback": false
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": "It is possible to shake the beetom off near the right door, then lure it down to the bottom without taking more hits (or to kill the Pirates with Bombs).",
+      "devNote": "If starting the room at the bottom, this requires killing the pirates twice, but it's probably not worth fixing."
+    },
+    {
+      "link": [9, 4],
+      "name": "Leave with Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 10
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [9, 4],
+      "name": "Leave with Extended Moondance",
+      "requires": [
+        {"or": [
+          "Morph",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canExtendedMoondance",
+        "canTrickyUseFrozenEnemies",
+        {"enemyDamage": {
+          "enemy": "Beetom",
+          "type": "contact",
+          "hits": 10
+        }},
+        "h_ExtendedMoondanceBeetomLeniency"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": "Carefully Moondance where the floor is supported by more tiles."
+    },
+    {
+      "link": [10, 2],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [10, 4],
+      "name": "G-Mode Morph Pirate Kill",
+      "requires": [
+        {"or": [
+          "Bombs",
+          {"ammo": { "type": "PowerBomb", "count": 2}}
+        ]}
+      ]
+    },
+    {
+      "link": [10, 9],
+      "name": "G-Mode Morph - Power Bomb to the Beetoms",
+      "requires": [
+        {"ammo": { "type": "PowerBomb", "count": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb and exit G-Mode. To prevent freeing the Beetoms, the Power Bomb needs to be placed on the left platform just below the door."
+    },
+    {
+      "link": [10, 9],
+      "name": "G-Mode Morph - Overload PLMs to the Beetoms",
+      "requires": [
+        "Bombs",
+        {"or": [
+          {"and": [
+            "SpringBall",
+            {"or": [
+              "canBePatient",
+              "HiJump"
+            ]}
+          ]},
+          "h_canArtificialMorphCeilingBombJump"
+        ]}
+      ],
+      "note": "Place bombs against the bottom of the crumble blocks to overload PLMs."
     }
   ]
 }

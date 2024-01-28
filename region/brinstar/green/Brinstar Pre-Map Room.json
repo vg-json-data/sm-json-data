@@ -10,55 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Brinstar Pre-Map Left Door (to Map)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d36",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Zeela",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Brinstar Pre-Map Right Door (to Green Shaft)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x0018d42",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeela or Sidehopper",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sm. Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
           "name": "Brinstar Pre-Map Grey Lock (to Green Shaft)",
@@ -147,7 +111,6 @@
     {
       "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "exitCondition": {
         "leaveWithRunway": {
           "length": 3,
@@ -157,9 +120,37 @@
       "requires": []
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zeela",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph",
         {"or": [
@@ -172,7 +163,6 @@
     {
       "link": [1, 2],
       "name": "Temporary Blue Bounce",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 1,
@@ -189,7 +179,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph",
         {"or": [
@@ -202,7 +191,6 @@
     {
       "link": [2, 1],
       "name": "Speedball (Come In Shinecharging)",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 11,
@@ -218,7 +206,6 @@
     {
       "link": [2, 1],
       "name": "Speedball (In-Room)",
-      "notable": false,
       "requires": [
         "canSlowShortCharge",
         {"canShineCharge": {
@@ -232,8 +219,22 @@
     },
     {
       "link": [2, 1],
+      "name": "Speedball (In-Room) Extended Runway With Frozen Zeela",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        "canSlowShortCharge",
+        {"canShineCharge": {
+          "usedTiles": 15,
+          "openEnd": 1
+        }},
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Use a frozen Zeela to extend the upper platform to help set up the speedball."
+    },
+    {
+      "link": [2, 1],
       "name": "Temporary Blue Bounce",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
@@ -248,7 +249,6 @@
     {
       "link": [2, 1],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
@@ -261,12 +261,17 @@
         "leaveShinecharged": {
           "framesRemaining": 60
         }
-      }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ]
     },
     {
       "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -278,7 +283,6 @@
     {
       "link": [2, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
@@ -295,7 +299,6 @@
     {
       "link": [2, 2],
       "name": "Zeela & Sidehopper Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [2],
@@ -303,6 +306,35 @@
         }},
         {"refill": ["Missile", "Super"]}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zeela or Sidehopper",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sm. Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
     }
   ]
 }

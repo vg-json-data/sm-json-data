@@ -10,27 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Tourian Escape Room 2 Top Door (to Escape Room 1)",
+      "name": "Top Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x001aaf8",
       "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 3,
-          "requires": []
-        },
-        {
-          "name": "Platform",
-          "jumpwayType": "platformBelow",
-          "height": 7,
-          "leftPosition": -2.5,
-          "rightPosition": 2.5,
-          "requires": []
-        }
-      ],
       "locks": [
         {
           "name": "Tourian Escape 2 Lock (to Escape Room 1)",
@@ -49,20 +33,11 @@
     },
     {
       "id": 2,
-      "name": "Tourian Escape Room 2 Right Door (to Escape Room 3)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001ab04",
-      "doorEnvironments": [{"physics": "air"}],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Tourian Space Pirate (all)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -78,6 +53,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 2}
       ]
     },
@@ -91,21 +67,128 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Door Frame Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 3
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Platform Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 7,
+          "leftPosition": -2.5,
+          "rightPosition": 2.5
+        }
+      }
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 95
+        }
+      },
+      "requires": [
+        {"or": [
+          {"ammo": {"type": "Super", "count": 1}},
+          {"and": [
+            "Plasma",
+            "Wave"
+          ]},
+          {"and": [
+            "Plasma",
+            "canHitbox"
+          ]}
+        ]},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 2}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}]
     },
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge (HiJump, Screw, Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 130
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "ScrewAttack",
+        "HiJump",
+        "canWalljump",
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 6}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Enter shinecharged with a spin-jump.",
+        "Perform quick ledge-grabs to reach the top of the room and spark out."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark (Ledge Grabs)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 155
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 6}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Enter shinecharged with a spin-jump.",
+        "Perform quick ledge-grabs to reach the top of the room and spark out."
+      ]
     },
     {
       "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -113,6 +196,18 @@
           "openEnd": 1
         }
       }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Tourian Space Pirate (all)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
     }
   ]
 }

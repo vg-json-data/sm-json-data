@@ -10,7 +10,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Red Firefleas Left Door (to X-Ray)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "red",
       "nodeAddress": "0x001905a",
@@ -33,11 +33,23 @@
     },
     {
       "id": 2,
-      "name": "Red Firefleas Right Door (to Red Tower)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019066",
       "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 3,
+      "name": "Safe Block in the Middle of the Room",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 4,
+      "name": "Small Ledge Below Left Door",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -90,7 +102,21 @@
       "from": 2,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1}
       ]
     }
   ],
@@ -98,15 +124,14 @@
     {
       "link": [1, 1],
       "name": "Open the Door",
-      "notable": false,
-      "requires": [],
-      "clearsObstacles": ["A"],
-      "devNote": "A doorUnlockedAtNode requirement is not included, since it is implicitly included in the exitCondition of strats that rely on this."
+      "requires": [
+        {"doorUnlockedAtNode": 1}
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -118,7 +143,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Spark (X-Mode)",
-      "notable": false,
       "requires": [
         "h_canXMode",
         "h_XModeSpikeHit",
@@ -144,9 +168,15 @@
       "devNote": "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "Grapple",
@@ -157,7 +187,6 @@
     {
       "link": [1, 2],
       "name": "Shinespark (Come In With Spark)",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -176,7 +205,6 @@
     {
       "link": [1, 2],
       "name": "Shinespark (Come In Shinecharging)",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 6,
@@ -184,14 +212,23 @@
         }
       },
       "requires": [
-        {"shinespark": {
-          "frames": 142,
-          "excessFrames": 60
-        }}
+        "canHorizontalShinespark",
+        {"or":[
+          {"shinespark": {
+            "frames": 142,
+            "excessFrames": 60
+          }},
+          {"and":[
+            "canShinechargeMovement",
+            "canMidairShinespark",
+            {"shinespark": {
+              "frames": 134,
+              "excessFrames": 60
+            }}
+          ]}
+        ]}
       ],
-      "devNote": [
-        "FIXME: With canShinesparkMovement you can jump out a bit before sparking, but it may not be worth modeling."
-      ]
+      "devNote": "FIXME: Could be doable tankless if the shinecharge happened in the previous room and then Samus ran out with more speed."
     },
     {
       "link": [1, 2],
@@ -207,13 +244,12 @@
       ],
       "note": [
         "If you wait long enough, a Waver will arrive. After it turns around to go back to the right, damage boost off of it, then follow it.",
-        "Continue to hit it to get iframes to avoid taking damage from any spikes."
+        "Continue to hit it to get i-frames to avoid taking damage from any spikes."
       ]
     },
     {
       "link": [1, 2],
       "name": "X-Ray Exit Spike Floor",
-      "notable": false,
       "requires": [
         {"spikeHits": 4},
         {"or": [
@@ -226,7 +262,6 @@
     {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "SpaceJump",
@@ -237,7 +272,6 @@
     {
       "link": [2, 1],
       "name": "Shinespark (Come in With Spark)",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -248,7 +282,6 @@
     {
       "link": [2, 1],
       "name": "Shinespark (Come in Shinecharging)",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 4,
@@ -256,6 +289,7 @@
         }
       },
       "requires": [
+        "canHorizontalShinespark",
         {"shinespark": {"frames": 143, "excessFrames": 6}}
       ],
       "devNote": [
@@ -265,7 +299,6 @@
     {
       "link": [2, 1],
       "name": "Shinespark (In-Room Runway)",
-      "notable": false,
       "requires": [
         "canMidairShinespark",
         "canShinechargeMovementComplex",
@@ -280,7 +313,6 @@
     {
       "link": [2, 1],
       "name": "Leave With Spark (In-Room Runway)",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -294,12 +326,13 @@
       "exitCondition": {
         "leaveWithSpark": {}
       },
-      "note": "Use the really small runway in the pit in the middle of the room. The door must be already opened."
+      "unlocksDoors": [{"types": ["ammo"], "requires": [], "useImplicitRequires": false}],
+      "note": "Use the really small runway in the pit in the middle of the room. The door must be already opened.",
+      "devNote": "Unlocking the door is free since obstacle A being cleared implies it was already unlocked earlier if needed."
     },
     {
       "link": [2, 1],
       "name": "Shinespark (X-Mode)",
-      "notable": false,
       "requires": [
         "canMidairShinespark",
         "h_canXMode",
@@ -320,7 +353,6 @@
     {
       "link": [2, 1],
       "name": "Leave With Spark (X-Mode)",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["A"]},
         "canMidairShinespark",
@@ -341,13 +373,17 @@
       "exitCondition": {
         "leaveWithSpark": {}
       },
+      "unlocksDoors": [{"types": ["ammo"], "requires": [], "useImplicitRequires": false}],
       "note": [
         "Jump from the runway near the right door to bounce onto spikes for X-Mode.",
         "Store a spark in X-Mode and use that to shinepark across the room.",
         "Bumping a solid tile before activating X-Mode will remove dash state, preventing shinecharging.",
         "The left door must have been opened previously, in order to shinespark through it."
       ],
-      "devNote": "Omitting leniency spikeHits, since the firefleas provide an opportunity to farm after a failed attempt."
+      "devNote": [
+        "Omitting leniency spikeHits, since the firefleas provide an opportunity to farm after a failed attempt.",
+        "Unlocking the door is free since obstacle A being cleared implies it was already unlocked earlier if needed."
+      ]
     },
     {
       "link": [2, 1],
@@ -366,122 +402,6 @@
         "Cross the gaps by freezing multiple enemies or by refreezing a Waver while standing on it.",
         "Be careful running on frozen enemies.",
         "Freeze the final Waver high and walljump up, or wait for the second Waver to come back."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Ice and HiJump",
-      "notable": false,
-      "requires": [
-        "canUseFrozenEnemies",
-        "HiJump",
-        "canCarefulJump",
-        {"or": [
-          "canTrickyJump",
-          "canWalljump"
-        ]},
-        {"spikeHits": 3},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ],
-      "note": "Use the Fireflea when it moves to the right to cross the first gap."
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access IBJ",
-      "notable": false,
-      "requires": [
-        "h_canJumpIntoIBJ",
-        {"spikeHits": 5},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access Springwall",
-      "notable": false,
-      "requires": [
-        "canSpringwall",
-        {"spikeHits": 5},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access Speed HiJump",
-      "notable": false,
-      "requires": [
-        "HiJump",
-        {"spikeHits": 4},
-        "SpeedBooster",
-        {"or": [
-          "canTrickyJump",
-          "canWalljump"
-        ]},
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 2}
-        ]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access SpikeJumps with HiJump",
-      "notable": true,
-      "requires": [
-        "HiJump",
-        "canWalljump",
-        "canIframeSpikeJump",
-        "canTrickyJump",
-        {"spikeHits": 3},
-        {"or": [
-          {"spikeHits": 1},
-          {"and": [
-            {"enemyDamage": {
-              "enemy": "Fireflea",
-              "type": "contact",
-              "hits": 1
-            }},
-            "canHorizontalDamageBoost"
-          ]}
-        ]},
-        {"or": [
-          "canInsaneWalljump",
-          {"and": [
-            {"spikeHits": 1},
-            "canHorizontalDamageBoost"
-          ]}
-        ]}
-      ],
-      "note": [
-        "Jump to the door leading to X-Ray either by jumping from spikes or with a very precise jump.",
-        "Cross the room by Jumping atop the spikes.",
-        "Taking enemy damage can be used to reduce some spike damage.",
-        "The final jump can either be made by jumping from the bottommost spike stair or from the safe stair.",
-        "Setup run speed atop the spike stair by holding forward to be pushed backward.",
-        "The safe stair jump is much harder, but can be made without every pixel of runway."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "X-Ray Access MidAir Spring Ball",
-      "notable": false,
-      "requires": [
-        "HiJump",
-        {"spikeHits": 4},
-        "canSpringBallJumpMidAir",
-        {"or": [
-          "canIframeSpikeJump",
-          {"spikeHits": 3}
-        ]}
       ]
     },
     {
@@ -505,19 +425,18 @@
     {
       "link": [2, 2],
       "name": "Fireflea Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [2],
           "mustStayPut": false
         }},
         {"refill": ["Energy", "PowerBomb"]}
-      ]
+      ],
+      "resetsObstacles": ["A"]
     },
     {
       "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -529,7 +448,6 @@
     {
       "link": [2, 2],
       "name": "Leave With Spark (In-Room Runway)",
-      "notable": false,
       "requires": [
         "canShinechargeMovementComplex",
         "canMidairShinespark",
@@ -547,7 +465,6 @@
     {
       "link": [2, 2],
       "name": "Leave Shinecharged (X-Mode)",
-      "notable": false,
       "requires": [
         "h_canXMode",
         "h_XModeSpikeHit",
@@ -565,6 +482,201 @@
       },
       "note": [
         "Store a spark in X-Mode and use that to leave with a shinecharge."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "IBJ",
+      "requires": [
+        "h_canIBJ",
+        {"spikeHits": 1},
+        {"or": [
+          "canBombHorizontally",
+          {"spikeHits": 1}
+        ]}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Tricky Springwall",
+      "requires": [
+        "canSpringwall",
+        "canTrickyJump",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "HiJump and Speedbooster",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "HiJump Spring Ball",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Ice and HiJump",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "HiJump",
+        "canCarefulJump",
+        {"or": [
+          "canTrickyJump",
+          "canWalljump"
+        ]},
+        {"spikeHits": 1}
+      ],
+      "note": "Use the Fireflea when it moves to the right to cross the first gap."
+    },
+    {
+      "link": [2, 3],
+      "name": "HiJump and Wall Jump",
+      "requires": [
+        "HiJump",
+        "canPreciseWalljump",
+        "canIframeSpikeJump",
+        {"spikeHits": 2}
+      ],
+      "note": "Jump from on top of the lower spikes, wall jump on the overhang, and land on the upper spikes."
+    },
+    {
+      "link": [2, 3],
+      "name": "Damage Boost",
+      "requires": [
+        "canTrickyJump",
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 1
+        }},
+        "canHorizontalDamageBoost",
+        {"or": [
+          "canIframeSpikeJump",
+          {"spikeHits": 1}
+        ]}
+      ],
+      "note": [
+        "Damage boost off of the Fireflea or a Waver in order to get onto the upper spikes.",
+        "It is possible to quickly get into position to use the Waver or to wait for it to return.",
+        "It is also possible (but not required in this strat) to perform a second damage boost off of the Wavers to avoid some spike damage."
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "requires": [
+        {"spikeHits": 4}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Spike Run",
+      "requires": [
+        "canIframeSpikeJump",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            {"spikeHits": 2}
+          ]},
+          {"spikeHits": 3}
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Ice and HiJump",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "HiJump",
+        "canCarefulJump"
+      ],
+      "note": "Freeze the Waver that gets stuck in the left pit as high as possible in order to avoid a wall jump."
+    },
+    {
+      "link": [4, 1],
+      "name": "Spike IBJ",
+      "requires": [
+        "h_IBJFromSpikes"
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "X-Ray Access Springwall",
+      "requires": [
+        "canSpringwall",
+        {"spikeHits": 1}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Speed HiJump",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        {"or": [
+          "canTrickyJump",
+          "canWalljump"
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Spring Ball Jump",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir",
+        {"or": [
+          "canTrickySpringBallJump",
+          {"and": [
+            "canIframeSpikeJump",
+            {"spikeHits": 1}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "X-Ray Access SpikeJumps with HiJump",
+      "notable": true,
+      "requires": [
+        "HiJump",
+        "canTrickyJump",
+        {"or": [
+          {"and": [
+            "canInsaneWalljump",
+            "h_canBackIntoCorner"
+          ]},
+          {"and": [
+            {"spikeHits": 1},
+            "canPreciseWalljump",
+            "canIframeSpikeJump"
+          ]}
+        ]}
+      ],
+      "note": [
+        "Jump to the door leading to X-Ray either by jumping from spikes or with a very precise jump.",
+        "Cross the room by Jumping atop the spikes.",
+        "Taking enemy damage can be used to reduce some spike damage.",
+        "The final jump can either be made by jumping from the bottommost spike stair or from the safe stair.",
+        "Setup run speed atop the spike stair by holding forward to be pushed backward.",
+        "The safe stair jump is much harder, but can be made without every pixel of runway."
       ]
     }
   ]

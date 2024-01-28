@@ -11,7 +11,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Amphitheatre Left Door (to Writg)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019996",
@@ -27,118 +27,38 @@
           "note": "When entering from node 2, this door is always submerged in acid"
         }
       ],
-      "runways": [
-        {
-          "name": "Base Runway - Amphitheatre Left Door (to Writg)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
+      "useImplicitDoorUnlocks": false,
       "spawnAt": 6
     },
     {
       "id": 2,
-      "name": "Amphitheatre Right Door (to Red Kihunters)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00199a2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Amphitheatre Right Door (to Red Kihunters)",
-          "length": 15,
-          "gentleUpTiles": 5,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 175}
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with no Enemies - Amphitheatre Right Door (to Red Kihunters)",
-          "length": 19,
-          "gentleUpTiles": 6,
-          "strats": [
-            {
-              "name": "Heatproof Pirate Kill",
-              "notable": false,
-              "requires": [
-                "h_heatProof",
-                {"enemyKill": {
-                  "enemies": [["Yellow Space Pirate (standing)"]],
-                  "excludedWeapons": ["Bombs"]
-                }}
-              ]
-            },
-            {
-              "name": "Quick Suitless Pirate Kill",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 220},
-                {"enemyKill": {
-                  "enemies": [["Yellow Space Pirate (standing)"]],
-                  "explicitWeapons": ["Super", "ScrewAttack"]
-                }}
-              ]
-            },
-            {
-              "name": "Medium Suitless Pirate Kill",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 450},
-                {"enemyKill": {
-                  "enemies": [["Yellow Space Pirate (standing)"]],
-                  "explicitWeapons": ["Missile", "Charge+Plasma"]
-                }}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1,
-          "note": "This longer runway requires taking out the Space Pirate."
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Amphitheatre Junction (Bottom Platform)",
+      "name": "Bottom Platform Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 4,
-      "name": "Amphitheatre Junction (Center Floating Platforms)",
+      "name": "Center Floating Platforms Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 5,
-      "name": "Amphitheatre Junction (Below Left Door)",
+      "name": "Below Left Door Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 6,
-      "name": "Amphitheatre Junction (Falling Entry)",
+      "name": "Left Door Spawn At Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -210,18 +130,32 @@
     {
       "name": "Amphitheatre Reverse Acid Dive",
       "note": "Dive into the acid and get to the doorway high on the left wall. Note that you can wall jump climb in acid without gravity."
+    },
+    {
+      "name": "Reverse Amphitheatre Thread the Needle",
+      "note": [
+        "Jump directly from the top door's ramp, through the pirates, to the far bottom left of the acid filled room.",
+        "Begin running from the top of the second slope and jump at the bottom of the third slope, bonking the large stalagtite in the ceiling.",
+        "Kill the first pirate with Screw Attack (or ahead of time with Charge+Plasma), and pass through the second pirate using a charged plasma shot.",
+        "Alternatively, with a very low speed shortcharge, blue speed can kill both pirates.",
+        "Enter the acid while aiming down to shrink Samus' hitbox.",
+        "This strat works with all combinations of movement items and suits."
+      ]
     }
   ],
   "links": [
     {
       "from": 1,
       "to": [
+        {"id": 1},
+        {"id": 3},
         {"id": 6}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 3},
         {"id": 4},
         {"id": 5}
@@ -261,11 +195,143 @@
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canHeatedCrystalFlash"
+      ],
+      "devNote": "FIXME: Add Crystal Flash strats in the acid too."
+    },
+    {
+      "link": [1, 3],
+      "name": "Careful Movement",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canCarefulJump",
+        {"heatFrames": 300}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Entering with 3 tiles of run speed will let Samus pass under the ceiling and over the bottom center pirate.",
+        "Pirates can be shot with any weapon to prevent them from firing."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Careful Movement (Come in Running)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canCarefulJump",
+        {"heatFrames": 240}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Entering with 3 tiles of run speed will let Samus pass under the ceiling and over the bottom center pirate.",
+        "Pirates can be shot with any weapon to prevent them from firing."
+      ]
+    },
+    {
       "link": [1, 6],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Pirate Alive)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 16,
+          "gentleUpTiles": 5,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Heatproof Pirate Kill)",
+      "requires": [
+        "h_heatProof",
+        {"enemyKill": {
+          "enemies": [["Yellow Space Pirate (standing)"]],
+          "excludedWeapons": ["Bombs"]
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 20,
+          "gentleUpTiles": 6,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Quick Suitless Pirate Kill)",
+      "requires": [
+        {"heatFrames": 220},
+        {"enemyKill": {
+          "enemies": [["Yellow Space Pirate (standing)"]],
+          "explicitWeapons": ["Super", "ScrewAttack"]
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 20,
+          "gentleUpTiles": 6,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Medium Suitless Pirate Kill)",
+      "requires": [
+        {"heatFrames": 450},
+        {"enemyKill": {
+          "enemies": [["Yellow Space Pirate (standing)"]],
+          "explicitWeapons": ["Missile", "Charge+Plasma"]
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 20,
+          "gentleUpTiles": 6,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
     },
     {
       "link": [2, 3],
@@ -327,39 +393,53 @@
     },
     {
       "link": [2, 5],
-      "name": "Reverse Amphitheatre Thread the Needle",
+      "name": "Reverse Amphitheatre Thread the Needle (Charge Plasma)",
       "notable": true,
+      "reusableRoomwideNotable": "Reverse Amphitheatre Thread the Needle",
       "requires": [
         "h_canNavigateHeatRooms",
         "canTrickyJump",
         "canSuitlessLavaDive",
+        "Charge",
+        "Plasma",
+        "canHitbox",
         {"or": [
-          {"and": [
-            "Charge",
-            "Plasma",
-            "canHitbox",
-            {"or": [
-              "ScrewAttack",
-              {"heatFrames": 210}
-            ]}
-          ]},
-          {"and": [
-            "canSlowShortCharge",
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 2,
-              "unusableTiles": 14
-            }}
-          ]}
+          "ScrewAttack",
+          {"heatFrames": 210}
         ]},
         {"heatFrames": 330},
         {"acidFrames": 210}
       ],
       "note": [
-        "Jump directly from the top door's ramp, through the pirates, to the far bottom left of the acid filled room.",
         "Begin running from the top of the second slope and jump at the bottom of the third slope, bonking the large stalagtite in the ceiling.",
-        "Kill the first pirate with Screw Attack or Charge+Plasma, and pass through the second pirate using a charged plasma shot.",
-        "Alternatively, a very low speed shortcharge can run through both pirates.",
+        "Kill the first pirate with Screw Attack (or ahead of time with Charge+Plasma), and pass through the second pirate using a charged plasma shot.",
+        "Enter the acid while aiming down to shrink Samus' hitbox.",
+        "This strat works with all combinations of movement items and suits."
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Reverse Amphitheatre Thread the Needle (Blue Speed)",
+      "notable": true,
+      "reusableRoomwideNotable": "Reverse Amphitheatre Thread the Needle",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 9,
+          "gentleDownTiles": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "canTrickyJump",
+        "canSuitlessLavaDive",
+        "canSlowShortCharge",
+        {"heatFrames": 330},
+        {"acidFrames": 210}
+      ],
+      "note": [
+        "Enter the room blue with very low run speed (e.g. with a 4-tap).",
+        "Use a precisely timed jump to bonk the large stalagtite in the ceiling and fall through both pirates, killing them with the blue speed.",
         "Enter the acid while aiming down to shrink Samus' hitbox.",
         "This strat works with all combinations of movement items and suits."
       ]
@@ -436,7 +516,6 @@
     {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -463,7 +542,6 @@
     {
       "link": [3, 4],
       "name": "Tricky Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canTrickyJump",
@@ -474,7 +552,6 @@
     {
       "link": [3, 4],
       "name": "Frozen Pirate",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Charge",
@@ -527,7 +604,6 @@
     {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -549,7 +625,6 @@
     {
       "link": [4, 2],
       "name": "HiJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "HiJump",
@@ -589,7 +664,6 @@
     {
       "link": [4, 2],
       "name": "Kill Pirates",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -692,7 +766,6 @@
     {
       "link": [5, 1],
       "name": "Acidless",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["A"]},
@@ -769,7 +842,6 @@
     {
       "link": [6, 1],
       "name": "SpinJump Entry",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canPrepareForNextRoom",
@@ -786,7 +858,6 @@
     {
       "link": [6, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -802,32 +873,8 @@
       ]
     },
     {
-      "link": [6, 3],
-      "name": "Careful Movement",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "canCarefulJump",
-        {"or": [
-          {"adjacentRunway": {
-            "fromNode": 1,
-            "usedTiles": 3,
-            "physics": ["normal"]
-          }},
-          {"heatFrames": 60}
-        ]},
-        {"heatFrames": 240}
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "Entering with 3 tiles of run speed will let Samus pass under the ceiling and over the bottom center pirate.",
-        "Pirates can be shot with any weapon to prevent them from firing."
-      ]
-    },
-    {
       "link": [6, 4],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canPrepareForNextRoom",
@@ -839,7 +886,6 @@
     {
       "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 180}

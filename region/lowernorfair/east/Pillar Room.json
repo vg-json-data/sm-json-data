@@ -11,7 +11,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Pillar Room Left Door (to Setup Room)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019942",
@@ -20,28 +20,11 @@
           "physics": "air",
           "note": "Acid can rise above the door, but it's possible to have air physics."
         }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Pillar Room Left Door (to Setup Room)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 85}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
       ]
     },
     {
       "id": 2,
-      "name": "Pillar Room Right Door (to Writg)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001994e",
@@ -49,23 +32,6 @@
         {
           "physics": "air",
           "note": "Acid can rise above the door, but it's possible to have air physics."
-        }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Pillar Room Right Door (to Writg)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 0
         }
       ]
     }
@@ -90,6 +56,7 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {
           "id": 2,
           "devNote": "Potentially doable with bombs and enough energy."
@@ -102,15 +69,37 @@
         {
           "id": 1,
           "devNote": "Potentially doable with bombs and enough energy."
-        }
+        },
+        {"id": 2}
       ]
     }
   ],
   "strats": [
     {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash",
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": false
+        }}
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -124,35 +113,41 @@
     {
       "link": [1, 2],
       "name": "Space Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
         "SpaceJump",
-        {"or": [
-          {"and": [
-            "canCarefulJump",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 2
-            }},
-            {"heatFrames": 300}
-          ]},
-          {"heatFrames": 380}
-        ]}
+        {"heatFrames": 380}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Space Screw (Come in Running)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        "ScrewAttack",
+        "SpaceJump",
+        "canCarefulJump",
+        {"heatFrames": 300}
       ]
     },
     {
       "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 15
-        }},
         {"shinespark": {"frames": 78, "excessFrames": 8}},
         {"heatFrames": 210}
       ],
@@ -164,14 +159,15 @@
     },
     {
       "link": [1, 2],
-      "name": "BlueSpace",
-      "notable": false,
+      "name": "Blue Space Jump",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "canBlueSpaceJump",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 180
-        }},
         {"heatFrames": 300}
       ],
       "devNote": [
@@ -232,7 +228,6 @@
     {
       "link": [2, 1],
       "name": "Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -269,7 +264,6 @@
     {
       "link": [2, 1],
       "name": "Space Screw",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -280,15 +274,16 @@
     },
     {
       "link": [2, 1],
-      "name": "BlueSpace",
-      "notable": false,
+      "name": "Blue Space Jump",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "canCarefulJump",
         "canBlueSpaceJump",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 180
-        }},
         {"heatFrames": 300}
       ],
       "devNote": [
@@ -299,14 +294,14 @@
     {
       "link": [2, 1],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 15
-        }},
         {"shinespark": {"frames": 78, "excessFrames": 4}},
         {"heatFrames": 210}
       ],
@@ -367,6 +362,28 @@
         "The power bombs can be placed far from the next pillar in line.",
         "PB1 - Near the broken pillar.  PB2 - On the 2nd full pillar.  PB3 - On the 4th full pillar.",
         "Wait for the Puromis to avoid damage but wait too long and the acid will cover the door."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash",
+        {"resetRoom": {
+          "nodes": [2],
+          "mustStayPut": false
+        }}
       ]
     }
   ]

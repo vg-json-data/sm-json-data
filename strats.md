@@ -13,8 +13,10 @@ A `strat` can have the following properties:
   * _requires_: The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
   * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
   * _clearsObstacles_: An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
+  * _resetsObstacles_: An array containing the ID of obstacles that will be reset (i.e. returned to their original state) by executing this strat.
   * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
   * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
+  * _unlocksDoors_: An array describing possible doors that can be unlocked as part of this strat.
   
 These properties are described below in more detail.
 ### Example
@@ -44,7 +46,9 @@ A strat has [logical requirements](logicalRequirements.md) which must be fulfill
 
 ## Clears Obstacles
 
-Execution of a strat may have an effect of clearing one or more [obstacles](region/region-readme.md#obstacles) in the room. This can represent, for example, that certain enemies or special blocks are destroyed by executing this strat. This allows later performing strats in the room that have an [`obstaclesCleared`](logicalRequirements.md#obstaclescleared) logical requirement on the same obstacle.
+Execution of a strat may have an effect of clearing one or more [obstacles](region/region-readme.md#obstacles) in the room. This is indicated by a `clearsObstacles` property on the strat. It can represent, for example, that certain enemies or special blocks are destroyed by executing this strat. This allows later performing strats in the room that have an [`obstaclesCleared`](logicalRequirements.md#obstaclescleared) logical requirement on this obstacle, while disallowing strats that have an [`obstaclesNotCleared`] requirement.
+
+Similarly, the `resetsObstacles` property is used to indicate that a strat results in an obstacle returning to its original, uncleared state.
 
 ## Reusable Roomwide Notable Strats
 
@@ -75,20 +79,25 @@ There is some variance in how much downward slopes slow Samus' movement, dependi
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. If the door has a lock on it, it is required to be unlocked before a strat with an `exitCondition` can be executed, unless the strat has the `bypassesDoorShell` property set to `true`. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
 
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
+- _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
+- _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
+- _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
+
+A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `true`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
 
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, and `comeInWithDoorStuckSetup`, `comeInSpeedballing`. Details are given under the corresponding entrance conditions below.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, and `comeInWithTemporaryBlue`. Details are given under the corresponding entrance conditions below.
 
 `leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details) :
 
@@ -122,11 +131,19 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge).
 
 `leaveShinecharged` has a single property:
-- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room.
+- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room. A special value "auto" may be used when the strat has a `comeInShinecharged` entrance condition: in this case, the frames remaining when leaving the room depends on how many frames are remaining when entering the room, with the `framesRequired` property of the `comeInShinecharged` indicating the amount of frames by which the shinecharge timer decreases between entering and exiting the room.
 
-A strat with a `leaveShinecharged` condition should include a `canShinecharge` requirement in its `requires`, as this is not implicitly included in the condition.
+A strat with a `leaveShinecharged` condition should either include a `canShinecharge` requirement in its `requires` or have a `comeInShinecharged` entrance condition.
 
 *Note*: Using a runway connected to a door to leave the room with a shinecharge is already covered by `leaveWithRunway`, so `leaveShinecharged` only needs to be used in cases where the shinecharge is obtained in another part of the room and then carried through the door.
+
+#### Position and Momentum Details
+
+A `leaveShinecharged` object does not provide any way to specify Samus' position or momentum through the door transition, but these details can affect the execution of the strat in the next room. Instead, as a way of normalizing these requirements, we make the following assumptions:
+
+- For a horizontal door transition, the `framesRemaining` (and any other strat requirements such as heat frames) should be based on Samus touching the door transition while running, with an unspecified amount of horizontal momentum but no vertical momentum.
+
+- For a vertical door transition, the `framesRemaining` (and other strat requirements) should be based on the worst-case position, among all possible horizontal positions within the door frame, with an unspecified amount of horizontal and vertical momentum. Samus must enter the transition in a normal "jumping" or "falling" pose. For example, entering an upward transition with a jump into mid-air morph would not be valid, because in the next room it would not be possible to control the effects of the jump in the expected way. Breaking spin before the transition would be valid, and it is recommended to do so since it allows reaching the transition more quickly.
 
 #### Example
 ```json
@@ -151,7 +168,10 @@ A strat with a `leaveShinecharged` condition should include a `canShinecharge` r
 
 A `leaveWithSpark` exit condition represents that Samus can leave through this door while shinesparking. A strat with a `leaveWithSpark` condition should include a `canShinecharge` and `shinespark` requirements in its `requires`.
 
-The `leaveWithSpark` object currently has no properties. If needed, properties might be added in the future to describe constraints on the position and direction of the spark. Currently it is implicitly assumed that the position can be fully controlled to be whatever is needed in the next room (e.g. to spark through either the top or bottom part of a horizontal door transition); so the requirements of a `leaveWithSpark` strat should be based on the worst-case scenario. The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
+The `leaveWithSpark` object has the following property:
+- _position_: For a horizontal transition, if specified, this takes two possible values, "top" or "bottom". The value "top" represents that the strat sparks through the doorway high enough to clear a single-tile block level with the bottom of the doorway. The value "bottom" represents that the strat sparks through the doorway low enough to clear a single-tile block level with the top of the doorway. If unspecified, it is understood that the strat can exit through either the top or bottom of the doorway, whichever is needed in the next room.
+
+The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions. There is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 *Note*: Using a runway connected to a door to leave the room with a shinespark is already covered by `leaveWithRunway`. Likewise `leaveShinecharged` implicitly includes the possibility of leaving the room with a shinespark. It is only necessary to use `leaveWithSpark` in cases where it would not be possible to reach the door before the shinecharge timer expires.
 
@@ -171,6 +191,32 @@ The `leaveWithSpark` object currently has no properties. If needed, properties m
   ],
   "exitCondition": {
     "leaveWithSpark": {}
+  }
+}
+```
+
+### Leave With Stored Fall Speed
+
+A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave through this door with stored fall speed.
+
+The `leaveWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
+
+A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithStoredFallSpeed` condition on the other side of the door.  A strat with a `leaveWithStoredFallSpeed` condition must either include a method of storing fall speed within its requirements, such as a Moondance.  Entering a room with a `comeInWithStoredFallSpeed` condition would also be possible exiting with a `leaveWithStoredFallSpeed` condition so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+
+#### Example
+```json
+{
+  "name": "Moondance to Store Fall Speed",
+  "notable": false,
+  "requires": [
+    "h_canUseBombs",
+    "canMoondance"
+  ],
+  "exitCondition": {
+    "leaveWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
   }
 }
 ```
@@ -231,10 +277,61 @@ and another where the `false` values for `morphed` are replaced with `true`. Her
 
 Aside from the implicit strats, there are a limited amount of `leaveWithGMode` strats possible. Normally entering a room with G-mode (or a G-mode setup) and then leaving with G-mode through a different door is not possible, since door shells cannot be opened while in G-mode. However, some door transitions do not have door shells (e.g. in Crateria Tube, Glass Tunnel, Crab Hole, Big Pink; also elevators and sand transitions), and some door shells are possible to bypass using glitches, so `leaveWithGMode` can be used in these situations.
 
+### Leave With Door Frame Below
+
+A `leaveWithDoorFrameBelow` exit condition represents that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump. A `leaveWithDoorFrameBelow` exit condition can satisfy `comeInWithWallJumpBelow` and `comeInWithSpaceJumpBelow` entrance conditions in the room above.
+
+A `leaveWithDoorFrameBelow` object has the following property:
+
+- _height_: The number of tiles beneath the door transition (not including the transition tiles) usable for wall-jumping.
+
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWalljump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, and then wall-jump back out.
+
+#### Example
+```json
+{
+  "name": "Leave With Door Frame Below",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithDoorFrame": {
+      "height": 2
+    }
+  }
+}
+```
+
+### Leave With Platform Below
+
+A `leaveWithPlatformBelow` exit condition represents that that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed. A `leaveWithPlatformBelow` exit condition can satisfy a `comeInWithPlatformBelow` entrance condition in the room above.
+
+A `leaveWithPlatformBelow` object has the following properties:
+
+- _height_: The number of tiles between the door transition and the platform, not including the transition tiles or platform itself. A horizontal slope tile (as in Blue Hopper Room) counts as a half tile.
+- _leftPosition_: This indicates the position of the furthest left usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+- _rightPosition_: This indicates the position of the furthest right usable tile of the platform, relative to the center of the door. A negative values indicates a position to the left of the door center, while a positive value indicates a position to the right of the door center. An open end, if applicable, is represented by an extra half tile.
+
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, position at the far end of the runway, and jump out.
+
+#### Example
+```json
+{
+  "name": "Leave With Platform Below",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithDoorFrame": {
+      "height": 7,
+      "leftPosition": -2.5,
+      "rightPosition": 2.5,
+    }
+  }
+}
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
 
+- _comeInNormally_: This indicates that Samus must come into the room through the specified door, with no other particular requirements.
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
@@ -244,9 +341,31 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
+- _comeInWithTemporaryBlue_: This indicates that Samus must come in by jumping through this door with temporary blue.
+- _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
+- _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
+- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
+- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
+- _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 
 Each of these properties is described in more detail below.
+
+### Come In Normally
+
+A `comeInNormally` entrance condition represents the need for Samus to enter the room through this door, with no other particular requirements. It has no properties.
+
+#### Example
+```json
+{
+  "name": "Come In Normally",
+  "notable": false,
+  "entranceCondition": {
+    "comeInNormally": {}
+  },
+  "requires": []
+}
+```
 
 ### Come In Running
 
@@ -398,11 +517,19 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
 
 - In order for `comeInShinecharged` to have a valid match with a `leaveShinecharged` condition, the `framesRequired` in the `comeInShinecharged` must be less than or equal to the `framesRemaining` of the `leaveShinecharged` condition. Aside from this, `comeInShinecharged` condition has no implicit requirements when matched with a `leaveShinecharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveShinecharged`. The frame counts in `comeInShinecharged` and `leaveShinecharged` are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts (to increase `framesRequired` or decrease `framesRemaining`).
 
-- A `comeInShinecharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 179 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
+- A `comeInShinecharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 170 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
-  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 10 heat frames are assumed for leaving the room after the shinecharge is obtained.
   - If the previous door environment is water, then `Gravity` is required.
-  
+
+#### Position and Momentum Details
+
+A `comeInShinecharged` object does not provide any way to specify Samus' position or momentum through the door transition, but these details can affect the execution of the strat. As a way of normalizing the requirements, we make the following assumptions:
+
+- For a horizontal door transition, the `framesRequired` (and any other strat requirements such as heat frames) should be based on an assumption that Samus enters the room while running, with an unspecified amount of horizontal momentum. So the requirements should be based on the worst-case scenario, which in most cases means entering the room on the ground but with no momentum.
+
+- For an vertical door transition, the `framesRemaining` (and other strat requirements) should be based on an assumption that Samus can enter through any horizontal position of the doorway (whichever is most favorable), in a jumping or falling pose, but with an unspecified amount of horizontal and vertical momentum. The requirements should be based on the worst-case momentum scenario, which generally means entering the room with no momentum, since any unwanted vertical momentum can be cancelled by releasing jump through the transition.
+
 #### Example
 ```json
 {
@@ -422,19 +549,37 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
 }
 ```
 
+### Come In Shinecharged Jumping
+
+A `comeInShinechargedJumping` entrance condition represents the need for Samus to jump into the room with a shinecharge with a certain amount of time remaining before it would expire. The jump must occur from an air environment on the other side of the door. It has the following property:
+
+- _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
+
+A strat with a `comeInShinechargedJumping` condition should include a `shinespark` requirement in its `requires`.
+
+The conditions for `comeInShinechargedJumping` are the same as for `comeInShinecharged`, with the added condition that the other side of the door must be an air environment.
+
 ### Come In With Spark
 
-A `comeInWithSpark` entrance condition indicates that Samus must shinespark into the room. The `comeInWithSpark` object has no properties. Properties might be added in the future to describe requirements on the position and direction of the spark. Currently it is implicitly assumed that the position can be fully controlled in the previous room, so a `comeInWithSpark` strat may make any assumptions needed about the position. The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
+A `comeInWithSpark` entrance condition indicates that Samus must shinespark into the room.
+
+The `comeInWithSpark` object has the following property:
+- _position_: For a horizontal transition, if specified, this takes two possible values, "top" or "bottom". The value "top" represents that the strat requires sparking through the doorway high enough to clear a single-tile block level with the bottom of the doorway. The value "bottom" represents that the strat requires sparking through the doorway low enough to clear a single-tile block level with the top of the doorway. If unspecified, it is understood that sparking in any position will work.
+
+The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
 
 A strat with a `comeInWithSpark` condition should include a `shinespark` requirement in its `requires`.
 
 A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, or `leaveWithRunway` condition on the other side of the door:
 
-- A match with `leaveWithSpark` or `leaveShinecharged` is always valid and does not come with any implicit requirements.
+- A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
+- A match with `leaveShinecharged` is always valid.
 - A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInShinecharged`) for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
+
+In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 #### Example
 ```json
@@ -534,12 +679,47 @@ It is assumed that the runway in the current room is level or sloping up; adjust
 Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
 
 A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. A match with a `leaveWithRunway` comes with implicit requirements:
+- A `canSpeedball` tech requirement.
 - A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
   - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
   - Otherwise 14 tiles are needed.
 - If the previous door environment is water, then `Gravity` is required.
 - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
 
+### Come In With Temporary Blue
+
+A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It has no properties.
+
+A `comeInWithTemporaryBlue` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. This comes with implicit requirements for actions to be performed in the previous room:
+  - The tech `canTemporaryBlue` is required.
+  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 200 heat frames are assumed for gaining temporary blue and leaving the room after the shinecharge is obtained.
+  - If the previous door environment is water, then `Gravity` is required.
+
+### Come In With Stored Fall Speed
+
+A `comeInWithStoredFallSpeed` entrance condition represents that Samus can enter through this door with stored fall speed. 
+
+The `comeInWithStoredFallSpeed` object has a single property:
+- _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
+
+A `comeInWithStoredFallSpeed` entrance condition must match with a `leaveWithStoredFallSpeed` condition on the other side of the door.  The `comeInWithStoredFallSpeed` can lead to another `leaveWithStoredFallSpeed` so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.  A strat with a `comeInWithStoredFallSpeed` condition should only include requirements needed to position Samus for the clip.
+
+*Note*: There is an implicit `canMoonfall` requirement on strats which have the `comeInWithStoredFallSpeed` condition as a means of using the stored fall speed.
+
+#### Example
+```json
+{
+  "name": "Stored Fall Speed Clip",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInWithStoredFallSpeed": {
+      "fallSpeedInTiles": 1
+    }
+  },
+  "requires": []
+}
+```
 ### Come In With R-Mode
 
 A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode while coming through this door.
@@ -617,6 +797,88 @@ __Example:__
 }
 ```
 
+### Come In With Wall Jump Below
+
+A `comeInWithWallJumpBelow` entrance condition indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
+
+A `comeInWithWallJumpBelow` object has the following property:
+
+- _minHeight_: Minimum height of door frame (tiles below the transition tiles) that will satisfy the condition.
+
+A `comeInWithWallJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door:
+- A match is valid provided the `height` property on the `leaveWithDoorFrameBelow` is at least as large as the `minHeight` property on the `comeInWithWallJumpBelow`.
+
+A `comeInWithWallJumpBelow` implicitly includes a `canWalljump` tech requirement.
+
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Wall Jump",
+  "entranceCondition": {
+    "comeInWithWallJumpBelow": {
+      "minHeight": 2
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
+
+### Come In With Space Jump Below
+
+A `comeInWithSpaceJumpBelow` entrance condition indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below. It has no properties.
+
+A `comeInWithSpaceJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door.
+
+A `comeInWithSpaceJumpBelow` implicitly includes a `SpaceJump` item requirement. If the room below is heated, then a requirement of `{"heatFrames": 30}` is implicitly included.
+
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Space Jump",
+  "entranceCondition": {
+    "comeInWithSpaceJumpBelow": {}
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
+
+### Come In With Platform Below
+
+A `comeInWithPlatformBelow` entrance condition indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed. It has the following properties:
+
+* _minHeight:_ Minimum height of the platform below that can satisfy this condition. It expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
+* _maxHeight:_ Maximum height of the platform below that can satisfy this condition. It expresses that the platform must be positioned at most a certain distance below the door transition.
+* _maxLeftPosition:_ Maximum value of "leftPosition" of the platform below that can satisfy this condition. It expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+* _minRightPosition:_ Minimum value of "rightPosition" of the platform below that can satisfy this condition. It expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
+
+A `comeInWithPlatformBelow` entrance condition must match with a `leaveWithPlatformBelow` exit condition on the other side of the door. A match is valid provided the `height`, `leftPosition`, and `rightPosition` properties on the `leaveWithDoorFrameBelow` satisfy all applicable constraints indicated by properties in the `comeInWithPlatformBelow`:
+$$\text{minHeight} \leq \text{height} \leq \text{maxHeight}$$
+$$\text{leftPosition} \leq \text{maxLeftPosition}$$
+$$\text{rightPosition} \geq \text{minRightPosition}$$
+
+A `comeInWithPlatformBelow` entrance condition has no implicit requirements.
+
+__Example:__
+```json
+{
+  "name": "Cross Room Jump - Standing Jump",
+  "entranceCondition": {
+    "comeInWithPlatformBelow": {
+      "minHeight": 6,
+      "maxHeight": 6,
+      "maxLeftPosition": 1,
+      "minRightPosition": 2
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
 
 ## G-Mode Regain Mobility
 
@@ -630,7 +892,7 @@ A `gModeRegainMobility` object has no properties.
   "name": "G-Mode Regain Mobility",
   "notable": false,
   "requires": [
-    "f_ZebesAwake",
+    "h_ZebesIsAwake",
     {"enemyDamage": {
       "enemy": "Geemer (blue)",
       "type": "contact",
@@ -646,6 +908,8 @@ A `gModeRegainMobility` object has no properties.
 A `bypassesDoorShell` property on a strat indicates that Samus can leave through the door transition in the `to` node
 without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": true` may also have an exit condition, but it is not required to have one.
 
+A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `canSkipDoorLock`.
+
 ### Example
 ```json
 {
@@ -657,3 +921,55 @@ without first unlocking or opening the door. For this to be valid, the `to` node
   "bypassesDoorShell": true
 }
 ```
+
+## Unlocks Doors
+
+An `unlocksDoors` array lists possibilities of doors that can be unlocked as part of executing this strat. The objects in the array have the following properties:
+
+- _nodeId_: The node ID of the door that can be unlocked. If unspecified, it is assumed to be the destination node of the strat.
+- _types_: A list of door unlock types, among "missiles", "super", "powerbomb", and "gray":
+    - "missiles": A door which can be opened using 5 Missiles, e.g. red doors.
+    - "super": A door which can be opened using a single Super, e.g. red or green doors.
+    - "powerbomb": A door which can be opened using a single Power Bomb, e.g. a yellow door.
+    - "gray": A door with a room-specific condition to unlock it.
+    - "ammo": A door which can be opened with ammo. This is a shorthand for ["missiles", "super", "powerbomb"].
+- _requires_: A list of additional logical requirements which must be satisfied in order for the door to be unlocked using this strat. 
+- _useImplicitRequires_: A boolean, true by default, indicating whether standard requirements should be implicitly appended to the `requires` in this object. This can be set this to false if the standard requirements are already accounted for in the strat `requires`, for example if the strat involves using a Power Bomb which would already unlock the door as a side effect, or if it uses a Super as a hero shot to open the door. If this property is set to true, the implicit standard requirements are based on the door type, as follows:
+    - For "missiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 5}}`.
+    - For "super", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
+    - For "powerbomb", the implicit requirement is `h_canUsePowerBombs`.
+    - For "gray", there is no implicit requirement.
+    
+In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `true`.
+
+If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. The case of gray doors only needs to be included in places where the vanilla game has gray doors.
+
+### Implicit Unlock Strats
+
+By default every door node has an implicit strat from the node to itself, for unlocking the door in a standard way. In an unheated room, this implicit strat has an `unlocksDoors` of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Unlock Door",
+  "requires": [],
+  "unlocksDoors": [{"type": "ammo", "requires": []}]
+}
+```
+
+In a heated room, it instead has the form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Unlock Door",
+  "requires": [],
+  "unlocksDoors": [
+    {"type": "missiles", "requires": [{"heatFrames": 50}]},
+    {"type": "super", "requires": []},
+    {"type": "powerbomb", "requires": [{"heatFrames": 110}]}
+  ]
+}
+```
+
+The implicit unlock strats can be disabled by setting the node property `useImplicitDoorUnlocks` to false.

@@ -10,51 +10,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Metroid Room 4 Top Left Door (to Metroid Room 3)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9f0",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Rinka",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Metroid Room 4 Bottom Door (to Blue Hoppers)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "grey",
       "nodeAddress": "0x001a9fc",
       "doorEnvironments": [{"physics": "air"}],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }},
-          {"or": [
-            "f_KilledMetroidRoom4",
-            {"metroidFrames": 104}
-          ]}
-        ],
-        "note": "If alive, the Metroids do up to 78 damage before the Rinka hits. Entering through the middle of the door will require less damage."
-      },
       "locks": [
         {
           "name": "Metroid Room 4 Grey Lock (to Blue Hoppers)",
@@ -117,7 +85,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -127,9 +94,71 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"or": [
+          {"resetRoom": {
+            "nodes": [1],
+            "mustStayPut": false
+          }},
+          "Ice",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "h_canCrystalFlash"
+      ],
+      "note": [
+        "To avoid heavy Rinka damage, perform the Crystal Flash while backed against the left door or inside the open door frame.",
+        "Lay the Power Bomb immediately after destroying the Rinka with the closer spawn location."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Rinka",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Rinka",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Morph Power Bomb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canMetroidAvoid",
+        {"ammo": {"type": "PowerBomb", "count": 5}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Kill the Metroids while artificially morphed without any movement items.",
+        "With just 5 Power Bombs, place one on the first platform to kill some Rinkas and to lure a second Metroid.",
+        "Place a second in the same region, then drop down and quickly place a third on the second platform and fall to the third platform while the first two Metroids die.",
+        "The remaining two Power Bombs can safely placed here to kill the final Metroid.",
+        "Note that it is necessary to exit G-Mode before exiting the room in order for the Metroids to remain killed."
+      ],
+      "devNote": "FIXME: It may be possible to kill the Metroids starting at the bottom door."
+    },
+    {
       "link": [1, 2],
       "name": "Already Cleared",
-      "notable": false,
       "requires": [
         "f_KilledMetroidRoom4"
       ],
@@ -138,7 +167,6 @@
     {
       "link": [1, 2],
       "name": "Ammo Kill",
-      "notable": false,
       "requires": [
         "Ice",
         {"enemyKill": {
@@ -151,7 +179,6 @@
     {
       "link": [1, 2],
       "name": "Tank and PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
@@ -164,7 +191,6 @@
     {
       "link": [1, 2],
       "name": "Metroid Room 4 Safe Six PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -197,7 +223,6 @@
     {
       "link": [1, 2],
       "name": "Easy Evade",
-      "notable": false,
       "requires": [
         {"or": [
           "Ice",
@@ -211,7 +236,6 @@
     {
       "link": [1, 2],
       "name": "Harder Evade",
-      "notable": false,
       "requires": [
         "canMetroidAvoid",
         "Morph"
@@ -234,7 +258,6 @@
     {
       "link": [1, 2],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         {"metroidFrames": 256}
       ],
@@ -243,7 +266,6 @@
     {
       "link": [2, 1],
       "name": "Already Cleared",
-      "notable": false,
       "requires": [
         "f_KilledMetroidRoom4"
       ],
@@ -252,7 +274,6 @@
     {
       "link": [2, 1],
       "name": "Ammo Kill",
-      "notable": false,
       "requires": [
         "Ice",
         {"enemyKill": {
@@ -265,7 +286,6 @@
     {
       "link": [2, 1],
       "name": "Tank and Three PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
@@ -278,7 +298,6 @@
     {
       "link": [2, 1],
       "name": "Tank and Six PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -331,7 +350,6 @@
     {
       "link": [2, 1],
       "name": "Easy Evade",
-      "notable": false,
       "requires": [
         {"or": [
           "Ice",
@@ -361,7 +379,6 @@
     {
       "link": [2, 1],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Rinka",
@@ -376,7 +393,6 @@
     {
       "link": [2, 2],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -388,6 +404,23 @@
         "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark.",
         "This requires the Metroids to be killed, because otherwise Samus will be grabbed on entry, and the other 2->1 strats won't work."
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Rinka",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"or": [
+          "f_KilledMetroidRoom4",
+          {"metroidFrames": 104}
+        ]}
+      ],
+      "gModeRegainMobility": {},
+      "note": "If alive, the Metroids do up to 78 damage before the Rinka hits. Entering through the middle of the door will require less damage."
     }
   ]
 }

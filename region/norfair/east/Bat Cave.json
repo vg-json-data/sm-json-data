@@ -11,7 +11,7 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Bat Cave Left Door (to Bubble Mountain)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197aa",
@@ -19,7 +19,7 @@
     },
     {
       "id": 2,
-      "name": "Bat Cave Right Door (to Speed Booster Hall)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197b6",
@@ -27,7 +27,7 @@
     },
     {
       "id": 3,
-      "name": "Bat Cave Farm Spot",
+      "name": "Gamet Farm Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -59,12 +59,21 @@
       ]
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Camera Broken",
+      "obstacleType": "abstract",
+      "note": "Represents being off-camera in the top part of the room."
+    }
+  ],
   "links": [
     {
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
@@ -87,7 +96,6 @@
     {
       "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -97,9 +105,15 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
@@ -114,7 +128,6 @@
     {
       "link": [1, 2],
       "name": "Precise Walljump",
-      "notable": false,
       "requires": [
         "canPreciseWalljump",
         "canTrickyJump",
@@ -128,7 +141,6 @@
     {
       "link": [1, 2],
       "name": "Enter Running Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 2,
@@ -145,7 +157,6 @@
     {
       "link": [1, 2],
       "name": "Enter Shinecharged and Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 95
@@ -159,9 +170,21 @@
       "note": "Shoot diagonally to clear the Skree and shot block before jumping to a closer platform and shinesparking to the above area."
     },
     {
+      "link": [1, 3],
+      "name": "X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Climb up 1 screen."
+    },
+    {
       "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"heatFrames": 230},
@@ -180,7 +203,6 @@
     {
       "link": [2, 1],
       "name": "Enter Running and Leave Shinesparking",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 6,
@@ -192,12 +214,14 @@
         {"heatFrames": 165},
         {"shinespark": {"frames": 15}}
       ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
       "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
     },
     {
       "link": [2, 1],
       "name": "Enter Shinecharged and Leave Shinesparking",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 115
@@ -208,12 +232,30 @@
         {"heatFrames": 165},
         {"shinespark": {"frames": 15}}
       ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
       "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
+    },
+    {
+      "link": [2, 2],
+      "name": "Fix the Camera",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canOffScreenMovement",
+        {"heatFrames": 160}
+      ],
+      "resetsObstacles": ["A"],
+      "note": [
+        "Destroy the shot block by standing on top of it, jumping, aiming down, and shooting at the moment that you land.",
+        "This requires precision because the beam projectile will immediately despawn while off-camera.",
+        "Less precise alternatives include using a bomb, Power Bomb, or Grapple, if available.",
+        "With the shot block destroyed, fall down through the opening and jump back up, and the camera will be fixed."
+      ]
     },
     {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"heatFrames": 10}
       ],
@@ -225,7 +267,6 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"heatFrames": 50}
       ]
@@ -233,7 +274,6 @@
     {
       "link": [3, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -249,14 +289,33 @@
     {
       "link": [3, 3],
       "name": "Gamet Farm",
-      "notable": false,
       "requires": [
+        {"obstaclesNotCleared": ["A"]},
         {"or": [
           "canPauseAbuse",
           {"heatFrames": 50}
         ]},
         {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
       ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Off-Camera Gamet Farm",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canOffScreenMovement",
+        {"or": [
+          "ScrewAttack",
+          "h_canUseMorphBombs",
+          "Grapple"
+        ]},
+        {"or": [
+          "canPauseAbuse",
+          {"heatFrames": 50}
+        ]},
+        {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
+      ],
+      "note": "When off-camera, the Gamets still spawn but cannot be destroyed with beams or other projectiles."
     }
   ]
 }

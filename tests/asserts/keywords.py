@@ -46,6 +46,7 @@ def process_keyvalue(k, v, metadata):
     # keys to ignore for documented reasons
     manualKeys = [
         "clearsObstacles",
+        "resetsObstacles",
         "initiateRemotely",
         "obstaclesCleared",
         "obstaclesNotCleared"
@@ -62,8 +63,6 @@ def process_keyvalue(k, v, metadata):
         # "groupName",        # !!could check for unique
         # "nodeAddress",      # !!could check for unique
         # "roomAddress",      # !!could check for unique
-        "mobility",         # validated by schema
-        "mode",             # validated by schema
         "jumpwayType",      # validated by schema
         "lockType",         # validated by schema
         "nodeType",         # validated by schema
@@ -76,11 +75,14 @@ def process_keyvalue(k, v, metadata):
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInRunning",  # validated by schema
-        "comeInJumping",    # validated by schema
+        "comeInJumping",    # validated by schema,
+        "comeInWithGMode",    # validated by schema,
         "leaveWithGModeSetup", # validated by schema
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
+        "framesRemaining",  # validated by schema
+        "types",  # validated by schema in 'unlockDoors', manually in 'enemyDamage'
     ]
 
     # check if it's a key we want to check
@@ -104,7 +106,10 @@ def process_keyvalue(k, v, metadata):
         if v not in uniques[kCheck]:
             uniques[kCheck].append(v)
             isSkip = True
-        else:
+        elif kCheck == "nodeAddress" and int(v, 16) in [0x189ca, 0x189d6]:
+            # nodeAddress is normally unique but there are two exceptions in West Ocean for the bridge doors.
+            isSkip = True
+        else:      
             msg = f"🔴ERROR: {k}:{v} not unique!"
             messages["reds"].append(msg)
             messages["counts"]["reds"] += 1
@@ -200,6 +205,39 @@ def search_for_path(fromNodes, sourceNode, targetNode, stratRef):
         msg = f"🟡WARNING: Path not found:{stratRef}::{sourceNode}:{tNode}:{targetNode}::Is it longer than a 3-node chain? Gave up looking"
 
     return [foundPath, msg]
+
+
+def find_door_unlocked_nodes_rec(req):
+    if isinstance(req, dict):
+        if "doorUnlockedAtNode" in req:
+            return set([req["doorUnlockedAtNode"]])
+        if "and" in req:
+            return find_door_unlocked_nodes_rec(req["and"])
+        if "or" in req:
+            return find_door_unlocked_nodes_rec(req["or"])
+    if isinstance(req, list):
+        return set(y for x in req for y in find_door_unlocked_nodes_rec(x))
+    return set()
+
+
+def find_door_unlocked_nodes(strat, node_subtype):
+    nodes = find_door_unlocked_nodes_rec(strat["requires"])
+    from_node = strat["link"][0]
+    to_node = strat["link"][1]
+    if "exitCondition" in strat and strat.get("bypassesDoorShell") != True and node_subtype not in ["elevator", "doorway"]:
+        nodes.add(to_node)
+    if "entranceCondition" not in strat and from_node in nodes:
+        nodes.remove(from_node)
+    return nodes
+
+def check_node_covered_in_unlocks_doors(strat, node_id):
+    unlocks_doors = strat.get("unlocksDoors", [])
+    to_node = strat["link"][1]
+    types = [t for x in unlocks_doors if x.get("nodeId", to_node) == node_id for t in x["types"]]
+    if "ammo" in types: 
+        return []
+    missing_types = {"missiles", "super", "powerbomb"}.difference(types)
+    return missing_types
 
 # give list of keys to check
 # give label for output message
@@ -330,18 +368,6 @@ for jsonPath in [
             # print(flattened_dict)
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v, {})
-
-cheatSheetJSON = {}
-with open(
-    os.path.join(
-        ".",
-        "tests",
-        "asserts",
-        "canLeaveCharged.json"
-    ),
-    encoding="utf-8"
-) as cheatSheetFile:
-    cheatSheetJSON = json.load(cheatSheetFile)
 
 print("")
 print("Check Regions")
@@ -525,6 +551,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     obstacleErrors = search_for_valid_keyvalue(
                         [
                             "clearsObstacles.",
+                            "resetsObstacles.",
                             "obstaclesCleared.",
                             "obstaclesNotCleared.",
                         ],
@@ -603,19 +630,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
-
-                    # Validate canLeaveCharged
-                    # Validate leaveWithGMode
-                    gModeObjects = []
-                    for node in room["nodes"]:
-                        if "id" in node:
-                            nodeRef = f"{roomRef}:{node['id']}"
-
-                        # Collect GMode objects
-                        if "leaveWithGMode" in node:
-                            for leaveG in node["leaveWithGMode"]:
-                                gModeObjects.append(leaveG)
-
                     # Validate strats
                     previous_link = (0, 0)
                     for strat in room["strats"]:
@@ -653,39 +667,30 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            if "leaveShinecharged" in strat["exitCondition"]:
+                                if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
+                                    if "entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]:
+                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition:{stratRef}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+                        node_subtype = node_lookup[toNode]["nodeSubType"]
+                        door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype)                                
+                        for node in door_unlocked_nodes:
+                            missing_types = check_node_covered_in_unlocks_doors(strat, node)
+                            if len(missing_types) == 3:
+                                msg = f"🟡WARNING: Door unlocked requirement for node {node} is not covered in `unlocksDoors`:{stratRef}"
+                                messages["yellows"].append(msg)
+                                messages["counts"]["yellows"] += 1
+                            else:
+                                for t in missing_types:
+                                    msg = f"🟡WARNING: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
+                                    messages["yellows"].append(msg)
+                                    messages["counts"]["yellows"] += 1
                         if strat.get("bypassesDoorShell") == True:
                             if node_lookup[toNode]["nodeType"] != "door":
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-
-
-                    # Validate GMode objects
-                    for gModeObj in gModeObjects:
-                        if "strats" in gModeObj:
-                            parentNodeRef = ""
-                            if "fromNode" in gModeObj:
-                                parentNodeRef = f"{gModeObj['fromNode']}:"
-                            toNodeRef = f"{roomRef}:{parentNodeRef}"
-                            if "id" in gModeObj:
-                                toNodeRef += f"{gModeObj['id']}:"
-                            for strat in gModeObj["strats"]:
-                                stratRef = f"{toNodeRef}{strat['name']}"
-                                if "requires" in strat:
-                                    for req in strat["requires"]:
-                                        if "comeInWithGMode" in req:
-                                            if "fromNodes" in req["comeInWithGMode"]:
-                                                for fromNode in req["comeInWithGMode"]["fromNodes"]:
-                                                    fromNodeRef = f"Node[{stratRef}:{fromNode}]"
-                                                    if fromNode not in roomData["nodes"]["froms"]:
-                                                        msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
-                                                        messages["reds"].append(msg)
-                                                        messages["counts"]["reds"] += 1
-                                                    else:
-                                                        msg = ""
-                                                        msg += f"🟢{area}/{subarea}/{roomName}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
-                                                        messages["greens"].append(msg)
-                                                        messages["counts"]["greens"] += 1
 
                     # Validate Nodes
                     showNodes = paramData["showNodes"]
@@ -818,49 +823,46 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
 # print(uniques)
 
-if bail:
-    firstErr = True
-    firstWarn = True
-    foundErr = False
-    foundWarn = False
-    lastRegion = ""
-    region = ""
-    for msg in messages["reds"]:
-        if isinstance(msg, dict):
-            if "region" in msg:
-                region = msg["region"]
-            if "msg" in msg:
-                if "note" in msg:
-                    msg["msg"] += " !! " + msg["note"]
-                msg = msg["msg"]
-        if "ERROR" in msg or "requires" in msg:
-            foundErr = True
-            if firstErr:
-                print("🔴ERROR🔴")
-                firstErr = False
-            if region != lastRegion:
-                print(region)
-                lastRegion = region
-            print(msg)
-    for msg in messages["yellows"]:
-        if isinstance(msg, dict):
-            if "region" in msg:
-                region = msg["region"]
-            if "msg" in msg:
-                if "note" in msg:
-                    msg["msg"] += " !! " + msg["note"]
-                msg = msg["msg"]
-        if "WARNING" in msg or "requires" in msg:
-            foundWarn = True
-            if firstWarn:
-                print("🟡WARNING🟡")
-                firstWarn = False
-            if region != lastRegion:
-                print(region)
-                lastRegion = region
-            print(msg)
-    if foundWarn:
-        subprocess.run("echo \"::warning title=Warning::Check Log for Details...\"", shell=True)
-    if foundErr:
-        print("🔴Something fucked up! Bailing!")
-        sys.exit(1)
+firstErr = True
+firstWarn = True
+foundErr = False
+foundWarn = False
+lastRegion = ""
+region = ""
+for msg in messages["reds"]:
+    if isinstance(msg, dict):
+        if "region" in msg:
+            region = msg["region"]
+        if "msg" in msg:
+            if "note" in msg:
+                msg["msg"] += " !! " + msg["note"]
+            msg = msg["msg"]
+    if "ERROR" in msg or "requires" in msg:
+        foundErr = True
+        if firstErr:
+            print("🔴 {} ERRORs 🔴".format(len(messages["reds"])))
+            firstErr = False
+        if region != lastRegion:
+            print(region)
+            lastRegion = region
+        print(msg)
+for msg in messages["yellows"]:
+    if isinstance(msg, dict):
+        if "region" in msg:
+            region = msg["region"]
+        if "msg" in msg:
+            if "note" in msg:
+                msg["msg"] += " !! " + msg["note"]
+            msg = msg["msg"]
+    if "WARNING" in msg or "requires" in msg:
+        foundWarn = True
+        if firstWarn:
+            print("🟡 {} WARNINGs 🟡".format(len(messages["yellows"])))
+            firstWarn = False
+        if region != lastRegion:
+            print(region)
+            lastRegion = region
+        print(msg)
+if foundErr:
+    print("🔴Something fucked up! Bailing!")
+    sys.exit(1)

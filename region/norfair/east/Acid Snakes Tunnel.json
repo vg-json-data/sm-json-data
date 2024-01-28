@@ -11,107 +11,31 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Acid Snakes Tunnel Left Door (to Crocomire Speedway)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001974a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Snakes Tunnel Left Door (to Crocomire Speedway)",
-          "length": 13,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 150}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Acid Snakes Tunnel Right Door (to Nutella Refill)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019756",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Snakes Tunnel Right Door (to Nutella Refill)",
-          "length": 13,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 150}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Acid Snakes Tunnel Top Door (to Red Pirate Shaft)",
+      "name": "Top Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019762",
-      "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 2,
-          "requires": [
-            {"heatFrames": 120}
-          ]
-        },
-        {
-          "name": "Platform",
-          "jumpwayType": "platformBelow",
-          "height": 9,
-          "leftPosition": -7.5,
-          "rightPosition": 7,
-          "requires": [
-            {"heatFrames": 120}
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Frozen Gammets",
-            "notable": false,
-            "requires": [
-              "h_heatProof",
-              "canUpwardGModeSetup",
-              "canTrickyUseFrozenEnemies",
-              "Morph"
-            ],
-            "note": [
-              "Freeze the stack of Gammets together a few times to try and raise them as high as possible.",
-              "Run with them to the door and freeze the top two such that Samus can stand on the lower and take damage from the higher Gammet when it unfreezes."
-            ],
-            "devNote": [
-              "Landing on the Gammet with an aim down, or spin, wasn't working.  So require Morph.",
-              "Would be notable but its a GMode strat."
-            ]
-          }
-        ]}
-      ]
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Acid Snakes Tunnel Farm Spot",
+      "name": "Gamet Farm Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -158,12 +82,14 @@
     {
       "from": 1,
       "to": [
+        {"id": 1},
         {"id": 4}
       ]
     },
     {
       "from": 2,
       "to": [
+        {"id": 2},
         {"id": 3},
         {"id": 4}
       ]
@@ -172,6 +98,7 @@
       "from": 3,
       "to": [
         {"id": 2},
+        {"id": 3},
         {"id": 4}
       ]
     },
@@ -189,25 +116,151 @@
     {
       "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 70}
       ]
     },
     {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
       "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 80}
       ]
     },
     {
+      "link": [2, 3],
+      "name": "In-Room Shortcharge",
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 13,
+            "openEnd": 1
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 2},
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 1
+            }},
+            {"heatFrames": 20}
+          ]}
+        ]},
+        {"heatFrames": 240}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Come In Shinecharged, Leave Sparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"shinespark": {"frames": 8}},
+        {"heatFrames": 50}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Come In Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 13,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 80}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 90
+        }
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave With Door Frame Below",
+      "requires": [
+        {"heatFrames": 80}
+      ],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 2
+        }
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave With Platform Below (Small Runway)",
+      "requires": [
+        {"heatFrames": 80}
+      ],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -2,
+          "rightPosition": 2
+        }
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave With Platform Below (Full Runway)",
+      "requires": [
+        {"or": [
+          "canXRayTurnaround",
+          "canMoonwalk"
+        ]},
+        {"heatFrames": 100}
+      ],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -2,
+          "rightPosition": 6
+        }
+      },
+      "devNote": [
+        "This includes time to moonwalk back against the right door, without shooting it open.",
+        "An additional tile could be used by opening the right door but there is not yet any known application."
+      ]
+    },
+    {
       "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 210}
@@ -216,16 +269,77 @@
     {
       "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 55}
       ]
     },
     {
+      "link": [3, 3],
+      "name": "Leave With Door Frame Below",
+      "requires": [
+        {"heatFrames": 70}
+      ],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 2
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Platform Below (Small Runway)",
+      "requires": [
+        {"heatFrames": 70}
+      ],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -2.5,
+          "rightPosition": 2.5
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Platform Below (Full Runway)",
+      "requires": [
+        {"heatFrames": 120}
+      ],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -7.5,
+          "rightPosition": 6
+        }
+      },
+      "devNote": "An additional tile could be used by opening the right door but there is not yet any known application."
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Frozen Gammets",
+      "notable": false,
+      "requires": [
+        "h_heatProof",
+        "canUpwardGModeSetup",
+        "canTrickyUseFrozenEnemies",
+        "Morph"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "Freeze the stack of Gammets together a few times to try and raise them as high as possible.",
+        "Run with them to the door and freeze the top two such that Samus can stand on the lower and take damage from the higher Gammet when it unfreezes."
+      ],
+      "devNote": [
+        "Landing on the Gammet with an aim down, or spin, wasn't working.  So require Morph.",
+        "Would be notable but its a GMode strat."
+      ]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 210}
@@ -234,16 +348,50 @@
     {
       "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 80}
       ]
     },
     {
+      "link": [4, 1],
+      "name": "Leave with Runway",
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 10}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 1
+        }
+      }
+    },
+    {
       "link": [4, 2],
       "name": "Base",
-      "notable": false,
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 210}
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Leave with Runway",
+      "requires": [
+        "h_canNavigateHeatRooms",
+        {"heatFrames": 155}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 14,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [4, 3],
+      "name": "Base",
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 210}
@@ -252,16 +400,54 @@
     {
       "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 210}
       ]
     },
     {
+      "link": [4, 3],
+      "name": "Leave With Door Frame Below",
+      "requires": [
+        {"heatFrames": 220}
+      ],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 2
+        }
+      }
+    },
+    {
+      "link": [4, 3],
+      "name": "Leave With Platform Below",
+      "requires": [
+        {"heatFrames": 220}
+      ],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 9,
+          "leftPosition": -7.5,
+          "rightPosition": 2
+        }
+      }
+    },
+    {
+      "link": [4, 3],
+      "name": "Gamet Ice Clip Door Lock Skip",
+      "requires": [
+        {"heatFrames": 560},
+        "canTrickyUseFrozenEnemies",
+        "h_canNonTrivialCeilingClip"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Bring a Gamet from the farm and freeze it at a precise distance below the door in order to crouch-jump up and clip through the door shell.",
+        "The pixel window is larger and higher with Morph and an X-Ray stand-up, in which case a standing jump is used."
+      ]
+    },
+    {
       "link": [4, 4],
       "name": "Gamet Farm",
-      "notable": false,
       "requires": [
         {"or": [
           "canPauseAbuse",
