@@ -171,7 +171,7 @@ A `leaveWithSpark` exit condition represents that Samus can leave through this d
 The `leaveWithSpark` object has the following property:
 - _position_: For a horizontal transition, if specified, this takes two possible values, "top" or "bottom". The value "top" represents that the strat sparks through the doorway high enough to clear a single-tile block level with the bottom of the doorway. The value "bottom" represents that the strat sparks through the doorway low enough to clear a single-tile block level with the top of the doorway. If unspecified, it is understood that the strat can exit through either the top or bottom of the doorway, whichever is needed in the next room.
 
-The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions.
+The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions. There is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 *Note*: Using a runway connected to a door to leave the room with a shinespark is already covered by `leaveWithRunway`. Likewise `leaveShinecharged` implicitly includes the possibility of leaving the room with a shinespark. It is only necessary to use `leaveWithSpark` in cases where it would not be possible to reach the door before the shinecharge timer expires.
 
@@ -507,7 +507,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
 
 ### Come In Shinecharged
 
-A `comeInShinecharged` entrance condition represents the need for Samus to run into the room with a shinecharge with a certain amount of time remaining before it would expire. It has the following property:
+A `comeInShinecharged` entrance condition represents the need for Samus to run or jump into the room with a shinecharge with a certain amount of time remaining before it would expire. It has the following property:
 
 - _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
 
@@ -526,7 +526,7 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
 
 A `comeInShinecharged` object does not provide any way to specify Samus' position or momentum through the door transition, but these details can affect the execution of the strat. As a way of normalizing the requirements, we make the following assumptions:
 
-- For a horizontal door transition, the `framesRequired` (and any other strat requirements such as heat frames) should be based on an assumption that Samus enters the room while running, with an unspecified amount of horizontal momentum. So the requirements should be based on the worst-case scenario, which in most cases means entering the room on the ground but with no momentum.
+- For a horizontal door transition, the `framesRequired` (and any other strat requirements such as heat frames) should be based on an assumption that Samus enters the room either while running or spin-jumping just before the transition, with an unspecified amount of momentum. So the requirements should be based on the worst-case scenario, which in most cases means entering the room with no momentum. If entering with a spin jump is required, keep in mind that a `comeInShinecharged` condition does not require air physics in the previous room, so the jump may be low; if a spin jump with more momentum is required then the `comeInShinechargedJumping` condition should be used.
 
 - For an vertical door transition, the `framesRemaining` (and other strat requirements) should be based on an assumption that Samus can enter through any horizontal position of the doorway (whichever is most favorable), in a jumping or falling pose, but with an unspecified amount of horizontal and vertical momentum. The requirements should be based on the worst-case momentum scenario, which generally means entering the room with no momentum, since any unwanted vertical momentum can be cancelled by releasing jump through the transition.
 
@@ -573,11 +573,13 @@ A strat with a `comeInWithSpark` condition should include a `shinespark` require
 A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, or `leaveWithRunway` condition on the other side of the door:
 
 - A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
-- A match with `leaveShinecharged` is always valid and does not come with any implicit requirements.
+- A match with `leaveShinecharged` is always valid.
 - A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInShinecharged`) for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
+
+In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
 
 #### Example
 ```json
@@ -951,7 +953,7 @@ By default every door node has an implicit strat from the node to itself, for un
   "link": [1, 1],
   "name": "Unlock Door",
   "requires": [],
-  "unlocksDoors": [{"type": "ammo", "requires": []}]
+  "unlocksDoors": [{"types": ["ammo"], "requires": []}]
 }
 ```
 
@@ -963,9 +965,9 @@ In a heated room, it instead has the form:
   "name": "Unlock Door",
   "requires": [],
   "unlocksDoors": [
-    {"type": "missiles", "requires": [{"heatFrames": 50}]},
-    {"type": "super", "requires": []},
-    {"type": "powerbomb", "requires": [{"heatFrames": 110}]}
+    {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+    {"types": ["super"], "requires": []},
+    {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
   ]
 }
 ```

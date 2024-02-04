@@ -82,7 +82,7 @@ def process_keyvalue(k, v, metadata):
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
         "framesRemaining",  # validated by schema
-        "types",  # validated by schema in 'unlockDoors', manually in 'enemyDamage'
+        "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
     ]
 
     # check if it's a key we want to check
@@ -224,7 +224,7 @@ def find_door_unlocked_nodes(strat, node_subtype):
     nodes = find_door_unlocked_nodes_rec(strat["requires"])
     from_node = strat["link"][0]
     to_node = strat["link"][1]
-    if "exitCondition" in strat and strat.get("bypassesDoorShell") != True and node_subtype not in ["elevator", "doorway"]:
+    if "exitCondition" in strat and strat.get("bypassesDoorShell") != True and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
         nodes.add(to_node)
     if "entranceCondition" not in strat and from_node in nodes:
         nodes.remove(from_node)
