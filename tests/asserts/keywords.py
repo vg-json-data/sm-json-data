@@ -678,14 +678,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         for node in door_unlocked_nodes:
                             missing_types = check_node_covered_in_unlocks_doors(strat, node)
                             if len(missing_types) == 3:
-                                msg = f"🟡WARNING: Door unlocked requirement for node {node} is not covered in `unlocksDoors`:{stratRef}"
-                                messages["yellows"].append(msg)
-                                messages["counts"]["yellows"] += 1
+                                msg = f"🔴ERROR: Door unlocked requirement for node {node} is not covered in `unlocksDoors`:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
                             else:
                                 for t in missing_types:
-                                    msg = f"🟡WARNING: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
-                                    messages["yellows"].append(msg)
-                                    messages["counts"]["yellows"] += 1
+                                    msg = f"🔴ERROR: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                         if strat.get("bypassesDoorShell") == True:
                             if node_lookup[toNode]["nodeType"] != "door":
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
