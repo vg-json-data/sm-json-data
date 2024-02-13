@@ -291,10 +291,30 @@ A `resourceCapacity` object represents the need for Samus to be capable of holdi
 __Example:__
 ```json
 {"resourceCapacity": [
-    { "type": "Missile", "count": 10},
-    { "type": "Super", "count":10},
-    { "type": "PowerBomb", "count": 11},
-    { "type": "RegularEnergy", "count":899}
+    {"type": "Missile", "count": 10},
+    {"type": "Super", "count": 10},
+    {"type": "PowerBomb", "count": 11},
+    {"type": "RegularEnergy", "count": 899}
+]}
+```
+
+#### resourceAvailable object
+A `resourceAvailable` object represents the need for Samus to be holding at least a set amount of a specific resource. It can have the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus must have.
+
+This requirement does not consume the resource.
+
+__Example:__
+```json
+{"resourceAvailable": [
+    {"type": "Energy", "count": 99}
 ]}
 ```
 
