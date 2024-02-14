@@ -299,7 +299,7 @@ __Example:__
 ```
 
 #### resourceAvailable object
-A `resourceAvailable` object represents the need for Samus to be holding at least a set amount of a specific resource. It can have the following properties:
+A `resourceAvailable` object represents the need for Samus to be holding at least a set amount of a specific resource. It has the following properties:
 * _type:_ The type of resource. Can have the following values:
   * Missile
   * Super
@@ -315,6 +315,26 @@ __Example:__
 ```json
 {"resourceAvailable": [
     {"type": "Energy", "count": 99}
+]}
+```
+
+#### resourceMissingAtMost object
+A `resourceMissingAtMost` object represents the need for Samus to be missing at most a certain amount of a specific resource, relative to being full capacity. It has the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus must have.
+
+For example, a count of zero would indicate that Samus must be full on that resource type.
+
+__Example:__
+```json
+{"resourceMissingAtMost": [
+    {"type": "Energy", "count": 0}
 ]}
 ```
 
