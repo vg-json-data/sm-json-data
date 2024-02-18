@@ -89,6 +89,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
 
 Each of these properties is described in more detail below.
 
@@ -327,6 +328,29 @@ In a heated room, heat frames must be explicitly included in the strat `requires
 }
 ```
 
+## Leave With Grapple Teleport
+
+A `leaveWithGrappleTeleport` exit condition represents that Samus can leave through this door while grappled, which can enable a teleport in the next room. The position of the block that Samus is grappled to (counted in tiles from the top left corner of the room) determines the destination of the teleport in the next room. For the teleport to work, the next room must have a block in a corresponding position that Samus can remain grappled to; e.g. a solid tile will work but air will not.
+
+A `leaveWithGrappleTeleport` object has the following property:
+
+- _blockPositions_: A list of tile coordinates of (grapple) blocks that Samus could be grappled to while exiting the room. Coordinates `[x, y]` are represented as tile counts with `[0, 0]` representing the top-left corner of the room.
+
+A `leaveWithGrappleTeleport` comes with an implicit tech requirement `canGrappleTeleport`.
+
+#### Example
+```json
+{
+  "name": "Leave with Grapple Teleport",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGrappleTeleport": {
+      "blockPositions": [[5, 3]]
+    }
+  }
+}
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
@@ -348,6 +372,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
 
 Each of these properties is described in more detail below.
 
@@ -877,6 +902,30 @@ __Example:__
   "requires": [
     "canCrossRoomJumpIntoWater"
   ]
+}
+```
+
+
+### Come In With Grapple Teleport
+
+A `comeInWithGrappleTeleport` entrance condition represents that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
+
+A `comeInWithGrappleTeleport` object has the following property:
+
+- _blockPositions_: A list of tile coordinates of (grapple) blocks that Samus could be grappled to while exiting the other room. Coordinates `[x, y]` are represented as tile counts with `[0, 0]` representing the top-left corner of the room.
+
+A `comeInWithGrappleTeleport` comes with an implicit tech requirement `canGrappleTeleport`.
+
+#### Example
+```json
+{
+  "name": "Come in With Grapple Teleport",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGrappleTeleport": {
+      "blockPositions": [[5, 3]]
+    }
+  }
 }
 ```
 
