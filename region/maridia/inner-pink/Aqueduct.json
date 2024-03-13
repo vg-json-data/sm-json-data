@@ -180,15 +180,9 @@
         {"id": 1},
         {"id": 2},
         {"id": 3},
-        {
-          "id": 4,
-          "devNote": "There's nothing difficult about getting here suitless, but it does run a heavy risk of leading the player into suitless Maridia situations"
-        },
+        {"id": 4},
         {"id": 5},
-        {
-          "id": 7,
-          "note": "This direct link is just for the shinespark"
-        },
+        {"id": 7},
         {"id": 9},
         {"id": 10},
         {"id": 11}
@@ -197,6 +191,7 @@
     {
       "from": 3,
       "to": [
+        {"id": 2},
         {"id": 4}
       ]
     },
@@ -677,7 +672,13 @@
           "usedTiles": 33,
           "openEnd": 2
         }},
-        {"shinespark": {"frames": 9}}
+        {"or": [
+          {"shinespark": {"frames": 12}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 3}}
+          ]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
@@ -715,6 +716,36 @@
         }}
       ],
       "gModeRegainMobility": {}
+    },
+    {
+      "link": [2, 3],
+      "name": "Gravity",
+      "requires": [
+        "Gravity",
+        {"or": [
+          "SpaceJump",
+          "canPlayInSand",
+          {"canShineCharge": {
+            "usedTiles": 32,
+            "openEnd": 1
+          }},
+          "h_canUseSpringBall"
+        ]}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Suitless",
+      "requires": [
+        "canSuitlessMaridia",
+        {"or": [
+          {"and": [
+            "HiJump",
+            "h_canUseSpringBall"
+          ]},
+          "canPlayInSand"
+        ]}
+      ]
     },
     {
       "link": [2, 3],
@@ -1006,12 +1037,34 @@
       },
       "requires": [
         "canWaterShineCharge",
+        "canShinechargeMovement",
         {"canShineCharge": {
           "usedTiles": 33,
           "openEnd": 2
         }},
         {"shinespark": {"frames": 37, "excessFrames": 3}}
       ]
+    },
+    {
+      "link": [2, 9],
+      "name": "Suitless Shinespark, Low Run Speed",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 0.4375
+        }
+      },
+      "requires": [
+        "canWaterShineCharge",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"shinespark": {"frames": 34, "excessFrames": 3}}
+      ],
+      "note": "Start running next to the transition (But at least 1 pixel away) so that Samus has very low run speed.",
+      "devNote": "Starting with low run speed is less obvious than trying to shortcharge."
     },
     {
       "link": [2, 10],
@@ -1040,34 +1093,19 @@
       "note": "Overload PLMs using the Grapple Blocks."
     },
     {
-      "link": [3, 4],
-      "name": "Base",
-      "requires": [
-        "h_canNavigateUnderwater"
-      ]
-    },
-    {
-      "link": [4, 2],
-      "name": "Base",
+      "link": [3, 2],
+      "name": "Gravity",
       "requires": [
         "Gravity",
         {"or": [
           "SpaceJump",
           "canPlayInSand",
-          {"canShineCharge": {
-            "usedTiles": 20,
-            "openEnd": 2,
-            "steepDownTiles": 1,
-            "steepUpTiles": 1,
-            "gentleDownTiles": 5,
-            "gentleUpTiles": 5
-          }},
           "h_canUseSpringBall"
         ]}
       ]
     },
     {
-      "link": [4, 2],
+      "link": [3, 2],
       "name": "Suitless",
       "requires": [
         "canSuitlessMaridia",
@@ -1079,33 +1117,10 @@
       ]
     },
     {
-      "link": [4, 3],
+      "link": [3, 4],
       "name": "Base",
       "requires": [
-        "Gravity",
-        {"or": [
-          "SpaceJump",
-          "canPlayInSand",
-          {"canShineCharge": {
-            "usedTiles": 32,
-            "openEnd": 1
-          }},
-          "h_canUseSpringBall"
-        ]}
-      ]
-    },
-    {
-      "link": [4, 3],
-      "name": "Suitless",
-      "requires": [
-        "canSuitlessMaridia",
-        {"or": [
-          {"and": [
-            "HiJump",
-            "h_canUseSpringBall"
-          ]},
-          "canPlayInSand"
-        ]}
+        "h_canNavigateUnderwater"
       ]
     },
     {
@@ -1702,7 +1717,11 @@
       "requires": [
         "Gravity",
         "canLateralMidAirMorph",
-        "canCarefulJump"
+        "canCarefulJump",
+        {"or": [
+          "canTrickyJump",
+          "canSpringBallBounce"
+        ]}
       ]
     },
     {

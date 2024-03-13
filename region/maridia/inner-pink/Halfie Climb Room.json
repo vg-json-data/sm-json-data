@@ -360,12 +360,76 @@
       },
       "requires": [
         "canCrossRoomJumpIntoWater",
+        "canTrickyJump",
         {"or": [
           "canWalljump",
           "SpaceJump"
         ]}
       ],
       "note": "Requires a runway of 1 tile in the adjacent room. Use Space Jump or a wall jump after getting out of the water."
+    },
+    {
+      "link": [1, 4],
+      "name": "Cross Room Jump (Lenient)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 4
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        {"or": [
+          "canWalljump",
+          "SpaceJump"
+        ]}
+      ],
+      "note": "Assumes a runway of at least 4 tiles in the adjacent room. Use Space Jump or a wall jump after getting out of the water."
+    },
+    {
+      "link": [1, 4],
+      "name": "Cross Room Jump with HiJump and SpeedBooster",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 4
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canTrickyJump",
+        "HiJump"
+      ],
+      "note": "Requires a runway of 4 tile in the adjacent room."
+    },
+    {
+      "link": [1, 4],
+      "name": "Cross Room Jump with HiJump and SpeedBooster (Lenient)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 8
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "HiJump"
+      ],
+      "note": "Assumes a runway of 8 tiles in the adjacent room."
+    },
+    {
+      "link": [1, 4],
+      "name": "Cross Room Jump with SpeedBooster",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 21
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater"
+      ],
+      "note": "Requires a runway of approximately 21 tile in the adjacent room."
     },
     {
       "link": [1, 4],
@@ -379,20 +443,33 @@
       "requires": [
         "h_canJumpIntoIBJ",
         {"or": [
-          "h_canDoubleBombJump",
-          {"enemyDamage": {
-            "enemy": "Mochtroid",
-            "type": "contact",
-            "hits": 2
-          }}
+          {"ammo": {"type": "PowerBomb", "count": 1}},
+          {"and": [
+            "h_canCeilingBombJump",
+            {"enemyDamage": {
+              "enemy": "Mochtroid",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]},
+          {"and": [
+            "h_canDoubleBombJump",
+            {"enemyDamage": {
+              "enemy": "Mochtroid",
+              "type": "contact",
+              "hits": 2
+            }}
+          ]}
         ]},
         "canCrossRoomJumpIntoWater",
-        "canMomentumConservingTurnaround"
+        "canMomentumConservingTurnaround",
+        "canTrickyJump"
       ],
       "note": [
         "Only requires a runway of approximately 1 tile in the adjacent room.",
-        "Take two Mochtroid hits or use a double bomb jump."
-      ]
+        "Take two Mochtroid hits or kill it using a Power Bomb or 5 Bombs."
+      ],
+      "devNote": "The rhythm for placing 4 Bombs quickly is the main component of ceiling bomb jumps."
     },
     {
       "link": [1, 4],
@@ -426,6 +503,15 @@
             ]}
           ]}
         ]}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Double Spring Ball Jump",
+      "requires": [
+        "canSuitlessMaridia",
+        "canDoubleSpringBallJumpMidAir",
+        "HiJump"
       ]
     },
     {
@@ -528,8 +614,26 @@
           "usedTiles": 33,
           "openEnd": 2
         }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Mochtroid",
+            "type": "contact",
+            "hits": 2
+          }},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "Wave",
+              "Spazer",
+              "Plasma",
+              {"ammo": {"type": "Missile","count": 1}},
+              {"ammo": {"type": "Super", "count": 1}}
+            ]}
+          ]}
+        ]},
         {"shinespark": {"frames": 20, "excessFrames": 3}}
-      ]
+      ],
+      "note": "Enter the room with a careful amount of momentum where Samus must spend extra time slowing down during the stutter, but must not have much run speed."
     },
     {
       "link": [2, 1],
@@ -584,6 +688,56 @@
           "openEnd": 0
         }
       }
+    },
+    {
+      "link": [2, 2],
+      "name": "Stutter Water Shinecharge, Leave with Spark",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 2
+        }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Mochtroid",
+            "type": "contact",
+            "hits": 2
+          }},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "Wave",
+              "Spazer",
+              "Plasma",
+              {"ammo": {"type": "Missile","count": 1}},
+              {"ammo": {"type": "Super", "count": 1}}
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"shinespark": {"frames": 12}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 3}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Enter the room with a careful amount of momentum where Samus must spend extra time slowing down during the stutter, but must not have much run speed."
     },
     {
       "link": [2, 2],
@@ -648,7 +802,7 @@
           "canSunkenTileWideWallClimb"
         ]}
       ],
-      "devNote": "Run away from the oums and reclimb after each to avoid needing to jump over them."
+      "note": "Run away from the oums and reclimb after each if jumping over them is difficult."
     },
     {
       "link": [2, 3],
@@ -699,9 +853,57 @@
       "requires": [
         "HiJump",
         "canDownGrab",
+        "canTrickyJump",
         "canCrossRoomJumpIntoWater"
       ],
       "note": "Requires a runway of 8 tiles in the adjacent room."
+    },
+    {
+      "link": [2, 4],
+      "name": "Cross Room Jump with Speedbooster, HiJump (Lenient)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 9
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canCrossRoomJumpIntoWater"
+      ],
+      "note": "Assumes a runway of 9 tiles in the adjacent room."
+    },
+    {
+      "link": [2, 4],
+      "name": "Cross Room Jump with Speedbooster",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 38
+        }
+      },
+      "requires": [
+        "canTrickyJump",
+        "canCrossRoomJumpIntoWater"
+      ],
+      "note": "Requires a runway of 38 tiles in the adjacent room."
+    },
+    {
+      "link": [2, 4],
+      "name": "Cross Room Jump with Spring Ball, HiJump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 1
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canMomentumConservingTurnaround",
+        "canTrickySpringBallJump",
+        "canCrossRoomJumpIntoWater"
+      ],
+      "note": "Requires a runway of 1 tile in the adjacent room."
     },
     {
       "link": [2, 4],
@@ -742,6 +944,7 @@
       },
       "requires": [
         "canPreciseWalljump",
+        "canTrickyJump",
         "canCrossRoomJumpIntoWater"
       ],
       "note": [
@@ -783,8 +986,26 @@
           "usedTiles": 33,
           "openEnd": 2
         }},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Mochtroid",
+            "type": "contact",
+            "hits": 2
+          }},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "Wave",
+              "Spazer",
+              "Plasma",
+              {"ammo": {"type": "Missile","count": 1}},
+              {"ammo": {"type": "Super", "count": 1}}
+            ]}
+          ]}
+        ]},
         {"shinespark": {"frames": 39, "excessFrames": 4}}
-      ]
+      ],
+      "note": "Enter the room with a careful amount of momentum where Samus must spend extra time slowing down during the stutter, but must not have much run speed."
     },
     {
       "link": [2, 4],
