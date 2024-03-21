@@ -14,6 +14,7 @@ A `strat` can have the following properties:
   * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
   * _clearsObstacles_: An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
   * _resetsObstacles_: An array containing the ID of obstacles that will be reset (i.e. returned to their original state) by executing this strat.
+  * _comesThroughToilet_: Indicates whether this strat is applicable if the Toilet comes between this room and the other room.
   * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
   * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
   * _unlocksDoors_: An array describing possible doors that can be unlocked as part of this strat.
@@ -926,6 +927,32 @@ A `comeInWithGrappleTeleport` comes with an implicit tech requirement `canGrappl
       "blockPositions": [[5, 3]]
     }
   }
+}
+```
+
+## Comes Through Toilet
+
+A `comesThroughToilet` property indicates if the strat is applicable when the Toilet comes between this room (which should have an `entranceCondition`) and the other room (one with a matching `exitCondition`). This property should be specified on every strat having an `entranceCondition` through a vertical transition. It has three possible values:
+
+- "yes": The strat is applicable only if the Toilet comes between this room and the other room.
+- "no": The strat is applicable only if the Toilet *does not* come between this room and the other room.
+- "any": The strat is applicable regardless of whether the Toilet comes between this room and the other room.
+
+### Example
+```json
+{
+  "name": "Cross Room Jump - Toilet HiJump Wall Jump",
+  "entranceCondition": {
+    "comeInWithWallJumpBelow": {
+      "minHeight": 2
+    }
+  },
+  "comesThroughToilet": "yes",
+  "requires": [
+    "canCrossRoomJumpIntoWater",
+    "HiJump",
+    "canDownGrab"
+  ]
 }
 ```
 
