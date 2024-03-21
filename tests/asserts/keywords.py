@@ -82,6 +82,7 @@ def process_keyvalue(k, v, metadata):
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
         "framesRemaining",  # validated by schema
+        "comesThroughToilet",  # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
     ]
 
