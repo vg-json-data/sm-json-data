@@ -24,16 +24,60 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x00196d2",
       "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 3,
+      "name": "Above Lava Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 4,
+      "name": "Lava, Left Wall",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "On top of the Bottom-Left Namihe"
+    },
+    {
+      "id": 5,
+      "name": "Lava, Center Namihe",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Just below the center Namihe, almost at the bottom of the stairs."
     }
   ],
   "enemies": [
     {
       "id": "e1",
-      "groupName": "Lava Dive Namihes",
+      "groupName": "Lava Dive Center Top Namihe",
       "enemyName": "Namihe",
-      "quantity": 6,
-      "betweenNodes": [1, 2],
-      "dropRequires": ["h_heatProof", "Gravity"]
+      "quantity": 1,
+      "homeNodes": [3],
+      "dropRequires": ["h_heatProof", "h_lavaProof"]
+    },
+    {
+      "id": "e2",
+      "groupName": "Lava Dive Right Namihes",
+      "enemyName": "Namihe",
+      "quantity": 2,
+      "betweenNodes": [2, 5],
+      "dropRequires": ["h_heatProof", "h_lavaProof"]
+    },
+    {
+      "id": "e3",
+      "groupName": "Lava Dive Center Bottom Namihe",
+      "enemyName": "Namihe",
+      "quantity": 1,
+      "homeNodes": [5],
+      "dropRequires": ["h_heatProof", "h_lavaProof"]
+    },
+    {
+      "id": "e4",
+      "groupName": "Lava Dive Left Namihes",
+      "enemyName": "Namihe",
+      "quantity": 2,
+      "homeNodes": [4],
+      "dropRequires": ["h_heatProof", "h_lavaProof"]
     }
   ],
   "links": [
@@ -41,14 +85,43 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 3}
       ]
     },
     {
       "from": 2,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
       ]
     }
   ],
@@ -88,349 +161,10 @@
       ]
     },
     {
-      "link": [1, 2],
+      "link": [1, 3],
       "name": "Base",
       "requires": [
-        "Gravity",
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        {"heatFrames": 510},
-        {"lavaFrames": 425}
-      ],
-      "devNote": "7 seconds with spacejump, 7.5s w/HJB, 8s grav only"
-    },
-    {
-      "link": [1, 2],
-      "name": "Reverse Lava Dive",
-      "requires": [
-        "canSuitlessLavaDive",
-        {"heatFrames": 600},
-        {"lavaFrames": 500}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Base",
-      "requires": [
-        "Gravity",
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        "SpaceJump",
-        {"heatFrames": 600},
-        {"lavaFrames": 325}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive Shinespark",
-      "notable": true,
-      "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 4,
-          "openEnd": 1
-        }
-      },
-      "requires": [
-        "Gravity",
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        "canShinechargeMovementTricky",
-        "canHorizontalDamageBoost",
-        {"shinespark": {"frames": 33}},
-        {"heatFrames": 420},
-        {"lavaFrames": 175},
-        {"enemyDamage": {
-          "enemy": "Namihe",
-          "type": "fireball",
-          "hits": 1
-        }}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": [
-        "Store the shinespark on the last possible pixels of runway.",
-        "Quickly drop to the nearby namihe and damage boost using its flame.",
-        "Hold the damage boost until just before being below the above platform and spark upwards"
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive Gravity Jump",
-      "requires": [
-        "canSuitlessLavaDive",
-        "canGravityJump",
-        "HiJump",
-        {"heatFrames": 500},
-        {"lavaFrames": 250},
-        {"gravitylessLavaFrames": 100},
-        {"gravitylessHeatFrames": 100}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Hjless Lava Dive Gravity Jump",
-      "requires": [
-        "canGravityJump",
-        "canSuitlessLavaDive",
-        "canStaggeredWalljump",
-        {"heatFrames": 500},
-        {"lavaFrames": 250},
-        {"gravitylessLavaFrames": 250},
-        {"gravitylessHeatFrames": 250}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "devNote": "FIXME This is assuming Samus waits to equip Gravity until after the lava dive is complete."
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive Diagonal Bomb Jump",
-      "notable": true,
-      "requires": [
-        "h_heatProof",
-        "Gravity",
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        "h_canJumpIntoIBJ",
-        "h_canDoubleBombJump",
-        "h_canDiagonalBombJump",
-        "h_canStaggeredIBJ",
-        {"heatFrames": 2800},
-        {"lavaFrames": 2600}
-      ],
-      "note": [
-        "Begin on top of the lower left Namihe",
-        "Jump into a double IBJ with such timing that Samus passes above the fired flame and such a way that there is no horizontal speed.",
-        "A forward jump with run not held will work.",
-        "Begin diagonal bomb jumping once past the start of the 2nd spike group from the top."
-      ],
-      "failures": [
-        {
-          "name": "Namihe Hit",
-          "cost": [
-            {"enemyDamage": {
-              "enemy": "Namihe",
-              "hits": 1,
-              "type": "fireball"
-            }},
-            {"heatFrames": 300},
-            {"lavaFrames": 300}
-          ]
-        },
-        {
-          "name": "Dropped IBJ",
-          "cost": [
-            {"heatFrames": 1000},
-            {"lavaFrames": 1000}
-          ]
-        }
-      ],
-      "devNote": "heatProof because each attempt at this strat costs so many heat frames and its hard enough already."
-    },
-    {
-      "link": [2, 1],
-      "name": "Double IBJ with Ice Plasma",
-      "requires": [
-        "Gravity",
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        "h_canJumpIntoIBJ",
-        "h_canDoubleBombJump",
-        "Plasma",
-        "Ice",
-        "canCameraManip",
-        {"heatFrames": 1530},
-        {"lavaFrames": 1350}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": [
-        "Align with the above platform and scroll the camera left.",
-        "Freeze both left side Namihes and begin bomb jumping"
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Springwall",
-      "requires": [
-        {"or": [
-          "h_lavaProof",
-          "canSuitlessLavaDive"
-        ]},
-        "canSpringwall",
-        "HiJump",
-        "canUseEnemies",
-        {"heatFrames": 900},
-        {"lavaFrames": 700}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "devNote": "Works with or without Gravity"
-    },
-    {
-      "link": [2, 1],
-      "name": "Double Springball Jump",
-      "requires": [
-        "canSuitlessLavaDive",
-        "h_canDoubleSpringBallJumpWithHiJump",
-        {"heatFrames": 620},
-        {"lavaFrames": 460}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": [
-        "Stand one platform below the bottommost right-side Namihe and Double SpringBall Jump while holding left.",
-        "Avoid the first Namihe flame and the higher flames will not spawn in time to get in the way so long as they were not made active on the way down."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive HiJumpless Suitless Double Springball Jump",
-      "notable": true,
-      "requires": [
-        "canSuitlessLavaDive",
-        "canDoubleSpringBallJumpMidAir",
-        "canSpringwall",
-        "canUseEnemies",
-        {"heatFrames": 1300},
-        {"lavaFrames": 1100}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": "Double springball jump out of a walljump starting from the top of the left wall Namihe."
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive BounceBall",
-      "entranceCondition": {
-        "comeInJumping": {
-          "minTiles": 4,
-          "speedBooster": false
-        }
-      },
-      "requires": [
-        "canSuitlessLavaDive",
-        "canStaggeredWalljump",
-        "canBounceBall",
-        "canUseEnemies",
-        "HiJump",
-        {"heatFrames": 900},
-        {"lavaFrames": 700}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": "Jump through the door for a speedy entry.  Morph before entering the lava.",
-      "devNote": [
-        "In room bounceball works and saves 50 health (no heat/lava protection) over morphless entry but loses 50 health compared to this strat.",
-        "Not included since these numbers aren't precise enough for another entry strat."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Lava Dive",
-      "requires": [
-        "canSuitlessLavaDive",
-        "canStaggeredWalljump",
-        "canUseEnemies",
-        "HiJump",
-        {"heatFrames": 1000},
-        {"lavaFrames": 800}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": "Big jumps continue your speed for longer and keep flames from spawning."
-    },
-    {
-      "link": [2, 1],
-      "name": "Hjless Lava Dive BounceBall",
-      "notable": true,
-      "entranceCondition": {
-        "comeInJumping": {
-          "minTiles": 4,
-          "speedBooster": false
-        }
-      },
-      "requires": [
-        "canSuitlessLavaDive",
-        "canIframeSpikeJump",
-        "canStaggeredWalljump",
-        "canBounceBall",
-        "canFastWalljumpClimb",
-        "canUseEnemies",
-        "canCameraManip",
-        {"heatFrames": 1000},
-        {"lavaFrames": 850},
-        {"enemyDamage": {
-          "enemy": "Namihe",
-          "type": "fireball",
-          "hits": 1
-        }}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": [
-        "Use the bottommost right side namihe to generate a flame and walk with it to the bottommost left namihe head",
-        "Use a turnaround animation as Samus is hit by the flame to cancel out knockback frames.",
-        "While invulnerability frames are active, walljump up the spikes either 2 or 3 times and jump accross to catch the middle wall and climb from there."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Hjless Lava Dive",
-      "notable": true,
-      "entranceCondition": {
-        "comeInJumping": {
-          "minTiles": 4,
-          "speedBooster": false
-        }
-      },
-      "requires": [
-        "canSuitlessLavaDive",
-        "canIframeSpikeJump",
-        "canStaggeredWalljump",
-        "canFastWalljumpClimb",
-        "canUseEnemies",
-        "canCameraManip",
-        {"heatFrames": 1100},
-        {"lavaFrames": 1000},
-        {"enemyDamage": {
-          "enemy": "Namihe",
-          "type": "fireball",
-          "hits": 1
-        }}
-      ],
-      "unlocksDoors": [
-        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
-      ],
-      "note": [
-        "Use the bottommost right side namihe to generate a flame and walk with it to the bottommost left namihe head",
-        "Use a turnaround animation as Samus is hit by the flame to cancel out knockback frames.",
-        "While invulnerability frames are active, walljump up the spikes either 2 or 3 times and jump accross to catch the middle wall and climb from there."
+        {"heatFrames": 90}
       ]
     },
     {
@@ -462,6 +196,607 @@
       "name": "Crystal Flash",
       "requires": [
         "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "Gravity",
+        "SpaceJump",
+        {"heatFrames": 340},
+        {"lavaFrames": 280},
+        {"or": [
+          "canDisableEquipment",
+          {"and": [
+            {"heatFrames": 120},
+            {"lavaFrames": 120}
+          ]}
+        ]}
+      ],
+      "note": "Samus will be slowed by lava if SpeedBooster is equipped, even with Gravity."
+    },
+    {
+      "link": [2, 3],
+      "name": "Lava Dive Shinespark",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canShinechargeMovementTricky",
+        "canHorizontalDamageBoost",
+        {"shinespark": {"frames": 33}},
+        {"heatFrames": 320},
+        {"lavaFrames": 155},
+        {"enemyDamage": {
+          "enemy": "Namihe",
+          "type": "fireball",
+          "hits": 1
+        }}
+      ],
+      "note": [
+        "Store the shinespark on the last possible pixels of runway.",
+        "Quickly drop to the nearby namihe and damage boost using its flame.",
+        "Hold the damage boost until just before being below the above platform and spark upwards"
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Suitless Bounceball Entry (In-Room Jump)",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canTrickyJump",
+        "canBounceBall",
+        {"heatFrames": 435},
+        {"lavaFrames": 305}
+      ],
+      "note": [
+        "Build up a little run speed and do a small jump into the lava.",
+        "Morph before reaching the lava, Bounce, and Unmorph shortly after sink slightly before floating down to the stairs."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Suitless Bounceball Entry (Enter Falling)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 4,
+          "speedBooster": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canCarefulJump",
+        "canBounceBall",
+        {"heatFrames": 330},
+        {"lavaFrames": 290}
+      ],
+      "note": [
+        "Jump into the door frame so that Samus is falling when entering this room.",
+        "Morph before reaching the lava and Bounce down to the bottom."
+      ],
+      "devNote": "4 Tile jump entry is the Normalized Kronic Boost room setup."
+    },
+    {
+      "link": [2, 5],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "Gravity",
+        {"heatFrames": 250},
+        {"lavaFrames": 190},
+        {"or": [
+          "canDisableEquipment",
+          {"and": [
+            {"heatFrames": 50},
+            {"lavaFrames": 50}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Suitless Lava Entry",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        {"heatFrames": 330},
+        {"lavaFrames": 270}
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Suitless Bounceball Entry (In-Room Jump)",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canTrickyJump",
+        "canBounceBall",
+        {"heatFrames": 330},
+        {"lavaFrames": 200}
+      ],
+      "note": [
+        "Build up a little run speed and do a small jump into the lava.",
+        "Morph before reaching the lava, Bounce, and Unmorph shortly after sink slightly before floating down to the stairs."
+      ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Suitless Bounceball Entry (Enter Falling)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 4,
+          "speedBooster": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canCarefulJump",
+        "canBounceBall",
+        {"heatFrames": 230},
+        {"lavaFrames": 190}
+      ],
+      "note": [
+        "Jump into the door frame so that Samus is falling when entering this room.",
+        "Morph before reaching the lava, Bounce, and Unmorph shortly after sink slightly before floating down to the stairs."
+      ],
+      "devNote": "4 Tile jump entry is the Normalized Kronic Boost room setup."
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 105}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 10}]}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Leave Shinecharged",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 1
+        }},
+        {"heatFrames": 115}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 140
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Jump Into Crystal Flash Clip",
+      "requires": [
+        "h_heatProof",
+        "h_canJumpIntoCrystalFlashClip",
+        "Grapple"
+      ],
+      "note": [
+        "Use a Crystal Flash to clip through the ceiling, where there is one solid tile with 2 empty tiles above it.",
+        "Use Grapple as the Crystal Flash is ending to be forced above the solid tile."
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ]
+    },
+    {
+      "link": [3, 5],
+      "name": "Reverse Lava Dive Entry",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        {"heatFrames": 130},
+        {"lavaFrames": 80},
+        {"or": [
+          "Gravity",
+          {"and": [
+            {"heatFrames": 20},
+            {"lavaFrames": 20}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Lava Dive with HiJump",
+      "requires": [
+        "canSuitlessLavaDive",
+        "canUseEnemies",
+        "canTrickyJump",
+        "canStaggeredWalljump",
+        {"heatFrames": 270},
+        {"lavaFrames": 240}
+      ],
+      "note": [
+        "Walljump off of the lower half of the Upper-Left Namihe to cross to the right side wall.",
+        "Continue Walljumping up from there, waiting for the above flame to pass if it is in the way."
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Springwall",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "canSpringwall",
+        "canTrickySpringBallJump",
+        "HiJump",
+        "canUseEnemies",
+        {"heatFrames": 195},
+        {"lavaFrames": 180}
+      ],
+      "note": "Lava physics will reduce Samus' horizontal momentum.",
+      "devNote": "Works with or without Gravity"
+    },
+    {
+      "link": [4, 3],
+      "name": "Lava Dive HiJumpless Suitless Double Springball Jump",
+      "notable": true,
+      "requires": [
+        "canSuitlessLavaDive",
+        "canUseEnemies",
+        "canDoubleSpringBallJumpMidAir",
+        "canSpringwall",
+        "canPreciseWalljump",
+        {"heatFrames": 270},
+        {"lavaFrames": 240}
+      ],
+      "note": "Double springball jump out of a walljump starting from the top of the left wall Namihe."
+    },
+    {
+      "link": [4, 3],
+      "name": "Lava Dive HiJumpless Nahime Morph Kago",
+      "notable": true,
+      "requires": [
+        "canSuitlessLavaDive",
+        "canInsaneWalljump",
+        "canInsaneJump",
+        "canIframeSpikeJump",
+        "canStaggeredWalljump",
+        "canFastWalljumpClimb",
+        "canUseEnemies",
+        "canKago",
+        {"heatFrames": 510},
+        {"lavaFrames": 480},
+        {"enemyDamage": {
+          "enemy": "Namihe",
+          "type": "kago",
+          "hits": 2
+        }}
+      ],
+      "note": [
+        "Enter the Bottom-Left Namihe by Kagoing inside of it.",
+        "Wait for a second hit to gain I-Frames and then very quickly walljump up the spikes and across to the right side wall."
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Lava Dive Diagonal Bomb Jump",
+      "notable": true,
+      "requires": [
+        "h_heatProof",
+        "Gravity",
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "h_canJumpIntoIBJ",
+        "h_canDoubleBombJump",
+        "h_canDiagonalBombJump",
+        "h_canStaggeredIBJ",
+        "canInsaneJump",
+        {"heatFrames": 1560},
+        {"lavaFrames": 1520}
+      ],
+      "note": [
+        "Begin on top of the lower left Namihe",
+        "Jump into a double IBJ with such timing that Samus passes above the fired flame and such a way that there is no horizontal speed.",
+        "A forward jump with run not held will work.",
+        "Begin diagonal bomb jumping once past the start of the 2nd spike group from the top."
+      ],
+      "failures": [
+        {
+          "name": "Namihe Hit",
+          "cost": [
+            {"enemyDamage": {
+              "enemy": "Namihe",
+              "hits": 1,
+              "type": "fireball"
+            }},
+            {"heatFrames": 300},
+            {"lavaFrames": 300}
+          ]
+        },
+        {
+          "name": "Dropped IBJ",
+          "cost": [
+            {"heatFrames": 1000},
+            {"lavaFrames": 1000}
+          ]
+        }
+      ],
+      "devNote": "heatProof because each attempt at this strat costs so many heat frames and its hard enough already."
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedLavaCrystalFlash"
+      ]
+    },
+    {
+      "link": [4, 5],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"heatFrames": 180},
+            {"lavaFrames": 180}
+          ]},
+          {"and": [
+            "Gravity",
+            "canDisableEquipment",
+            {"heatFrames": 140},
+            {"lavaFrames": 140}
+          ]},
+          {"and": [
+            {"heatFrames": 210},
+            {"lavaFrames": 210}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Reverse Lava Dive (Gravity)",
+      "requires": [
+        "Gravity",
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        {"or": [
+          {"and": [
+            "canDisableEquipment",
+            {"heatFrames": 270},
+            {"lavaFrames": 230}
+          ]},
+          {"and": [
+            "canDisableEquipment",
+            "SpaceJump",
+            "canCarefulJump",
+            {"heatFrames": 225},
+            {"lavaFrames": 180}
+          ]},
+          {"and": [
+            {"heatFrames": 330},
+            {"lavaFrames": 300}
+          ]}
+        ]}
+      ],
+      "note": "Samus will be slowed by lava if SpeedBooster is equipped, even with Gravity."
+    },
+    {
+      "link": [5, 2],
+      "name": "Reverse Lava Dive (Suitless)",
+      "requires": [
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"heatFrames": 270},
+            {"lavaFrames": 270}
+          ]},
+          {"and": [
+            {"heatFrames": 295},
+            {"lavaFrames": 295}
+          ]}
+        ]},
+        {"or": [
+           {"and": [
+              "SpaceJump",
+              "canCarefulJump",
+              {"heatFrames": 100}
+            ]},
+           {"and": [
+              "canWalljump",
+              {"heatFrames": 60}
+            ]},
+           {"and": [
+              "canSpringBallJumpMidAir",
+              {"heatFrames": 100}
+            ]},
+           {"and": [
+              "canBombJumpWaterEscape",
+              {"heatFrames": 180},
+              {"lavaFrames": 30}
+            ]},
+           {"and": [
+              "HiJump",
+              {"heatFrames": 60},
+              {"lavaFrames": 10}
+            ]}
+         ]}
+      ],
+      "note": "Samus will be slowed by lava if SpeedBooster is equipped, even with Gravity.",
+      "devNote": "Varia no etanks is barely possible with vanilla Varia."
+    },
+    {
+      "link": [5, 3],
+      "name": "Gravity Jump without HiJump",
+      "requires": [
+        "canSuitlessLavaDive",
+        "canGravityJump",
+        "canStaggeredWalljump",
+        {"heatFrames": 290},
+        {"gravitylessLavaFrames": 230},
+        {"lavaFrames": 20}
+      ],
+      "note": [
+        "Gravity jump from below the Lowest-Right Namihe.",
+        "Walljump using the right side wall to reach the top of the lava, avoiding the Namihe fireball.",
+        "Turning Gravity Suit back on can reduce lava damage, but may make the walljumps more difficult."
+      ],
+      "devNote": [
+        "Assumes Gravity is not reenabled until after the strat is complete.",
+        "A left wall gravity jump would save a small number of gravityless lava frames at the cost of more heat and lava frames."
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Gravity Jump with HiJump",
+      "requires": [
+        "canSuitlessLavaDive",
+        "canGravityJump",
+        "HiJump",
+        {"heatFrames": 155},
+        {"gravitylessLavaFrames": 125},
+        {"lavaFrames": 20}
+      ],
+      "note": [
+        "Gravity jump from below the Lowest-Right Namihe.",
+        "A crouch jump or walljump can help exit the lava in one jump, but are not required."
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "HiJumpless Lava Dive",
+      "notable": true,
+      "requires": [
+        "canSuitlessLavaDive",
+        "canIframeSpikeJump",
+        "canStaggeredWalljump",
+        "canFastWalljumpClimb",
+        "canUseEnemies",
+        "canCameraManip",
+        {"heatFrames": 600},
+        {"lavaFrames": 500},
+        {"enemyDamage": {
+          "enemy": "Namihe",
+          "type": "fireball",
+          "hits": 1
+        }}
+      ],
+      "note": [
+        "Use the bottommost right side namihe to generate a flame and walk with it to the bottommost left namihe head",
+        "Use a turnaround animation as Samus is hit by the flame to cancel out knockback frames.",
+        "While invulnerability frames are active, walljump up the spikes either 2 or 3 times and jump accross to catch the middle wall and climb from there."
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Double Spring Ball Jump with HiJump",
+      "requires": [
+        "canSuitlessLavaDive",
+        "h_canDoubleSpringBallJumpWithHiJump",
+        {"heatFrames": 255},
+        {"lavaFrames": 225}
+      ],
+      "note": [
+        "Double Spring Ball Jump from below the Lowest-Right Namihe.",
+        "Double Spring Ball Jumps are easier in Lava than in Water."
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Double IBJ with Ice Plasma",
+      "requires": [
+        "Gravity",
+        {"or": [
+          "h_lavaProof",
+          "canSuitlessLavaDive"
+        ]},
+        "h_canJumpIntoIBJ",
+        "h_canDoubleBombJump",
+        "Plasma",
+        "Ice",
+        "canCameraManip",
+        {"heatFrames": 1040},
+        {"lavaFrames": 1020}
+      ],
+      "note": [
+        "Align with the above platform and scroll the camera left by walking into the left side of the bottom-most tiles.",
+        "Freeze both left side Namihes and begin bomb jumping"
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"heatFrames": 195},
+            {"lavaFrames": 195}
+          ]},
+          {"and": [
+            "Gravity",
+            "canDisableEquipment",
+            {"heatFrames": 150},
+            {"lavaFrames": 150}
+          ]},
+          {"and": [
+            {"heatFrames": 200},
+            {"lavaFrames": 200}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedLavaCrystalFlash"
       ]
     }
   ]
