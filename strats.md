@@ -354,13 +354,14 @@ A `leaveWithGrappleTeleport` comes with an implicit tech requirement `canGrapple
 
 ## Entrance conditions
 
-In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one property:
+In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one of the following properties:
 
 - _comeInNormally_: This indicates that Samus must come into the room through the specified door, with no other particular requirements.
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
 - _comeInShinecharged_: This indicates that Samus must enter the room with a shinecharge with a certain amount of frames remaining.
+- _comeInShinechargedJumping_: This indicates that Samus must jump into the the room with a shinecharge with a certain amount of frames remaining.
 - _comeInWithSpark_: This indicates that Samus must shinespark into the room.
 - _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
@@ -374,6 +375,10 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
+
+In addition it may contain the following property:
+
+- _comesThroughToilet_: This indicates whether the strat is applicable if the Toilet comes between this room and the other room.
 
 Each of these properties is described in more detail below.
 
@@ -930,9 +935,9 @@ A `comeInWithGrappleTeleport` comes with an implicit tech requirement `canGrappl
 }
 ```
 
-## Comes Through Toilet
+### Comes Through Toilet
 
-A `comesThroughToilet` property indicates if the strat is applicable when the Toilet comes between this room (which should have an `entranceCondition`) and the other room (one with a matching `exitCondition`). This property should be specified on every strat having an `entranceCondition` through a vertical transition. It has three possible values:
+Inside an `entranceCondition` object, a `comesThroughToilet` property indicates if the strat is applicable when the Toilet comes between this room and the other room (one with a matching `exitCondition`). This property should be specified on every strat having an `entranceCondition` through a vertical transition. It has three possible values:
 
 - "yes": The strat is applicable only if the Toilet comes between this room and the other room.
 - "no": The strat is applicable only if the Toilet *does not* come between this room and the other room.
@@ -945,9 +950,9 @@ A `comesThroughToilet` property indicates if the strat is applicable when the To
   "entranceCondition": {
     "comeInWithWallJumpBelow": {
       "minHeight": 2
-    }
+    },
+    "comesThroughToilet": "yes"
   },
-  "comesThroughToilet": "yes",
   "requires": [
     "canCrossRoomJumpIntoWater",
     "HiJump",
