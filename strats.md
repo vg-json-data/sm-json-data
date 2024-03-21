@@ -951,6 +951,7 @@ A `comesThroughToilet` property indicates if the strat is applicable when the To
   "requires": [
     "canCrossRoomJumpIntoWater",
     "HiJump",
+    "canPreciseWalljump",
     "canDownGrab"
   ]
 }
