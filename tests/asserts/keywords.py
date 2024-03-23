@@ -385,9 +385,10 @@ for root, dirs, files in os.walk(os.path.join(".", "connection")):
         with open(os.path.join(root, filename), "r", encoding="utf-8") as connectionFile:
             connections_json = json.load(connectionFile)
             for connection in connections_json["connections"]:
+                if connection["connectionType"] not in ["VerticalDoor", "VerticalSandpit"]:
+                    continue
                 for i, node in enumerate(connection["nodes"]):
-                    if node["position"] in ["top", "bottom"]:
-                        vertical_door_nodes.add((node["roomid"], node["nodeid"]))
+                    vertical_door_nodes.add((node["roomid"], node["nodeid"]))
 
 
 print("")
