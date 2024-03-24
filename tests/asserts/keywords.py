@@ -370,6 +370,27 @@ for jsonPath in [
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v, {})
 
+# process connections to identify vertical doors:
+vertical_door_nodes = set()
+connections = {
+    "inter": {},
+    "intra": {},
+    "subarea": {}
+}
+connectionPath = os.path.join(".","connection")
+for root, dirs, files in os.walk(os.path.join(".", "connection")):
+    for filename in files:
+        if not filename.endswith(".json"):
+            continue
+        with open(os.path.join(root, filename), "r", encoding="utf-8") as connectionFile:
+            connections_json = json.load(connectionFile)
+            for connection in connections_json["connections"]:
+                if connection["connectionType"] not in ["VerticalDoor", "VerticalSandpit"]:
+                    continue
+                for i, node in enumerate(connection["nodes"]):
+                    vertical_door_nodes.add((node["roomid"], node["nodeid"]))
+
+
 print("")
 print("Check Regions")
 for r,d,f in os.walk(os.path.join(".","region")):
@@ -661,6 +682,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         if "entranceCondition" in strat:
                             if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
                                 msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if (room["id"], fromNode) in vertical_door_nodes and "comesThroughToilet" not in strat["entranceCondition"]:
+                                msg = f"🔴ERROR: Strat with vertical entranceCondition is missing 'comesThroughToilet':{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if (room["id"], fromNode) not in vertical_door_nodes and "comesThroughToilet" in strat["entranceCondition"]:
+                                msg = f"🔴ERROR: Strat has 'comesThroughToilet' but is not a vertical connection:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
                         if "exitCondition" in strat:
