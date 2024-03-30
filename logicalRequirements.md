@@ -354,6 +354,26 @@ __Example:__
 {"refill": ["Energy", "Missile"]}
 ```
 
+#### partialRefill object
+
+A `partialRefill` object represents a process that refills a certain resource type up to a certain level, while having no effect if already at or above that level. It has two properties:
+
+* _type_: The resource type being partially refilled, one of the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (combination of RegularEnergy + ReserveEnergy)
+* _limit_: The level of resource amount that the refill stops at.
+
+When applied to `Energy` type, the refill applies first to regular energy; if the refill `limit` exceeds the regular energy capacity, then regular energy will be fully refilled and the remaining amount (after subtracting regular energy capacity) will be applied as a partial refill to reserve energy.
+
+__Example:__
+```json
+{"partialRefill": {"type": "Energy", "limit": 1500}}
+```
+
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
 
