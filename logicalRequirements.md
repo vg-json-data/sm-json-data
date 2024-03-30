@@ -365,13 +365,13 @@ A `partialRefill` object represents a process that refills a certain resource ty
   * RegularEnergy
   * ReserveEnergy
   * Energy (combination of RegularEnergy + ReserveEnergy)
-* _level_: The level of resource amount that the refill stops at.
+* _limit_: The level of resource amount that the refill stops at.
 
-When applied to `Energy` type, the refill applies first to regular energy; if the refill `level` exceeds the regular energy capacity, then regular energy will be fully refilled and the remaining level (after subtracting regular energy capacity) will be applied as a partial refill to reserve energy.
+When applied to `Energy` type, the refill applies first to regular energy; if the refill `limit` exceeds the regular energy capacity, then regular energy will be fully refilled and the remaining amount (after subtracting regular energy capacity) will be applied as a partial refill to reserve energy.
 
 __Example:__
 ```json
-{"partialRefill": {"type": "Energy", "level": 1500}}
+{"partialRefill": {"type": "Energy", "limit": 1500}}
 ```
 
 ### Momentum-Based Objects
