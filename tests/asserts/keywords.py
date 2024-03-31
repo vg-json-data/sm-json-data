@@ -72,6 +72,7 @@ def process_keyvalue(k, v, metadata):
         "utility",          # validated by schema
         "resourceCapacity", # validated by schema
         "refill",           # validated by schema
+        "partialRefill",    # validated by schema
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInRunning",  # validated by schema
