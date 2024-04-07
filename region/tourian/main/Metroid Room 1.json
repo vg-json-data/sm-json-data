@@ -38,7 +38,30 @@
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9a8",
-      "doorEnvironments": [{"physics": "air"}]
+      "doorEnvironments": [{"physics": "air"}],
+      "locks": [
+        {
+          "name": "Metroid Room 1 Logical Flag Lock",
+          "lockType": "killEnemies",
+          "lock": [
+            {"obstaclesCleared": ["A"]}
+          ],
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                {"obstaclesCleared": ["A"]}
+              ]
+            }
+          ],
+          "yields": ["f_KilledMetroidRoom1"],
+          "devNote": [
+            "If all the Metroids die, make sure to collect the kill flag.",
+            "And travelling to 1 isn't free."
+          ]
+        }
+      ]
     },
     {
       "id": 3,
@@ -404,12 +427,19 @@
     },
     {
       "link": [2, 1],
-      "name": "Ceiling Bomb Jump",
+      "name": "Blue SpaceJump, Into the Room",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
       "requires": [
-        "f_KilledMetroidRoom1",
-        "h_canCeilingBombJump"
+        "canBlueSpaceJump",
+        "canCarefulJump"
       ],
-      "devNote": "There may be other high-level bomb strats that could work, such as a low vertical diagonal bomb jump or an HBJ from an IBJ."
+      "note": "Jump Immediately upon entry, or before the transition.",
+      "devNote": "There is 1 unusable tile in this runway."
     },
     {
       "link": [2, 1],
@@ -544,6 +574,36 @@
     },
     {
       "link": [2, 2],
+      "name": "Tank and PB Kill",
+      "requires": [
+        {"enemyKill": {
+          "enemies": [["Metroid", "Metroid", "Metroid", "Metroid"]],
+          "explicitWeapons": ["PowerBombPeriphery"]
+        }},
+        {"metroidFrames": 170}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Power Bombing the first Metroid will cause the rest to rush towards Samus."
+    },
+    {
+      "link": [2, 2],
+      "name": "Metroid Room 1 PB Dodge Kill (Right to Left)",
+      "notable": true,
+      "requires": [
+        {"enemyKill": {
+          "enemies": [["Metroid", "Metroid", "Metroid", "Metroid"]],
+          "explicitWeapons": ["PowerBomb"]
+        }},
+        "canMetroidAvoid"
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Group all of the Metroids by hitting the first Rinka with a Power Bomb.",
+        "Once grouped, use two more Power Bombs to finish them off."
+      ]
+    },
+    {
+      "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Rinka",
       "notable": false,
       "requires": [
@@ -607,9 +667,17 @@
     },
     {
       "link": [2, 4],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 4],
       "name": "Already Cleared",
       "requires": [
-        "f_KilledMetroidRoom1"
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "f_KilledMetroidRoom1"
+        ]}
       ],
       "clearsObstacles": ["A"]
     },
@@ -624,104 +692,6 @@
         }}
       ],
       "clearsObstacles": ["A"]
-    },
-    {
-      "link": [2, 4],
-      "name": "Tank and PB Kill",
-      "requires": [
-        {"enemyKill": {
-          "enemies": [["Metroid", "Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
-        }},
-        {"metroidFrames": 304}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [2, 4],
-      "name": "Metroid Room 1 PB Dodge Kill (Right to Left)",
-      "notable": true,
-      "requires": [
-        {"enemyKill": {
-          "enemies": [["Metroid", "Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
-        }},
-        "canMetroidAvoid"
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "Group all of the Metroids by hitting the first Rinka with a Power Bomb.",
-        "Once grouped, use two more Power Bombs to finish them off."
-      ]
-    },
-    {
-      "link": [2, 4],
-      "name": "Ice Evade",
-      "requires": [
-        "Ice"
-      ]
-    },
-    {
-      "link": [2, 4],
-      "name": "Screw Evade",
-      "requires": [
-        {"or": [
-          "ScrewAttack",
-          "canPseudoScrew"
-        ]},
-        {"or": [
-          "canDodgeWhileShooting",
-          "SpaceJump"
-        ]}
-      ],
-      "note": [
-        "Use ScrewAttack or a PseudoScrew to prevent Metroids from attaching to Samus.",
-        "These abilities may also be used to temporarily prevent damage from Metroids if they do attach."
-      ],
-      "devNote": "FIXME: Screw effects cannot be used during some of the strats used in crossing the acid pit."
-    },
-    {
-      "link": [2, 4],
-      "name": "Harder Evade",
-      "requires": [
-        "canMetroidAvoid"
-      ]
-    },
-    {
-      "link": [2, 4],
-      "name": "Blue SpaceJump",
-      "requires": [
-        "canBlueSpaceJump",
-        {"canShineCharge": {
-          "usedTiles": 22,
-          "openEnd": 1
-        }},
-        {"metroidFrames": 4}
-      ]
-    },
-    {
-      "link": [2, 4],
-      "name": "Blue SpaceJump, Into the Room",
-      "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 1,
-          "openEnd": 1
-        }
-      },
-      "requires": [
-        "canBlueSpaceJump",
-        "canCarefulJump"
-      ],
-      "note": "Jump Immediately upon entry, or before the transition.",
-      "devNote": "There is 1 unusable tile in this runway."
-    },
-    {
-      "link": [2, 4],
-      "name": "Tank the Damage",
-      "requires": [
-        {"metroidFrames": 421}
-      ],
-      "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
     },
     {
       "link": [3, 2],
@@ -754,6 +724,38 @@
         ]}
       ],
       "note": "Use the full runway to gain echoes and enough speed to reach the far platform."
+    },
+    {
+      "link": [3, 2],
+      "name": "Shinespark Midair",
+      "requires": [
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 31,
+          "openEnd": 0
+        }},
+        {"or": [
+          {"and": [
+            {"obstaclesCleared": ["A"]},
+            {"shinespark": {
+              "frames": 54
+            }}
+          ]},
+          {"and": [
+            {"metroidFrames": 300},
+            {"shinespark": {
+              "frames": 54
+            }}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"shinespark": {
+              "frames": 75,
+              "excessFrames": 16
+            }}
+          ]}
+        ]}
+      ]
     },
     {
       "link": [3, 2],
@@ -904,36 +906,77 @@
     },
     {
       "link": [4, 1],
-      "name": "Base",
+      "name": "Space Jump",
       "requires": [
-        "SpaceJump"
+        "SpaceJump",
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "ScrewAttack",
+          "canPseudoScrew",
+          "Ice",
+          "canMetroidAvoid",
+          {"metroidFrames": 420}
+        ]}
       ]
     },
     {
       "link": [4, 1],
       "name": "Speedjump",
       "requires": [
-        "SpeedBooster"
+        "SpeedBooster",
+        "canCarefulJump",
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "Ice",
+          "canMetroidAvoid",
+          {"metroidFrames": 200}
+        ]},
+        {"or": [
+          "canTrickyJump",
+          {"acidFrames": 27},
+          {"and": [
+            {"acidFrames": 16},
+            "canPreciseWalljump"
+          ]},
+          {"and": [
+            {"acidFrames": 16},
+            "Gravity"
+          ]}
+        ]}
       ]
     },
     {
       "link": [4, 1],
-      "name": "Metroid Room 1 Spring Ball Jump (Right to Left)",
+      "name": "Spring Ball Jump (Right to Left)",
       "requires": [
-        "canSpringBallBounce"
+        "canSpringBallBounce",
+        "canCarefulJump",
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          {"and": [
+            "canTrickyJump",
+            "canMetroidAvoid"
+          ]},
+          {"metroidFrames": 270}
+        ]}
       ],
       "note": [
-        "At max non-speed run speed, you can bounce on both platforms and avoid all acid.",
-        "This even avoids the third Metroid."
+        "At max non-speed run speed, Spring Ball bounce on both platforms and avoid all acid.",
+        "Land on the right side of the first platform to avoid the second Metroid.",
+        "Bouncing on the second platform will usually avoid the third Metroid."
       ]
     },
     {
       "link": [4, 1],
-      "name": "Metroid Room 1 Frozen Rinka (Right to Left)",
+      "name": "Frozen Rinka (Right to Left)",
       "requires": [
-        "canUseFrozenEnemies"
+        "canTrickyUseFrozenEnemies",
+        "canTrickyJump"
       ],
-      "note": "Doable using the top Rinka near the right end of the acid pool."
+      "note": [
+        "Use the lower Rinka as a platform to setup the angle for the top Rinka.",
+        "Then use the frozen Rinka to cross the acid."
+      ]
     },
     {
       "link": [4, 1],
@@ -941,7 +984,7 @@
       "requires": [
         {"or": [
           {"and": [
-            "canPreciseWalljump",
+            "canDelayedWalljump",
             {"acidFrames": 20}
           ]},
           {"and": [
@@ -953,6 +996,30 @@
             "Gravity",
             {"acidFrames": 10}
           ]}
+        ]},
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "Ice",
+          "ScrewAttack",
+          "canMetroidAvoid",
+          {"and": [
+            "canPseudoScrew",
+            "canTrickyJump"
+          ]},
+          {"metroidFrames": 420}
+        ]},
+        {"or": [
+          "canInsaneJump",
+          {"and": [
+            "canTrickyJump",
+            "canPreciseWalljump",
+            {"acidFrames": 16}
+          ]},
+          {"and": [
+            "Gravity",
+            {"acidFrames": 16}
+          ]},
+          {"acidFrames": 27}
         ]}
       ]
     },
@@ -960,8 +1027,64 @@
       "link": [4, 1],
       "name": "Acid Run",
       "requires": [
-        {"acidFrames": 70}
+        {"acidFrames": 70},
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "Ice",
+          "ScrewAttack",
+          {"and": [
+            "canPseudoScrew",
+            "canDodgeWhileShooting"
+          ]},
+          {"metroidFrames": 670}
+        ]}
       ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Blue SpaceJump",
+      "requires": [
+        "canBlueSpaceJump",
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 1
+        }},
+        {"metroidFrames": 67}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Shinespark Midair",
+      "requires": [
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 23,
+          "openEnd": 0
+        }},
+        {"shinespark": {
+          "frames": 80,
+          "excessFrames": 5
+        }},
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "Ice",
+          "ScrewAttack",
+          "canPseudoScrew",
+          {"metroidFrames": 200}
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Inifinite Bomb Jump",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_canCeilingBombJump",
+          "h_canDiagonalBombJump"
+        ]}
+      ],
+      "note": "Bomb Jump between the two floating platforms."
     }
   ]
 }
