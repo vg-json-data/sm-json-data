@@ -179,7 +179,7 @@
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
         {"metroidFrames": 96}
       ],
@@ -191,7 +191,7 @@
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
         {"or": [
           "canMetroidAvoid",
@@ -250,6 +250,10 @@
         {"or": [
           "canMoonfall",
           "Morph"
+        ]},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          {"metroidFrames": 25}
         ]}
       ],
       "exitCondition": {
@@ -273,7 +277,11 @@
       },
       "requires": [
         "canShinechargeMovementTricky",
-        {"shinespark": {"frames": 7}}
+        {"shinespark": {"frames": 7}},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
@@ -296,6 +304,10 @@
         {"or": [
           "canMoonfall",
           "Morph"
+        ]},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          {"metroidFrames": 25}
         ]}
       ],
       "exitCondition": {
@@ -318,7 +330,11 @@
       },
       "requires": [
         "canShinechargeMovementTricky",
-        {"shinespark": {"frames": 22}}
+        {"shinespark": {"frames": 22}},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
@@ -354,9 +370,9 @@
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
-        {"metroidFrames": 96}
+        {"metroidFrames": 400}
       ],
       "clearsObstacles": ["A"]
     },
@@ -367,7 +383,7 @@
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
         "canMetroidAvoid"
       ],
@@ -408,14 +424,14 @@
       ],
       "note": [
         "Buffer a spinjump towards the door to jump over the top metroid and land on the middle platform.",
-        "Metroids can knocked with Beam shots to clear a path."
+        "Metroids can be knocked with Beam shots to clear a path."
       ]
     },
     {
       "link": [2, 1],
       "name": "Tank the Damage",
       "requires": [
-        {"metroidFrames": 80}
+        {"metroidFrames": 120}
       ]
     },
     {
@@ -506,17 +522,258 @@
     },
     {
       "link": [2, 1],
-      "name": "Come in Shinecharged, Leave With Spark (Morph)",
+      "name": "Come in Shinecharging, Leave With Spark (Left Side)",
       "entranceCondition": {
-        "comeInShinecharged": {
-          "framesRequired": 125
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 7}},
+        "f_KilledMetroidRoom2"
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Not pressing dash will make the platforming easier, unless HiJump is also equipped."
+      ],
+      "devNote": "Metroids randomly block shots fired and can make opening the door unreliable."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "HiJump",
+        "canCarefulJump",
+        {"or": [
+          "f_KilledMetroidRoom2",
+          {"and": [
+            "canMetroidAvoid",
+            "canShinechargeMovementTricky"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Spinjump into the opening below the top door."
+      ],
+      "devNote": "Metroids randomly block shots fired and can make opening the door unreliable."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged (Morph)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canWallJumpInstantMorph",
+        "f_KilledMetroidRoom2"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 30
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Wall jump up the right wall and either mid-air morph to fit through the gap below the top door.",
+        "Alternatively use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing."
+      ],
+      "devNote": "Metroids randomly block shots fired and can make opening the door unreliable."
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged (Wiggle)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
         }
       },
       "requires": [
         "canWalljump",
-        "Morph",
+        "canMidairWiggle",
+        "canShinechargeMovementTricky",
+        "f_KilledMetroidRoom2"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing."
+      ],
+      "devNote": "Metroids randomly block shots fired and can make opening the door unreliable."
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canCarefulJump",
         "canShinechargeMovementComplex",
-        {"shinespark": {"frames": 8}}
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Spinjump into the opening below the top door."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge (Morph)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 140
+        }
+      },
+      "requires": [
+        "canWallJumpInstantMorph",
+        "canShinechargeMovementComplex",
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Wall jump up the right wall and either mid-air morph to fit through the gap below the top door.",
+        "Alternatively use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge (Wiggle)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canMidairWiggle",
+        "canShinechargeMovementTricky",
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Wall jump up the right wall and use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canCarefulJump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 6}},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Spinjump into the opening below the top door."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark (Morph)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "canWallJumpInstantMorph",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 5}},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
@@ -530,33 +787,7 @@
         "Alternatively use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing.",
         "Shoot the door open and spark out."
       ]
-    }, 
-    {
-      "link": [2, 1],
-      "name": "Carry Shinecharge (Wiggle)",
-      "entranceCondition": {
-        "comeInShinecharged": {
-          "framesRequired": 135
-        }
-      },
-      "requires": [
-        "canWalljump",
-        "canMidairWiggle",
-        "canShinechargeMovementTricky",
-        {"shinespark": {"frames": 5}}
-      ],
-      "exitCondition": {
-        "leaveWithSpark": {}
-      },
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ],
-      "note": [
-        "Wall jump up the right wall and use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing.",
-        "Shoot the door open and spark out."
-      ]
-    }, 
+    },
     {
       "link": [2, 1],
       "name": "Come in Shinecharged, Leave With Spark (Wiggle)",
@@ -569,7 +800,11 @@
         "canWalljump",
         "canMidairWiggle",
         "canShinechargeMovementTricky",
-        {"shinespark": {"frames": 5}}
+        {"shinespark": {"frames": 5}},
+        {"or": [
+          "f_KilledMetroidRoom2",
+          "canMetroidAvoid"
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
@@ -582,7 +817,7 @@
         "Wall jump up the right wall and use a mid-air wiggle to reduce the height of Samus' hitbox after the walljump, to be able to fit through the gap without morphing.",
         "Shoot the door open and spark out."
       ]
-    }, 
+    },
     {
       "link": [2, 2],
       "name": "Leave with Runway",
