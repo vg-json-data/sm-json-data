@@ -84,6 +84,7 @@ def process_keyvalue(k, v, metadata):
         "speedBooster", # validated by schema
         "framesRemaining",  # validated by schema
         "comesThroughToilet",  # validated by schema
+        "direction",  # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
     ]
 
@@ -693,6 +694,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has 'comesThroughToilet' but is not a vertical connection:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            if "comeInWithTemporaryBlue" in strat["entranceCondition"]:
+                                if (room["id"], fromNode) in vertical_door_nodes and "direction" not in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has vertical comeInWithTemporaryBlue entranceCondition without 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                if (room["id"], fromNode) not in vertical_door_nodes and "direction" in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has non-vertical comeInWithTemporaryBlue entranceCondition with 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                         if "exitCondition" in strat:
                             if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
@@ -704,6 +714,16 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                         msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition:{stratRef}"
                                         messages["reds"].append(msg)
                                         messages["counts"]["reds"] += 1
+                            if "leaveWithTemporaryBlue" in strat["exitCondition"]:
+                                if (room["id"], toNode) in vertical_door_nodes and "direction" not in strat["exitCondition"]["leaveWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has vertical leaveWithTemporaryBlue exitCondition without 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                if (room["id"], toNode) not in vertical_door_nodes and "direction" in strat["exitCondition"]["leaveWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has non-vertical leaveWithTemporaryBlue exitCondition with 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
                         node_subtype = node_lookup[toNode]["nodeSubType"]
                         door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype)                                
                         for node in door_unlocked_nodes:

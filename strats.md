@@ -85,6 +85,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveNormally_: This indicates that can Samus leave through this door in a "normal" way, by walking, falling, or jumping.
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
+- _leaveWithTemporaryBlue_: This indicates that Samus may leave through this door by jumping with temporary blue.
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
@@ -178,6 +179,32 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
     "leaveShinecharged": {
       "framesRemaining": 90
     }
+  }
+}
+```
+
+### Leave With Temporary Blue
+
+A `leaveWithTemporaryBlue` exit condition represents that Samus can leave through this door by jumping with temporary blue. It has no properties.
+
+The `leaveWithTemporaryBlue` object has the following property:
+- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus is facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+
+*Note*: Using a runway connected to a door to leave the room with temporary blue is already covered by `leaveWithRunway`.
+
+#### Example
+```json
+{
+  "name": "Leave With Temporary Blue",
+  "notable": false,
+  "requires": [
+    {"canShinecharge": {
+      "usedTiles": 20,
+      "openEnd": 0
+    }}
+  ],
+  "exitCondition": {
+    "leaveWithTemporaryBlue": {}
   }
 }
 ```
@@ -741,7 +768,16 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
 
 A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It has no properties.
 
-A `comeInWithTemporaryBlue` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. This comes with implicit requirements for actions to be performed in the previous room:
+The `comeInWithTemporaryBlue` object has the following property:
+- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+
+A `comeInWithTemporaryBlue` entrance condition must match with either a `leaveWithTemporaryBlue` or `leaveWithRunway` condition on the other side of the door. 
+
+For a `comeInWithTemporaryBlue` to match with a `leaveWithTemporaryBlue`, their `direction` properties must be equal, if they are both specified and not "any".
+
+A match with `leaveWithTemporaryBlue` comes only with an implicit requirement of the tech `canTemporaryBlue`.
+
+A match with `leaveWithRunway` comes with implicit requirements for actions to be performed in the previous room:
   - The tech `canTemporaryBlue` is required.
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 200 heat frames are assumed for gaining temporary blue and leaving the room after the shinecharge is obtained.
