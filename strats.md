@@ -526,7 +526,9 @@ A `comeInShinecharging` entrance condition represents the need for Samus to run 
 
 * _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_
 
-The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles).
+The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles). It also has the following property:
+
+* _minTiles_: If specified, this is the minimum number of tiles of runway in the other room required to be used, in order to gain enough momentum.
 
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
@@ -540,7 +542,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
 
 - If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway in the other room is used starting from the door. In this case Samus will need to run in both directions. The way to calculate heat frames then depends on which rooms are heated:
   - If both rooms are heated, then it is best to use smallest amount of runway possible in the other room. If the required shinecharge tiles
-  (based on the desired difficulty) is no more than the effective runway length in the current room (based on the `comeInShinecharging` properties), then there is no need to add heat frames for running in the other room. Otherwise, the amount of runway to use in the other room is the difference between the required shinecharge tiles and the effective runway length in the current room. The run in the other room to get positioned on the runway can be done at full speed, so the [table](#come-in-running) can be used to determine the required heat frames for this run, including heat frames for turning around and positioning. For the run back to charge the spark, there are two cases:
+  (based on the desired difficulty) is no more than the effective runway length in the current room (based on the `comeInShinecharging` properties), then there is no need to add heat frames for running in the other room. Otherwise, the amount of runway to use in the other room is the difference between the required shinecharge tiles and the effective runway length in the current room (but at least `minTiles`, if specified). The run in the other room to get positioned on the runway can be done at full speed, so the [table](#come-in-running) can be used to determine the required heat frames for this run, including heat frames for turning around and positioning. For the run back to charge the spark, there are two cases:
      - If the combined effective runway length is at least 31.3 tiles, then dash can be held through the entire run, so the [table](#come-in-running) can be used to get the total heat frames. 
      - If the combined effective runway length is less than 31.3 tiles, then run back to charge the spark requires a constant 85 frames (essentially independent of shortcharging technique).
 
