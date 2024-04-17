@@ -1,9 +1,11 @@
 # sm-json-data
 ## Aim of the Project
 
-This project intends to represent Super Metroid's layout and navigation in a format that is handy for software to read and interpret. The primary goal is to eventually be used by the SMZ3 combo randomizer (https://github.com/tewtal/alttp_sm_combo_randomizer) to build its logic, expanding that project's possibilities.
+This project intends to represent Super Metroid's layout and navigation in a format that is handy for software to read and interpret. 
+The aim is for it to useful for a wide variety of Super Metroid projects. Currently it is used by the following projects:
 
-However, the intent is for the data model to also be usable for other projects related to Super Metroid.
+- [Map Rando](https://maprando.com), as the basis for its item placement logic.
+- Total's quad-crossover randomizer (Zelda 1, Metroid 1, Link to the Past, and Super Metroid), currently in development.
 
 ## Project Structure
 
