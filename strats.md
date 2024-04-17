@@ -85,6 +85,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveNormally_: This indicates that can Samus leave through this door in a "normal" way, by walking, falling, or jumping.
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
+- _leaveWithTemporaryBlue_: This indicates that Samus may leave through this door by jumping with temporary blue.
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
@@ -178,6 +179,32 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
     "leaveShinecharged": {
       "framesRemaining": 90
     }
+  }
+}
+```
+
+### Leave With Temporary Blue
+
+A `leaveWithTemporaryBlue` exit condition represents that Samus can leave through this door by jumping with temporary blue. It has no properties.
+
+The `leaveWithTemporaryBlue` object has the following property:
+- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus is facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+
+*Note*: Using a runway connected to a door to leave the room with temporary blue is already covered by `leaveWithRunway`.
+
+#### Example
+```json
+{
+  "name": "Leave With Temporary Blue",
+  "notable": false,
+  "requires": [
+    {"canShinecharge": {
+      "usedTiles": 20,
+      "openEnd": 0
+    }}
+  ],
+  "exitCondition": {
+    "leaveWithTemporaryBlue": {}
   }
 }
 ```
@@ -499,7 +526,9 @@ A `comeInShinecharging` entrance condition represents the need for Samus to run 
 
 * _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_
 
-The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles).
+The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles). It also has the following property:
+
+* _minTiles_: If specified, this is the minimum number of tiles of runway in the other room required to be used, in order to gain enough momentum.
 
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
@@ -513,7 +542,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
 
 - If the `from` node of the `leaveWithRunway` is the same as the `to` node, then this represents that the runway in the other room is used starting from the door. In this case Samus will need to run in both directions. The way to calculate heat frames then depends on which rooms are heated:
   - If both rooms are heated, then it is best to use smallest amount of runway possible in the other room. If the required shinecharge tiles
-  (based on the desired difficulty) is no more than the effective runway length in the current room (based on the `comeInShinecharging` properties), then there is no need to add heat frames for running in the other room. Otherwise, the amount of runway to use in the other room is the difference between the required shinecharge tiles and the effective runway length in the current room. The run in the other room to get positioned on the runway can be done at full speed, so the [table](#come-in-running) can be used to determine the required heat frames for this run, including heat frames for turning around and positioning. For the run back to charge the spark, there are two cases:
+  (based on the desired difficulty) is no more than the effective runway length in the current room (based on the `comeInShinecharging` properties), then there is no need to add heat frames for running in the other room. Otherwise, the amount of runway to use in the other room is the difference between the required shinecharge tiles and the effective runway length in the current room (but at least `minTiles`, if specified). The run in the other room to get positioned on the runway can be done at full speed, so the [table](#come-in-running) can be used to determine the required heat frames for this run, including heat frames for turning around and positioning. For the run back to charge the spark, there are two cases:
      - If the combined effective runway length is at least 31.3 tiles, then dash can be held through the entire run, so the [table](#come-in-running) can be used to get the total heat frames. 
      - If the combined effective runway length is less than 31.3 tiles, then run back to charge the spark requires a constant 85 frames (essentially independent of shortcharging technique).
 
@@ -741,7 +770,16 @@ A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` co
 
 A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It has no properties.
 
-A `comeInWithTemporaryBlue` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. This comes with implicit requirements for actions to be performed in the previous room:
+The `comeInWithTemporaryBlue` object has the following property:
+- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+
+A `comeInWithTemporaryBlue` entrance condition must match with either a `leaveWithTemporaryBlue` or `leaveWithRunway` condition on the other side of the door. 
+
+For a `comeInWithTemporaryBlue` to match with a `leaveWithTemporaryBlue`, their `direction` properties must be equal, if they are both specified and not "any".
+
+A match with `leaveWithTemporaryBlue` comes only with an implicit requirement of the tech `canTemporaryBlue`.
+
+A match with `leaveWithRunway` comes with implicit requirements for actions to be performed in the previous room:
   - The tech `canTemporaryBlue` is required.
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 200 heat frames are assumed for gaining temporary blue and leaving the room after the shinecharge is obtained.
