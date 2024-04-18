@@ -66,6 +66,11 @@
       "id": "A",
       "name": "Green Gate",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "G-Mode Indirect Despawn Gate",
+      "obstacleType": "abstract"
     }
   ],
   "links": [
@@ -142,7 +147,8 @@
       "link": [1, 1],
       "name": "Gamet Farm",
       "requires": [
-        {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
+        {"refill": ["Energy", "Missile", "Super", "PowerBomb"]},
+        {"obstaclesNotCleared": ["B"]}
       ]
     },
     {
@@ -162,6 +168,23 @@
       },
       "note": [
         "It is possible to lure the Gamets out of the water with nothing but ledge grabs."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Indirect Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Cross the room while in indirect G-Mode and the gate will not be there.",
+        "Note that if any of the Gamets are killed, none of them will respawn, but they can still be frozen and used as a platform.",
+        "It is possible but difficult to cross either of the moats with Grapple before PLMs are overloaded, but not both of them."
       ]
     },
     {
@@ -244,6 +267,20 @@
       "note": [
         "Carefully and quickly lure the Gamets to the right door without letting them go off camera.",
         "It may help to kill any extra Gamets once they spread apart."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Indirect Morph IBJ Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "Gravity",
+        "h_canArtificialMorphIBJ"
       ]
     },
     {
@@ -339,13 +376,34 @@
       "note": "With enough run speed, jump over the first moat and MockBall into a regular springball jump over the second moat."
     },
     {
+      "link": [1, 3],
+      "name": "G-Mode Morph IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "Gravity",
+        "h_canArtificialMorphIBJ"
+      ]
+    },
+    {
       "link": [1, 4],
       "name": "Base",
       "requires": [
         {"or": [
-          "Grapple",
-          "SpaceJump"
+          "SpaceJump",
+          {"and": [
+            "Grapple",
+            {"obstaclesNotCleared": ["B"]}
+          ]}
         ]}
+      ],
+      "devNote": [
+        "It is possible to use one set of the Grapple blocks in G-Mode. Generally the second moat is harder to cross so the logic is only allowing it there.",
+        "FIXME: It may be possible to cross the whole room with Grapple in G-Mode, but it would be very hard."
       ]
     },
     {
@@ -357,7 +415,7 @@
           "canWalljump",
           "HiJump",
           "canSpringBallJumpMidAir",
-          "h_canFly",
+          "h_canIBJ",
           "canUseFrozenEnemies",
           "canGravityJump"
         ]}
@@ -539,6 +597,18 @@
       ]
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Indirect Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "clearsObstacles": ["B"]
+    },
+    {
       "link": [2, 3],
       "name": "Base",
       "requires": [
@@ -548,6 +618,14 @@
         ]}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 3],
+      "name": "Go Through Missing Gate",
+      "requires": [
+        {"obstaclesCleared": ["B"]}
+      ],
+      "resetsObstacles": ["B"]
     },
     {
       "link": [3, 2],
@@ -561,11 +639,23 @@
       "clearsObstacles": ["A"]
     },
     {
+      "link": [3, 2],
+      "name": "Go Through Missing Gate",
+      "requires": [
+        {"obstaclesCleared": ["B"]}
+      ],
+      "resetsObstacles": ["B"]
+    },
+    {
       "link": [3, 4],
       "name": "Base",
       "requires": [
-        {"obstaclesCleared": ["A"]}
-      ]
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          {"obstaclesCleared": ["B"]}
+        ]}
+      ],
+      "resetsObstacles": ["B"]
     },
     {
       "link": [3, 4],
@@ -584,7 +674,8 @@
             "canStaggeredWalljump"
           ]}
         ]}
-      ]
+      ],
+      "resetsObstacles": ["B"]
     },
     {
       "link": [3, 4],
@@ -616,6 +707,7 @@
           }}
         ]}
       ],
+      "resetsObstacles": ["B"],
       "note": "Kill either the leftmost puyo or jump into the right side of the water and fight all the puyos."
     },
     {
@@ -628,8 +720,12 @@
       "name": "Base",
       "requires": [
         {"or": [
-          "Grapple",
-          "SpaceJump"
+          "SpaceJump",
+          {"and": [
+            "Grapple",
+            {"obstaclesNotCleared": ["B"]}
+          ]},
+          "canPreciseGrapple"
         ]}
       ]
     },
@@ -641,7 +737,7 @@
         {"or": [
           "canWalljump",
           "canGravityJump",
-          "h_canFly",
+          "h_canIBJ",
           {"and": [
             "HiJump",
             "SpeedBooster"
