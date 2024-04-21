@@ -297,7 +297,7 @@ A `leaveWithGMode` exit condition represents that Samus can leave through this d
 A `leaveWithGMode` object has the following property:
 - _morphed_: If true, then this strat results in leaving the room in a morphed state, either by maintaining artificial morph or by having the Morph item.
 
-For most doors in the game, it is possible to enter the room with a G-mode setup and then immediately exit back through the same door. This is because in direct G-mode the door does not close behind Samus. To avoid the need to write out tedious boilerplate, these strats are understood to be included implicitly. Specifically, for every door node without a `spawnAt` property, there are two implicit strats, with `leaveWithGMode` exit conditions, one of the form
+For most doors in the game, it is possible to enter the room with a G-mode setup and then immediately exit back through the same door. This is because in direct G-mode the door does not close behind Samus. To avoid the need to write out tedious boilerplate, these strats are understood to be included implicitly. The implicit strats are included for every door node excluding vertical doors with `"position": "bottom"` as well as any with a `spawnAt` property. There are two implicit strats, with `leaveWithGMode` exit conditions, one of the form
 
 ```json
 {
