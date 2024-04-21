@@ -85,6 +85,8 @@ def process_keyvalue(k, v, metadata):
         "framesRemaining",  # validated by schema
         "comesThroughToilet",  # validated by schema
         "direction",  # validated by schema
+        "blue",  # validated by schema
+        "movementType",  # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
     ]
 

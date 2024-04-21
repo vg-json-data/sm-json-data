@@ -87,6 +87,10 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveShinecharged_: This indicates that it is possible to charge a shinespark and leave the room with a certain amount of time remaining on the shinecharge timer (e.g., so that a shinespark can be activated in the next room). 
 - _leaveWithTemporaryBlue_: This indicates that Samus may leave through this door by jumping with temporary blue.
 - _leaveWithSpark_: This indicates that it is possible to shinespark through the door transition.
+- _leaveSpinning_: This indicates that it is possible to jump through this door with a spin jump from a runway not connected to the door, possibly with blue speed.
+- _leaveWithMockball_: This indicates that it is possible to mockball through the door with a certain amount of momentum, and possibly with blue speed, from a runway not connected to the door.
+- _leaveWithSpringBallBounce_: This indicates that it is possible to leave through this door with a spring ball bounce with a certain amount of momentum.
+- _leaveSpaceJumping: This indicates that it is possible to Space Jump through the bottom of the doorway (through a horizontal transition) with a certain amount of momentum, and possibly with blue speed.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
@@ -118,7 +122,7 @@ A `leaveWithRunway` object indicates that a strat exits the current room using a
 
 A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, and `comeInWithTemporaryBlue`. Details are given under the corresponding entrance conditions below.
 
-`leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details) :
+`leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details):
 
 * _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_, _startingDownTiles_
 
@@ -236,6 +240,134 @@ The direction of the spark is assumed to be horizontal when sparking through hor
   ],
   "exitCondition": {
     "leaveWithSpark": {}
+  }
+}
+```
+
+### Leave Spinning
+
+A `leaveSpinning` exit condition represents that Samus can spin jump through the door with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. This exit condition applies to jumps from a runway disconnected from the door (e.g. below a ledge in front of the door). It should only be applied in cases where there is flexibility to exit at a wide range of positions between the top and bottom of the doorway.
+
+The `leaveSpinning` object has the following properties:
+
+- _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump.
+- _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. This could be used, for example, in case of a difference in usable runway length if shortcharging is being performed, or a difference in heat damage taken. The default is "any".
+
+If a `leaveSpinning` condition is used for blue speed in the next room, then it implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item). Heat frames are not included and would have to described explicitly in the strat "requires".
+
+#### Example
+```json
+{
+  "name": "Leave Spinning",
+  "notable": false,
+  "requires": [],
+  "exitCondition": {
+    "leaveSpinning": {
+      "remoteRunway": {
+        "length": 12,
+        "openEnd": 1
+      }
+    }
+  }
+}
+```
+
+### Leave With Mockball
+
+A `leaveWithMockball` exit condition represents that Samus can leave through the door while in a mockball (or process of morphing into a mockball) with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption.
+
+The `leaveWithMockball` object has the following properties:
+
+- _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump before the mockball.
+- _landingRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to land and gain speed in a mockball before hitting the transition.
+- _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
+
+A `leaveWithMockball` condition implicitly includes the `canMockball` tech requirement (including the `Morph` item requirement). If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canSpeedball` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
+
+#### Example
+```json
+{
+  "name": "Leave With Mockball",
+  "notable": false,
+  "requires": [],
+  "exitCondition": {
+    "leaveWithMockball": {
+      "remoteRunway": {
+        "length": 12,
+        "openEnd": 1
+      },
+      "landingRunway": {
+        "length": 3,
+        "openEnd": 1
+      }
+    }
+  }
+}
+```
+
+### Leave With Spring Ball Bounce
+
+A `leaveWithSpringBallBounce` exit condition represents that Samus can leave through the door with a spring ball bounce in front of the door, with a certain amount of momentum, and possibly with blue speed.
+
+The `leaveWithSpringBallBounce` object has the following properties:
+
+- _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump before the mockball.
+- _landingRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to land and gain speed in a mockball before hitting the transition.
+- _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
+- _movementType_: This takes one of three possible values, "mockball", "airball", or "any", indicating the type of bounce that can be used. 
+  - "mockball" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "airball" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+
+A `leaveWithSpringBallBounce` condition implicitly includes the `canSpringBallBounce` tech requirement (including the `Morph` and `SpringBall` item requirements). If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canSpeedball` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
+
+Note that using a mockball in front of the door to perform a spring ball bounce is already covered by `leaveWithMockball`. Therefore strats for `leaveWithStringBallBounce` are generally only needed to cover the "airball" case; they can also be used for cases where a mockball-type bounce is carried from elsewhere by bouncing across the room.
+
+#### Example
+```json
+{
+  "name": "Leave With Spring Ball Bounce",
+  "notable": false,
+  "requires": [],
+  "exitCondition": {
+    "leaveWithSpringBallBounce": {
+      "remoteRunway": {
+        "length": 12,
+        "openEnd": 1
+      },
+      "landingRunway": {
+        "length": 3,
+        "openEnd": 1
+      },
+      "movementType": "airball"
+    }
+  }
+}
+```
+
+### Leave Space Jumping
+
+A `leaveSpaceJumping` exit condition represents that Samus can Space Jump through the bottom of the doorway with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. It should only be applied in cases where there is flexibility to exit at any position between the top and bottom of the doorway.
+
+The `leaveSpaceJumping` object has the following properties:
+
+- _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the Space Jump.
+- _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
+
+A `leaveSpaceJumping` condition implicitly includes the `SpaceJump` item requirement. If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canBlueSpaceJump` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
+
+#### Example
+```json
+{
+  "name": "Leave Space Jumping",
+  "notable": false,
+  "requires": [],
+  "exitCondition": {
+    "leaveSpaceJumping": {
+      "remoteRunway": {
+        "length": 12,
+        "openEnd": 1
+      }
+    }
   }
 }
 ```
@@ -402,6 +534,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInNormally_: This indicates that Samus must come into the room through the specified door, with no other particular requirements.
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
+- _comeInSpaceJumping_: This indicates that Samus must Space Jump through the bottom of the doorway.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
 - _comeInShinecharged_: This indicates that Samus must enter the room with a shinecharge with a certain amount of frames remaining.
 - _comeInShinechargedJumping_: This indicates that Samus must jump into the the room with a shinecharge with a certain amount of frames remaining.
@@ -411,6 +544,9 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithDoorStuckSetup_: This indicates that Samus must enter the room in a way that allows getting stuck in the door as it closes.
 - _comeInSpeedballing_: This indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball.
 - _comeInWithTemporaryBlue_: This indicates that Samus must come in by jumping through this door with temporary blue.
+- _comeInWithMockball_: This indicates that Samus must roll into the room with a mockball with a certain amount of momentum.
+- _comeInWithSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room.
+- _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
@@ -517,6 +653,32 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
     }
   },
   "requires": []
+}
+```
+
+### Come In Space Jumping
+
+A `comeInSpaceJumping` entrance condition indicates that Samus must come in with a Space Jump through the bottom of the doorway, applicable to horizontal transitions. It has the following properties:
+
+* _speedBooster_: If true, then Speed Booster must be used while gaining run speed. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
+* _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
+
+A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with an implicit `SpaceJump` item requirement.
+
+```json
+{
+  "name": "Come In Space Jumping",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInSpaceJumping": {
+      "speedBooster": "any",
+      "minTiles": 4
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
 }
 ```
 
@@ -758,13 +920,16 @@ It is assumed that the runway in the current room is level or sloping up; adjust
 
 Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
 
-A `comeInSpeedballing` entrance condition must match with a `leaveWithRunway` condition on the other side of the door. A match with a `leaveWithRunway` comes with implicit requirements:
-- A `canSpeedball` tech requirement.
-- A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
-  - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
-  - Otherwise 14 tiles are needed.
-- If the previous door environment is water, then `Gravity` is required.
-- If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
+A `comeInSpeedballing` entrance condition must match with one of the following conditions on the other side of the door: `leaveWithRunway`, `leaveSpinning`, `leaveWithMockball`. 
+
+In every case, there is an implicit tech requirement of `canSpeedball`. A match with a `leaveWithRunway` comes with the following implicit requirements:
+  - A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
+    - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
+    - Otherwise 14 tiles are needed.
+  - If the previous door environment is water, then `Gravity` is required.
+  - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
+
+For `leaveSpinning` and `leaveWithMockball`, their `blue` property must be either "yes" or "any", and there is an implicit `canShineCharge` requirement based on the runway length in the exit condition.
 
 ### Come In With Temporary Blue
 
@@ -773,17 +938,119 @@ A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in
 The `comeInWithTemporaryBlue` object has the following property:
 - _direction_: This takes two possible values "left" and "right", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
 
-A `comeInWithTemporaryBlue` entrance condition must match with either a `leaveWithTemporaryBlue` or `leaveWithRunway` condition on the other side of the door. 
+  A `comeInWithTemporaryBlue` entrance condition must match with one of the following exit conditions on the other side of the door: `leaveWithTemporaryBlue`, `leaveWithRunway`:
 
-For a `comeInWithTemporaryBlue` to match with a `leaveWithTemporaryBlue`, their `direction` properties must be equal, if they are both specified and not "any".
-
-A match with `leaveWithTemporaryBlue` comes only with an implicit requirement of the tech `canTemporaryBlue`.
-
-A match with `leaveWithRunway` comes with implicit requirements for actions to be performed in the previous room:
-  - The tech `canTemporaryBlue` is required.
-  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible.
-  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 200 heat frames are assumed for gaining temporary blue and leaving the room after the shinecharge is obtained.
+- To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`. 
+- A match with `leaveWithRunway` comes with implicit requirements:
+  - The tech `canTemporaryBlue`.
+  - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement).
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. An extra `{"heatFrames": 200}` is assumed for gaining temporary blue and leaving the room.
   - If the previous door environment is water, then `Gravity` is required.
+
+### Come In Blue Spinning
+
+A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed. It has the following properties:
+
+  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump.
+  - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
+
+A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `leaveWithRunway` exit condition on the other side of the door.
+
+- A match with `leaveSpinning` has the following requirements:
+  - The `blue` property must be "yes" or "any".
+  - If `minTiles` is specified, the effective runway length of the `remoteRunway` in the `leaveSpinning` must be at least `minTiles`.
+  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible. Note that in these cases the `unusableTiles` property is ignored (i.e., not subtracted).
+- A match with `leaveWithRunway` has the following requirements:
+  - If `blue` is "yes", a `canShinecharge` requirement (including `SpeedBooster` item) is required. Here `unusableTiles` are subtracted from the available runway length.
+  - If `minTiles` is specified, the effective runway length must be at least `minTiles + unusableTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. The `unusableTiles` are ignored (i.e. not subtracted) for the purposes of determining heat frames, since heat damage is still taken during the jump.
+  - If the previous door environment is water, then `Gravity` is required.
+
+```json
+{
+  "name": "Come In Blue Spinning",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInBlueSpinning": {
+      "unusableTiles": 2
+    }
+  },
+  "requires": []
+}
+```
+
+### Come In With Mockball
+
+A `comeInWithMockball` entrance condition indicates that Samus must roll into the room in a mockball with a certain amount of momentum. It has the following properties:
+
+- _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and enter a mockball.
+- _remoteAndLandingMinTiles_: When entering a mockball, it takes some time to accelerate up to full speed, which means that even when using a remote runway (i.e. one not connected to the door) to gain speed for the jump, the amount of landing space in front of the door still matters. Depending on the strat, different combinations of remote runway and landing lengths may work (e.g. with shorter landing lengths possibly requiring longer remote runways to compensate). This property is a list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable to gain speed at the start of the mockball. 
+
+A `comeInWithMockball` entrance condition must match with one of the following conditions on the other side of the door: `leaveWithMockball` or `leaveWithRunway`:
+
+- A match with `leaveWithMockball` has the following requirements:
+  - The `blue` property of `leaveWithMockball` must be "no" or "any".
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `canMockball` tech (including `Morph` item).
+- A match with `leaveWithRunway` has the following requirements:
+  - The effective runway length must be at least `acjacentMinTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. 
+  - If the previous door environment is water, then `Gravity` is required.
+  - The `canMockball` tech (including `Morph` item) is required.
+
+```json
+{
+  "name": "Come In With Mockball",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInWithMockball": {
+      "adjacentMinTiles": 11,
+      "remoteAndLandingMinTiles": [[8, 2], [7, 3]]
+    }
+  },
+  "requires": []
+}
+```
+
+### Come In With Spring Ball Bounce
+
+A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in the doorway of the previous room. It has the following properties:
+
+- _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
+- _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
+- _movementType_: This takes one of three possible values, "mockball", "airball", and "any", indicating the type of bounce that is required.
+  - "mockball" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "airball" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+
+A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce` or `leaveWithMockball` on the other side of the door. The following requirements apply in both cases:
+- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
+- The `blue` property of the exit condition must be "no" or "any". 
+- `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+
+There are additional requirements depending on the exit condition:
+
+- A match with `leaveWithSpringBallBounce` has the following additional requirements:
+  - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
+  - If the `movementType` of either the exit condition or entrance condition is "mockball", then `canMockball` is required.
+- A match with `leaveWithMockball` has the following requirements:
+  - The `movementType` of the entrance condition must be "mockball" or "any".
+  - The `canMockball` tech is required.
+
+```json
+{
+  "name": "Come In With Spring Ball Bounce",
+  "notable": false,
+  "entranceCondition": {
+    "comeInWithSpringBallBounce": {
+      "remoteAndLandingMinTiles": [[4, 1]],
+      "movementType": "any"
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
 
 ### Come In With Stored Fall Speed
 
