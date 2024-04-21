@@ -77,6 +77,12 @@
       "name": "G-Mode Get to the Left Door",
       "obstacleType": "abstract",
       "note": "Samus has all of the items to get to the left door while in G-Mode Morph, without including the item if it is being remote acquired."
+    },
+    {
+      "id": "D",
+      "name": "G-Mode Morph Direct",
+      "obstacleType": "abstract",
+      "note": "Samus enters the room in direct G-Mode with artificial morph, in order to be able to remote acquire the item."
     }
   ],
   "enemies": [
@@ -124,10 +130,8 @@
     {
       "from": 3,
       "to": [
-        {
-          "id": 1,
-          "devNote": "No Space Jump strat because that's taken care of by 3 -> 5 -> 1."
-        },
+        {"id": 1},
+        {"id": 2},
         {"id": 5}
       ]
     },
@@ -358,17 +362,17 @@
     },
     {
       "link": [1, 6],
-      "name": "G-Mode Morph Diagonal IBJ",
+      "name": "G-Mode Direct Morph Spring Ball",
       "entranceCondition": {
         "comeInWithGMode": {
-          "mode": "any",
+          "mode": "direct",
           "morphed": true
         }
       },
       "requires": [
-        "h_canArtificialMorphDiagonalBombJump",
-        "canBeVeryPatient"
-      ]
+        "h_canArtificialMorphSpringBall"
+      ],
+      "clearsObstacles": ["D"]
     },
     {
       "link": [1, 6],
@@ -384,9 +388,16 @@
         "h_canArtificialMorphBombHorizontally",
         "h_canArtificialMorphIBJ",
         "canSuitlessLavaDive",
-        {"acidFrames": 175}
+        {"acidFrames": 175},
+        {"or": [
+          "canTrickyJump",
+          {"acidFrames": 110}
+        ]}
       ],
-      "note": "Bomb boost horizontally into the acid, then IBJ onto the solid platforms."
+      "note": [
+        "Bomb boost horizontally into the acid, then roll to the right and bomb out to safety.",
+        "To save some Energy, it is possible to IBJ out of the acid onto the first solid platform."
+      ]
     },
     {
       "link": [2, 2],
@@ -705,6 +716,35 @@
       ]
     },
     {
+      "link": [2, 6],
+      "name": "G-Mode Direct Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphSpringBall",
+          {"and": [
+            "canBombHorizontally",
+            "h_canArtificialMorphPowerBomb"
+          ]},
+          {"and": [
+            "h_canArtificialMorphBombs",
+            "canTrickyJump"
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["D"],
+      "note": [
+        "A single horizontal Power Bomb boost can get Samus on top of the blocks and kill most of the Mellas.",
+        "With Bombs, killing the Mellas can be a bit tricky; it is recommended to use one to boost and place some midair before luring a Mella to more easily kill it."
+      ]
+    },
+    {
       "link": [3, 1],
       "name": "Indiana Jones Grapple in Reverse",
       "notable": true,
@@ -719,7 +759,14 @@
       "link": [3, 1],
       "name": "G-Mode Morph Remote Acquire - to Left Door (Using Previous Strat)",
       "requires": [
-        {"obstaclesCleared": ["C"]}
+        {"obstaclesCleared": ["C", "D"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "G-Mode Morph Remote Acquire - to Right Door",
+      "requires": [
+        {"obstaclesCleared": ["D"]}
       ]
     },
     {
@@ -1072,8 +1119,7 @@
     {
       "link": [6, 5],
       "name": "Base",
-      "requires": [],
-      "clearsObstacles": ["A"]
+      "requires": []
     },
     {
       "link": [6, 6],
