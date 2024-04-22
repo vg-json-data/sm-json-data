@@ -743,6 +743,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
 
+                        if "collectsItems" in strat:
+                            for item_node_id in strat["collectsItems"]:
+                                if item_node_id not in node_lookup or node_lookup[item_node_id]["nodeType"] != "item":
+                                    msg = f"🔴ERROR: collectsItems references node {item_node_id} which is not an item node:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
+                        if "setsFlags" in strat:
+                            for flag in strat["setsFlags"]:
+                                if flag not in keywords["flags"]:
+                                    msg = f"🔴ERROR: setsFlags references flag '{flag}' which does not exist:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
                     # Validate Nodes
                     showNodes = paramData["showNodes"]
                     bail = paramData["bail"]
