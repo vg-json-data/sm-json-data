@@ -18,7 +18,8 @@ A `strat` can have the following properties:
   * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
   * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
   * _unlocksDoors_: An array describing possible doors that can be unlocked as part of this strat.
-  
+  * _collectsItems_: An array listing items that are collected as part of this strat (e.g. for G-mode remote item acquire).
+  * _setsFlags_: An array listing game flags that are set as part of this strat.
 These properties are described below in more detail.
 ### Example
 
@@ -1114,3 +1115,34 @@ In a heated room, it instead has the form:
 ```
 
 The implicit unlock strats can be disabled by setting the node property `useImplicitDoorUnlocks` to false.
+
+## Collects Items
+
+An `collectsItems` array lists the node IDs (within the room) of items that become collected (if not already collected) as part of executing this strat. This can be useful, for example, for strats that use G-mode to "remote acquire" items at a location different from the item node.
+
+For items collected in this way, the `locks` property of the item node plays no role, so the strat `requires` must include any necessary requirements to ensure the item has spawned.
+
+```json
+{
+  "link": [1, 2],
+  "name": "G-Mode Remote Acquire Item",
+  "requires": [],
+  "collectsItems": [3]
+}
+```
+
+## Sets Flags
+
+A `setsFlags` array lists the names of game flags that become set (if not already set) as part of executing this strat.
+
+```json
+{
+  "link": [5, 6],
+  "name": "Break the Tube",
+  "requires": [
+    {"not": "f_MaridiaTubeBroken"},
+    "h_canUsePowerBombs"
+  ],
+  "setsFlags": ["f_MaridiaTubeBroken"]
+}
+```
