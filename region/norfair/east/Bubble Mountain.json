@@ -108,6 +108,13 @@
       "name": "Main Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
+    },
+    {
+      "id": 10,
+      "name": "G-Mode Morph Junction (Above the Power Bomb Blocks)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "note": "Represents being on the Power Bomb blocks with G-Mode Morph (artificial morph)"
     }
   ],
   "obstacles": [
@@ -172,7 +179,8 @@
           "id": 7,
           "note": "This link only includes ways of crossing to 7 that can't be done from node 9"
         },
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -182,7 +190,8 @@
         {"id": 2},
         {"id": 3},
         {"id": 7},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -193,7 +202,8 @@
         {"id": 3},
         {"id": 5},
         {"id": 7},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -225,7 +235,8 @@
         {"id": 2},
         {"id": 3},
         {"id": 6},
-        {"id": 7}
+        {"id": 7},
+        {"id": 10}
       ]
     },
     {
@@ -239,7 +250,8 @@
         {"id": 3},
         {"id": 6},
         {"id": 7},
-        {"id": 9}
+        {"id": 9},
+        {"id": 10}
       ]
     },
     {
@@ -258,6 +270,14 @@
         {"id": 7},
         {"id": 8},
         {"id": 9}
+      ]
+    },
+    {
+      "from": 10,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 7}
       ]
     }
   ],
@@ -305,6 +325,27 @@
       "requires": [
         "h_canCrystalFlash"
       ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Waver",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "note": "Wait 20 seconds for a Waver to come and hit Samus."
     },
     {
       "link": [1, 2],
@@ -519,6 +560,17 @@
     {
       "link": [1, 9],
       "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [1, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": []
     },
     {
@@ -791,6 +843,26 @@
       ]
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Waver",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {}
+    },
+    {
       "link": [2, 3],
       "name": "Carry Shinecharge",
       "entranceCondition": {
@@ -1027,6 +1099,17 @@
       "requires": []
     },
     {
+      "link": [2, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": []
+    },
+    {
       "link": [3, 1],
       "name": "X-Ray Climb",
       "entranceCondition": {
@@ -1232,6 +1315,24 @@
       "devNote": "This is only useful if the blocks are broken, but if they are not broken the longer runway can be used."
     },
     {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Get Hit By Sova",
+      "requires": [
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "h_canBombThings"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "Lure a Sova from the bomb maze, or from just below the Power Bomb blocks.",
+        "Using a Power Bomb while avoiding killing the Sova can be done by placing the Power Bomb on the lowest stair on the ledge above,",
+        "Starting at the bottom of the room and going up through the Power Bomb blocks can be done by first luring the Sova into safety at the bottom of the room."
+      ]
+    },
+    {
       "link": [3, 5],
       "name": "Stored Moonfall Clip",
       "entranceCondition": {
@@ -1275,6 +1376,17 @@
     {
       "link": [3, 9],
       "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [3, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
       "requires": []
     },
     {
@@ -1376,10 +1488,7 @@
             "nodes": [4, 5],
             "mustStayPut": false
           }},
-          {"and": [
-            "h_canBombThings",
-            {"ammo": {"type": "Super", "count": 1}}
-          ]}
+          {"ammo": {"type": "Super", "count": 1}}
         ]}
       ],
       "exitCondition": {
@@ -1388,12 +1497,14 @@
           "openEnd": 1
         }
       },
-      "devNote": [
+      "note": [
         "Starting from the top of the room will require careful manipulation of the Sovas.",
         "If going through the Power Bomb blocks, place the Power Bomb on the lowest stair on the ledge above,",
-        "go down and lure the Sova up and use a super to knock it off once it is just above the right side of where the Power Bomb blocks were.",
-        "If using Bombs, lure the Sova that is just below the Power Bomb blocks, then use a super to prevent it from going into the Morph tunnel."
-      ]
+        "go down and lure the Sova up and use a Super to knock it off once it is just above the right side of where the Power Bomb blocks were.",
+        "If using Bombs, lure the Sova that is just below the Power Bomb blocks, then use a Super to prevent it from going into the Morph tunnel.",
+        "Starting at the bottom of the room and going up for the item before coming back down can be done, even with a Power Bomb, by first luring the Sova into safety at the bottom of the room."
+      ],
+      "devNote": "FIXME: It is possible to do this by following the Sova around the room to avoid resetting the room or using a Super."
     },
     {
       "link": [4, 4],
@@ -1402,6 +1513,65 @@
         "h_canCrystalFlash"
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [4, 4],
+      "name": "G-Mode Setup - Get Hit By Sova",
+      "requires": [
+        {"or": [
+          {"resetRoom": {
+            "nodes": [4, 5],
+            "mustStayPut": false
+          }},
+          {"ammo": {"type": "Super", "count": 1}}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": [
+        "Starting from the top of the room will require careful manipulation of the Sovas.",
+        "If going through the Power Bomb blocks, place the Power Bomb on the lowest stair on the ledge above,",
+        "go down and lure the Sova up and use a Super to knock it off once it is just above the right side of where the Power Bomb blocks were.",
+        "If using Bombs, lure the Sova that is just below the Power Bomb blocks, then use a Super to prevent it from going into the Morph tunnel.",
+        "Starting at the bottom of the room and going up for the item before coming back down can be done, even with a Power Bomb, by first luring the Sova into safety at the bottom of the room."
+      ],
+      "devNote": "FIXME: It is possible to do this by following the Sova around the room to avoid resetting the room or using a Super."
+    },
+    {
+      "link": [4, 4],
+      "name": "G-Mode Morph Power Bomb the Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphMovement",
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb high enough to reach the blocks above."
+    },
+    {
+      "link": [4, 4],
+      "name": "G-Mode Morph Power Bomb the Blocks (Power Bombs Only)",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphBombHorizontally",
+        {"ammo": {"type": "PowerBomb", "count": 3}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "The blocks are breakable with 4 Power Bombs.",
+        "Horizontally bomb over the vertical door then up two ledges before placing a Power Bomb that can reach the blocks above."
+      ]
     },
     {
       "link": [4, 5],
@@ -1531,6 +1701,23 @@
         {"shinespark": {"frames": 12, "excessFrames": 12}}
       ],
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "link": [5, 5],
+      "name": "G-Mode Indirect Morph Power Bomb the Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "h_canArtificialMorphMovement",
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb high enough to reach the blocks above."
     },
     {
       "link": [5, 9],
@@ -1712,6 +1899,28 @@
       }
     },
     {
+      "link": [6, 6],
+      "name": "G-Mode Setup - Get Hit By Waver",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": "Wait 50 seconds for a Waver to get to this door."
+    },
+    {
+      "link": [6, 6],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "note": "Wait 50 seconds for a Waver to come and hit Samus."
+    },
+    {
       "link": [6, 7],
       "name": "Base",
       "requires": []
@@ -1820,6 +2029,35 @@
       "unlocksDoors": [
         {"types": ["super"], "requires": []},
         {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [6, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphMovement",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "canCameraManip"
+          ]},
+          "h_canArtificialMorphPowerBomb",
+          {"enemyDamage": {
+            "enemy": "Waver",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "note": [
+        "Lower the camera to watch the Wavers and to help avoid them.",
+        "With Bombs alone, it may be helpful to kill the top Waver; this can be done by placing Bombs in a vertical line and then moving out of the way as it approaches."
       ]
     },
     {
@@ -2197,9 +2435,79 @@
       ]
     },
     {
+      "link": [7, 7],
+      "name": "G-Mode Setup - Get Hit By Waver",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "note": "Wait 40 seconds for a Waver to get to this door."
+    },
+    {
+      "link": [7, 7],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Waver",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "note": "Wait 40 seconds for a Waver to come and hit Samus."
+    },
+    {
       "link": [7, 9],
       "name": "Base",
       "requires": []
+    },
+    {
+      "link": [7, 10],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphMovement",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "canCameraManip"
+          ]},
+          "h_canArtificialMorphPowerBomb",
+          {"enemyDamage": {
+            "enemy": "Waver",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "note": [
+        "Lower the camera to watch the Wavers and to help avoid them.",
+        "With Bombs alone, it may be helpful to kill the top Waver; this can be done by placing Bombs in a vertical line and then moving out of the way as it approaches."
+      ]
+    },
+    {
+      "link": [7, 10],
+      "name": "G-Mode Morph Power Bombs Only",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canBombHorizontally",
+        "h_canArtificialMorphPowerBomb",
+        "h_additionalBomb"
+      ],
+      "note": [
+        "Use one Power Bomb to jump towards the Cacatac then a second to jump over it and down below.",
+        "Do not land where the Cacatac was, or Samus will get hit by its invisible spikes."
+      ]
     },
     {
       "link": [8, 9],
@@ -2393,6 +2701,60 @@
         "h_canCrystalFlash"
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [10, 1],
+      "name": "G-Mode Morph IBJ",
+      "requires": [
+        "h_canArtificialMorphIBJ",
+        {"or": [
+          "h_canArtificialMorphPowerBomb",
+          {"and": [
+            "canTrickyJump",
+            {"or": [
+              "canBePatient",
+              "h_canDoubleBombJump"
+            ]}
+          ]}
+        ]}
+      ],
+      "note": "Carefully dodge the Wavers while being prepared to abort the IBJ and start over if necessary."
+    },
+    {
+      "link": [10, 3],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [10, 3],
+      "name": "G-Mode Morph Power Bomb the Blocks",
+      "requires": [
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [10, 7],
+      "name": "G-Mode Morph IBJ",
+      "requires": [
+        "h_canArtificialMorphIBJ",
+        {"or": [
+          "h_canArtificialMorphPowerBomb",
+          {"and": [
+            "canTrickyJump",
+            "canBePatient",
+            {"or": [
+              "canBeVeryPatient",
+              "h_canDoubleBombJump"
+            ]}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Carefully dodge the Wavers while being prepared to abort the IBJ and start over if necessary.",
+        "It may be best to first IBJ to the top left side and kill the top Waver with Bombs;",
+        "this can be done by placing bombs in a vertical line, then dodging the Waver as it approaches."
+      ]
     }
   ]
 }
