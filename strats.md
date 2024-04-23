@@ -1140,7 +1140,6 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
   "link": [5, 6],
   "name": "Break the Tube",
   "requires": [
-    {"not": "f_MaridiaTubeBroken"},
     "h_canUsePowerBombs"
   ],
   "setsFlags": ["f_MaridiaTubeBroken"]
