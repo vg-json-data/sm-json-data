@@ -52,6 +52,13 @@
         "This node represents the small platforms above the acid.",
         "In some situations, it may be accessible without access to node 4, if the Speed blocks can't be broken."
       ]
+    },
+    {
+      "id": 6,
+      "name": "G-Mode Morph Junction (At Speed Blocks)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "note": "Represents being at the bottom of the room with G-Mode Morph (artificial morph)"
     }
   ],
   "obstacles": [
@@ -64,6 +71,18 @@
       "id": "B",
       "name": "Speed blocks",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "C",
+      "name": "G-Mode Get to the Left Door",
+      "obstacleType": "abstract",
+      "note": "Samus has all of the items to get to the left door while in G-Mode Morph, without including the item if it is being remote acquired."
+    },
+    {
+      "id": "D",
+      "name": "G-Mode Morph Direct",
+      "obstacleType": "abstract",
+      "note": "Samus enters the room in direct G-Mode with artificial morph, in order to be able to remote acquire the item."
     }
   ],
   "enemies": [
@@ -86,6 +105,10 @@
     {
       "name": "PCJR Indiana Jones Grapple",
       "note": "Involves grappling off several Rippers, where falling may lead to a soft lock."
+    },
+    {
+      "name": "PCJR G-Mode Morph Long Diagonal Bomb Jump",
+      "note": "Perform a long diagonal bomb jump from the left door to the solid platforms above the acid."
     }
   ],
   "links": [
@@ -95,7 +118,8 @@
         {"id": 1},
         {"id": 3},
         {"id": 4},
-        {"id": 5}
+        {"id": 5},
+        {"id": 6}
       ]
     },
     {
@@ -103,16 +127,15 @@
       "to": [
         {"id": 2},
         {"id": 4},
-        {"id": 5}
+        {"id": 5},
+        {"id": 6}
       ]
     },
     {
       "from": 3,
       "to": [
-        {
-          "id": 1,
-          "devNote": "No Space Jump strat because that's taken care of by 3 -> 5 -> 1."
-        },
+        {"id": 1},
+        {"id": 2},
         {"id": 5}
       ]
     },
@@ -141,6 +164,16 @@
         },
         {"id": 3},
         {"id": 4}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 5},
+        {"id": 6}
       ]
     }
   ],
@@ -317,6 +350,98 @@
       "link": [1, 5],
       "name": "Base",
       "requires": []
+    },
+    {
+      "link": [1, 6],
+      "name": "G-Mode Morph Spring Ball",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphSpringBall"
+      ]
+    },
+    {
+      "link": [1, 6],
+      "name": "G-Mode Direct Morph Spring Ball",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphSpringBall"
+      ],
+      "clearsObstacles": ["D"]
+    },
+    {
+      "link": [1, 6],
+      "name": "PCJR G-Mode Morph Long Diagonal Bomb Jump (Indirect)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphDiagonalBombJump"
+      ],
+      "reusableRoomwideNotable": "PCJR G-Mode Morph Long Diagonal Bomb Jump",
+      "note": "Perform a long diagonal bomb jump from the left door to the solid platforms above the acid."
+    },
+    {
+      "link": [1, 6],
+      "name": "PCJR G-Mode Morph Long Diagonal Bomb Jump (Direct)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphDiagonalBombJump"
+      ],
+      "clearsObstacles": ["D"],
+      "reusableRoomwideNotable": "PCJR G-Mode Morph Long Diagonal Bomb Jump",
+      "note": "Perform a long diagonal bomb jump from the left door to the solid platforms above the acid."
+    },
+    {
+      "link": [1, 6],
+      "name": "G-Mode Morph Acid Dive IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "Gravity",
+        "h_canArtificialMorphIBJ",
+        "h_canArtificialMorphBombHorizontally",
+        "canSuitlessLavaDive",
+        {"or": [
+          {"acidFrames": 280},
+          {"and": [
+            "canTrickyJump",
+            {"acidFrames": 220}
+          ]},
+          {"and": [
+            "canInsaneJump",
+            "h_canArtificialMorphDoubleBombJump",
+            {"acidFrames": 175}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Bomb boost horizontally at the top of an IBJ and land in the acid, then roll to the right and bomb out to safety.",
+        "To save some Energy, it is possible to IBJ or double IBJ out of the acid onto the first solid platform."
+      ]
     },
     {
       "link": [2, 2],
@@ -499,6 +624,22 @@
       ]
     },
     {
+      "link": [2, 2],
+      "name": "G-Mode Morph Power Bomb the Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb then exit G-Mode to break the blocks."
+    },
+    {
       "link": [2, 4],
       "name": "Base",
       "requires": [
@@ -583,6 +724,71 @@
       ]
     },
     {
+      "link": [2, 6],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphSpringBall",
+          {"and": [
+            "canBombHorizontally",
+            "h_canArtificialMorphPowerBomb"
+          ]},
+          {"and": [
+            "h_canArtificialMorphBombs",
+            "canTrickyJump"
+          ]},
+          {"and": [
+            "h_canArtificialMorphBombs",
+            {"enemyDamage": {
+              "enemy": "Mella",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]}
+      ],
+      "note": [
+        "A single horizontal Power Bomb boost can get Samus on top of the blocks and kill most of the Mellas.",
+        "With Bombs, killing the Mellas can be a bit tricky; it is recommended to use one to boost and place some midair before luring a Mella to more easily kill it."
+      ]
+    },
+    {
+      "link": [2, 6],
+      "name": "G-Mode Direct Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphSpringBall",
+          {"and": [
+            "canBombHorizontally",
+            "h_canArtificialMorphPowerBomb"
+          ]},
+          {"and": [
+            "h_canArtificialMorphBombs",
+            "canTrickyJump"
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["D"],
+      "note": [
+        "A single horizontal Power Bomb boost can get Samus on top of the blocks and kill most of the Mellas.",
+        "With Bombs, killing the Mellas can be a bit tricky; it is recommended to use one to boost and place some midair before luring a Mella to more easily kill it."
+      ]
+    },
+    {
       "link": [3, 1],
       "name": "Indiana Jones Grapple in Reverse",
       "notable": true,
@@ -592,6 +798,20 @@
       ],
       "reusableRoomwideNotable": "PCJR Indiana Jones Grapple",
       "note": "Involves grappling off several Ripper 2."
+    },
+    {
+      "link": [3, 1],
+      "name": "G-Mode Morph Remote Acquire - to Left Door (Using Previous Strat)",
+      "requires": [
+        {"obstaclesCleared": ["C", "D"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "G-Mode Morph Remote Acquire - to Right Door",
+      "requires": [
+        {"obstaclesCleared": ["D"]}
+      ]
     },
     {
       "link": [3, 5],
@@ -912,6 +1132,70 @@
       ],
       "clearsObstacles": ["B"],
       "note": "Gravity makes it possible to charge a spark in the acid in order to break the speed blocks."
+    },
+    {
+      "link": [6, 1],
+      "name": "G-Mode Morph to Left Door (Using Previous Strat)",
+      "requires": [
+        {"obstaclesCleared": ["C"]}
+      ]
+    },
+    {
+      "link": [6, 2],
+      "name": "G-Mode Morph",
+      "requires": []
+    },
+    {
+      "link": [6, 2],
+      "name": "G-Mode Morph Power Bomb the Blocks",
+      "requires": [
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [6, 3],
+      "name": "G-Mode Morph IBJ",
+      "requires": [
+        "h_canArtificialMorphIBJ"
+      ]
+    },
+    {
+      "link": [6, 5],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [6, 6],
+      "name": "G-Mode Morph Spring Ball IBJ",
+      "requires": [
+        "h_canArtificialMorphJumpIntoIBJ"
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [6, 6],
+      "name": "G-Mode Morph Diagonal Bomb Jump",
+      "requires": [
+        "h_canArtificialMorphDiagonalBombJump"
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [6, 6],
+      "name": "G-Mode Morph Acid Dive IBJ",
+      "requires": [
+        "Gravity",
+        "h_canArtificialMorphIBJ",
+        "h_canArtificialMorphBombHorizontally",
+        "canSuitlessLavaDive",
+        {"acidFrames": 150}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Cross the solid platforms then horizontally boost into the acid and begin an IBJ.",
+        "With more limited Energy, it is possible to IBJ high into the room and boost horizontally to fall into the acid a bit further to the left."
+      ]
     }
   ]
 }
