@@ -1118,7 +1118,7 @@ The implicit unlock strats can be disabled by setting the node property `useImpl
 
 ## Collects Items
 
-An `collectsItems` array lists the node IDs (within the room) of items that become collected (if not already collected) as part of executing this strat. This can be useful, for example, for strats that use G-mode to "remote acquire" items at a location different from the item node.
+A `collectsItems` array lists the node IDs (within the room) of items that become collected (if not already collected) as part of executing this strat. This can be useful, for example, for strats that use G-mode to "remote acquire" items at a location different from the item node.
 
 For items collected in this way, the `locks` property of the item node plays no role, so the strat `requires` must include any necessary requirements to ensure the item has spawned.
 
