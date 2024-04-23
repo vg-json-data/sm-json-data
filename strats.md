@@ -189,7 +189,7 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
 
 ### Leave With Temporary Blue
 
-A `leaveWithTemporaryBlue` exit condition represents that Samus can leave through this door by jumping with temporary blue. It has no properties.
+A `leaveWithTemporaryBlue` exit condition represents that Samus can leave through this door by jumping with temporary blue. It can be applied to either horizontal or vertical transitions.
 
 The `leaveWithTemporaryBlue` object has the following property:
 - _direction_: This takes two possible values "left" and "right", indicating the direction that Samus is facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
@@ -246,7 +246,7 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 
 ### Leave Spinning
 
-A `leaveSpinning` exit condition represents that Samus can spin jump through the door with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. This exit condition applies to jumps from a runway disconnected from the door (e.g. below a ledge in front of the door). It should only be applied in cases where there is flexibility to exit at a wide range of positions between the top and bottom of the doorway.
+A `leaveSpinning` exit condition represents that Samus can spin jump through a horizontal transition with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. This exit condition applies to jumps from a runway disconnected from the door (e.g. below a ledge in front of the door). It should only be applied in cases where there is flexibility to exit at a wide range of positions between the top and bottom of the doorway. It should also only be applied where there is air physics at the door.
 
 The `leaveSpinning` object has the following properties:
 
@@ -274,7 +274,7 @@ If a `leaveSpinning` condition is used for blue speed in the next room, then it 
 
 ### Leave With Mockball
 
-A `leaveWithMockball` exit condition represents that Samus can leave through the door while in a mockball (or process of morphing into a mockball) with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption.
+A `leaveWithMockball` exit condition represents that Samus can leave through a horizontal transition while in a mockball (or process of morphing into a mockball) with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. It should only be applied where there is air physics at the door.
 
 The `leaveWithMockball` object has the following properties:
 
@@ -307,7 +307,7 @@ A `leaveWithMockball` condition implicitly includes the `canMockball` tech requi
 
 ### Leave With Spring Ball Bounce
 
-A `leaveWithSpringBallBounce` exit condition represents that Samus can leave through the door with a spring ball bounce in front of the door, with a certain amount of momentum, and possibly with blue speed.
+A `leaveWithSpringBallBounce` exit condition represents that Samus can leave through a horizontal transition with a spring ball bounce in front of the door, with a certain amount of momentum, and possibly with blue speed. It should only be applied where there is air physics at the door.
 
 The `leaveWithSpringBallBounce` object has the following properties:
 
@@ -346,7 +346,7 @@ Note that using a mockball in front of the door to perform a spring ball bounce 
 
 ### Leave Space Jumping
 
-A `leaveSpaceJumping` exit condition represents that Samus can Space Jump through the bottom of the doorway with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. It should only be applied in cases where there is flexibility to exit at any position between the top and bottom of the doorway.
+A `leaveSpaceJumping` exit condition represents that Samus can Space Jump through the bottom of a horizontal transition just before hitting the transition, using momentum (and possibly blue speed) available from a remote runway (one not connected to the door). It should also only be applied where there is air physics at the door.
 
 The `leaveSpaceJumping` object has the following properties:
 
@@ -933,9 +933,7 @@ For `leaveSpinning` and `leaveWithMockball`, their `blue` property must be eithe
 
 ### Come In With Temporary Blue
 
-A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It has no properties.
-
-The `comeInWithTemporaryBlue` object has the following property:
+A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It is applicable to horizontal and vertical transitions. It has the following property:
 - _direction_: This takes two possible values "left" and "right", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
 
   A `comeInWithTemporaryBlue` entrance condition must match with one of the following exit conditions on the other side of the door: `leaveWithTemporaryBlue`, `leaveWithRunway`:
@@ -949,7 +947,7 @@ The `comeInWithTemporaryBlue` object has the following property:
 
 ### Come In Blue Spinning
 
-A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed. It has the following properties:
+A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed, applicable to horizontal transitions. It has the following properties:
 
   - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump.
   - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
@@ -981,7 +979,7 @@ A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `
 
 ### Come In With Mockball
 
-A `comeInWithMockball` entrance condition indicates that Samus must roll into the room in a mockball with a certain amount of momentum. It has the following properties:
+A `comeInWithMockball` entrance condition indicates that Samus must roll into the room in a mockball with a certain amount of momentum, applicable to horizontal transitions. It has the following properties:
 
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and enter a mockball.
 - _remoteAndLandingMinTiles_: When entering a mockball, it takes some time to accelerate up to full speed, which means that even when using a remote runway (i.e. one not connected to the door) to gain speed for the jump, the amount of landing space in front of the door still matters. Depending on the strat, different combinations of remote runway and landing lengths may work (e.g. with shorter landing lengths possibly requiring longer remote runways to compensate). This property is a list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable to gain speed at the start of the mockball. 
@@ -1014,7 +1012,7 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 
 ### Come In With Spring Ball Bounce
 
-A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in the doorway of the previous room. It has the following properties:
+A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in the doorway of the previous room, applicable to horizontal transitions. It has the following properties:
 
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
