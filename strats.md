@@ -314,13 +314,13 @@ The `leaveWithSpringBallBounce` object has the following properties:
 - _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump before the mockball.
 - _landingRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to land and gain speed in a mockball before hitting the transition.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
-- _movementType_: This takes one of three possible values, "mockball", "airball", or "any", indicating the type of bounce that can be used. 
-  - "mockball" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
-  - "airball" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+- _movementType_: This takes one of three possible values, "controlled", "uncontrolled", or "any", indicating the type of bounce that can be used. 
+  - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
 A `leaveWithSpringBallBounce` condition implicitly includes the `canSpringBallBounce` tech requirement (including the `Morph` and `SpringBall` item requirements). If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canSpeedball` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
 
-Note that using a mockball in front of the door to perform a spring ball bounce is already covered by `leaveWithMockball`. Therefore strats for `leaveWithStringBallBounce` are generally only needed to cover the "airball" case; they can also be used for cases where a mockball-type bounce is carried from elsewhere by bouncing across the room.
+Note that using a mockball in front of the door to perform a spring ball bounce is already covered by `leaveWithMockball`. Therefore strats for `leaveWithStringBallBounce` are generally only needed to cover the "uncontrolled" case; they can also be used for cases where a controlled-type bounce is carried from elsewhere by bouncing across the room.
 
 #### Example
 ```json
@@ -338,7 +338,7 @@ Note that using a mockball in front of the door to perform a spring ball bounce 
         "length": 3,
         "openEnd": 1
       },
-      "movementType": "airball"
+      "movementType": "uncontrolled"
     }
   }
 }
@@ -1016,9 +1016,9 @@ A `comeInWithSpringBallBounce` entrance condition indicates that Samus must ente
 
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
-- _movementType_: This takes one of three possible values, "mockball", "airball", and "any", indicating the type of bounce that is required.
-  - "mockball" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
-  - "airball" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+- _movementType_: This takes one of three possible values, "controlled", "uncontrolled", and "any", indicating the type of bounce that is required.
+  - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
 A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce` or `leaveWithMockball` on the other side of the door. The following requirements apply in both cases:
 - The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
@@ -1029,9 +1029,9 @@ There are additional requirements depending on the exit condition:
 
 - A match with `leaveWithSpringBallBounce` has the following additional requirements:
   - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
-  - If the `movementType` of either the exit condition or entrance condition is "mockball", then `canMockball` is required.
+  - If the `movementType` of either the exit condition or entrance condition is "controlled", then `canMockball` is required.
 - A match with `leaveWithMockball` has the following requirements:
-  - The `movementType` of the entrance condition must be "mockball" or "any".
+  - The `movementType` of the entrance condition must be "controlled" or "any".
   - The `canMockball` tech is required.
 
 ```json
