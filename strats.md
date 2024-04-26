@@ -380,7 +380,7 @@ A `leaveWithStoredFallSpeed` exit condition represents that Samus can leave thro
 The `leaveWithStoredFallSpeed` object has a single property:
 - _fallSpeedInTiles_: The number of tiles Samus would clip through by Moonfalling on top of a solid floor.
 
-A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithStoredFallSpeed` condition on the other side of the door.  A strat with a `leaveWithStoredFallSpeed` condition must either include a method of storing fall speed within its requirements, such as a Moondance.  Entering a room with a `comeInWithStoredFallSpeed` condition would also be possible exiting with a `leaveWithStoredFallSpeed` condition so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
+A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithStoredFallSpeed` condition on the other side of the door.  A strat with a `leaveWithStoredFallSpeed` condition must include a method of storing fall speed within its requirements, such as a Moondance.  Entering a room with a `comeInWithStoredFallSpeed` condition would also be a possible way to exit with a `leaveWithStoredFallSpeed` condition so long as the stored speed is not lost.  For this to happen, both doors must be connected by one `Runway`, and Samus must not Crouch or become Knocked back.
 
 #### Example
 ```json
