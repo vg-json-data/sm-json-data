@@ -375,8 +375,9 @@ for jsonPath in [
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v, {})
 
-# process connections to identify vertical doors:
+# process connections to identify door positions:
 vertical_door_nodes = set()
+door_position_dict = {}
 connections = {
     "inter": {},
     "intra": {},
@@ -390,11 +391,11 @@ for root, dirs, files in os.walk(os.path.join(".", "connection")):
         with open(os.path.join(root, filename), "r", encoding="utf-8") as connectionFile:
             connections_json = json.load(connectionFile)
             for connection in connections_json["connections"]:
-                if connection["connectionType"] not in ["VerticalDoor", "VerticalSandpit"]:
-                    continue
                 for i, node in enumerate(connection["nodes"]):
-                    vertical_door_nodes.add((node["roomid"], node["nodeid"]))
-
+                    door_position_dict[(node["roomid"], node["nodeid"])] = node["position"]
+                if connection["connectionType"] in ["VerticalDoor", "VerticalSandpit"]:
+                    for i, node in enumerate(connection["nodes"]):
+                        vertical_door_nodes.add((node["roomid"], node["nodeid"]))
 
 print("")
 print("Check Regions")
@@ -510,6 +511,19 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             roomData["nodes"]["ids"].append(node["id"])
                         if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
                             roomData["nodes"]["spawnAts"].append(node["spawnAt"])
+
+                        node_orientation = node.get("doorOrientation")
+                        door_position = door_position_dict.get((room["id"], node["id"]))
+                        if (node_orientation, door_position) not in [
+                            ("left", "right"),
+                            ("right", "left"),
+                            ("up", "bottom"),
+                            ("down", "top"),
+                            (None, None),
+                        ]:
+                            msg = f"🔴ERROR: Door orientation '{node_orientation}' inconsistent with connection position '{door_position}': {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
 
                     # Document Links
                     link_set = set()
