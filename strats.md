@@ -193,7 +193,7 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
 A `leaveWithTemporaryBlue` exit condition represents that Samus can leave through this door by jumping with temporary blue. It can be applied to either horizontal or vertical transitions.
 
 The `leaveWithTemporaryBlue` object has the following property:
-- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus is facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+- _direction_: This takes three possible values "left", "right", and "any", indicating the direction that Samus is facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
 
 *Note*: Using a runway connected to a door to leave the room with temporary blue is already covered by `leaveWithRunway`.
 
@@ -935,9 +935,9 @@ For `leaveSpinning` and `leaveWithMockball`, their `blue` property must be eithe
 ### Come In With Temporary Blue
 
 A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in by jumping through this door with temporary blue. It is applicable to horizontal and vertical transitions. It has the following property:
-- _direction_: This takes two possible values "left" and "right", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
+- _direction_: This takes three possible values "left", "right", and "any", indicating the direction that Samus must be facing through the transition. It should be specified for all vertical transitions but not horizontal ones.
 
-  A `comeInWithTemporaryBlue` entrance condition must match with one of the following exit conditions on the other side of the door: `leaveWithTemporaryBlue`, `leaveWithRunway`:
+A `comeInWithTemporaryBlue` entrance condition must match with one of the following exit conditions on the other side of the door: `leaveWithTemporaryBlue`, `leaveWithRunway`:
 
 - To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`. 
 - A match with `leaveWithRunway` comes with implicit requirements:
@@ -950,7 +950,7 @@ A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in
 
 A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed, applicable to horizontal transitions. It has the following properties:
 
-  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump.
+  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump. This can be omitted if the strat does not require coming any with any particular amount of momentum.
   - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
 
 A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `leaveWithRunway` exit condition on the other side of the door.
@@ -992,8 +992,8 @@ A `comeInWithMockball` entrance condition must match with one of the following c
   - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
   - The `canMockball` tech (including `Morph` item).
 - A match with `leaveWithRunway` has the following requirements:
-  - The effective runway length must be at least `acjacentMinTiles`.
-  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. 
+  - The effective runway length must be at least `adjacentMinTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
   - If the previous door environment is water, then `Gravity` is required.
   - The `canMockball` tech (including `Morph` item) is required.
 
