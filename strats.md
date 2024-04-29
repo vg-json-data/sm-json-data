@@ -950,7 +950,7 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 
 A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed, applicable to horizontal transitions. It has the following properties:
 
-  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump. This can be omitted if the strat does not require coming any with any particular amount of momentum.
+  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump. This can be omitted if the strat does not require coming in with any particular amount of momentum.
   - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
 
 A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `leaveWithRunway` exit condition on the other side of the door.
