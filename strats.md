@@ -1334,22 +1334,26 @@ A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `ca
 An `unlocksDoors` array lists possibilities of doors that can be unlocked as part of executing this strat. The objects in the array have the following properties:
 
 - _nodeId_: The node ID of the door that can be unlocked. If unspecified, it is assumed to be the destination node of the strat.
-- _types_: A list of door unlock types, among "missiles", "super", "powerbomb", and "gray":
+- _types_: A list of door unlock types, among "missiles", "super", "powerbomb", "gray", "gadoraMissiles" and "gadoraSuper":
     - "missiles": A door which can be opened using 5 Missiles, e.g. red doors.
     - "super": A door which can be opened using a single Super, e.g. red or green doors.
     - "powerbomb": A door which can be opened using a single Power Bomb, e.g. a yellow door.
-    - "gray": A door with a room-specific condition to unlock it.
     - "ammo": A door which can be opened with ammo. This is a shorthand for ["missiles", "super", "powerbomb"].
+    - "gadoraMissiles": A gadora eye door which is opened using 3 Missiles.
+    - "gadoraSuper": A gadora eye door which is opened using a single Super.
 - _requires_: A list of additional logical requirements which must be satisfied in order for the door to be unlocked using this strat. 
 - _useImplicitRequires_: A boolean, true by default, indicating whether standard requirements should be implicitly appended to the `requires` in this object. This can be set this to false if the standard requirements are already accounted for in the strat `requires`, for example if the strat involves using a Power Bomb which would already unlock the door as a side effect, or if it uses a Super as a hero shot to open the door. If this property is set to true, the implicit standard requirements are based on the door type, as follows:
     - For "missiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 5}}`.
     - For "super", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
     - For "powerbomb", the implicit requirement is `h_canUsePowerBombs`.
-    - For "gray", there is no implicit requirement.
+    - For "gadoraMissiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 3}}`.
+    - For "gadoraSuper", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
     
 In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `true`.
 
-If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. The case of gray doors only needs to be included in places where the vanilla game has gray doors.
+If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three main types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. Currently the inclusion of "gadoraMissiles" and "gadoraSuper" are optional, and cross-room strats going through them are not usable unless the door has previously been unlocked.
+
+When using this data to support vanilla door colors, which are specified by their `nodeSubType`, the door is required to be unlocked with an `unlocksDoors` object if and only if there is no `locks` property specified; otherwise the strats included in the `locks` should be used.
 
 ### Implicit Unlock Strats
 
@@ -1360,7 +1364,11 @@ By default every door node has an implicit strat from the node to itself, for un
   "link": [1, 1],
   "name": "Unlock Door",
   "requires": [],
-  "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+  "unlocksDoors": [
+    {"types": ["ammo"], "requires": []},
+    {"types": ["gadoraMissiles"], "requires": []},
+    {"types": ["gadoraSuper"], "requires": []}
+  ]
 }
 ```
 
@@ -1374,7 +1382,9 @@ In a heated room, it instead has the form:
   "unlocksDoors": [
     {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
     {"types": ["super"], "requires": []},
-    {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+    {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]},
+    {"types": ["gadoraMissiles"], "requires": [{"heatFrames": 300}]},
+    {"types": ["gadoraSuper"], "requires": [{"heatFrames": 100}]}
   ]
 }
 ```
