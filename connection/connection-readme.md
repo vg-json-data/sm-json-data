@@ -27,7 +27,7 @@ Each connection has a `direction` which indicates how it can be navigated. This 
 
 __Additional Considerations__
 
-By default, a permanent grey door on one side shouldn't make a connection two-way. The absence of a door at all should. Naturally, a door that doesn't actually lead back to the same node would also make a connection one-way.
+By default, a permanent gray door on one side shouldn't make a connection two-way. The absence of a door at all should. Naturally, a door that doesn't actually lead back to the same node would also make a connection one-way.
 
 ### node/position
 Both nodes in a connection have a position. This can be one of `left`, `right`, `top`, or `bottom`. Please note that this is the position of the node as compared to the other node in the connection, _not_ their position within their respective room.
