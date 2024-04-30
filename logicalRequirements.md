@@ -402,6 +402,22 @@ __Additional considerations__
 
 * A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
+#### getBlueSpeed object
+
+A `getBlueSpeed` object represents the need for Samus to be able to gain blue speed using a specified runway. It is very similar to `canShineCharge`, including the same set of properties, except that `getBlueSpeed` does not involve crouching to enter a shinecharge state for performing a shinespark. Instead, `getBlueSpeed` involves using the blue speed directly, such as to destroy enemies, bomb blocks, or Speed blocks.
+
+Note that a `getBlueSpeed` requirement is compatible with preserving a flash suit, while `canShinecharge` is not.
+
+__Example:__
+```json
+{"getBlueSpeed": {
+  "usedTiles": 25,
+  "steepUpTiles": 3,
+  "steepDownTiles": 3,
+  "openEnd": 1
+}},
+```
+
 #### itemNotCollectedAtNode object
 An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
 an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
@@ -458,9 +474,6 @@ __Example:__
 {"obstaclesNotCleared": ["A"]}
 ```
 
-__Additional considerations__
-Entering a room does not count as executing a strat, so this logical element cannot be fulfilled instantly upon entering a room.
-
 #### resetRoom object
 A `resetRoom` object represents the need for the room to be in an initial state in order to perform a strat. A `resetRoom` object can have the following properties:
 * _nodes:_ An array containing the in-room ID of nodes at which entering the room can work.
@@ -480,4 +493,45 @@ __Example:__
 {"resetRoom":{
   "nodes": [1, 2]
 }}
+```
+
+### Glitched suits
+
+#### gainFlashSuit object
+
+A `gainFlashSuit` object represents that Samus gains a flash suit as part of executing this strat. A flash suit is a special shinecharge state which can be stored indefinitely and used one time to perform a shinespark, potentially in a distant room from where the flash suit was gained. 
+
+A `gainFlashSuit` object has no properties.
+
+With certain exceptions explained below, a flash suit can generally be carried around by any sequence of strats until it is used. A flash suit use is indicated by a `useFlashSuit` logical requirement. 
+
+The need to perform actions that cannot preserve a flash suit are indicated by a `noFlashSuit` logical requirement; typically this is expressed indirectly through tech or helpers, such as `canCrouchJump`, `canXRayStandup`, `canCrystalFlash`, or `h_canMidAirShootUp`. A `canShineCharge` logical requirement also cannot preserve a flash suit.
+
+The process of verifying which strats allow preserving a flash suit is not yet complete. Strats which have been checked are indicated by a property `"flashSuitChecked": true`. Any strat without this property should be assumed to be logically unusable for carrying a flash suit. Note that a strat with `"flashSuitChecked": true` may or may not be able to preserve a flash suit, depending on its logical requirements.
+
+__Example:__
+```json
+{"gainFlashSuit": {}}
+```
+
+#### useFlashSuit object
+
+A `useFlashSuit` indicates a need to have a flash suit state, which will then be lost as part of executing this strat. A strat with `useFlashSuit` should also have a `shinespark` logical requirement to specify the energy loss from shinesparking. 
+
+A `useFlashSuit` object has no properties.
+
+__Example:__
+```json
+{"useFlashSuit": {}}
+```
+
+#### noFlashSuit
+
+A `noFlashSuit` indicates a need to perform actions that are incompatible with preserving a flash suit; it therefore requires that Samus not be in a flash suit state.
+
+A `noFlashSuit` object has no properties.
+
+__Example:__
+```json
+{"noFlashSuit": {}}
 ```
