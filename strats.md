@@ -21,6 +21,7 @@ A `strat` can have the following properties:
   * _collectsItems_: An array listing items that are collected as part of this strat (e.g. for G-mode remote item acquire).
   * _setsFlags_: An array listing game flags that are set as part of this strat.
 These properties are described below in more detail.
+  * _flashSuitChecked_: Indicates that the logical requirements of the strat have been verified to be logically sound with respect to whether a flash suit can be carried or not. Note that a `true` value does not necessarily mean that a flash suit can be carried with this strat, only that its logical requirements can be relied on to determine whether it can or not.
 ### Example
 
 Here's a simple example of a strat:
@@ -121,7 +122,7 @@ A `leaveNormally` object indicates that Samus can leave the room through this do
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room. A `leaveWithRunway` condition implies that the area around the door must be clear of any enemies that would interfere with using the runway.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, and `comeInWithTemporaryBlue`. Details are given under the corresponding entrance conditions below.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInGettingBlueSpeed`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, `comeInWithTemporaryBlue`, `comeInBlueSpinning`, and `comeInWithMockball`. Details are given under the corresponding entrance conditions below.
 
 `leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details):
 
@@ -745,6 +746,29 @@ The way to calculate minimally required heat frames depends on the type of `leav
       "excessFrames": 3
     }}
   ]
+}
+```
+
+### Come In Getting Blue Speed
+
+A `comeInGettingBlueSpeed` entrance condition represents the need for Samus to run into the room with enough space to gain blue speed. It is similar to `comeInShinecharging` and has the same set of properties. 
+
+A `comeInGettingBlueSpeed` must match with a corresponding `leaveWithRunway` condition on the other side of the door, and it includes the same requirements as a `comeInShinecharging` except with a `getBlueSpeed` requirement in place of a `canShinecharge`.
+
+Note that a `comeInGettingBlueSpeed` entrance condition is compatible with preserving a flash suit, while `comeInShinecharging` is not.
+
+#### Example
+```json
+{
+  "name": "Come In Getting Blue Speed",
+  "notable": false,
+  "entranceCondition": {
+    "comeInGettingBlueSpeed": {
+      "length": 5,
+      "openEnd": 1
+    }
+  },
+  "requires": []
 }
 ```
 
