@@ -1124,7 +1124,7 @@ There are additional requirements depending on the exit condition:
   "name": "Come In With Blue Spring Ball Bounce",
   "notable": false,
   "entranceCondition": {
-    "comeInWithSpringBallBounce": {
+    "comeInWithBlueSpringBallBounce": {
       "remoteAndLandingMinTiles": [[15, 1]],
       "movementType": "controlled"
     }
