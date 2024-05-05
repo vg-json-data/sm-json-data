@@ -226,7 +226,7 @@ def find_door_unlocked_nodes_rec(req):
     return set()
 
 
-def find_door_unlocked_nodes(strat, node_subtype):
+def find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks):
     nodes = find_door_unlocked_nodes_rec(strat["requires"])
     from_node = strat["link"][0]
     to_node = strat["link"][1]
@@ -234,6 +234,8 @@ def find_door_unlocked_nodes(strat, node_subtype):
         nodes.add(to_node)
     if "entranceCondition" not in strat and from_node in nodes:
         nodes.remove(from_node)
+    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") != True and "gModeRegainMobility" not in strat:
+        nodes.add(to_node)
     return nodes
 
 def check_node_covered_in_unlocks_doors(strat, node_id):
@@ -492,25 +494,28 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Document Nodes
                     # Validate Nodes
                     node_lookup = {}
+                    nodes_without_implicit_unlocks = set()
                     for node in room["nodes"]:
-                        if "id" in node:
-                            node_lookup[node['id']] = node
-                            nodeRef = f"{roomRef}:{node['id']}"
-                            if node["id"] in roomData["nodes"]["froms"]:
-                                msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            else:
-                                roomData["nodes"]["froms"].append(node["id"])
-                            if node["name"] in roomData["nodes"]["names"]:
-                                msg = f"🔴ERROR: Node Name not unique! {nodeRef}:{node['name']}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            else:
-                                roomData["nodes"]["names"].append(node["name"])
-                            roomData["nodes"]["ids"].append(node["id"])
+                        node_lookup[node['id']] = node
+                        nodeRef = f"{roomRef}:{node['id']}"
+                        if node["id"] in roomData["nodes"]["froms"]:
+                            msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        else:
+                            roomData["nodes"]["froms"].append(node["id"])
+                        if node["name"] in roomData["nodes"]["names"]:
+                            msg = f"🔴ERROR: Node Name not unique! {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        else:
+                            roomData["nodes"]["names"].append(node["name"])
+                        roomData["nodes"]["ids"].append(node["id"])
                         if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
-                            roomData["nodes"]["spawnAts"].append(node["spawnAt"])
+                            roomData["nodes"]["tos"].append(node["spawnAt"])
+
+                        if node.get("useImplicitDoorUnlocks") is False:
+                            nodes_without_implicit_unlocks.add(node['id'])
 
                         node_orientation = node.get("doorOrientation")
                         door_position = door_position_dict.get((room["id"], node["id"]))
@@ -524,7 +529,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             msg = f"🔴ERROR: Door orientation '{node_orientation}' inconsistent with connection position '{door_position}': {nodeRef}:{node['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-
+                            
                     # Document Links
                     link_set = set()
                     for link_from in room["links"]:
@@ -742,7 +747,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
 
                         node_subtype = node_lookup[toNode]["nodeSubType"]
-                        door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype)                                
+                        door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks)
                         for node in door_unlocked_nodes:
                             missing_types = check_node_covered_in_unlocks_doors(strat, node)
                             if len(missing_types) == 3:
