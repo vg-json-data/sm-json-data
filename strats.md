@@ -548,6 +548,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithTemporaryBlue_: This indicates that Samus must come in by jumping through this door with temporary blue.
 - _comeInWithMockball_: This indicates that Samus must roll into the room with a mockball with a certain amount of momentum.
 - _comeInWithSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room.
+- _comeInWithBlueSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room while having blue speed.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
@@ -1037,7 +1038,7 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 
 ### Come In With Spring Ball Bounce
 
-A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in the doorway of the previous room, applicable to horizontal transitions. It has the following properties:
+A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, applicable to horizontal transitions. It has the following properties:
 
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
@@ -1045,19 +1046,27 @@ A `comeInWithSpringBallBounce` entrance condition indicates that Samus must ente
   - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
   - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
-A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce` or `leaveWithMockball` on the other side of the door. The following requirements apply in both cases:
+A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
 - The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
-- The `blue` property of the exit condition must be "no" or "any". 
-- `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
 
 There are additional requirements depending on the exit condition:
 
 - A match with `leaveWithSpringBallBounce` has the following additional requirements:
   - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
   - If the `movementType` of either the exit condition or entrance condition is "controlled", then `canMockball` is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "no" or "any". 
 - A match with `leaveWithMockball` has the following requirements:
   - The `movementType` of the entrance condition must be "controlled" or "any".
   - The `canMockball` tech is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "no" or "any".
+- A match with `leaveWithRunway` has the following requirements:
+  - The effective runway length must be at least `adjacentMinTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
+  - If the previous door environment is water, then `Gravity` is required.
+  - The `canMockball` tech (including `Morph` item) is required.
+
 
 ```json
 {
@@ -1072,6 +1081,55 @@ There are additional requirements depending on the exit condition:
   "requires": [
     "canCrossRoomJumpIntoWater"
   ]
+}
+```
+
+### Come In With Blue Spring Ball Bounce
+
+A `comeInWithBlueSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, while having blue speed. This is applicable to horizontal transitions. It has the following properties:
+
+- _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce. This includes the entire length of runway from where the run begins, up to the door transition.
+- _adjacentBlueSpeedTiles_: This is the minimum length of the part of the runway used to gain blue speed (before jumping), in case an adjacent runway (connected to the door) is used.
+- _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
+- _movementType_: This takes one of three possible values, "controlled", "uncontrolled", and "any", indicating the type of bounce that is required.
+  - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+
+A `comeInWithBlueSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
+- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
+
+There are additional requirements depending on the exit condition:
+
+- A match with `leaveWithBlueSpringBallBounce` has the following additional requirements:
+  - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
+  - If the `movementType` of either the exit condition or entrance condition is "controlled", then `canSpeedball` is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "yes" or "any". 
+  - A `getBlueSpeed` requirement based on remote runway length.
+- A match with `leaveWithMockball` has the following requirements:
+  - The `movementType` of the entrance condition must be "controlled" or "any".
+  - The `canMockball` tech is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "yes" or "any".
+  - A `getBlueSpeed` requirement based on remote runway length.
+- A match with `leaveWithRunway` has the following requirements:
+  - The effective runway length must be at least `adjacentMinTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
+  - If the previous door environment is water, then `Gravity` is required.
+  - The `canSpeedball` tech (including `Morph` item) is required.
+  - A `getBlueSpeed` requirement based on length `adjacentBlueSpeedTiles`.
+
+```json
+{
+  "name": "Come In With Blue Spring Ball Bounce",
+  "notable": false,
+  "entranceCondition": {
+    "comeInWithSpringBallBounce": {
+      "remoteAndLandingMinTiles": [[15, 1]],
+      "movementType": "controlled"
+    }
+  },
+  "requires": []
 }
 ```
 
