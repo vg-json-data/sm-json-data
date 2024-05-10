@@ -535,3 +535,14 @@ __Example:__
 ```json
 {"noFlashSuit": {}}
 ```
+
+### Other requirements
+
+#### tech object
+
+A `tech` object indicates the need to be able to perform a `tech`, but without its `otherRequires`. This can be used to override item, ammo, or other requirements that are normally associated with the tech. The removal of `otherRequires` requirements applies recursively to any tech in the `techRequires` of the referenced tech.
+
+__Example:__
+```json
+{"tech": "canIBJ"}
+```
