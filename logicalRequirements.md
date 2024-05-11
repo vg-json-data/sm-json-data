@@ -204,7 +204,24 @@ __Example:__
 
 __Additional considerations__
 
-Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be strictly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+
+#### heatFramesWithEnergyDrops object
+
+A `heatFramesWithEnergyDrops` object represents the need for Samus to spend time in a heated room, but with the possibility of offsetting some of the heat damage using energy drops from enemies. Any heat damage is logically applied before the energy gain, so Samus must be able to survive the heat before picking up the drops. Any energy gain is logically capped to not exceed the heat damage, so this logical requirement cannot result in a net energy gain. A `heatFramesWithEnergyDrops` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
+
+The actual amount of energy gained typically depends on RNG and also on which ammo types are completely full. The drop probabilities for each enemy type is given in the [enemies](enemies/main.json) file. Because of the randomness involved, the logical amount of energy gain is open to various interpretations. For example, the mean, the median, or a lower confidence limit could be used.
+
+__Example:__
+```json
+{"heatFramesWithEnergyDrops": {
+  "frames": 200,
+  "drops": [
+    {"enemy": "Magdollite", "count": 3},
+    {"enemy": "Multiviola", "count": 2}
+  ]
+}}
+```
 
 #### gravitylessHeatFrames object
 A `gravitylessHeatFrames` object represents Samus in a heated environment with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `heatFrames` without the reduction effects given by Gravity Suit.
