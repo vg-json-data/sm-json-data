@@ -89,6 +89,7 @@ def process_keyvalue(k, v, metadata):
         "movementType",  # validated by schema
         "doorOrientation",  # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
+        "type",  # validated by schema in 'resourceAvailable', 'resourceCapacity'
     ]
 
     # check if it's a key we want to check
