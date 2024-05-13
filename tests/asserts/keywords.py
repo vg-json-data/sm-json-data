@@ -88,6 +88,8 @@ def process_keyvalue(k, v, metadata):
         "blue",  # validated by schema
         "movementType",  # validated by schema
         "doorOrientation",  # validated by schema
+        "minExtraRunSpeed", # validated by schema
+        "maxExtraRunSpeed", # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
     ]
 

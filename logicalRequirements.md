@@ -418,6 +418,25 @@ __Example:__
 }},
 ```
 
+
+#### speedBall object
+
+A `speedBall` object represents the need for Samus to be able to gain blue speed and jump into a speedball using a specified runway. It includes a `canSpeedball` tech requirement. Whether a speedball can performed within a given runway length depends on the player's ability to shortcharge as well as to perform a short-hop mockball. The [blue run speed table](strats.md#blue-run-speed-table) describes several tiers of shortcharging skill, their associated runway lengths over which blue speed can be attained, and the resulting run speed. For determining whether a speedball is logically possible, the lowest run speed should be used within the range of what is possible for that skill level; this corresponds to using the "Ideal speed" from the table. The total runway length required can then be computed as follows:
+
+$$\text{minimum speedball runway} = \text{minimal blue speed runway} + \text{short-hop mockball frames} * \text{mid-air speed}$$
+
+Here the "mid-air speed" is obtained by adding the extra run speed (from the "Ideal speed" at the end of getting blue speed) to a base speed of $1.5, which is the average of the spin-jump base speed of $1.6 and the aim-down base speed of $1.4, assuming that roughly half of the jump will be spent in each of those two states. The "short-hop mockball frames" is the amount of frames between the start of the jump and when the morph-sized hitbox is achieved; it is a parameter that can be varied based on assumed player skill: a value of 6 is at or near TAS-level, while 40 would be a lenient value where Samus can jump several tiles into the air.
+
+__Example:__
+```json
+{"speedBall": {
+  "length": 25,
+  "steepUpTiles": 3,
+  "steepDownTiles": 3,
+  "openEnd": 1
+}},
+```
+
 #### itemNotCollectedAtNode object
 An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
 an item could be used to overload PLMs in G-mode assuming the item has spawned. Note that any conditions for the item to spawn (e.g. for
