@@ -71,6 +71,7 @@ def process_keyvalue(k, v, metadata):
         "physics",          # validated by schema
         "utility",          # validated by schema
         "resourceCapacity", # validated by schema
+        "resourceAvailable",# validated by schema
         "refill",           # validated by schema
         "partialRefill",    # validated by schema
         "comeInWithSpark",  # validated by schema
