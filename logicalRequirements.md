@@ -184,10 +184,11 @@ __Example:__
 
 #### autoReserveTrigger object
 
-An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. It has two optional properties:
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero.  An `autoReserveTrigger` object has three optional properties:
 
 * _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
 * _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
+* _environmentalDamage_: The types of environmental damage that are being taken while the refill is occurring. The refill recovers 1 energy per frame and damage is taken on every frame of refill.  `environmentalDamage` can be of the forms `heat`, `lava`, and `acid`.  Each specified type of environment represents a requirement of that "environmentFrames" object where the frame amount is Samus' new energy after the reserve refill has complete. Environmental Damage is applied after the refill has complete.
 
 __Example:__
 ```json
