@@ -1518,126 +1518,126 @@ There are many kinds of cross-room strats that require Samus to enter the room w
 - Extra run speed: This increases by $0.1 for each frame that dash is held while running. With Speed Booster it reaches a maximum value of $7.0, while without Speed Booster it reaches a maximum value of $2.0. When stopping holding forward while walking/running, the extra run speed is immediately converted into base speed, i.e., base speed is increased by the value of the extra run speed, while the extra run speed immediately becomes zero. Other actions will either leave the extra run speed unchanged (e.g., jumping, breaking spin with jump held, or performing an airball or mockball) or immediately set it to zero (e.g., turning around, or breaking spin without jump held).
 - Combined run speed: This is the total of base speed and extra run speed, and represents the actual amount that Samus will move horizontally.
 
-All these speed values are measured in pixels (and subpixels) per frame. Since extra run speed remains stable through various movement actions, it is generally the more useful quantity to reference in cross-room strats. The following table shows how Samus' relative position and horizontal speeds change while running, starting from a stand, with dash held the entire time, with Speedbooster equipped. 
+All these speed values are measured in pixels (and subpixels) per frame. Since extra run speed remains stable through various movement actions, it is generally the more useful quantity to reference in cross-room strats. The following table shows how Samus' relative position and horizontal speeds change while running, starting from a stand, with dash held the entire time, with Speedbooster equipped. The initial vertical speed when jumping is also shown (both without and with HiJump).
 
-| Frame | Position | Base Speed | Extra Run Speed |
-| ----- | -------- | ---------- | --------------- |
-| 0     |  $0.0    |    $0.0     |      $0.0       |
-| 1     |  $1.0    |    $0.0     |      $0.0       |
-| 2     |  $1.4    |    $0.3     |      $0.1       |
-| 3     |  $1.C    |    $0.6     |      $0.2       |
-| 4     |  $2.8    |    $0.9     |      $0.3       |
-| 5     |  $3.8    |    $0.C     |      $0.4       |
-| 6     |  $4.C    |    $0.F     |      $0.5       |
-| 7     |  $6.4    |    $1.2     |      $0.6       |
-| 8     |  $8.0    |    $1.5     |      $0.7       |
-| 9     |  $A.0    |    $1.8     |      $0.8       |
-| 10    |  $C.4    |    $1.B     |      $0.9       |
-| 11    |  $E.C    |    $1.E     |      $0.A       |
-| 12    |  $12.3   |    $2.C     |      $0.B       |
-| 13    |  $15.B   |    $2.C     |      $0.C       |
-| 14    |  $19.4   |    $2.C     |      $0.D       |
-| 15    |  $1C.E   |    $2.C     |      $0.E       |
-| 16    |  $20.9   |    $2.C     |      $0.F       |
-| 17    |  $24.5   |    $2.C     |      $1.0       |
-| 18    |  $28.2   |    $2.C     |      $1.1       |
-| 19    |  $2C.0   |    $2.C     |      $1.2       |
-| 20    |  $2F.F   |    $2.C     |      $1.3       |
-| 21    |  $33.F   |    $2.C     |      $1.4       |
-| 22    |  $38.0   |    $2.C     |      $1.5       |
-| 23    |  $3C.2   |    $2.C     |      $1.6       |
-| 24    |  $40.5   |    $2.C     |      $1.7       |
-| 25    |  $44.9   |    $2.C     |      $1.8       |
-| 26    |  $48.E   |    $2.C     |      $1.9       |
-| 27    |  $4D.4   |    $2.C     |      $1.A       |
-| 28    |  $51.B   |    $2.C     |      $1.B       |
-| 29    |  $56.3   |    $2.C     |      $1.C       |
-| 30    |  $5A.C   |    $2.C     |      $1.D       |
-| 31    |  $5F.6   |    $2.C     |      $1.E       |
-| 32    |  $64.1   |    $2.C     |      $1.F       |
-| 33    |  $68.D   |    $2.C     |      $2.0       |
-| 34    |  $6D.A   |    $2.C     |      $2.1       |
-| 35    |  $72.8   |    $2.C     |      $2.2       |
-| 36    |  $77.7   |    $2.C     |      $2.3       |
-| 37    |  $7C.7   |    $2.C     |      $2.4       |
-| 38    |  $81.8   |    $2.C     |      $2.5       |
-| 39    |  $86.A   |    $2.C     |      $2.6       |
-| 40    |  $8B.D   |    $2.C     |      $2.7       |
-| 41    |  $91.1   |    $2.C     |      $2.8       |
-| 42    |  $96.6   |    $2.C     |      $2.9       |
-| 43    |  $9B.C   |    $2.C     |      $2.A       |
-| 44    |  $A1.3   |    $2.C     |      $2.B       |
-| 45    |  $A6.B   |    $2.C     |      $2.C       |
-| 46    |  $AC.4   |    $2.C     |      $2.D       |
-| 47    |  $B1.E   |    $2.C     |      $2.E       |
-| 48    |  $B7.9   |    $2.C     |      $2.F       |
-| 49    |  $BD.5   |    $2.C     |      $3.0       |
-| 50    |  $C3.2   |    $2.C     |      $3.1       |
-| 51    |  $C9.0   |    $2.C     |      $3.2       |
-| 52    |  $CE.F   |    $2.C     |      $3.3       |
-| 53    |  $D4.F   |    $2.C     |      $3.4       |
-| 54    |  $DB.0   |    $2.C     |      $3.5       |
-| 55    |  $E1.2   |    $2.C     |      $3.6       |
-| 56    |  $E7.5   |    $2.C     |      $3.7       |
-| 57    |  $ED.9   |    $2.C     |      $3.8       |
-| 58    |  $F3.E   |    $2.C     |      $3.9       |
-| 59    |  $FA.4   |    $2.C     |      $3.A       |
-| 60    |  $100.B  |    $2.C     |      $3.B       |
-| 61    |  $107.3  |    $2.C     |      $3.C       |
-| 62    |  $10D.C  |    $2.C     |      $3.D       |
-| 63    |  $114.6  |    $2.C     |      $3.E       |
-| 64    |  $11B.1  |    $2.C     |      $3.F       |
-| 65    |  $121.D  |    $2.C     |      $4.0       |
-| 66    |  $128.A  |    $2.C     |      $4.1       |
-| 67    |  $12F.8  |    $2.C     |      $4.2       |
-| 68    |  $136.7  |    $2.C     |      $4.3       |
-| 69    |  $13D.7  |    $2.C     |      $4.4       |
-| 70    |  $144.8  |    $2.C     |      $4.5       |
-| 71    |  $14B.A  |    $2.C     |      $4.6       |
-| 72    |  $152.D  |    $2.C     |      $4.7       |
-| 73    |  $15A.1  |    $2.C     |      $4.8       |
-| 74    |  $161.6  |    $2.C     |      $4.9       |
-| 75    |  $168.C  |    $2.C     |      $4.A       |
-| 76    |  $170.3  |    $2.C     |      $4.B       |
-| 77    |  $177.B  |    $2.C     |      $4.C       |
-| 78    |  $17F.4  |    $2.C     |      $4.D       |
-| 79    |  $186.E  |    $2.C     |      $4.E       |
-| 80    |  $18E.9  |    $2.C     |      $4.F       |
-| 81    |  $196.5  |    $2.C     |      $5.0       |
-| 82    |  $19E.2  |    $2.C     |      $5.1       |
-| 83    |  $1A6.0  |    $2.C     |      $5.2       |
-| 84    |  $1AD.F  |    $2.C     |      $5.3       |
-| 85    |  $1B5.F  |    $2.C     |      $5.4       |
-| 86    |  $1BE.0  |    $2.C     |      $5.5       |
-| 87    |  $1C6.2  |    $2.C     |      $5.6       |
-| 88    |  $1CE.5  |    $2.C     |      $5.7       |
-| 89    |  $1D6.9  |    $2.C     |      $5.8       |
-| 90    |  $1DE.E  |    $2.C     |      $5.9       |
-| 91    |  $1E7.4  |    $2.C     |      $5.A       |
-| 92    |  $1EF.B  |    $2.C     |      $5.B       |
-| 93    |  $1F8.3  |    $2.C     |      $5.C       |
-| 94    |  $200.C  |    $2.C     |      $5.D       |
-| 95    |  $209.6  |    $2.C     |      $5.E       |
-| 96    |  $212.1  |    $2.C     |      $5.F       |
-| 97    |  $21A.D  |    $2.C     |      $6.0       |
-| 98    |  $223.A  |    $2.C     |      $6.1       |
-| 99    |  $22C.8  |    $2.C     |      $6.2       |
-| 100   |  $235.7  |    $2.C     |      $6.3       |
-| 101   |  $23E.7  |    $2.C     |      $6.4       |
-| 102   |  $247.8  |    $2.C     |      $6.5       |
-| 103   |  $250.A  |    $2.C     |      $6.6       |
-| 104   |  $259.D  |    $2.C     |      $6.7       |
-| 105   |  $263.1  |    $2.C     |      $6.8       |
-| 106   |  $26C.6  |    $2.C     |      $6.9       |
-| 107   |  $275.C  |    $2.C     |      $6.A       |
-| 108   |  $27F.3  |    $2.C     |      $6.B       |
-| 109   |  $288.B  |    $2.C     |      $6.C       |
-| 110   |  $292.4  |    $2.C     |      $6.D       |
-| 111   |  $29B.E  |    $2.C     |      $6.E       |
-| 112   |  $2A5.9  |    $2.C     |      $6.F       |
-| 113   |  $2AF.5  |    $2.C     |      $7.0       |
+| Frame | Position | Base Speed | Extra Run Speed | Jump Speed | HiJump Speed
+| ----- | -------- | ---------- | --------------- | ---------- | ------------
+| 0     |  $0.0    |    $0.0    |      $0.0       |    $4.E    |     $6.0
+| 1     |  $1.0    |    $0.0    |      $0.0       |    $4.E    |     $6.0
+| 2     |  $1.4    |    $0.3    |      $0.1       |    $4.F    |     $6.1
+| 3     |  $1.C    |    $0.6    |      $0.2       |    $4.0    |     $6.2
+| 4     |  $2.8    |    $0.9    |      $0.3       |    $4.1    |     $6.3
+| 5     |  $3.8    |    $0.C    |      $0.4       |    $4.2    |     $6.4
+| 6     |  $4.C    |    $0.F    |      $0.5       |    $4.3    |     $6.5
+| 7     |  $6.4    |    $1.2    |      $0.6       |    $4.4    |     $6.6
+| 8     |  $8.0    |    $1.5    |      $0.7       |    $4.5    |     $6.7
+| 9     |  $A.0    |    $1.8    |      $0.8       |    $4.6    |     $6.8
+| 10    |  $C.4    |    $1.B    |      $0.9       |    $4.7    |     $6.9
+| 11    |  $E.C    |    $1.E    |      $0.A       |    $4.8    |     $6.A
+| 12    |  $12.3   |    $2.C    |      $0.B       |    $4.9    |     $6.B
+| 13    |  $15.B   |    $2.C    |      $0.C       |    $4.A    |     $6.C
+| 14    |  $19.4   |    $2.C    |      $0.D       |    $4.B    |     $6.D
+| 15    |  $1C.E   |    $2.C    |      $0.E       |    $4.C    |     $6.E
+| 16    |  $20.9   |    $2.C    |      $0.F       |    $4.D    |     $6.F
+| 17    |  $24.5   |    $2.C    |      $1.0       |    $4.E    |     $6.0
+| 18    |  $28.2   |    $2.C    |      $1.1       |    $4.F    |     $6.1
+| 19    |  $2C.0   |    $2.C    |      $1.2       |    $4.0    |     $6.2
+| 20    |  $2F.F   |    $2.C    |      $1.3       |    $4.1    |     $6.3
+| 21    |  $33.F   |    $2.C    |      $1.4       |    $4.2    |     $6.4
+| 22    |  $38.0   |    $2.C    |      $1.5       |    $4.3    |     $6.5
+| 23    |  $3C.2   |    $2.C    |      $1.6       |    $4.4    |     $6.6
+| 24    |  $40.5   |    $2.C    |      $1.7       |    $4.5    |     $6.7
+| 25    |  $44.9   |    $2.C    |      $1.8       |    $4.6    |     $6.8
+| 26    |  $48.E   |    $2.C    |      $1.9       |    $4.7    |     $6.9
+| 27    |  $4D.4   |    $2.C    |      $1.A       |    $4.8    |     $6.A
+| 28    |  $51.B   |    $2.C    |      $1.B       |    $4.9    |     $6.B
+| 29    |  $56.3   |    $2.C    |      $1.C       |    $4.A    |     $6.C
+| 30    |  $5A.C   |    $2.C    |      $1.D       |    $4.B    |     $6.D
+| 31    |  $5F.6   |    $2.C    |      $1.E       |    $4.C    |     $6.E
+| 32    |  $64.1   |    $2.C    |      $1.F       |    $4.D    |     $6.F
+| 33    |  $68.D   |    $2.C    |      $2.0       |    $5.E    |     $7.0
+| 34    |  $6D.A   |    $2.C    |      $2.1       |    $5.F    |     $7.1
+| 35    |  $72.8   |    $2.C    |      $2.2       |    $5.0    |     $7.2
+| 36    |  $77.7   |    $2.C    |      $2.3       |    $5.1    |     $7.3
+| 37    |  $7C.7   |    $2.C    |      $2.4       |    $5.2    |     $7.4
+| 38    |  $81.8   |    $2.C    |      $2.5       |    $5.3    |     $7.5
+| 39    |  $86.A   |    $2.C    |      $2.6       |    $5.4    |     $7.6
+| 40    |  $8B.D   |    $2.C    |      $2.7       |    $5.5    |     $7.7
+| 41    |  $91.1   |    $2.C    |      $2.8       |    $5.6    |     $7.8
+| 42    |  $96.6   |    $2.C    |      $2.9       |    $5.7    |     $7.9
+| 43    |  $9B.C   |    $2.C    |      $2.A       |    $5.8    |     $7.A
+| 44    |  $A1.3   |    $2.C    |      $2.B       |    $5.9    |     $7.B
+| 45    |  $A6.B   |    $2.C    |      $2.C       |    $5.A    |     $7.C
+| 46    |  $AC.4   |    $2.C    |      $2.D       |    $5.B    |     $7.D
+| 47    |  $B1.E   |    $2.C    |      $2.E       |    $5.C    |     $7.E
+| 48    |  $B7.9   |    $2.C    |      $2.F       |    $5.D    |     $7.F
+| 49    |  $BD.5   |    $2.C    |      $3.0       |    $5.E    |     $7.0
+| 50    |  $C3.2   |    $2.C    |      $3.1       |    $5.F    |     $7.1
+| 51    |  $C9.0   |    $2.C    |      $3.2       |    $5.0    |     $7.2
+| 52    |  $CE.F   |    $2.C    |      $3.3       |    $5.1    |     $7.3
+| 53    |  $D4.F   |    $2.C    |      $3.4       |    $5.2    |     $7.4
+| 54    |  $DB.0   |    $2.C    |      $3.5       |    $5.3    |     $7.5
+| 55    |  $E1.2   |    $2.C    |      $3.6       |    $5.4    |     $7.6
+| 56    |  $E7.5   |    $2.C    |      $3.7       |    $5.5    |     $7.7
+| 57    |  $ED.9   |    $2.C    |      $3.8       |    $5.6    |     $7.8
+| 58    |  $F3.E   |    $2.C    |      $3.9       |    $5.7    |     $7.9
+| 59    |  $FA.4   |    $2.C    |      $3.A       |    $5.8    |     $7.A
+| 60    |  $100.B  |    $2.C    |      $3.B       |    $5.9    |     $7.B
+| 61    |  $107.3  |    $2.C    |      $3.C       |    $5.A    |     $7.C
+| 62    |  $10D.C  |    $2.C    |      $3.D       |    $5.B    |     $7.D
+| 63    |  $114.6  |    $2.C    |      $3.E       |    $5.C    |     $7.E
+| 64    |  $11B.1  |    $2.C    |      $3.F       |    $5.D    |     $7.F
+| 65    |  $121.D  |    $2.C    |      $4.0       |    $6.E    |     $8.0
+| 66    |  $128.A  |    $2.C    |      $4.1       |    $6.F    |     $8.1
+| 67    |  $12F.8  |    $2.C    |      $4.2       |    $6.0    |     $8.2
+| 68    |  $136.7  |    $2.C    |      $4.3       |    $6.1    |     $8.3
+| 69    |  $13D.7  |    $2.C    |      $4.4       |    $6.2    |     $8.4
+| 70    |  $144.8  |    $2.C    |      $4.5       |    $6.3    |     $8.5
+| 71    |  $14B.A  |    $2.C    |      $4.6       |    $6.4    |     $8.6
+| 72    |  $152.D  |    $2.C    |      $4.7       |    $6.5    |     $8.7
+| 73    |  $15A.1  |    $2.C    |      $4.8       |    $6.6    |     $8.8
+| 74    |  $161.6  |    $2.C    |      $4.9       |    $6.7    |     $8.9
+| 75    |  $168.C  |    $2.C    |      $4.A       |    $6.8    |     $8.A
+| 76    |  $170.3  |    $2.C    |      $4.B       |    $6.9    |     $8.B
+| 77    |  $177.B  |    $2.C    |      $4.C       |    $6.A    |     $8.C
+| 78    |  $17F.4  |    $2.C    |      $4.D       |    $6.B    |     $8.D
+| 79    |  $186.E  |    $2.C    |      $4.E       |    $6.C    |     $8.E
+| 80    |  $18E.9  |    $2.C    |      $4.F       |    $6.D    |     $8.F
+| 81    |  $196.5  |    $2.C    |      $5.0       |    $6.E    |     $8.0
+| 82    |  $19E.2  |    $2.C    |      $5.1       |    $6.F    |     $8.1
+| 83    |  $1A6.0  |    $2.C    |      $5.2       |    $6.0    |     $8.2
+| 84    |  $1AD.F  |    $2.C    |      $5.3       |    $6.1    |     $8.3
+| 85    |  $1B5.F  |    $2.C    |      $5.4       |    $6.2    |     $8.4
+| 86    |  $1BE.0  |    $2.C    |      $5.5       |    $6.3    |     $8.5
+| 87    |  $1C6.2  |    $2.C    |      $5.6       |    $6.4    |     $8.6
+| 88    |  $1CE.5  |    $2.C    |      $5.7       |    $6.5    |     $8.7
+| 89    |  $1D6.9  |    $2.C    |      $5.8       |    $6.6    |     $8.8
+| 90    |  $1DE.E  |    $2.C    |      $5.9       |    $6.7    |     $8.9
+| 91    |  $1E7.4  |    $2.C    |      $5.A       |    $6.8    |     $8.A
+| 92    |  $1EF.B  |    $2.C    |      $5.B       |    $6.9    |     $8.B
+| 93    |  $1F8.3  |    $2.C    |      $5.C       |    $6.A    |     $8.C
+| 94    |  $200.C  |    $2.C    |      $5.D       |    $6.B    |     $8.D
+| 95    |  $209.6  |    $2.C    |      $5.E       |    $6.C    |     $8.E
+| 96    |  $212.1  |    $2.C    |      $5.F       |    $6.D    |     $8.F
+| 97    |  $21A.D  |    $2.C    |      $6.0       |    $7.E    |     $9.0
+| 98    |  $223.A  |    $2.C    |      $6.1       |    $7.F    |     $9.1
+| 99    |  $22C.8  |    $2.C    |      $6.2       |    $7.0    |     $9.2
+| 100   |  $235.7  |    $2.C    |      $6.3       |    $7.1    |     $9.3
+| 101   |  $23E.7  |    $2.C    |      $6.4       |    $7.2    |     $9.4
+| 102   |  $247.8  |    $2.C    |      $6.5       |    $7.3    |     $9.5
+| 103   |  $250.A  |    $2.C    |      $6.6       |    $7.4    |     $9.6
+| 104   |  $259.D  |    $2.C    |      $6.7       |    $7.5    |     $9.7
+| 105   |  $263.1  |    $2.C    |      $6.8       |    $7.6    |     $9.8
+| 106   |  $26C.6  |    $2.C    |      $6.9       |    $7.7    |     $9.9
+| 107   |  $275.C  |    $2.C    |      $6.A       |    $7.8    |     $9.A
+| 108   |  $27F.3  |    $2.C    |      $6.B       |    $7.9    |     $9.B
+| 109   |  $288.B  |    $2.C    |      $6.C       |    $7.A    |     $9.C
+| 110   |  $292.4  |    $2.C    |      $6.D       |    $7.B    |     $9.D
+| 111   |  $29B.E  |    $2.C    |      $6.E       |    $7.C    |     $9.E
+| 112   |  $2A5.9  |    $2.C    |      $6.F       |    $7.D    |     $9.F
+| 113   |  $2AF.5  |    $2.C    |      $7.0       |    $7.E    |     $9.0
 
-Without Speedbooster, the same table is also valid up through row 33 (when extra run speed reaches $2.0).
+Without Speedbooster, the same table is also valid up through row 33 (when extra run speed reaches $2.0), except that in that case the Jump Speed and HiJump Speeds are just constants ($4.E and $6.0) independent of run speed.
 
 # Full run speed table
 
