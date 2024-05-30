@@ -48,6 +48,12 @@
           "type": "integer",
           "title": "Steep Down Tiles",
           "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards"
+        },
+        "startingDownTiles": {
+          "$id": "#/definitions/runway/properties/startingDownTiles",
+          "type": "integer",
+          "title": "Steep Down Tiles",
+          "description": "Number of tiles at the start of the runway that steeply slope downwards, preventing a stutter."
         }
       }
     },
@@ -282,12 +288,6 @@
                   "type": "integer",
                   "title": "Steep Down Tiles",
                   "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running away from the door)"
-                },
-                "minTiles": {
-                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInShinecharging/properties/minTiles",
-                  "type": "integer",
-                  "title": "Minimum Tiles",
-                  "description": "Minimum number of tiles of runway in the other room required to be used (in order to gain enough momentum)."
                 }
               }
             },
@@ -343,11 +343,17 @@
                   "title": "Steep Down Tiles",
                   "description": "Number of tiles in the runway that steeply slope (one vertical tile) downwards (when running away from the door)"
                 },
-                "minTiles": {
-                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInGettingBlueSpeed/properties/minTiles",
-                  "type": "integer",
-                  "title": "Minimum Tiles",
-                  "description": "Minimum number of tiles of runway in the other room required to be used (in order to gain enough momentum)."
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInGettingBlueSpeed/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) which will satisfy this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInGettingBlueSpeed/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) which will satisfy this condition."
                 }
               }
             },
@@ -480,11 +486,17 @@
               "required": ["unusableTiles"],
               "additionalProperties": false,
               "properties": {
-                "minTiles": {
-                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInBlueSpinning/properties/minTiles",
-                  "type": "number",
-                  "title": "Minimum Runway Tiles",
-                  "description": "The minimum effective runway tiles needed before jumping, in order to gain sufficient momentum."
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInBlueSpinning/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) which will satisfy this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInBlueSpinning/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) which will satisfy this condition."
                 },
                 "unusableTiles": {
                   "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInBlueSpinning/properties/unusableTiles",
@@ -571,6 +583,40 @@
                 {"required": ["adjacentMinTiles"]},
                 {"required": ["remoteAndLandingMinTiles"]}
               ]
+            },
+            "comeInWithBlueSpringBallBounce": {
+              "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueSpringBallBounce",
+              "type": "object",
+              "title": "Come In With Blue Spring Ball Bounce",
+              "description": "Represents that Samus must jump into the room with a blue spring ball bounce in the doorway of the previous room.",
+              "required": ["movementType"],
+              "additionalProperties": false,
+              "properties": {
+                "movementType": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueSpringBallBounce/properties/movementType",
+                  "type": "string",
+                  "title": "Movement Type",
+                  "enum": ["controlled", "uncontrolled", "any"],
+                  "description": "The type of bounce to enter with."
+                },
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueSpringBallBounce/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) which will satisfy this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueSpringBallBounce/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) which will satisfy this condition."
+                },
+                "minLandingTiles": {
+                  "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithBlueSpringBallBounce/properties/minLandingTiles",
+                  "type": "number",
+                  "description": "Minimum length of landing runway which will satisfy this condition."
+                }
+              }
             },
             "comeInWithStoredFallSpeed": {
               "$id": "#/definitions/strat/properties/entranceCondition/properties/comeInWithStoredFallSpeed",
@@ -750,6 +796,7 @@
             {"required": ["comeInWithTemporaryBlue"]},
             {"required": ["comeInWithMockball"]},
             {"required": ["comeInWithSpringBallBounce"]},
+            {"required": ["comeInWithBlueSpringBallBounce"]},
             {"required": ["comeInBlueSpinning"]},
             {"required": ["comeInWithStoredFallSpeed"]},
             {"required": ["comeInWithRMode"]},
@@ -914,6 +961,18 @@
                   "$ref": "#/definitions/runway",
                   "description": "Runway that is available to gain momentum for the spin jump."
                 },
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpinning/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpinning/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
                 "blue": {
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpinning/properties/blue",
                   "type": "string",
@@ -941,6 +1000,18 @@
                   "$ref": "#/definitions/runway",
                   "description": "Runway that is available to land while entering mockball and gain speed before the transition."
                 },
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithMockball/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithMockball/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
                 "blue": {
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithMockball/properties/blue",
                   "type": "string",
@@ -967,6 +1038,18 @@
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithSpringBallBounce/properties/landingRunway",
                   "$ref": "#/definitions/runway",
                   "description": "Runway that is available for landing, either for entering a mockball, or for bouncing after an airball."
+                },
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithSpringBallBounce/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithSpringBallBounce/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
                 },
                 "blue": {
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveWithSpringBallBounce/properties/blue",
@@ -996,6 +1079,18 @@
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpaceJumping/properties/remoteRunway",
                   "$ref": "#/definitions/runway",
                   "description": "Runway that is available to gain momentum for the Space Jump."
+                },
+                "minExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpaceJumping/properties/minExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Minimum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
+                },
+                "maxExtraRunSpeed": {
+                  "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpaceJumping/properties/maxExtraRunSpeed",
+                  "type": "string",
+                  "pattern": "^\\$[0-9|A-F]\\.[0-9|A-F]+$",
+                  "description": "Maximum extra run speed (in hexadecimal) with which it is possible to leave with this condition."
                 },
                 "blue": {
                   "$id": "#/definitions/strat/properties/exitCondition/properties/leaveSpaceJumping/properties/blue",

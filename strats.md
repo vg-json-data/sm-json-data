@@ -248,11 +248,13 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 
 ### Leave Spinning
 
-A `leaveSpinning` exit condition represents that Samus can spin jump through a horizontal transition with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. This exit condition applies to jumps from a runway disconnected from the door (e.g. below a ledge in front of the door). It should only be applied in cases where there is flexibility to exit at a wide range of positions between the top and bottom of the doorway. It should also only be applied where there is air physics at the door.
+A `leaveSpinning` exit condition represents that Samus can spin jump through a horizontal transition with a certain amount of momentum, and possibly with blue speed, depending on the length of available runway and short-charging skill assumption. This exit condition applies to jumps from a runway disconnected from the door (e.g. below a ledge in front of the door). It should only be applied where there is air physics at the door. It should also only be applied in cases where there is flexibility to exit at a wide range of positions between the top and bottom of the doorway. Specifically, for every vertical position at least 8 pixels below the top of the doorway, it should be possible to control the jump to leave at that position. This means being able to leave at screen positions in the range between 116 ($74) and 148 ($94); the highest of these positions corresponds to Samus' hitbox just barely fitting in the top half of the doorway.
 
 The `leaveSpinning` object has the following properties:
 
 - _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. For leaving with blue speed, there is already an implicit minimum speed based on shortcharging skill, so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at low speeds.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. There is already an implicit speed limit based on the length of the remote runway (see the [full run speed table](#full-run-speed-table)), and for leaving with blue speed there is a different implicit limit based on a combination of runway length and shortcharging skill (see the [blue run speed table](#blue-run-speed-table)); so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at high speeds.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. This could be used, for example, in case of a difference in usable runway length if shortcharging is being performed, or a difference in heat damage taken. The default is "any".
 
 If a `leaveSpinning` condition is used for blue speed in the next room, then it implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item). Heat frames are not included and would have to described explicitly in the strat "requires".
@@ -282,6 +284,8 @@ The `leaveWithMockball` object has the following properties:
 
 - _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump before the mockball.
 - _landingRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to land and gain speed in a mockball before hitting the transition.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. For leaving with blue speed, there is already an implicit minimum speed based on shortcharging skill, so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at low speeds.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. There is already an implicit speed limit based on the length of the remote runway (see the [full run speed table](#full-run-speed-table)), and for leaving with blue speed there is a different implicit limit based on a combination of runway length and shortcharging skill (see the [blue run speed table](#blue-run-speed-table)); so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at high speeds.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
 
 A `leaveWithMockball` condition implicitly includes the `canMockball` tech requirement (including the `Morph` item requirement). If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canSpeedball` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
@@ -315,6 +319,8 @@ The `leaveWithSpringBallBounce` object has the following properties:
 
 - _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the jump before the mockball.
 - _landingRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to land and gain speed in a mockball before hitting the transition.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. For leaving with blue speed, there is already an implicit minimum speed based on shortcharging skill, so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at low speeds.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. There is already an implicit speed limit based on the length of the remote runway (see the [full run speed table](#full-run-speed-table)), and for leaving with blue speed there is a different implicit limit based on a combination of runway length and shortcharging skill (see the [blue run speed table](#blue-run-speed-table)); so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at high speeds.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
 - _movementType_: This takes one of three possible values, "controlled", "uncontrolled", or "any", indicating the type of bounce that can be used. 
   - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
@@ -353,6 +359,8 @@ A `leaveSpaceJumping` exit condition represents that Samus can Space Jump throug
 The `leaveSpaceJumping` object has the following properties:
 
 - _remoteRunway_: A [runway geometry](#runway-geometry) object describing the tiles available to gain speed for the Space Jump.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. For leaving with blue speed, there is already an implicit minimum speed based on shortcharging skill, so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at low speeds.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. There is already an implicit speed limit based on the length of the remote runway (see the [full run speed table](#full-run-speed-table)), and for leaving with blue speed there is a different implicit limit based on a combination of runway length and shortcharging skill (see the [blue run speed table](#blue-run-speed-table)); so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at high speeds.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
 
 A `leaveSpaceJumping` condition implicitly includes the `SpaceJump` item requirement. If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canBlueSpaceJump` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
@@ -548,6 +556,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithTemporaryBlue_: This indicates that Samus must come in by jumping through this door with temporary blue.
 - _comeInWithMockball_: This indicates that Samus must roll into the room with a mockball with a certain amount of momentum.
 - _comeInWithSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room.
+- _comeInWithBlueSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room while having blue speed.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
@@ -690,9 +699,7 @@ A `comeInShinecharging` entrance condition represents the need for Samus to run 
 
 * _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_
 
-The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles). It also has the following property:
-
-* _minTiles_: If specified, this is the minimum number of tiles of runway in the other room required to be used, in order to gain enough momentum.
+The length should not include any tiles that Samus skips over through the transition (e.g. door transition tiles and door shell tiles). 
 
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
@@ -751,7 +758,10 @@ The way to calculate minimally required heat frames depends on the type of `leav
 
 ### Come In Getting Blue Speed
 
-A `comeInGettingBlueSpeed` entrance condition represents the need for Samus to run into the room with enough space to gain blue speed. It is similar to `comeInShinecharging` and has the same set of properties. 
+A `comeInGettingBlueSpeed` entrance condition represents the need for Samus to run into the room with enough space to gain blue speed. It is similar to `comeInShinecharging` and includes the same set of properties, with the following additional properties:
+
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed at the end of the combined runway. This can be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed at the end of the combined runway.  This can be specified if something would prevent the strat from working at too high of a speed.
 
 A `comeInGettingBlueSpeed` must match with a corresponding `leaveWithRunway` condition on the other side of the door, and it includes the same requirements as a `comeInShinecharging` except with a `getBlueSpeed` requirement in place of a `canShinecharge`.
 
@@ -943,18 +953,16 @@ A `comeInSpeedballing` entrance condition indicates that Samus must enter the ro
 
 It is assumed that the runway in the current room is level or sloping up; adjustments would be needed to handle a case where it sloped down.
 
-Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
+Note that a `comeInSpeedballing` entrance condition can always be satisfied by coming into the room while already in a speedball. Therefore, a different entrance condition (e.g. `comeInGettingBlueSpeed` or `comeInBlueSpinning`) must be used if the strat specifically requires obtaining the speedball after entering the room (either by jumping through the transition, or by running through the transition and jumping afterward).
 
 A `comeInSpeedballing` entrance condition must match with one of the following conditions on the other side of the door: `leaveWithRunway`, `leaveSpinning`, `leaveWithMockball`. 
 
 In every case, there is an implicit tech requirement of `canSpeedball`. A match with a `leaveWithRunway` comes with the following implicit requirements:
-  - A `canShineCharge` based on the combined runway length, minus the amount of tiles needed to perform the jump into the speedball. The amount of tiles needed for the jump depends on the player's shortcharge ability (as well as ability to short-hop mockball): obtaining blue speed with lower run speed means less space needed to perform the jump. This can be approximated in a simple way with the following assumptions:
-    - If the tech `canSlowShortCharge` is enabled, then 5 tiles are needed for the jump into the speedball.
-    - Otherwise 14 tiles are needed.
+  - A `speedBall` requirement based on the combined runway length.
   - If the previous door environment is water, then `Gravity` is required.
   - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
 
-For `leaveSpinning` and `leaveWithMockball`, their `blue` property must be either "yes" or "any", and there is an implicit `canShineCharge` requirement based on the runway length in the exit condition.
+For `leaveSpinning` and `leaveWithMockball`, their `blue` property must be either "yes" or "any", and there is an implicit `getBlueSpeed` requirement based on the runway length in the exit condition.
 
 ### Come In With Temporary Blue
 
@@ -974,18 +982,18 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 
 A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed, applicable to horizontal transitions. It has the following properties:
 
-  - _minTiles_: The minimum effective runway length required to obtain sufficient speed before the jump. This can be omitted if the strat does not require coming in with any particular amount of momentum.
-  - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
+- _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too high of a speed.
 
 A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `leaveWithRunway` exit condition on the other side of the door.
 
 - A match with `leaveSpinning` has the following requirements:
   - The `blue` property must be "yes" or "any".
-  - If `minTiles` is specified, the effective runway length of the `remoteRunway` in the `leaveSpinning` must be at least `minTiles`.
-  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that gaining a shinecharge is possible. Note that in these cases the `unusableTiles` property is ignored (i.e., not subtracted).
+  - A `SpeedBooster` requirement.
+  - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)). Note that `unusableTiles` is ignored in this case.
 - A match with `leaveWithRunway` has the following requirements:
-  - If `blue` is "yes", a `canShinecharge` requirement (including `SpeedBooster` item) is required. Here `unusableTiles` are subtracted from the available runway length.
-  - If `minTiles` is specified, the effective runway length must be at least `minTiles + unusableTiles`.
+  - There must exist a possible value of extra run speed satisfying any applicable constraints: `minExtraRunSpeed` or `maxExtraRunSpeed` in the entrance condition, along with implicit constraints based on shortcharge skill and the effective runway length (with `unusableTiles` subtracted) in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. The `unusableTiles` are ignored (i.e. not subtracted) for the purposes of determining heat frames, since heat damage is still taken during the jump.
   - If the previous door environment is water, then `Gravity` is required.
 
@@ -1037,7 +1045,7 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 
 ### Come In With Spring Ball Bounce
 
-A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in the doorway of the previous room, applicable to horizontal transitions. It has the following properties:
+A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, applicable to horizontal transitions. It has the following properties:
 
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
@@ -1045,19 +1053,27 @@ A `comeInWithSpringBallBounce` entrance condition indicates that Samus must ente
   - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
   - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
-A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce` or `leaveWithMockball` on the other side of the door. The following requirements apply in both cases:
+A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
 - The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
-- The `blue` property of the exit condition must be "no" or "any". 
-- `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
 
 There are additional requirements depending on the exit condition:
 
 - A match with `leaveWithSpringBallBounce` has the following additional requirements:
   - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
   - If the `movementType` of either the exit condition or entrance condition is "controlled", then `canMockball` is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "no" or "any". 
 - A match with `leaveWithMockball` has the following requirements:
   - The `movementType` of the entrance condition must be "controlled" or "any".
   - The `canMockball` tech is required.
+  - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
+  - The `blue` property of the exit condition must be "no" or "any".
+- A match with `leaveWithRunway` has the following requirements:
+  - The effective runway length must be at least `adjacentMinTiles`.
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
+  - If the previous door environment is water, then `Gravity` is required.
+  - The `canMockball` tech (including `Morph` item) is required.
+
 
 ```json
 {
@@ -1072,6 +1088,55 @@ There are additional requirements depending on the exit condition:
   "requires": [
     "canCrossRoomJumpIntoWater"
   ]
+}
+```
+
+### Come In With Blue Spring Ball Bounce
+
+A `comeInWithBlueSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, while having blue speed. This is applicable to horizontal transitions. It has the following properties:
+
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed.  This only needs to be specified if something would prevent the strat from working at too high of a speed.
+- _minLandingTiles_: The minimum effective length of landing runway in the other room which is needed to ensure the strat can work.
+- _movementType_: This takes one of three possible values, "controlled", "uncontrolled", and "any", indicating the type of bounce that is required.
+  - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
+  - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
+
+A `comeInWithBlueSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
+- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items).
+- The `Speedbooster` item.
+- There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the runway in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
+
+There are additional requirements depending on the exit condition:
+
+- A match with `leaveWithBlueSpringBallBounce` has the following additional requirements:
+  - The `movementType` of the exit condition must equal that of the entrance condition, or one of them must be "any".
+  - If the `movementType` of either the exit condition or entrance condition is "controlled", then `canSpeedball` is required.
+  - The effective length of the `landingRunway` is at least `minLandingLength` (if specified).
+  - The `blue` property of the exit condition must be "yes" or "any". 
+  - A `getBlueSpeed` requirement is included based on the remote runway length.
+- A match with `leaveWithMockball` has the following requirements:
+  - The `movementType` of the entrance condition must be "controlled" or "any".
+  - The `canSpeedball` tech is required.
+  - The effective length of the `landingRunway` is at least `minLandingLength` (if specified).
+  - The `blue` property of the exit condition must be "yes" or "any".
+  - A `getBlueSpeed` requirement is included based on the remote runway length.
+- A match with `leaveWithRunway` has the following requirements:
+  - A `speedBall` requirement is included based on the runway length minus `minLandingLength`, except that the `canSpeedball` tech requirement is only included if the `movementType` of the entrance condition is "controlled".
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames can be approximately calculated in the same way as for `comeInGettingBlueSpeed`.
+  - If the previous door environment is water, then `Gravity` is required.
+
+```json
+{
+  "name": "Come In With Blue Spring Ball Bounce",
+  "notable": false,
+  "entranceCondition": {
+    "comeInWithBlueSpringBallBounce": {
+      "remoteAndLandingMinTiles": [[15, 1]],
+      "movementType": "controlled"
+    }
+  },
+  "requires": []
 }
 ```
 
@@ -1444,3 +1509,213 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
   "setsFlags": ["f_MaridiaTubeBroken"]
 }
 ```
+
+## Run Speed
+
+There are many kinds of cross-room strats that require Samus to enter the room with a certain amount of speed. For easier interpretation, these requirements are usually specified in terms of runway tiles required. In certain situations, however, it is necessary to directly reference speed values. There are several types of Samus horizontal speed:
+
+- Base speed: This gradually increases from to $0.0 to $2.C over the first 11 frames of Samus beginning walking or running. It gradually decreases to $0.0 when stopping holding forward while walking/running. Base speed will change in certain ways when Samus jumps, breaks spin, morphs, or performs other actions.
+- Extra run speed: This increases by $0.1 for each frame that dash is held while running. With Speed Booster it reaches a maximum value of $7.0, while without Speed Booster it reaches a maximum value of $2.0. When stopping holding forward while walking/running, the extra run speed is immediately converted into base speed, i.e., base speed is increased by the value of the extra run speed, while the extra run speed immediately becomes zero. Other actions will either leave the extra run speed unchanged (e.g., jumping, breaking spin with jump held, or performing an airball or mockball) or immediately set it to zero (e.g., turning around, or breaking spin without jump held).
+- Combined run speed: This is the total of base speed and extra run speed, and represents the actual amount that Samus will move horizontally.
+
+All these speed values are measured in pixels (and subpixels) per frame. Since extra run speed remains stable through various movement actions, it is generally the more useful quantity to reference in cross-room strats. The following table shows how Samus' relative position and horizontal speeds change while running, starting from a stand, with dash held the entire time, with Speedbooster equipped. The initial vertical speed when jumping is also shown (both without and with HiJump).
+
+| Frame | Position | Base Speed | Extra Run Speed | Jump Speed | HiJump Speed
+| ----- | -------- | ---------- | --------------- | ---------- | ------------
+| 0     |  $0.0    |    $0.0    |      $0.0       |    $4.E    |     $6.0
+| 1     |  $1.0    |    $0.0    |      $0.0       |    $4.E    |     $6.0
+| 2     |  $1.4    |    $0.3    |      $0.1       |    $4.F    |     $6.1
+| 3     |  $1.C    |    $0.6    |      $0.2       |    $4.0    |     $6.2
+| 4     |  $2.8    |    $0.9    |      $0.3       |    $4.1    |     $6.3
+| 5     |  $3.8    |    $0.C    |      $0.4       |    $4.2    |     $6.4
+| 6     |  $4.C    |    $0.F    |      $0.5       |    $4.3    |     $6.5
+| 7     |  $6.4    |    $1.2    |      $0.6       |    $4.4    |     $6.6
+| 8     |  $8.0    |    $1.5    |      $0.7       |    $4.5    |     $6.7
+| 9     |  $A.0    |    $1.8    |      $0.8       |    $4.6    |     $6.8
+| 10    |  $C.4    |    $1.B    |      $0.9       |    $4.7    |     $6.9
+| 11    |  $E.C    |    $1.E    |      $0.A       |    $4.8    |     $6.A
+| 12    |  $12.3   |    $2.C    |      $0.B       |    $4.9    |     $6.B
+| 13    |  $15.B   |    $2.C    |      $0.C       |    $4.A    |     $6.C
+| 14    |  $19.4   |    $2.C    |      $0.D       |    $4.B    |     $6.D
+| 15    |  $1C.E   |    $2.C    |      $0.E       |    $4.C    |     $6.E
+| 16    |  $20.9   |    $2.C    |      $0.F       |    $4.D    |     $6.F
+| 17    |  $24.5   |    $2.C    |      $1.0       |    $4.E    |     $6.0
+| 18    |  $28.2   |    $2.C    |      $1.1       |    $4.F    |     $6.1
+| 19    |  $2C.0   |    $2.C    |      $1.2       |    $4.0    |     $6.2
+| 20    |  $2F.F   |    $2.C    |      $1.3       |    $4.1    |     $6.3
+| 21    |  $33.F   |    $2.C    |      $1.4       |    $4.2    |     $6.4
+| 22    |  $38.0   |    $2.C    |      $1.5       |    $4.3    |     $6.5
+| 23    |  $3C.2   |    $2.C    |      $1.6       |    $4.4    |     $6.6
+| 24    |  $40.5   |    $2.C    |      $1.7       |    $4.5    |     $6.7
+| 25    |  $44.9   |    $2.C    |      $1.8       |    $4.6    |     $6.8
+| 26    |  $48.E   |    $2.C    |      $1.9       |    $4.7    |     $6.9
+| 27    |  $4D.4   |    $2.C    |      $1.A       |    $4.8    |     $6.A
+| 28    |  $51.B   |    $2.C    |      $1.B       |    $4.9    |     $6.B
+| 29    |  $56.3   |    $2.C    |      $1.C       |    $4.A    |     $6.C
+| 30    |  $5A.C   |    $2.C    |      $1.D       |    $4.B    |     $6.D
+| 31    |  $5F.6   |    $2.C    |      $1.E       |    $4.C    |     $6.E
+| 32    |  $64.1   |    $2.C    |      $1.F       |    $4.D    |     $6.F
+| 33    |  $68.D   |    $2.C    |      $2.0       |    $5.E    |     $7.0
+| 34    |  $6D.A   |    $2.C    |      $2.1       |    $5.F    |     $7.1
+| 35    |  $72.8   |    $2.C    |      $2.2       |    $5.0    |     $7.2
+| 36    |  $77.7   |    $2.C    |      $2.3       |    $5.1    |     $7.3
+| 37    |  $7C.7   |    $2.C    |      $2.4       |    $5.2    |     $7.4
+| 38    |  $81.8   |    $2.C    |      $2.5       |    $5.3    |     $7.5
+| 39    |  $86.A   |    $2.C    |      $2.6       |    $5.4    |     $7.6
+| 40    |  $8B.D   |    $2.C    |      $2.7       |    $5.5    |     $7.7
+| 41    |  $91.1   |    $2.C    |      $2.8       |    $5.6    |     $7.8
+| 42    |  $96.6   |    $2.C    |      $2.9       |    $5.7    |     $7.9
+| 43    |  $9B.C   |    $2.C    |      $2.A       |    $5.8    |     $7.A
+| 44    |  $A1.3   |    $2.C    |      $2.B       |    $5.9    |     $7.B
+| 45    |  $A6.B   |    $2.C    |      $2.C       |    $5.A    |     $7.C
+| 46    |  $AC.4   |    $2.C    |      $2.D       |    $5.B    |     $7.D
+| 47    |  $B1.E   |    $2.C    |      $2.E       |    $5.C    |     $7.E
+| 48    |  $B7.9   |    $2.C    |      $2.F       |    $5.D    |     $7.F
+| 49    |  $BD.5   |    $2.C    |      $3.0       |    $5.E    |     $7.0
+| 50    |  $C3.2   |    $2.C    |      $3.1       |    $5.F    |     $7.1
+| 51    |  $C9.0   |    $2.C    |      $3.2       |    $5.0    |     $7.2
+| 52    |  $CE.F   |    $2.C    |      $3.3       |    $5.1    |     $7.3
+| 53    |  $D4.F   |    $2.C    |      $3.4       |    $5.2    |     $7.4
+| 54    |  $DB.0   |    $2.C    |      $3.5       |    $5.3    |     $7.5
+| 55    |  $E1.2   |    $2.C    |      $3.6       |    $5.4    |     $7.6
+| 56    |  $E7.5   |    $2.C    |      $3.7       |    $5.5    |     $7.7
+| 57    |  $ED.9   |    $2.C    |      $3.8       |    $5.6    |     $7.8
+| 58    |  $F3.E   |    $2.C    |      $3.9       |    $5.7    |     $7.9
+| 59    |  $FA.4   |    $2.C    |      $3.A       |    $5.8    |     $7.A
+| 60    |  $100.B  |    $2.C    |      $3.B       |    $5.9    |     $7.B
+| 61    |  $107.3  |    $2.C    |      $3.C       |    $5.A    |     $7.C
+| 62    |  $10D.C  |    $2.C    |      $3.D       |    $5.B    |     $7.D
+| 63    |  $114.6  |    $2.C    |      $3.E       |    $5.C    |     $7.E
+| 64    |  $11B.1  |    $2.C    |      $3.F       |    $5.D    |     $7.F
+| 65    |  $121.D  |    $2.C    |      $4.0       |    $6.E    |     $8.0
+| 66    |  $128.A  |    $2.C    |      $4.1       |    $6.F    |     $8.1
+| 67    |  $12F.8  |    $2.C    |      $4.2       |    $6.0    |     $8.2
+| 68    |  $136.7  |    $2.C    |      $4.3       |    $6.1    |     $8.3
+| 69    |  $13D.7  |    $2.C    |      $4.4       |    $6.2    |     $8.4
+| 70    |  $144.8  |    $2.C    |      $4.5       |    $6.3    |     $8.5
+| 71    |  $14B.A  |    $2.C    |      $4.6       |    $6.4    |     $8.6
+| 72    |  $152.D  |    $2.C    |      $4.7       |    $6.5    |     $8.7
+| 73    |  $15A.1  |    $2.C    |      $4.8       |    $6.6    |     $8.8
+| 74    |  $161.6  |    $2.C    |      $4.9       |    $6.7    |     $8.9
+| 75    |  $168.C  |    $2.C    |      $4.A       |    $6.8    |     $8.A
+| 76    |  $170.3  |    $2.C    |      $4.B       |    $6.9    |     $8.B
+| 77    |  $177.B  |    $2.C    |      $4.C       |    $6.A    |     $8.C
+| 78    |  $17F.4  |    $2.C    |      $4.D       |    $6.B    |     $8.D
+| 79    |  $186.E  |    $2.C    |      $4.E       |    $6.C    |     $8.E
+| 80    |  $18E.9  |    $2.C    |      $4.F       |    $6.D    |     $8.F
+| 81    |  $196.5  |    $2.C    |      $5.0       |    $6.E    |     $8.0
+| 82    |  $19E.2  |    $2.C    |      $5.1       |    $6.F    |     $8.1
+| 83    |  $1A6.0  |    $2.C    |      $5.2       |    $6.0    |     $8.2
+| 84    |  $1AD.F  |    $2.C    |      $5.3       |    $6.1    |     $8.3
+| 85    |  $1B5.F  |    $2.C    |      $5.4       |    $6.2    |     $8.4
+| 86    |  $1BE.0  |    $2.C    |      $5.5       |    $6.3    |     $8.5
+| 87    |  $1C6.2  |    $2.C    |      $5.6       |    $6.4    |     $8.6
+| 88    |  $1CE.5  |    $2.C    |      $5.7       |    $6.5    |     $8.7
+| 89    |  $1D6.9  |    $2.C    |      $5.8       |    $6.6    |     $8.8
+| 90    |  $1DE.E  |    $2.C    |      $5.9       |    $6.7    |     $8.9
+| 91    |  $1E7.4  |    $2.C    |      $5.A       |    $6.8    |     $8.A
+| 92    |  $1EF.B  |    $2.C    |      $5.B       |    $6.9    |     $8.B
+| 93    |  $1F8.3  |    $2.C    |      $5.C       |    $6.A    |     $8.C
+| 94    |  $200.C  |    $2.C    |      $5.D       |    $6.B    |     $8.D
+| 95    |  $209.6  |    $2.C    |      $5.E       |    $6.C    |     $8.E
+| 96    |  $212.1  |    $2.C    |      $5.F       |    $6.D    |     $8.F
+| 97    |  $21A.D  |    $2.C    |      $6.0       |    $7.E    |     $9.0
+| 98    |  $223.A  |    $2.C    |      $6.1       |    $7.F    |     $9.1
+| 99    |  $22C.8  |    $2.C    |      $6.2       |    $7.0    |     $9.2
+| 100   |  $235.7  |    $2.C    |      $6.3       |    $7.1    |     $9.3
+| 101   |  $23E.7  |    $2.C    |      $6.4       |    $7.2    |     $9.4
+| 102   |  $247.8  |    $2.C    |      $6.5       |    $7.3    |     $9.5
+| 103   |  $250.A  |    $2.C    |      $6.6       |    $7.4    |     $9.6
+| 104   |  $259.D  |    $2.C    |      $6.7       |    $7.5    |     $9.7
+| 105   |  $263.1  |    $2.C    |      $6.8       |    $7.6    |     $9.8
+| 106   |  $26C.6  |    $2.C    |      $6.9       |    $7.7    |     $9.9
+| 107   |  $275.C  |    $2.C    |      $6.A       |    $7.8    |     $9.A
+| 108   |  $27F.3  |    $2.C    |      $6.B       |    $7.9    |     $9.B
+| 109   |  $288.B  |    $2.C    |      $6.C       |    $7.A    |     $9.C
+| 110   |  $292.4  |    $2.C    |      $6.D       |    $7.B    |     $9.D
+| 111   |  $29B.E  |    $2.C    |      $6.E       |    $7.C    |     $9.E
+| 112   |  $2A5.9  |    $2.C    |      $6.F       |    $7.D    |     $9.F
+| 113   |  $2AF.5  |    $2.C    |      $7.0       |    $7.E    |     $9.0
+
+Without Speedbooster, the same table is also valid up through row 33 (when extra run speed reaches $2.0), except that in that case the Jump Speed and HiJump Speeds are just constants ($4.E and $6.0) independent of run speed.
+
+# Full run speed table
+
+The following table shows the maximum extra run speed attainable with a last-frame jump from a given runway length, with a closed end at the start and an open end before the jump, with Speedbooster equipped and holding dash the entire time:
+
+| Runway length | Extra run speed |
+| ------------- | --------------- |
+| 1             |      $0.A       |
+| 2             |      $0.E       |
+| 3             |      $1.2       |
+| 4             |      $1.6       |
+| 5             |      $1.A       |
+| 6             |      $1.E       |
+| 7             |      $2.1       |
+| 8             |      $2.4       |
+| 9             |      $2.7       |
+| 10            |      $2.A       |
+| 11            |      $2.D       |
+| 12            |      $3.0       |
+| 13            |      $3.3       |
+| 14            |      $3.5       |
+| 15            |      $3.8       |
+| 16            |      $3.A       |
+| 17            |      $3.D       |
+| 18            |      $3.F       |
+| 19            |      $4.2       |
+| 20            |      $4.4       |
+| 21            |      $4.6       |
+| 22            |      $4.8       |
+| 23            |      $4.A       |
+| 24            |      $4.D       |
+| 25            |      $4.F       |
+| 26            |      $5.1       |
+| 27            |      $5.3       |
+| 28            |      $5.5       |
+| 29            |      $5.7       |
+| 30            |      $5.9       |
+| 31            |      $5.B       |
+| 32            |      $5.C       |
+| 33            |      $5.E       |
+| 34            |      $6.0       |
+| 35            |      $6.2       |
+| 36            |      $6.4       |
+| 37            |      $6.5       |
+| 38            |      $6.7       |
+| 39            |      $6.9       |
+| 40            |      $6.B       |
+| 41            |      $6.C       |
+| 42            |      $6.E       |
+| 43+           |      $7.0       |
+
+Without Speed Booster, the same table is valid except that extra run speed is capped at $2.0.
+
+### Blue run speed table
+
+Calculating attainable run speed becomes more complex when using a runway to gain blue speed state before jumping, e.g. to be able to destroy bomb blocks and enemies on contact. The amount of speed obtained can depend on how the shortcharge is executed as well as the length of runway used. Lowest speed can be achieved by pressing dash only with crisp taps on the 4 magic frames, in order to minimize the time that dash is held; given a limited length of runway, stutters also help to reset Samus' base speed at the start of the run. High speed can be achieved by again using stutters and crisp taps, but with as few taps as necessary, holding dash continuously at the end of the run, starting as soon as possible while still getting blue before the end of the runway. We define several levels of shortcharging skill:
+
+| Difficulty level | Minimal shortcharge length | Description                                                        |
+| ---------------- | -------------------------- | ------------------------------------------------------------------ |
+|        A         |             25             | No stutter, 1-tap held at least 15 frames before first magic frame |
+|        B         |             20             | Single stutter, up to 2-tap, taps at least 11 frames each          |
+|        C         |             16             | Single stutter, up to 3-tap, taps at least 7 frames each           |
+|        D         |             15             | Single stutter, up to 4-tap, taps at least 5 frames each           |
+|        E         |             14             | Double stutter, up to 4-tap, taps at least 4 frames each           |
+|        F         |             13             | Triple stutter, up to 4-tap, taps at least 3 frames each           |
+|        G         |             11             | Near-perfect stutters and taps                                     |
+
+Based on these definitions and some testing, we can determine a range of attainable run speed for each combination of runway length and skill level. For each runway length, we define an "ideal speed" to be the extra run speed that would result by performing the shortcharge in the easiest possible way for that length of runway, i.e. using the techniques in the lowest possible difficulty level. For each difficulty level at or above that level, we then measure a maximum speed reasonably attainable using those techniques. The following table shows possible values for representative runway lengths; values for other runway lengths can be obtained by linearly interpolating the values in this table. All speed values refer to extra run speed:
+
+| Runway length | Ideal speed  |  A   |  B   |  C   |  D   |  E   |  F   |  G   |
+| ------------- | ------------ | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+|      30       |     $5.9     | $5.9 | $5.9 | $5.9 | $5.9 | $5.9 | $5.9 | $5.9 |
+|      25       |     $4.8     | $4.9 | $4.B | $4.C | $4.D | $4.E | $4.E | $4.E |
+|      20       |     $3.7     |  -   | $3.A | $3.C | $3.E | $4.0 | $4.1 | $4.2 |
+|      17       |     $1.E     |  -   |  -   | $2.9 | $2.D | $3.3 | $3.8 | $3.A |
+|      16       |     $1.B     |  -   |  -   | $2.3 | $2.B | $3.1 | $3.3 | $3.5 |
+|      15       |     $1.6     |  -   |  -   |  -   | $1.B | $2.9 | $2.B | $2.F |
+|      14       |     $1.2     |  -   |  -   |  -   |  -   | $1.A | $2.4 | $2.A |
+|      13       |     $1.0     |  -   |  -   |  -   |  -   |  -   | $1.2 | $1.E |
+|      12       |     $0.B     |  -   |  -   |  -   |  -   |  -   |   -  | $0.B |
+|      11       |     $0.7     |  -   |  -   |  -   |  -   |  -   |  -   | $0.7 |
