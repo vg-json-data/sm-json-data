@@ -36,24 +36,11 @@
       "nodeAddress": "0x78C2A"
     },
     {
-      "id": 4,
-      "name": "Right Junction with Speed Blocks Broken",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "note": [
-        "This node strictly represents access to the speed ramp *with the speed blocks broken*.",
-        "If they can't be broken, this node is not considered accessible but node 5 might be."
-      ]
-    },
-    {
       "id": 5,
       "name": "Small Platforms Junction",
       "nodeType": "junction",
       "nodeSubType": "junction",
-      "note": [
-        "This node represents the small platforms above the acid.",
-        "In some situations, it may be accessible without access to node 4, if the Speed blocks can't be broken."
-      ]
+      "note": "Represents being at the small platforms above the acid."
     },
     {
       "id": 6,
@@ -118,8 +105,8 @@
       "from": 1,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
-        {"id": 4},
         {"id": 5},
         {"id": 6}
       ]
@@ -127,8 +114,9 @@
     {
       "from": 2,
       "to": [
+        {"id": 1},
         {"id": 2},
-        {"id": 4},
+        {"id": 3},
         {"id": 5},
         {"id": 6}
       ]
@@ -142,30 +130,11 @@
       ]
     },
     {
-      "from": 4,
-      "to": [
-        {"id": 1},
-        {
-          "id": 2,
-          "devNote": "Since node 4 is only accessed if Speed blocks are broken, access back to 2 is free"
-        },
-        {
-          "id": 3,
-          "note": "All strats that don't require speed blocks to be broken are in 5 -> 3."
-        },
-        {"id": 5}
-      ]
-    },
-    {
       "from": 5,
       "to": [
         {"id": 1},
-        {
-          "id": 2,
-          "note": "If the speed blocks are broken, free access can be attained via node 4"
-        },
-        {"id": 3},
-        {"id": 4}
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
@@ -198,6 +167,22 @@
         "h_canCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "PCJR Full Room Space Jump Through Speed Blocks",
+      "notable": true,
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canBlueSpaceJump"
+      ],
+      "clearsObstacles": ["B"],
+      "note": "The blocks can be broken if you can generate a blue suit using the previous room's runway, and carry it to the blocks by slowing floating down with Space Jump."
     },
     {
       "link": [1, 3],
@@ -338,21 +323,6 @@
       "note": "Grapple off several Ripper 2."
     },
     {
-      "link": [1, 4],
-      "name": "PCJR Full Room Space Jump Through Speed Blocks",
-      "notable": true,
-      "entranceCondition": {
-        "comeInGettingBlueSpeed": {
-          "length": 9,
-          "openEnd": 0
-        }
-      },
-      "requires": [
-        "canBlueSpaceJump"
-      ],
-      "note": "The blocks can be broken if you can generate a blue suit using the previous room's runway, and carry it to the blocks by slowing floating down with Space Jump."
-    },
-    {
       "link": [1, 5],
       "name": "Base",
       "requires": []
@@ -455,12 +425,109 @@
       ]
     },
     {
+      "link": [2, 1],
+      "name": "PCJR Wall Jump Shinespark to Left Door",
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovement",
+        "canMidairShinespark",
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 32,
+            "gentleUpTiles": 6,
+            "openEnd": 1
+          }},
+          {"and": [
+            "h_canShineChargeMaxRunway",
+            {"obstaclesCleared": ["A"]}
+          ]}
+        ]},
+        {"shinespark": {"frames": 90}}
+      ],
+      "note": "Fire off the shinespark at the apex of two consecutive walljumps.",
+      "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
+    },
+    {
+      "link": [2, 1],
+      "name": "PCJR Big Jump Shinespark",
+      "notable": true,
+      "requires": [
+        "canShinechargeMovement",
+        "canMidairShinespark",
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 32,
+            "gentleUpTiles": 6,
+            "openEnd": 1
+          }},
+          {"and": [
+            "h_canShineChargeMaxRunway",
+            {"obstaclesCleared": ["A"]}
+          ]}
+        ]},
+        {"shinespark": {"frames": 52}}
+      ],
+      "note": "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex.",
+      "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
+    },
+    {
+      "link": [2, 1],
+      "name": "Short Run Speedjump",
+      "requires": [
+        "SpeedBooster",
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          "HiJump",
+          {"and": [
+            "canLateralMidAirMorph",
+            "canTrickySpringBallJump"
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Long Run Speedjump",
+      "requires": [
+        "SpeedBooster",
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          "h_canUsePowerBombs",
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
       "link": [2, 2],
       "name": "Break Power Bomb Blocks",
       "requires": [
         "h_canUsePowerBombs"
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Break Speed Blocks, Broken Power Bomb Blocks",
+      "requires": [
+        "SpeedBooster",
+        {"obstaclesCleared": ["A"]}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Break Speed Blocks, Short Charge",
+      "requires": [
+        {"getBlueSpeed": {
+          "usedTiles": 17,
+          "openEnd": 0
+        }}
+      ],
+      "clearsObstacles": ["B"],
+      "note": "Commonly known as a stutter-3, this is also doable as a 4-tap."
     },
     {
       "link": [2, 2],
@@ -696,23 +763,46 @@
       "flashSuitChecked": true
     },
     {
-      "link": [2, 4],
+      "link": [2, 3],
+      "name": "Shinespark",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 32,
+            "gentleUpTiles": 6,
+            "openEnd": 1
+          }},
+          {"and": [
+            "h_canShineChargeMaxRunway",
+            {"obstaclesCleared": ["A"]}
+          ]}
+        ]},
+        {"shinespark": {"frames": 40}}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Speedjump",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        "SpeedBooster",
+        "HiJump",
+        {"or": [
+          "canSpringBallJumpMidAir",
+          "canWalljump"
+        ]}
+      ]
+    },
+    {
+      "link": [2, 5],
       "name": "Base",
       "requires": [
         {"obstaclesCleared": ["B"]}
       ]
     },
     {
-      "link": [2, 4],
-      "name": "Broken Power Bomb Blocks",
-      "requires": [
-        "SpeedBooster",
-        {"obstaclesCleared": ["A"]}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "link": [2, 4],
+      "link": [2, 5],
       "name": "Full Shinespark",
       "entranceCondition": {
         "comeInShinecharged": {
@@ -729,7 +819,7 @@
       "note": "Spark from the ground, left of the Power Bomb blocks."
     },
     {
-      "link": [2, 4],
+      "link": [2, 5],
       "name": "Shinespark Ends Over Acid",
       "entranceCondition": {
         "comeInShinecharged": {
@@ -761,18 +851,6 @@
       "clearsObstacles": ["B"],
       "flashSuitChecked": true,
       "note": "Spark from the ground, left of the Power Bomb blocks."
-    },
-    {
-      "link": [2, 4],
-      "name": "Blue Speed Through Blocks",
-      "requires": [
-        {"getBlueSpeed": {
-          "usedTiles": 17,
-          "openEnd": 0
-        }}
-      ],
-      "clearsObstacles": ["B"],
-      "note": "Commonly known as a stutter-3, this is also doable as a 4-tap."
     },
     {
       "link": [2, 5],
@@ -879,119 +957,6 @@
     },
     {
       "link": [3, 5],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [4, 1],
-      "name": "PCJR Wall Jump Shinespark to Left Door",
-      "requires": [
-        "canWalljump",
-        "canShinechargeMovement",
-        "canMidairShinespark",
-        {"or": [
-          {"canShineCharge": {
-            "usedTiles": 32,
-            "gentleUpTiles": 6,
-            "openEnd": 1
-          }},
-          {"and": [
-            "h_canShineChargeMaxRunway",
-            {"obstaclesCleared": ["A"]}
-          ]}
-        ]},
-        {"shinespark": {"frames": 90}}
-      ],
-      "note": "Fire off the shinespark at the apex of two consecutive walljumps.",
-      "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
-    },
-    {
-      "link": [4, 1],
-      "name": "PCJR Big Jump Shinespark",
-      "notable": true,
-      "requires": [
-        "canShinechargeMovement",
-        "canMidairShinespark",
-        {"or": [
-          {"canShineCharge": {
-            "usedTiles": 32,
-            "gentleUpTiles": 6,
-            "openEnd": 1
-          }},
-          {"and": [
-            "h_canShineChargeMaxRunway",
-            {"obstaclesCleared": ["A"]}
-          ]}
-        ]},
-        {"shinespark": {"frames": 52}}
-      ],
-      "note": "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex.",
-      "devNote": "You can have a 'max' length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
-    },
-    {
-      "link": [4, 1],
-      "name": "Short Run Speedjump",
-      "requires": [
-        "SpeedBooster",
-        {"or": [
-          "HiJump",
-          {"and": [
-            "canLateralMidAirMorph",
-            "canTrickySpringBallJump"
-          ]}
-        ]}
-      ]
-    },
-    {
-      "link": [4, 1],
-      "name": "Long Run Speedjump",
-      "requires": [
-        "SpeedBooster",
-        {"or": [
-          "h_canUsePowerBombs",
-          {"obstaclesCleared": ["A"]}
-        ]}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [4, 2],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "link": [4, 3],
-      "name": "Shinespark",
-      "requires": [
-        {"or": [
-          {"canShineCharge": {
-            "usedTiles": 32,
-            "gentleUpTiles": 6,
-            "openEnd": 1
-          }},
-          {"and": [
-            "h_canShineChargeMaxRunway",
-            {"obstaclesCleared": ["A"]}
-          ]}
-        ]},
-        {"shinespark": {"frames": 40}}
-      ],
-      "devNote": "You can have a capped length runway available here if you break the PB blocks, but we won't duplicate strats for that right now."
-    },
-    {
-      "link": [4, 3],
-      "name": "Speedjump",
-      "requires": [
-        "SpeedBooster",
-        "HiJump",
-        {"or": [
-          "canSpringBallJumpMidAir",
-          "canWalljump"
-        ]}
-      ]
-    },
-    {
-      "link": [4, 5],
       "name": "Base",
       "requires": []
     },
@@ -1108,6 +1073,29 @@
       ]
     },
     {
+      "link": [5, 2],
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["B"]}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "PCJR Acid Shinespark",
+      "notable": true,
+      "requires": [
+        "Gravity",
+        "canSuitlessLavaDive",
+        "canShinechargeMovement",
+        "canHorizontalShinespark",
+        "h_canShineChargeMaxRunway",
+        {"acidFrames": 140},
+        {"shinespark": {"frames": 35}}
+      ],
+      "clearsObstacles": ["B"],
+      "note": "Gravity makes it possible to charge a spark in the acid in order to break the speed blocks."
+    },
+    {
       "link": [5, 3],
       "name": "Base",
       "requires": [
@@ -1204,29 +1192,6 @@
         "The Mella pixel positioning window is larger and higher with Morph and an X-Ray Stand Up."
       ],
       "devNote": "While the high pixel position looks possible, it is fairly unreasonable, as it also requires very precise horizontal positioning and the Mellas are chaotic."
-    },
-    {
-      "link": [5, 4],
-      "name": "Base",
-      "requires": [
-        {"obstaclesCleared": ["B"]}
-      ]
-    },
-    {
-      "link": [5, 4],
-      "name": "PCJR Acid Shinespark",
-      "notable": true,
-      "requires": [
-        "Gravity",
-        "canSuitlessLavaDive",
-        "canShinechargeMovement",
-        "canHorizontalShinespark",
-        "h_canShineChargeMaxRunway",
-        {"acidFrames": 140},
-        {"shinespark": {"frames": 35}}
-      ],
-      "clearsObstacles": ["B"],
-      "note": "Gravity makes it possible to charge a spark in the acid in order to break the speed blocks."
     },
     {
       "link": [6, 1],
