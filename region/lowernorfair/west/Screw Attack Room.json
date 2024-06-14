@@ -25,7 +25,8 @@
       "nodeSubType": "blue",
       "nodeAddress": "0x0019a7a",
       "doorOrientation": "right",
-      "doorEnvironments": [{"physics": "air"}]
+      "doorEnvironments": [{"physics": "air"}],
+      "spawnAt": 6
     },
     {
       "id": 3,
@@ -46,10 +47,15 @@
     },
     {
       "id": 5,
-      "name": "Junction Above Bottom Blocks with Top Blocks Broken",
+      "name": "Junction Above Bottom Blocks",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "note": "This exists because many strats for going up are somehwat independant from the strat for breaking the bomb blocks."
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 6,
+      "name": "Middle Right Door Spawn At Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -323,38 +329,78 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
-        "canPrepareForNextRoom",
         {"heatFrames": 40},
         "h_canHeatedCrystalFlash"
       ],
       "clearsObstacles": ["B"],
-      "flashSuitChecked": true,
-      "devNote": [
-        "The extra requirements are in case this is used after coming through the door.",
-        "FIXME: This could be refined slightly by using a spawnAt."
-      ]
+      "flashSuitChecked": true
     },
     {
       "link": [2, 3],
       "name": "Space Screw",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canPrepareForNextRoom",
         "SpaceJump",
         "ScrewAttack",
-        {"heatFrames": 400}
+        {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"]
     },
     {
       "link": [2, 3],
-      "name": "Screw Attack Room IBJ to Break the Top Blocks",
+      "name": "Doorway Speedjump",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canPowerBombMidIBJ",
-        {"heatFrames": 1300}
+        {"obstaclesCleared": ["A"]},
+        "HiJump",
+        "SpeedBooster",
+        "canWalljump",
+        "canCarefulJump",
+        {"doorUnlockedAtNode": 2},
+        {"heatFrames": 160}
       ],
-      "clearsObstacles": ["A"],
-      "note": "Place a Power Bomb during the IBJ to break the blocks without falling."
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "note": "Position yourself in the door way, then run and jump. Makes it possible to walljump up."
+    },
+    {
+      "link": [2, 3],
+      "name": "Doorway Spring Ball Jump",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "HiJump",
+        {"doorUnlockedAtNode": 2},
+        "canTrickySpringBallJump",
+        {"heatFrames": 120}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Screw Attack Room Doorway CWJ",
+      "notable": true,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatProof",
+        "HiJump",
+        "canCWJ",
+        "canStationarySpinJump",
+        "canInsaneJump",
+        "canInsaneWalljump",
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "note": "Position Samus in the doorway a few pixels from the edge. Dashing stationary spinjump into a delayed CWJ and hopefully catch the upper ledge with a walljump."
     },
     {
       "link": [2, 3],
@@ -514,40 +560,11 @@
     },
     {
       "link": [2, 4],
-      "name": "Base",
+      "name": "Prepared Screw Attack",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 90},
-        {"or": [
-          {"obstaclesCleared": ["B"]},
-          {"and": [
-            "ScrewAttack",
-            {"or": [
-              "canPrepareForNextRoom",
-              {"heatFrames": 30}
-            ]}
-          ]}
-        ]}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "link": [2, 4],
-      "name": "Power Bomb",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        {"heatFrames": 190}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "link": [2, 4],
-      "name": "Bombs",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        {"heatFrames": 180}
+        "ScrewAttack",
+        "canPrepareForNextRoom",
+        {"heatFrames": 90}
       ],
       "clearsObstacles": ["B"]
     },
@@ -603,60 +620,10 @@
     },
     {
       "link": [2, 5],
-      "name": "Upper Bomb Blocks Already Broken",
+      "name": "Base",
       "requires": [
-        {"obstaclesCleared": ["A"]}
+        {"heatFrames": 50}
       ]
-    },
-    {
-      "link": [2, 5],
-      "name": "Power Bombs",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        "canTrivialMidAirMorph",
-        {"heatFrames": 200}
-      ],
-      "clearsObstacles": ["A"],
-      "devNote": [
-        "This doesn't quite break the blocks above, but going up after has more requirements.",
-        "The canTrivialMidAirMorph could be avoided by using Spring Ball on entry or from the doorsill."
-      ]
-    },
-    {
-      "link": [2, 5],
-      "name": "Screw Attack Room IBJ to Break the Top Blocks",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "canIBJ",
-        {"heatFrames": 1200}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Expects that you fall down afterwards."
-    },
-    {
-      "link": [2, 5],
-      "name": "Space Bombs",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        "SpaceJump",
-        "canMidAirMorph",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [2, 5],
-      "name": "Springwall with Bombs",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        "h_HeatedSpringwall",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Use a Springwall to get up to the bomb blocks, to break them with a bomb."
     },
     {
       "link": [2, 5],
@@ -670,14 +637,13 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "canMidAirMorph",
         "h_canUseMorphBombs",
         {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"],
-      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the obstacle."
+      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the top bomb blocks."
     },
     {
       "link": [2, 5],
@@ -691,7 +657,6 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "canTrickyDashJump",
         "canMidAirMorph",
@@ -699,7 +664,7 @@
         {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"],
-      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the obstacle."
+      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the top bomb blocks."
     },
     {
       "link": [3, 1],
@@ -1040,10 +1005,32 @@
       "flashSuitChecked": true
     },
     {
+      "link": [5, 2],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 80},
+        {"or": [
+          "HiJump",
+          "SpaceJump",
+          "canWalljump",
+          "h_canCrouchJumpDownGrab",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "canIBJ",
+            {"heatFrames": 440}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 80}
+          ]}
+        ]}
+      ]
+    },
+    {
       "link": [5, 3],
       "name": "Screw Attack Room IBJ",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["A"]},
         "canIBJ",
         {"heatFrames": 1300}
       ],
@@ -1054,10 +1041,24 @@
     },
     {
       "link": [5, 3],
-      "name": "Space Jump",
+      "name": "Screw Attack Room IBJ to Break the Top Blocks",
       "requires": [
         "h_canNavigateHeatRooms",
+        "canPowerBombMidIBJ",
+        {"heatFrames": 1300}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb during the IBJ to break the blocks without falling."
+    },
+    {
+      "link": [5, 3],
+      "name": "Space Jump",
+      "requires": [
         "SpaceJump",
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "ScrewAttack"
+        ]},
         {"heatFrames": 400}
       ]
     },
@@ -1065,63 +1066,107 @@
       "link": [5, 3],
       "name": "Springwall",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["A"]},
         "h_HeatedSpringwall",
         {"heatFrames": 245}
       ]
     },
     {
-      "link": [5, 3],
-      "name": "Doorway Speedjump",
+      "link": [5, 4],
+      "name": "Base",
       "requires": [
-        "HiJump",
-        "SpeedBooster",
-        "canWalljump",
-        "canCarefulJump",
-        {"doorUnlockedAtNode": 2},
-        {"heatFrames": 240}
+        {"heatFrames": 40},
+        {"or": [
+          {"obstaclesCleared": ["B"]},
+          {"and": [
+            "ScrewAttack",
+            {"heatFrames": 30}
+          ]}
+        ]}
       ],
-      "unlocksDoors": [
-        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
-        {"nodeId": 2, "types": ["super"], "requires": []},
-        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
-      ],
-      "note": "Position yourself in the door way, then run and jump. Makes it possible to walljump up."
+      "clearsObstacles": ["B"]
     },
     {
-      "link": [5, 3],
-      "name": "Doorway Spring Ball Jump",
+      "link": [5, 4],
+      "name": "Power Bomb",
       "requires": [
-        "HiJump",
-        {"doorUnlockedAtNode": 2},
-        "canTrickySpringBallJump",
-        {"heatFrames": 200}
+        "h_canUsePowerBombs",
+        {"heatFrames": 140}
       ],
-      "unlocksDoors": [
-        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
-        {"nodeId": 2, "types": ["super"], "requires": []},
-        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 4],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        {"heatFrames": 130}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 5],
+      "name": "Power Bombs",
+      "requires": [
+        "h_canUsePowerBombs",
+        "canTrivialMidAirMorph",
+        {"heatFrames": 150}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": [
+        "FIXME: This doesn't quite break the blocks above, but going up after has more requirements.",
+        "The canTrivialMidAirMorph could be avoided by using Spring Ball on entry or from the doorsill."
       ]
     },
     {
-      "link": [5, 3],
-      "name": "Screw Attack Room Doorway CWJ",
-      "notable": true,
+      "link": [5, 5],
+      "name": "IBJ to Break the Top Blocks",
       "requires": [
-        "h_heatProof",
-        "HiJump",
-        "canCWJ",
-        "canStationarySpinJump",
-        "canInsaneJump",
-        "canInsaneWalljump",
-        {"doorUnlockedAtNode": 2}
+        "canIBJ",
+        {"heatFrames": 1150}
       ],
-      "unlocksDoors": [
-        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
-        {"nodeId": 2, "types": ["super"], "requires": []},
-        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      "clearsObstacles": ["A"],
+      "note": "Expects that Samus falls down afterwards.",
+      "devNote": "FIXME: This assumes B is not broken, add other IBJ variants."
+    },
+    {
+      "link": [5, 5],
+      "name": "Space Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        "SpaceJump",
+        "canMidAirMorph",
+        {"heatFrames": 250}
       ],
-      "note": "Position yourself in the door way a few pixels from the edge.  Dashing stationary spinjump into a delayed CWJ and hopefully catch the upper ledge with a walljump."
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [5, 5],
+      "name": "Springwall with Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        "h_HeatedSpringwall",
+        {"heatFrames": 250}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Use a Springwall to get up to the bomb blocks, to break them with a bomb."
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        {"heatFrames": 40},
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [6, 5],
+      "name": "Fall into Room",
+      "requires": [
+        {"heatFrames": 50}
+      ]
     }
   ]
 }
