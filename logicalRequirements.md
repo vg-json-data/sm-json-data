@@ -184,7 +184,7 @@ __Example:__
 
 #### autoReserveTrigger object
 
-An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. It has two optional properties:
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. If the `autoReserveTrigger` takes place in a heated room, there is an implicit `heatFrames` requirement with the number of frames being equal to the amount of health recovered by the Reserve refill.  An `autoReserveTrigger` object has two optional properties:
 
 * _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
 * _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).

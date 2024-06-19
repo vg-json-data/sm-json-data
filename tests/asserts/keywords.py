@@ -74,6 +74,7 @@ def process_keyvalue(k, v, metadata):
         "resourceAvailable",# validated by schema
         "refill",           # validated by schema
         "partialRefill",    # validated by schema
+        "autoReserveTrigger",    # validated by schema
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInRunning",  # validated by schema
