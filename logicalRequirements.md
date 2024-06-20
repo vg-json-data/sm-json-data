@@ -231,6 +231,15 @@ __Example:__
 {"gravitylessHeatFrames": 70}
 ```
 
+#### shineChargeFrames object
+
+A `shineChargeFrames` object represents the need for Samus to have the given amount of shinecharge frames remaining; after this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
+
+For this requirement to be satisfied, one of the following must be true:
+- It must be preceded by a `canShinecharge` requirement in the same strat.
+- It must be preceded by a strat with `keepsShinecharge` set to true.
+- The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
+
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
 
