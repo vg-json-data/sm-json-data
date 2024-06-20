@@ -236,8 +236,8 @@ __Example:__
 A `shineChargeFrames` object represents the need for Samus to have the given amount of shinecharge frames remaining; after this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
 
 For this requirement to be satisfied, one of the following must be true:
-- It must be preceded by a `canShinecharge` requirement in the same strat.
-- It must be preceded by a strat with `keepsShinecharge` set to true.
+- It must be preceded by a `canShineCharge` requirement in the same strat.
+- The start must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
 - The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
 
 #### hibashiHits object
