@@ -51,7 +51,8 @@
             "We went with the two most plausible ones."
           ]
         }
-      ]
+      ],
+      "spawnAt": 8
     },
     {
       "id": 2,
@@ -93,10 +94,9 @@
     },
     {
       "id": 8,
-      "name": "Left Door Junction After Multiviola",
+      "name": "Left Door Spawn At Junction (Multiviola Hit)",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "note": "In front of the bottom left door, after the multiviola has moved."
+      "nodeSubType": "junction"
     },
     {
       "id": 9,
@@ -199,7 +199,7 @@
           "id": 6,
           "note": "Direct link for SpeedBooster strats. Other strats should go 1-> 7-> 6."
         },
-        {"id": 8}
+        {"id": 7}
       ]
     },
     {
@@ -232,36 +232,30 @@
     {
       "from": 6,
       "to": [
+        {"id": 1},
         {"id": 4},
         {"id": 6},
         {
           "id": 7,
           "devNote": "The Dessgeegas can be assumed to be fought from above, going 4->6->7."
         },
-        {"id": 8},
         {"id": 9}
       ]
     },
     {
       "from": 7,
       "to": [
+        {"id": 1},
         {
           "id": 6,
           "devNote": "No heatproof or slow kill strats because it's less damage to run to the safe spot above 6 and kill them from there"
-        },
-        {"id": 8}
+        }
       ]
     },
     {
       "from": 8,
       "to": [
-        {"id": 1},
-        {"id": 6},
-        {
-          "id": 7,
-          "devNote": "No heatproof or slow kill strats because it's less damage to run to the safe spot above 6 and lure everything there"
-        },
-        {"id": 8}
+        {"id": 1}
       ]
     },
     {
@@ -278,27 +272,6 @@
       "name": "Leave With Runway (Full Runway)",
       "requires": [
         {"heatFrames": 250},
-        {"or": [
-          {"obstaclesCleared": ["E"]},
-          {"enemyDamage": {
-            "enemy": "Multiviola",
-            "type": "contact",
-            "hits": 1
-          }},
-          {"and": [
-            "canPrepareForNextRoom",
-            {"or": [
-              "Plasma",
-              {"and": [
-                "Charge",
-                {"or": [
-                  "Wave",
-                  "Spazer"
-                ]}
-              ]}
-            ]}
-          ]}
-        ]},
         {"or": [
           {"obstaclesCleared": ["C"]},
           {"and": [
@@ -324,25 +297,23 @@
         }
       },
       "note": "This runway requires killing the Dessgeegas closest to the door, and taking a Multiviola hit if the Multiviola is alive.",
-      "devNote": "This strat doesn't actually clear obstacle E, but since we're leaving the room after it doesn't really matter."
+      "devNote": "The Multiviolas move out of the way if coming from the left, or they can be killed with the Dessgeegas."
     },
     {
       "link": [1, 1],
       "name": "Leave With Runway (Short Runway)",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
+        "canPrepareForNextRoom",
         {"or": [
-          {"obstaclesCleared": ["E"]},
+          "Plasma",
           {"and": [
-            "canPrepareForNextRoom",
+            "Charge",
             {"or": [
-              "Plasma",
-              {"and": [
-                "Charge",
-                {"or": [
-                  "Wave",
-                  "Spazer"
-                ]}
-              ]}
+              "Wave",
+              "Spazer"
             ]}
           ]}
         ]},
@@ -354,8 +325,34 @@
           "openEnd": 1
         }
       },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
       "note": "The Multiviola can be killed by aiming diagonally down when entering the room and shooting a strong enough beam shot (not ice).",
       "devNote": "Taking a hit by the Multiviola isn't an option, as it will stop Samus' run and then the Dessgeega will be in the way."
+    },
+    {
+      "link": [1, 1],
+      "name": "Kill Multiviola on Entry (Blue Speed)",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 0,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom"
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["C", "E"]},
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     },
     {
       "link": [1, 1],
@@ -380,7 +377,6 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 135}
       ],
       "clearsObstacles": ["C", "E", "F"]
@@ -392,78 +388,188 @@
         "comeInWithSpark": {}
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 160},
-        {"shinespark": {"frames": 80}}
+        {"shinespark": {"frames": 77, "excessFrames": 2}}
       ],
       "clearsObstacles": ["C", "E", "F"],
       "note": "More heat frames than shinespark frames because the shinespark bonk takes some time."
     },
     {
-      "link": [1, 8],
-      "name": "Get Hit",
+      "link": [1, 6],
+      "name": "Plasma Hitbox Run-Through",
       "requires": [
+        "canDodgeWhileShooting",
+        "Plasma",
+        "canHitbox",
+        "h_getBlueSpeedMaxRunway",
+        {"heatFrames": 145}
+      ],
+      "clearsObstacles": ["C", "E", "F"],
+      "note": [
+        "Time Plasma shots so that Samus can run through the first two Dessgeegas and gain blue speed.",
+        "Shooting into the floor can give more control over the enemy iframes."
+      ]
+    },
+    {
+      "link": [1, 7],
+      "name": "Already Killed",
+      "requires": [
+        {"obstaclesCleared": ["C", "E"]},
+        {"heatFrames": 180}
+      ]
+    },
+    {
+      "link": [1, 7],
+      "name": "Tank the Damage",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"heatFrames": 240},
         {"enemyDamage": {
           "enemy": "Multiviola",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
           "type": "contact",
           "hits": 1
         }}
       ]
     },
     {
-      "link": [1, 8],
-      "name": "Kill Multiviola on Entry",
+      "link": [1, 7],
+      "name": "Tank the Damage",
       "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          {"and": [
-            "h_canNavigateHeatRooms",
-            {"enemyKill": {
-              "enemies": [["Multiviola"]],
-              "explicitWeapons": ["PseudoScrew", "ScrewAttack", "Missile", "Super"]
-            }},
-            {"heatFrames": 30}
-          ]},
-          {"and": [
-            "h_canNavigateHeatRooms",
-            {"enemyKill": {
-              "enemies": [["Multiviola"]],
-              "explicitWeapons": ["Charge+Ice", "Ice+Wave", "Ice+Spazer"]
-            }},
-            {"heatFrames": 60}
-          ]},
-          {"enemyKill": {
-            "enemies": [["Multiviola"]],
-            "explicitWeapons": ["Plasma", "Charge+Spazer", "Charge+Wave"]
-          }}
-        ]}
+        {"heatFrames": 200},
+        {"enemyDamage": {
+          "enemy": "Dessgeega",
+          "type": "contact",
+          "hits": 2
+        }}
+      ]
+    },
+    {
+      "link": [1, 7],
+      "name": "Plasma Kill",
+      "requires": [
+        "Plasma",
+        {"heatFrames": 380}
       ],
+      "clearsObstacles": ["C", "E"]
+    },
+    {
+      "link": [1, 7],
+      "name": "Plasma Kill Sparing Multiviolas",
+      "requires": [
+        "Plasma",
+        "canDodgeWhileShooting",
+        {"heatFrames": 480}
+      ],
+      "clearsObstacles": ["C"],
       "note": [
-        "The multiviola will immediately reach Samus at the door when entering the room.",
-        "By entering the room in a jump and aiming down, there is just enough time to shoot the multiviola.",
-        "Or by entering the room aiming diagonally down and firing a beam shot."
+        "Sparing the Multiviolas is required to perform an ice clip further in.",
+        "However, it requires going slower."
+      ]
+    },
+    {
+      "link": [1, 7],
+      "name": "Beam Combo Kill",
+      "requires": [
+        "canDodgeWhileShooting",
+        "Charge",
+        "Ice",
+        "Wave",
+        "Spazer",
+        {"heatFrames": 1080}
       ],
-      "devNote": "You can kill the viola with a super without jumping but that would be a notable strat for being frame precise and its not worth separating that out."
+      "clearsObstacles": ["C"],
+      "devNote": "Without canDodgeWhileShooting, tanking the damage and running through is best."
     },
     {
-      "link": [1, 8],
-      "name": "Kill Multiviola on Entry (Blue Speed)",
-      "entranceCondition": {
-        "comeInGettingBlueSpeed": {
-          "length": 0,
-          "openEnd": 1
-        }
-      },
+      "link": [1, 7],
+      "name": "Missiles Kill",
       "requires": [
-        "canPrepareForNextRoom"
+        {"enemyKill": {
+          "enemies": [
+            [
+              "Dessgeega",
+              "Dessgeega",
+              "Dessgeega",
+              "Multiviola",
+              "Multiviola"
+            ]
+          ],
+          "explicitWeapons": ["Missile"]
+        }},
+        {"heatFrames": 480}
+      ],
+      "clearsObstacles": ["C", "E"]
+    },
+    {
+      "link": [1, 7],
+      "name": "Missiles Kill Sparing Multiviolas",
+      "requires": [
+        "canDodgeWhileShooting",
+        {"enemyKill": {
+          "enemies": [["Dessgeega", "Dessgeega", "Dessgeega"]],
+          "explicitWeapons": ["Missile"]
+        }},
+        {"heatFrames": 540}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Sparing the Multiviolas is required to perform an ice clip further in.",
+        "However, it requires going slower."
       ]
     },
     {
-      "link": [1, 8],
-      "name": "Multiviola Already Dead",
+      "link": [1, 7],
+      "name": "Supers Kill",
       "requires": [
-        {"obstaclesCleared": ["E"]}
+        {"enemyKill": {
+          "enemies": [
+            [
+              "Dessgeega",
+              "Dessgeega",
+              "Dessgeega",
+              "Multiviola",
+              "Multiviola"
+            ]
+          ],
+          "explicitWeapons": ["Super"]
+        }},
+        {"heatFrames": 380}
+      ],
+      "clearsObstacles": ["C", "E"]
+    },
+    {
+      "link": [1, 7],
+      "name": "Supers Kill Sparing Multiviolas",
+      "requires": [
+        "canDodgeWhileShooting",
+        {"enemyKill": {
+          "enemies": [["Dessgeega", "Dessgeega", "Dessgeega"]],
+          "explicitWeapons": ["Super"]
+        }},
+        {"heatFrames": 380}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Sparing the Multiviolas is required to perform an ice clip further in.",
+        "However, it requires going slower."
       ]
+    },
+    {
+      "link": [1, 7],
+      "name": "Screw Kill",
+      "requires": [
+        "ScrewAttack",
+        {"heatFrames": 230}
+      ],
+      "clearsObstacles": ["C"],
+      "devNote": "You can't catch the Multiviolas to kill them with Screw without reaching node 6."
     },
     {
       "link": [2, 2],
@@ -491,7 +597,6 @@
       "name": "Power Bomb",
       "requires": [
         {"obstaclesNotCleared": ["A"]},
-        "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
         {"heatFrames": 180}
       ],
@@ -506,7 +611,6 @@
       "link": [2, 4],
       "name": "Break Left Blocks Only",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 160},
         {"obstaclesNotCleared": ["A"]},
         {"or": [
@@ -527,7 +631,6 @@
         "comeInWithTemporaryBlue": {}
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesNotCleared": ["A"]},
         "canPrepareForNextRoom",
         "canChainTemporaryBlue",
@@ -550,7 +653,6 @@
         "comeInWithTemporaryBlue": {}
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesNotCleared": ["A"]},
         "canPrepareForNextRoom",
         "canChainTemporaryBlue",
@@ -611,7 +713,6 @@
       "link": [3, 4],
       "name": "Base",
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 120}
       ]
@@ -760,7 +861,6 @@
       "link": [4, 3],
       "name": "Base",
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 80}
       ]
@@ -769,7 +869,6 @@
       "link": [4, 3],
       "name": "Power Bomb All the Blocks for Later",
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
         {"heatFrames": 80}
       ],
@@ -780,7 +879,6 @@
       "name": "Power Bomb the Left Blocks for Later",
       "requires": [
         {"obstaclesNotCleared": ["A"]},
-        "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
         {"heatFrames": 95}
       ],
@@ -792,7 +890,6 @@
       "link": [4, 3],
       "name": "Bomb a Block for Later",
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_canUseMorphBombs",
         {"heatFrames": 80}
       ],
@@ -830,7 +927,6 @@
       "link": [4, 6],
       "name": "Already Killed",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["D"]},
         {"heatFrames": 450}
       ]
@@ -839,7 +935,6 @@
       "link": [4, 6],
       "name": "Tank the Damage",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 400},
         {"enemyDamage": {
           "enemy": "Multiviola",
@@ -864,7 +959,6 @@
       "link": [4, 6],
       "name": "Screw Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         "ScrewAttack",
         {"heatFrames": 450}
       ],
@@ -874,7 +968,6 @@
       "link": [4, 6],
       "name": "Strong Beam Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"and": [
             "Wave",
@@ -903,7 +996,6 @@
       "link": [4, 6],
       "name": "Power Bomb Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"enemyKill": {
           "enemies": [
             ["Multiviola", "Multiviola"],
@@ -914,6 +1006,33 @@
         {"heatFrames": 500}
       ],
       "clearsObstacles": ["D"]
+    },
+    {
+      "link": [6, 1],
+      "name": "Blue Suit Run",
+      "requires": [
+        {"or": [
+          {"obstaclesCleared": ["F"]},
+          {"and": [
+            "canHitbox",
+            {"enemyDamage": {
+              "enemy": "Dessgeega",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        {"getBlueSpeed": {
+          "usedTiles": 23,
+          "openEnd": 2
+        }},
+        {"heatFrames": 200}
+      ],
+      "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
+      ],
+      "note": "Taking damage off a Dessgeega at the far right, coming in from the top, allows you to charge a blue suit and get through to the door."
     },
     {
       "link": [6, 4],
@@ -953,7 +1072,6 @@
       "link": [6, 7],
       "name": "Already Killed",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["F"]},
         {"heatFrames": 150}
       ]
@@ -962,7 +1080,6 @@
       "link": [6, 7],
       "name": "Tank the Damage",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 150},
         {"enemyDamage": {
           "enemy": "Dessgeega",
@@ -975,7 +1092,6 @@
       "link": [6, 7],
       "name": "Slow Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"enemyKill": {
           "enemies": [["Dessgeega", "Dessgeega"]],
           "excludedWeapons": ["Bombs", "PseudoScrew"]
@@ -989,7 +1105,6 @@
       "link": [6, 7],
       "name": "Beam Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"and": [
             "Plasma",
@@ -1010,7 +1125,6 @@
       "link": [6, 7],
       "name": "Screw Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         "ScrewAttack",
         {"heatFrames": 200}
       ],
@@ -1020,7 +1134,6 @@
       "link": [6, 7],
       "name": "Ammo Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"and": [
             {"enemyKill": {
@@ -1047,31 +1160,6 @@
         {"heatFrames": 150}
       ],
       "clearsObstacles": ["F"]
-    },
-    {
-      "link": [6, 8],
-      "name": "Blue Suit Run",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"or": [
-          {"obstaclesCleared": ["F"]},
-          {"and": [
-            "canHitbox",
-            {"enemyDamage": {
-              "enemy": "Dessgeega",
-              "type": "contact",
-              "hits": 1
-            }}
-          ]}
-        ]},
-        {"getBlueSpeed": {
-          "usedTiles": 23,
-          "openEnd": 2
-        }},
-        {"heatFrames": 200}
-      ],
-      "clearsObstacles": ["C", "E"],
-      "note": "Taking damage off a Dessgeega at the far right, coming in from the top, allows you to charge a blue suit and get through to the door."
     },
     {
       "link": [6, 9],
@@ -1142,114 +1230,33 @@
       ]
     },
     {
-      "link": [7, 6],
+      "link": [7, 1],
       "name": "Already Killed",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["F"]},
-        {"heatFrames": 100}
-      ]
-    },
-    {
-      "link": [7, 6],
-      "name": "Tank the Damage",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 150},
-        {"enemyDamage": {
-          "enemy": "Dessgeega",
-          "type": "contact",
-          "hits": 1
-        }}
-      ]
-    },
-    {
-      "link": [7, 6],
-      "name": "Plasma Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["C"]},
-        "Plasma",
-        {"heatFrames": 400}
-      ],
-      "clearsObstacles": ["F"]
-    },
-    {
-      "link": [7, 6],
-      "name": "Beam Combo Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["C"]},
-        "Charge",
-        "Ice",
-        "Wave",
-        "Spazer",
-        {"heatFrames": 550}
-      ],
-      "clearsObstacles": ["F"]
-    },
-    {
-      "link": [7, 6],
-      "name": "Supers Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["C"]},
-        {"enemyKill": {
-          "enemies": [["Dessgeega", "Dessgeega"]],
-          "explicitWeapons": ["Super"]
-        }},
-        {"heatFrames": 200}
-      ],
-      "clearsObstacles": ["F"]
-    },
-    {
-      "link": [7, 6],
-      "name": "Screw Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "ScrewAttack",
-        {"heatFrames": 160}
-      ],
-      "clearsObstacles": ["F"]
-    },
-    {
-      "link": [7, 6],
-      "name": "Missiles Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["C"]},
-        {"enemyKill": {
-          "enemies": [["Dessgeega", "Dessgeega"]],
-          "explicitWeapons": ["Missile"]
-        }},
-        {"heatFrames": 400}
-      ],
-      "clearsObstacles": ["F"]
-    },
-    {
-      "link": [7, 8],
-      "name": "Already Killed",
-      "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["C"]},
         {"heatFrames": 200}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
       ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "Tank the Damage",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 250},
         {"enemyDamage": {
           "enemy": "Dessgeega",
           "type": "contact",
           "hits": 2
         }}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
       ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "HeatProof Kill",
       "requires": [
         "h_heatProof",
@@ -1285,37 +1292,46 @@
         ]}
       ],
       "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
+      ],
       "note": "Some weapons are very slow at killing the Multiviolas and require use of the safe spot in the bottom right Multiviola cage.",
-      "devNote": "Bombs are excluded because there is no safe setup."
+      "devNote": [
+        "Bombs are excluded because there is no safe setup.",
+        "Without canDodgeWhileShooting, tanking the damage and running through is best."
+      ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "Wave Plasma Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["F"]},
         "Plasma",
         "Wave",
         {"heatFrames": 400}
       ],
-      "clearsObstacles": ["C", "E"]
+      "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
+      ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "Plasma Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["F"]},
         "Plasma",
         {"heatFrames": 500}
       ],
-      "clearsObstacles": ["C", "E"]
+      "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
+      ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "Missiles Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["F"]},
         {"heatFrames": 200},
         {"or": [
@@ -1336,13 +1352,15 @@
           {"obstaclesCleared": ["E"]}
         ]}
       ],
-      "clearsObstacles": ["C", "E"]
+      "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
+      ]
     },
     {
-      "link": [7, 8],
+      "link": [7, 1],
       "name": "Supers Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["F"]},
         {"heatFrames": 200},
         {"or": [
@@ -1363,58 +1381,36 @@
           {"obstaclesCleared": ["E"]}
         ]}
       ],
-      "clearsObstacles": ["C", "E"]
-    },
-    {
-      "link": [7, 8],
-      "name": "Screw Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "ScrewAttack",
-        {"heatFrames": 320}
-      ],
-      "clearsObstacles": ["C", "E"]
-    },
-    {
-      "link": [8, 1],
-      "name": "Base",
-      "requires": [],
+      "clearsObstacles": ["C", "E"],
       "unlocksDoors": [
         {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
       ]
     },
     {
-      "link": [8, 6],
-      "name": "Plasma Hitbox Run-Through",
+      "link": [7, 1],
+      "name": "Screw Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canDodgeWhileShooting",
-        "Plasma",
-        "canHitbox",
-        "h_getBlueSpeedMaxRunway",
-        {"heatFrames": 145}
+        "ScrewAttack",
+        {"heatFrames": 320}
       ],
-      "clearsObstacles": ["C", "E", "F"],
-      "note": [
-        "Time Plasma shots so that Samus can run through the first two Dessgeegas and gain blue speed.",
-        "Shooting into the floor can give more control over the enemy iframes."
+      "clearsObstacles": ["C", "E"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]}
       ]
     },
     {
-      "link": [8, 7],
+      "link": [7, 6],
       "name": "Already Killed",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"obstaclesCleared": ["C", "E"]},
-        {"heatFrames": 180}
+        {"obstaclesCleared": ["F"]},
+        {"heatFrames": 100}
       ]
     },
     {
-      "link": [8, 7],
+      "link": [7, 6],
       "name": "Tank the Damage",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 200},
+        {"heatFrames": 150},
         {"enemyDamage": {
           "enemy": "Dessgeega",
           "type": "contact",
@@ -1423,137 +1419,121 @@
       ]
     },
     {
-      "link": [8, 7],
+      "link": [7, 6],
       "name": "Plasma Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["C"]},
         "Plasma",
-        {"heatFrames": 380}
+        {"heatFrames": 400}
       ],
-      "clearsObstacles": ["C", "E"]
+      "clearsObstacles": ["F"]
     },
     {
-      "link": [8, 7],
-      "name": "Plasma Kill Sparing Multiviolas",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "Plasma",
-        {"heatFrames": 480}
-      ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "Sparing the Multiviolas is required to perform an ice clip further in.",
-        "However, it requires going slower."
-      ]
-    },
-    {
-      "link": [8, 7],
+      "link": [7, 6],
       "name": "Beam Combo Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["C"]},
+        "canDodgeWhileShooting",
         "Charge",
         "Ice",
         "Wave",
         "Spazer",
-        {"heatFrames": 1080}
+        {"heatFrames": 550}
       ],
-      "clearsObstacles": ["C"]
+      "clearsObstacles": ["F"],
+      "devNote": "Without canDodgeWhileShooting, tanking the damage and running through is best."
     },
     {
-      "link": [8, 7],
-      "name": "Missiles Kill",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"enemyKill": {
-          "enemies": [
-            [
-              "Dessgeega",
-              "Dessgeega",
-              "Dessgeega",
-              "Multiviola",
-              "Multiviola"
-            ]
-          ],
-          "explicitWeapons": ["Missile"]
-        }},
-        {"heatFrames": 480}
-      ],
-      "clearsObstacles": ["C", "E"]
-    },
-    {
-      "link": [8, 7],
-      "name": "Missiles Kill Sparing Multiviolas",
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"enemyKill": {
-          "enemies": [["Dessgeega", "Dessgeega", "Dessgeega"]],
-          "explicitWeapons": ["Missile"]
-        }},
-        {"heatFrames": 540}
-      ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "Sparing the Multiviolas is required to perform an ice clip further in.",
-        "However, it requires going slower."
-      ]
-    },
-    {
-      "link": [8, 7],
+      "link": [7, 6],
       "name": "Supers Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["C"]},
         {"enemyKill": {
-          "enemies": [
-            [
-              "Dessgeega",
-              "Dessgeega",
-              "Dessgeega",
-              "Multiviola",
-              "Multiviola"
-            ]
-          ],
+          "enemies": [["Dessgeega", "Dessgeega"]],
           "explicitWeapons": ["Super"]
         }},
-        {"heatFrames": 380}
+        {"heatFrames": 200}
       ],
-      "clearsObstacles": ["C", "E"]
+      "clearsObstacles": ["F"]
     },
     {
-      "link": [8, 7],
-      "name": "Supers Kill Sparing Multiviolas",
+      "link": [7, 6],
+      "name": "Screw Kill",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"enemyKill": {
-          "enemies": [["Dessgeega", "Dessgeega", "Dessgeega"]],
-          "explicitWeapons": ["Super"]
-        }},
-        {"heatFrames": 380}
+        "ScrewAttack",
+        {"heatFrames": 160}
       ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "Sparing the Multiviolas is required to perform an ice clip further in.",
-        "However, it requires going slower."
+      "clearsObstacles": ["F"]
+    },
+    {
+      "link": [7, 6],
+      "name": "Missiles Kill",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        {"enemyKill": {
+          "enemies": [["Dessgeega", "Dessgeega"]],
+          "explicitWeapons": ["Missile"]
+        }},
+        {"heatFrames": 400}
+      ],
+      "clearsObstacles": ["F"]
+    },
+    {
+      "link": [8, 1],
+      "name": "Get Hit on Entry",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Multiviola",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"heatFrames": 40}
       ]
     },
     {
-      "link": [8, 7],
-      "name": "Screw Kill",
+      "link": [8, 1],
+      "name": "Kill Multiviola on Entry",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "ScrewAttack",
-        {"heatFrames": 230}
+        "canPrepareForNextRoom",
+        {"or": [
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["PseudoScrew", "ScrewAttack"]
+            }},
+            {"heatFrames": 30}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["Missile", "Super"]
+            }},
+            {"heatFrames": 30}
+          ]},
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["Charge+Ice", "Ice+Wave", "Ice+Spazer"]
+            }},
+            {"heatFrames": 60}
+          ]},
+          {"enemyKill": {
+            "enemies": [["Multiviola"]],
+            "explicitWeapons": ["Plasma", "Charge+Spazer", "Charge+Wave"]
+          }}
+        ]},
+        {"heatFrames": 40}
       ],
-      "clearsObstacles": ["C"],
-      "devNote": "You can't catch the Multiviolas to kill them with Screw without reaching node 6."
-    },
-    {
-      "link": [8, 8],
-      "name": "Crystal Flash",
-      "requires": [
-        {"obstaclesCleared": ["C", "E"]},
-        "h_canHeatedCrystalFlash"
+      "note": [
+        "The Multiviola will immediately reach Samus at the door when entering the room.",
+        "By entering the room in a jump and aiming down, there is just enough time to shoot the multiviola.",
+        "Or by entering the room aiming diagonally down and firing a beam shot."
       ],
-      "flashSuitChecked": true
+      "devNote": [
+        "You can kill the Multiviola with a super without jumping but it would be a notable strat for being frame precise and its not worth separating it out.",
+        "This does not clear obstacle E, because this is not the Multiviola that can be used for the ice clip."
+      ]
     },
     {
       "link": [9, 2],
