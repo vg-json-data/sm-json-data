@@ -237,7 +237,7 @@ A `shineChargeFrames` object represents the need for Samus to have the given amo
 
 For this requirement to be satisfied, one of the following must be true:
 - It must be preceded by a `canShineCharge` requirement in the same strat.
-- The start must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
+- The strat must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
 - The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
 
 #### hibashiHits object
