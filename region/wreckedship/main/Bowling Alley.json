@@ -219,12 +219,12 @@
       "name": "Leave with Runway, Break Speed Blocks",
       "requires": [
         {"or": [
-          {"canShineCharge": {
+          {"getBlueSpeed": {
             "usedTiles": 28,
             "openEnd": 0
           }},
           {"and": [
-            {"canShineCharge": {
+            {"getBlueSpeed": {
               "usedTiles": 29,
               "openEnd": 0
             }},
@@ -243,7 +243,7 @@
       "link": [1, 1],
       "name": "Leave with Runway, Enter with Speed",
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 29,
           "openEnd": 0
         }
@@ -293,10 +293,10 @@
         "canTemporaryBlue",
         "canSpeedball",
         "canMoondance",
-        {"canShineCharge": {
-          "openEnd": 0,
+        {"getBlueSpeed": {
           "usedTiles": 16,
-          "steepDownTiles": 4
+          "steepDownTiles": 4,
+          "openEnd": 0
         }}
       ],
       "exitCondition": {
@@ -326,10 +326,10 @@
         "canExtendedMoondance",
         "canSpeedball",
         "Grapple",
-        {"canShineCharge": {
-          "openEnd": 0,
+        {"getBlueSpeed": {
           "usedTiles": 16,
-          "steepDownTiles": 4
+          "steepDownTiles": 4,
+          "openEnd": 0
         }}
       ],
       "exitCondition": {
@@ -358,10 +358,10 @@
         "canTemporaryBlue",
         "canMoondance",
         "canSpeedball",
-        {"canShineCharge": {
-          "openEnd": 0,
+        {"getBlueSpeed": {
           "usedTiles": 16,
-          "steepDownTiles": 4
+          "steepDownTiles": 4,
+          "openEnd": 0
         }}
       ],
       "clearsObstacles": ["B"],
@@ -384,10 +384,26 @@
         }
       },
       "requires": [
-        "SpeedBooster",
+        {"or": [
+          {"getBlueSpeed": {
+            "usedTiles": 28,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"getBlueSpeed": {
+              "usedTiles": 29,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 1}
+          ]}
+        ]},
         "canMoonfall"
       ],
       "clearsObstacles": ["B"],
+      "unlocksDoors": [
+        {"nodeId": 1, "types": ["missiles", "super"], "requires": []},
+        {"nodeId": 1, "types": ["powerbomb"], "requires": ["never"]}
+      ],
       "note": "The camera will not follow Samus after clipping."
     },
     {
@@ -410,10 +426,7 @@
         "h_XModeSpikeHit",
         "h_XModeSpikeHit",
         "canIframeSpikeJump",
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
+        "h_canShineChargeMaxRunway",
         "canShinechargeMovement"
       ],
       "exitCondition": {
@@ -430,10 +443,7 @@
       "requires": [
         {"not": "f_DefeatedPhantoon"},
         "canRiskPermanentLossOfAccess",
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
+        "h_canShineChargeMaxRunway",
         "canShinechargeMovement"
       ],
       "exitCondition": {
@@ -584,6 +594,7 @@
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": [
         "Climb up about half a screen.",
         "If Phantoon is dead, the last part of the climb should be done carefully to avoid triggering collision with the spikes:",
@@ -690,8 +701,8 @@
           {"and": [
             {"obstaclesCleared": ["A"]},
             {"canShineCharge": {
-              "usedTiles": 33,
-              "openEnd": 2
+              "usedTiles": 35,
+              "openEnd": 1
             }},
             {"or": [
               "f_DefeatedPhantoon",
@@ -706,13 +717,16 @@
         "Just left of center of the pit is a good place to bounce for entering the tunnel.",
         "Requires either a tight shortcharge or clearing the power bomb blocks to open up more runway."
       ],
-      "devNote": "Killing phantoon only removes requirements for the strat."
+      "devNote": [
+        "Killing phantoon only removes requirements for the strat.",
+        "The runway is a bit longer with Phantoon killed and the Power Bomb blocks broken, but it shouldn't matter at this difficulty."
+      ]
     },
     {
       "link": [4, 3],
       "name": "Blind Traversal",
       "requires": [
-        {"obstaclesCleared": ["B"]},
+        {"obstaclesCleared": ["A", "B"]},
         "h_canBombThings",
         "canOffScreenMovement",
         {"or": [
@@ -724,7 +738,10 @@
           {"and": [
             {"or": [
               {"and": [
-                "SpeedBooster",
+                {"canShineCharge": {
+                  "usedTiles": 35,
+                  "openEnd": 1
+                }},
                 "h_ShinesparksCostEnergy"
               ]},
               "f_DefeatedPhantoon"
@@ -741,26 +758,23 @@
     },
     {
       "link": [4, 5],
-      "name": "Chozo Statue Already Broken",
+      "name": "Broken Chozo Statue",
       "requires": [
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
-        {"shinespark": {"frames": 40}},
-        {"obstaclesCleared": ["A"]}
-      ]
-    },
-    {
-      "link": [4, 5],
-      "name": "Power Bomb the Chozo Statue",
-      "requires": [
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
-        {"shinespark": {"frames": 40}},
-        "h_canUsePowerBombs"
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "h_canUsePowerBombs"
+        ]},
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 35,
+            "openEnd": 1
+          }},
+          {"and": [
+            "f_DefeatedPhantoon",
+            "h_canShineChargeMaxRunway"
+          ]}
+        ]},
+        {"shinespark": {"frames": 40}}
       ],
       "clearsObstacles": ["A"]
     },

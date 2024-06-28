@@ -184,7 +184,7 @@ __Example:__
 
 #### autoReserveTrigger object
 
-An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. It has two optional properties:
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. If the `autoReserveTrigger` takes place in a heated room, there is an implicit `heatFrames` requirement with the number of frames being equal to the amount of health recovered by the Reserve refill.  An `autoReserveTrigger` object has two optional properties:
 
 * _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
 * _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
@@ -230,6 +230,15 @@ __Example:__
 ```json
 {"gravitylessHeatFrames": 70}
 ```
+
+#### shineChargeFrames object
+
+A `shineChargeFrames` object represents the need for Samus to have the given amount of shinecharge frames remaining; after this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
+
+For this requirement to be satisfied, one of the following must be true:
+- It must be preceded by a `canShineCharge` requirement in the same strat.
+- The strat must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
+- The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
 
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
@@ -397,7 +406,7 @@ This section contains logical elements centered around available running room, a
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction.
+* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).

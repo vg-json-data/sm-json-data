@@ -627,9 +627,9 @@
     },
     {
       "link": [2, 1],
-      "name": "Speedball (Come In Shinecharging)",
+      "name": "Speedball (Come In Getting Blue Speed)",
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 16,
           "openEnd": 1
         }
@@ -972,6 +972,48 @@
       ]
     },
     {
+      "link": [4, 4],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 4],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "Morph",
+          "h_canArtificialMorphSpringBall",
+          "h_canArtificialMorphBombThings"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
       "link": [4, 10],
       "name": "Base",
       "requires": [
@@ -993,6 +1035,7 @@
         {"shinespark": {"frames": 2, "excessFrames": 2}},
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": [
         "Perform a horizontal shinespark through the door transition, from a horizontal position that triggers a deep transition in the door.",
         "Sparking from one or two pixels away from the door is an example position that works (if possible in the neighboring room).",
@@ -1015,6 +1058,7 @@
         "canDeepTransition",
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": [
         "Stand facing the door in the previous room, at a specific distance from the door, approximately a 3-pixel window at an effective distance of a 6-tile closed-end runway (taking into account how slopes can modify the effective distance).",
         "Pause, then unpause while holding dash and right.",
@@ -1036,6 +1080,7 @@
         "canDeepTransition",
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": [
         "Stand facing away from the door in the previous room, at a specific distance from the door, approximately a 2-pixel window at an effective distance of 3.7 tiles (taking into account how slopes can modify the effective distance).",
         "Pause, then unpause while holding dash and right.",
@@ -1060,6 +1105,7 @@
       "requires": [
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": "Climb up 1 screen.",
       "devNote": [
         "Normally, an XRayClimb's resetRoom has mustStayPut true, but because node 5 is configured to spawn at 14, Samus will be expected to visit 14 before 5 when setting up.",
@@ -1084,6 +1130,42 @@
       "requires": [
         "h_canCrystalFlash"
       ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 5],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 5],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
       "flashSuitChecked": true
     },
     {
@@ -1290,7 +1372,7 @@
       "name": "Big Pink Super Block Speedball",
       "notable": true,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 5,
           "openEnd": 0
         }
@@ -1539,6 +1621,7 @@
       "requires": [
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": "Climb up 1 screen."
     },
     {
@@ -1773,13 +1856,13 @@
       "requires": [
         "canSpeedball",
         {"or": [
-          {"canShineCharge": {
+          {"getBlueSpeed": {
             "usedTiles": 16,
             "openEnd": 1
           }},
           {"and": [
             {"doorUnlockedAtNode": 2},
-            {"canShineCharge": {
+            {"getBlueSpeed": {
               "usedTiles": 17,
               "openEnd": 1
             }}
@@ -2047,7 +2130,7 @@
         "canLateralMidAirMorph",
         "canSlowShortCharge",
         "canTrickyJump",
-        {"canShineCharge": {
+        {"getBlueSpeed": {
           "usedTiles": 20,
           "openEnd": 2
         }},
@@ -2086,7 +2169,8 @@
           "canWalljump",
           {"and": [
             "SpeedBooster",
-            "HiJump"
+            "HiJump",
+            "canCarefulJump"
           ]}
         ]}
       ]
@@ -2173,7 +2257,16 @@
       "link": [14, 5],
       "name": "Land in Door Frame",
       "requires": [
-        "canPrepareForNextRoom"
+        "canPrepareForNextRoom",
+        {"or": [
+          "canCarefulJump",
+          "canStationarySpinJump"
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles"], "requires": ["never"]},
+        {"types": ["powerbomb"], "requires": ["h_canUseSpringBall"]}
       ],
       "note": "Jump through the door and shoot it open as you enter, landing on the door frame to avoid falling through the crumbles."
     },
