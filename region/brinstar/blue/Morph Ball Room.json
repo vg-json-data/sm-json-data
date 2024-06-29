@@ -33,7 +33,8 @@
           ],
           "devNote": "Technically this yields f_ZebesAwake, although it requires the same flag to spawn the enemies, so it's not possible here."
         }
-      ]
+      ],
+      "spawnAt": 6
     },
     {
       "id": 2,
@@ -93,7 +94,7 @@
     },
     {
       "id": 6,
-      "name": "Junction (Left of Morph Tunnel)",
+      "name": "Left Door Spawn At Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -135,11 +136,7 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 5},
-        {
-          "id": 6,
-          "note": "Requires either tanking one hit, or killing the Sidehoppers"
-        }
+        {"id": 5}
       ]
     },
     {
@@ -170,9 +167,9 @@
     {
       "from": 5,
       "to": [
+        {"id": 1},
         {"id": 4},
-        {"id": 5},
-        {"id": 6}
+        {"id": 5}
       ]
     },
     {
@@ -213,8 +210,7 @@
           "framesRemaining": 135
         }
       },
-      "flashSuitChecked": true,
-      "devNote": "Destroy obstacle C by travelling between nodes 1 and 6."
+      "flashSuitChecked": true
     },
     {
       "link": [1, 1],
@@ -336,6 +332,239 @@
       "flashSuitChecked": true
     },
     {
+      "link": [1, 1],
+      "name": "Power Beam Sidehopper Kill",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sidehopper",
+          "type": "contact",
+          "hits": 5
+        }}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Quick Sidehopper Kill",
+      "requires": [
+        {"enemyKill": {
+          "enemies": [
+            ["Sidehopper", "Sidehopper"],
+            ["Sidehopper"]
+          ],
+          "explicitWeapons": [
+            "Missile",
+            "Super",
+            "PowerBomb",
+            "ScrewAttack",
+            "Plasma"
+          ]
+        }}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "For the Power Bomb and Screw Attack kills, this strat assumes you don't know you're entering the room beforehand.",
+        "If you know, it's possible to Power Bomb kill the first two Sidehoppers damage-free by morphing before entering.",
+        "For Screw, just entering with a spin jump would work."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Spark into Room",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 40, "excessFrames": 9}}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Prepared Kill on Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          {"and": [
+            "Plasma",
+            "Charge"
+          ]},
+          "ScrewAttack",
+          {"and": [
+            "h_canUsePowerBombs",
+            {"enemyKill": {
+              "enemies": [["Sidehopper"]],
+              "explicitWeapons": ["Missile", "Super", "PowerBomb"]
+            }}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Enter the room ready to kill the hoppers before they can hit Samus.",
+        "with a charge plasma shot ready, or in a screw attack spin jump, or a morph, ready to lay a power bomb."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Prepared Missile and Super Kill",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canFarmWhileShooting",
+        {"ammo": {"type": "Missile", "count": 1}},
+        {"ammo": {"type": "Super", "count": 1}},
+        {"or": [
+          "Morph",
+          {"and": [
+            {"ammo": {"type": "Missile", "count": 1}},
+            {"ammo": {"type": "Super", "count": 1}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Enter the room and immediately shoot a Missile and a Super to kill the first hopper.",
+        "Quickly kill the second the same way or safely kill it with morph."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Prepared Missile and Super Kill (First Hopper)",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canFarmWhileShooting",
+        {"ammo": {"type": "Missile", "count": 1}},
+        {"ammo": {"type": "Super", "count": 1}}
+      ],
+      "note": "Enter the room and immediately shoot a Missile and a Super to kill the first hopper.",
+      "devNote": "This can then be paired with quickly leaving the room normally or with a G-Mode setup, if the door is unlocked."
+    },
+    {
+      "link": [1, 1],
+      "name": "Diagonal Spark on Entry",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 5
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canTrickyJump",
+        "canDodgeWhileShooting",
+        {"shinespark": {"frames": 5, "excessFrames": 1}},
+        {"enemyKill": {
+          "enemies": [
+            ["Sidehopper"]
+          ],
+          "explicitWeapons": [
+            "Missile",
+            "Super",
+            "PowerBomb",
+            "Plasma",
+            "Spazer",
+            "Wave",
+            "Bombs"
+          ]
+        }}
+      ],
+      "clearsObstacles": ["C"],
+      "note": "Spark diagonally immediately on entry to kill the first two sidehoppers, then carefully kill the third."
+    },
+    {
+      "link": [1, 1],
+      "name": "Power Bomb Sidehopper Kill and Bomb Blocks",
+      "requires": [
+        {"or": [
+          "canMockball",
+          {"enemyDamage": {
+            "enemy": "Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"enemyKill": {
+          "enemies": [
+            ["Sidehopper", "Sidehopper"],
+            ["Sidehopper"]
+          ],
+          "explicitWeapons": ["PowerBomb"]
+        }}
+      ],
+      "clearsObstacles": ["A", "C"],
+      "note": [
+        "This strat assumes you don't know you're entering the room beforehand. Otherwise, it's possible to kill the first two Sidehoppers without taking damage.",
+        "It's possible to break the bomb blocks alongside the third Sidehopper without taking an additional hit with a mockball."
+      ],
+      "devNote": "FIXME: There are missing Power Bomb strats that enter the room with a mockball."
+    },
+    {
+      "link": [1, 1],
+      "name": "Medium Sidehopper Kill",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sidehopper",
+          "type": "contact",
+          "hits": 2
+        }},
+        {"or": [
+          "Spazer",
+          "Wave"
+        ]}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Free Passage",
+      "requires": [
+        "h_ZebesNotAwake"
+      ],
+      "clearsObstacles": ["C"],
+      "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
+    },
+    {
+      "link": [1, 5],
+      "name": "Blocks Already Broken",
+      "requires": [
+        "Morph",
+        {"obstaclesCleared": ["A", "C"]}
+      ]
+    },
+    {
+      "link": [1, 5],
+      "name": "Bomb the Blocks",
+      "requires": [
+        "h_canBombThings",
+        {"obstaclesCleared": ["C"]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 5],
+      "name": "Morph Ball Room Speedball (Left to Right)",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        {"speedBall": {
+          "length": 25,
+          "openEnd": 0
+        }}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "It's a short charge into a speedball to break the bomb blocks.",
+        "The Sidehoppers need to be destroyed beforehand to clear the running space."
+      ]
+    },
+    {
       "link": [1, 5],
       "name": "Room Entry Speedball",
       "entranceCondition": {
@@ -447,157 +676,6 @@
         "Overload the PLMs by rolling through the camera scroll blocks which are 4 tiles to the right of the stair by the door.",
         "Roll under the last Sidehopper and through the bomb blocks."
       ]
-    },
-    {
-      "link": [1, 6],
-      "name": "Run Through",
-      "requires": [
-        {"or": [
-          {"enemyDamage": {
-            "enemy": "Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }},
-          {"obstaclesCleared": ["C"]}
-        ]}
-      ]
-    },
-    {
-      "link": [1, 6],
-      "name": "Power Beam Sidehopper Kill",
-      "requires": [
-        {"enemyDamage": {
-          "enemy": "Sidehopper",
-          "type": "contact",
-          "hits": 6
-        }}
-      ],
-      "clearsObstacles": ["C"]
-    },
-    {
-      "link": [1, 6],
-      "name": "Quick Sidehopper Kill",
-      "requires": [
-        {"enemyDamage": {
-          "enemy": "Sidehopper",
-          "type": "contact",
-          "hits": 1
-        }},
-        {"or": [
-          {"enemyKill": {
-            "enemies": [
-              ["Sidehopper", "Sidehopper"],
-              ["Sidehopper"]
-            ],
-            "explicitWeapons": [
-              "Missile",
-              "Super",
-              "PowerBomb",
-              "ScrewAttack",
-              "Plasma"
-            ]
-          }}
-        ]}
-      ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "For the Power Bomb and Screw Attack kills, this strat assumes you don't know you're entering the room beforehand.",
-        "If you know, it's possible to Power Bomb kill the first two Sidehoppers damage-free by morphing before entering.",
-        "For Screw, just entering with a spin jump would work."
-      ]
-    },
-    {
-      "link": [1, 6],
-      "name": "Spark into Room",
-      "entranceCondition": {
-        "comeInWithSpark": {}
-      },
-      "requires": [
-        {"shinespark": {"frames": 40, "excessFrames": 9}}
-      ],
-      "clearsObstacles": ["C"]
-    },
-    {
-      "link": [1, 6],
-      "name": "Kill on Entry",
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          {"and": [
-            "Plasma",
-            "Charge"
-          ]},
-          "ScrewAttack",
-          {"and": [
-            "h_canUsePowerBombs",
-            {"enemyKill": {
-              "enemies": [["Sidehopper"]],
-              "explicitWeapons": ["Missile", "Super", "PowerBomb"]
-            }}
-          ]}
-        ]}
-      ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "Enter the room ready to kill the hoppers before they can hit Samus.",
-        "with a charge plasma shot ready, or in a screw attack spin jump, or a morph, ready to lay a power bomb."
-      ]
-    },
-    {
-      "link": [1, 6],
-      "name": "Power Bomb Sidehopper Kill and Bomb Blocks",
-      "requires": [
-        {"enemyDamage": {
-          "enemy": "Sidehopper",
-          "type": "contact",
-          "hits": 1
-        }},
-        {"or": [
-          "canMockball",
-          {"enemyDamage": {
-            "enemy": "Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]},
-        {"enemyKill": {
-          "enemies": [
-            ["Sidehopper", "Sidehopper"],
-            ["Sidehopper"]
-          ],
-          "explicitWeapons": ["PowerBomb"]
-        }}
-      ],
-      "clearsObstacles": ["A", "C"],
-      "note": [
-        "This strat assumes you don't know you're entering the room beforehand. Otherwise, it's possible to kill the first two Sidehoppers without taking damage.",
-        "It's possible to take out obstacle A alongside the third Sidehopper, but there's a risk of taking an additional hit (negated by mockball)."
-      ]
-    },
-    {
-      "link": [1, 6],
-      "name": "Medium Sidehopper Kill",
-      "requires": [
-        {"enemyDamage": {
-          "enemy": "Sidehopper",
-          "type": "contact",
-          "hits": 3
-        }},
-        {"or": [
-          "Spazer",
-          "Wave"
-        ]}
-      ],
-      "clearsObstacles": ["C"]
-    },
-    {
-      "link": [1, 6],
-      "name": "Free Passage",
-      "requires": [
-        "h_ZebesNotAwake"
-      ],
-      "clearsObstacles": ["C"],
-      "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
     },
     {
       "link": [2, 2],
@@ -843,6 +921,50 @@
       "clearsObstacles": ["B"]
     },
     {
+      "link": [5, 1],
+      "name": "Blocks Already Broken",
+      "requires": [
+        "Morph",
+        {"obstaclesCleared": ["A"]}
+      ],
+      "note": "Kill the ground hoppers by shooting through the morph tunnel, then roll through to the left door."
+    },
+    {
+      "link": [5, 1],
+      "name": "Morph Ball Room Speedball (Right to Left)",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        {"getBlueSpeed": {
+          "usedTiles": 21,
+          "openEnd": 1
+        }},
+        "canSpeedball"
+      ],
+      "clearsObstacles": ["A", "C"],
+      "note": [
+        "It's a short charge into a speedball to break the Bomb Blocks.",
+        "The Power Bomb Blocks need to be destroyed to have enough running room.",
+        "The sidehoppers that remain can be killed safely using the morph tunnel."
+      ]
+    },
+    {
+      "link": [5, 1],
+      "name": "Safe Sidehopper Kill",
+      "requires": [
+        "Morph",
+        {"or": [
+          "Wave",
+          "canDodgeWhileShooting",
+          "h_canUsePowerBombs",
+          "ScrewAttack"
+        ]},
+        {"obstaclesCleared": ["A"]}
+      ],
+      "clearsObstacles": ["C"],
+      "note": "The SideHoppers can be killed safely from behind with Power Beam.",
+      "devNote": "Killing the ceiling hopper is the only one that's not free. Killing the bottom two and leaving the left door is accounted for elsewhere."
+    },
+    {
       "link": [5, 4],
       "name": "Base",
       "requires": [
@@ -852,6 +974,14 @@
         ]}
       ],
       "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 5],
+      "name": "Bomb the Blocks",
+      "requires": [
+        "h_canBombThings"
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "link": [5, 5],
@@ -869,48 +999,8 @@
       "note": "Place the Power Bomb, then exit g-mode before the bomb goes off."
     },
     {
-      "link": [5, 6],
-      "name": "Blocks Already Broken",
-      "requires": [
-        "Morph",
-        {"obstaclesCleared": ["A"]}
-      ]
-    },
-    {
-      "link": [5, 6],
-      "name": "Bomb the Blocks",
-      "requires": [
-        "h_canBombThings"
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [5, 6],
-      "name": "Morph Ball Room Speedball (Right to Left)",
-      "requires": [
-        {"obstaclesCleared": ["B"]},
-        {"getBlueSpeed": {
-          "usedTiles": 21,
-          "openEnd": 1
-        }},
-        "canSpeedball"
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "It's a short charge into a speedball to break the Bomb Blocks.",
-        "The Power Bomb Blocks need to be destroyed to have enough running room."
-      ]
-    },
-    {
       "link": [6, 1],
-      "name": "Laugh at Dead Sidehoppers",
-      "requires": [
-        {"obstaclesCleared": ["C"]}
-      ]
-    },
-    {
-      "link": [6, 1],
-      "name": "Tank the damage",
+      "name": "Sidehopper Hit on Entry",
       "requires": [
         {"enemyDamage": {
           "enemy": "Sidehopper",
@@ -918,17 +1008,6 @@
           "hits": 1
         }}
       ]
-    },
-    {
-      "link": [6, 1],
-      "name": "Safe Sidehopper Power Beam Kill",
-      "requires": [
-        "Morph",
-        {"obstaclesCleared": ["A"]}
-      ],
-      "clearsObstacles": ["C"],
-      "note": "If the bomb blocks are broken, the SideHoppers can be killed safely from behind with Power Beam.",
-      "devNote": "Obstacle can be broken by going to 5 and back."
     },
     {
       "link": [6, 1],
@@ -941,34 +1020,22 @@
     },
     {
       "link": [6, 5],
-      "name": "Blocks Already Broken",
+      "name": "Run Through",
       "requires": [
-        "Morph",
-        {"obstaclesCleared": ["A"]}
-      ]
-    },
-    {
-      "link": [6, 5],
-      "name": "Bomb the Blocks",
-      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sidehopper",
+          "type": "contact",
+          "hits": 2
+        }},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
         "h_canBombThings"
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "link": [6, 5],
-      "name": "Morph Ball Room Speedball (Left to Right)",
-      "requires": [
-        {"obstaclesCleared": ["C"]},
-        {"speedBall": {
-          "length": 25,
-          "openEnd": 0
-        }}
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "It's a short charge into a speedball to break the bomb blocks.",
-        "The Sidehoppers need to be destroyed beforehand to clear the running space."
       ]
     }
   ]
