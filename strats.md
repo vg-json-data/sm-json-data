@@ -1510,6 +1510,18 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
 }
 ```
 
+## Starts With Shinecharge
+
+The `startsWithShineCharge` property indicates that a strat must start while in a shinecharge state, from a shinecharge obtained in an earlier strat. The amount of frames required is determined by `shineChargeFrames` requirements in this strat.
+
+This property should not be combined with a `leaveShinecharged` exit condition.
+
+## Ends With Shinecharge
+
+The `endsWithShineCharge` property indicates that a strat ends while in a shinecharge state, allowing a shinespark to be used in a subsequent strat. The amount of frames remaining is determined by `shineChargeFrames` requirements coming after the most recent `canShineCharge` requirement.
+
+This property should not be combined with a `leaveShinecharged` exit condition.
+
 ## Run Speed
 
 There are many kinds of cross-room strats that require Samus to enter the room with a certain amount of speed. For easier interpretation, these requirements are usually specified in terms of runway tiles required. In certain situations, however, it is necessary to directly reference speed values. There are several types of Samus horizontal speed:
