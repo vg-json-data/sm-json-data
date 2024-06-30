@@ -304,6 +304,14 @@ __Example:__
 {"thornHits": 1}
 ```
 
+#### electricityHits object
+A `electricityHits` object represents the need for Samus to intentionally take a number of hits from electricity, found in Wrecked Ship. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
+
+__Example:__
+```json
+{"electricityHits": 1}
+```
+
 #### resourceCapacity object
 A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
 * _type:_ The type of resource. Can have the following values:
