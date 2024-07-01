@@ -150,6 +150,82 @@
     },
     {
       "link": [1, 1],
+      "name": "Leave Spinning",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 45,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 45,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 3,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 45,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 38,
+            "openEnd": 0
+          }
+        }
+      },
+      "devNote": "FIXME: Slightly longer runway can be used with power on; it's not clear yet if there's any application where this matters."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 45,
+          "openEnd": 1
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
         "h_canCrystalFlash"
@@ -265,6 +341,51 @@
         }
       },
       "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue (Facing Right)",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 28,
+          "openEnd": 0
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {
+          "direction": "right"
+        }
+      },
+      "devNote": "A couple more tiles can be used if power is on, but this doesn't seem worth modeling."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue (Facing Left)",
+      "requires": [
+        {"or": [
+          {"and": [
+            "f_DefeatedPhantoon",
+            {"canShineCharge": {
+              "usedTiles": 16,
+              "openEnd": 0
+            }}    
+          ]},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 28,
+              "openEnd": 0
+            }},
+            "canXRayTurnaround"
+          ]}
+        ]},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {
+          "direction": "left"
+        }
+      }
     },
     {
       "link": [2, 2],
@@ -423,6 +544,45 @@
     },
     {
       "link": [2, 3],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 45,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 2,
+            "openEnd": 1
+          },
+          "movementType": "controlled",
+          "maxExtraRunSpeed": "$3.C"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "devNote": "Higher run speed can be used, especially if power is on, but it is more difficult and not clear yet if it's worth modeling."
+    },
+    {
+      "link": [2, 3],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        "canSpeedball",
+        "canChainTemporaryBlue",
+        {"getBlueSpeed": {
+          "usedTiles": 22,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [2, 3],
       "name": "G-mode Morph",
       "entranceCondition": {
         "comeInWithGMode": {
@@ -535,7 +695,8 @@
       "name": "Speedball",
       "entranceCondition": {
         "comeInBlueSpinning": {
-          "unusableTiles": 1
+          "unusableTiles": 1,
+          "maxExtraRunSpeed": "$2.8"
         }
       },
       "requires": [
@@ -543,11 +704,50 @@
         "canCarefulJump",
         "canSlowShortCharge"
       ],
-      "clearsObstacles": ["A"],
-      "devNote": [
-        "A more controlled angle is needed entering the room for this strat.",
-        "FIXME: Develop a proper way to represent a maximum speed limit for the jump to work."
-      ]
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 2],
+      "name": "Temporary Blue Spring Ball Bounce (Come in Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canChainTemporaryBlue",
+        "canSpringBallBounce"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 2],
+      "name": "Temporary Blue Spring Ball Bounce (Come in With Temporary Blue)",
+      "entranceCondition": {
+        "comeInWithTemporaryBlue": {}
+      },
+      "requires": [
+        "canChainTemporaryBlue",
+        "canSpringBallBounce"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 2],
+      "name": "Blue Spring Ball Bounce",
+      "entranceCondition": {
+        "comeInWithBlueSpringBallBounce": {
+          "minLandingTiles": 2,
+          "maxExtraRunSpeed": "$1.A",
+          "movementType": "controlled"
+        }
+      },
+      "requires": [
+        "canTrickySpringBallBounce",
+        "canInsaneJump"
+      ],
+      "clearsObstacles": ["A"]
     },
     {
       "link": [3, 2],
