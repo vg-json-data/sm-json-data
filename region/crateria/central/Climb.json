@@ -39,7 +39,8 @@
             }
           ]
         }
-      ]
+      ],
+      "spawnAt": 7
     },
     {
       "id": 3,
@@ -120,6 +121,12 @@
       "name": "Main Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
+    },
+    {
+      "id": 7,
+      "name": "Bottom Left Door Spawn At Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -127,6 +134,11 @@
       "id": "A",
       "name": "Bottom Bomb Blocks",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "Entered from the Bottom Left Door",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -224,6 +236,12 @@
         {"id": 4},
         {"id": 5},
         {"id": 6}
+      ]
+    },
+    {
+      "from": 7,
+      "to": [
+        {"id": 2}
       ]
     }
   ],
@@ -474,7 +492,13 @@
     {
       "link": [1, 6],
       "name": "Base",
-      "requires": []
+      "requires": [
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
+      ]
     },
     {
       "link": [2, 2],
@@ -491,7 +515,11 @@
       "link": [2, 2],
       "name": "Leave with Extended Runway",
       "requires": [
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -505,7 +533,11 @@
       "name": "Leave with Extended Runway, Open Both Doors",
       "requires": [
         {"obstaclesCleared": ["A"]},
-        {"doorUnlockedAtNode": 5}
+        {"doorUnlockedAtNode": 5},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -519,9 +551,51 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
-        "h_canCrystalFlash"
+        "h_canCrystalFlash",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "devNote": "An unheated lava crystal flash could be added instead, but that would change the strats that come after."
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
       "flashSuitChecked": true
     },
     {
@@ -538,7 +612,7 @@
         "Morph",
         {"shinespark": {"frames": 147}}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "reusableRoomwideNotable": "Climb Behemoth Shinespark",
       "note": "Starting with a crouch, diagonal shinespark to the top to break the bomb blocks to the morph tunnels on the right."
     },
@@ -554,8 +628,20 @@
       },
       "requires": [
         "h_canArtificialMorphMovement",
-        "canOffScreenMovement"
+        "canOffScreenMovement",
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"and": [
+            "h_lavaProof",
+            {"or": [
+              "h_canArtificialMorphSpringBall",
+              "Morph",
+              "Gravity"
+            ]}
+          ]}
+        ]}
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
       "note": [
         "Overload PLMs using the scroll blocks next to the bomb wall",
@@ -578,9 +664,48 @@
         {"shinespark": {
           "frames": 147,
           "excessFrames": 124
-        }}
+        }},
+        "h_ClimbWithoutLava"
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
+      "reusableRoomwideNotable": "Climb Behemoth Shinespark",
+      "note": "Diagonal shinespark up the climb to break the bomb blocks to the morph tunnels on the right."
+    },
+    {
+      "link": [2, 4],
+      "name": "Behemoth Spark Bottom, Come in Shinecharging, Race the Lava",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 14,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Morph",
+        {"shinespark": {
+          "frames": 147,
+          "excessFrames": 124
+        }},
+        {"or": [
+          "h_lavaProof",
+          "canMoonfall",
+          {"lavaFrames": 120},
+          {"and": [
+            "Gravity",
+            {"lavaFrames": 100}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "clearsObstacles": ["A", "B"],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles"], "requires": [{"lavaFrames": 50}]},
+        {"types": ["powerbomb"], "requires": [{"lavaFrames": 110}]}
+      ],
       "reusableRoomwideNotable": "Climb Behemoth Shinespark",
       "note": "Diagonal shinespark up the climb to break the bomb blocks to the morph tunnels on the right."
     },
@@ -600,9 +725,10 @@
           "HiJump",
           "canTrickySpringBallJump"
         ]},
-        "canTrickyJump"
+        "canTrickyJump",
+        "h_ClimbWithoutLava"
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
       "flashSuitChecked": true,
       "note": "A Temporary Blue Chain with movement assists to climb up and destroy the bomb blocks blocking the bottom morph tunnel."
@@ -618,8 +744,10 @@
       },
       "requires": [
         "h_canArtificialMorphMovement",
-        "canOffScreenMovement"
+        "canOffScreenMovement",
+        "h_ClimbWithoutLava"
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
       "note": [
         "Overload PLMs using the scroll blocks next to the bomb wall",
@@ -744,7 +872,7 @@
       "requires": [
         {"shinespark": {"frames": 43, "excessFrames": 17}}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [2, 6],
@@ -756,7 +884,7 @@
         }
       },
       "requires": [],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [2, 6],
@@ -776,7 +904,7 @@
           ]}
         ]}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [2, 6],
@@ -790,7 +918,7 @@
         }
       },
       "requires": [],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "note": "If needed, unmorph while passing through the blocks to break more than just the bottom one.",
       "devNote": [
         "If we had a comeInWithSpeedball entrance condition, it should be used instead.",
@@ -807,7 +935,7 @@
         }
       },
       "requires": [],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [2, 6],
@@ -821,7 +949,7 @@
         "canTrickyJump",
         "SpaceJump"
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A", "B"]
     },
     {
       "link": [2, 6],
@@ -832,9 +960,17 @@
           "morphed": false
         }
       },
-      "requires": [],
+      "requires": [
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
-      "note": "Overload PLMs using the scroll blocks immediately in front of the bomb wall"
+      "note": "Overload PLMs using the scroll blocks immediately in front of the bomb wall",
+      "devNote": "This could be possible with the lava, but it would be blind and very tight."
     },
     {
       "link": [2, 6],
@@ -842,7 +978,7 @@
       "requires": [
         "f_ZebesSetAblaze"
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "devNote": "These are destroyed on entry if Zebes is Ablaze."
     },
     {
@@ -920,7 +1056,12 @@
       "link": [3, 6],
       "name": "Base",
       "requires": [
-        "h_canBombThings"
+        "h_canBombThings",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ]
     },
     {
@@ -1139,19 +1280,30 @@
     {
       "link": [4, 4],
       "name": "Leave with Runway",
-      "requires": [],
+      "requires": [
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
+      ],
       "exitCondition": {
         "leaveWithRunway": {
           "length": 4,
           "openEnd": 0
         }
-      }
+      },
+      "devNote": "It is sometimes possible to beat the lava, but it depends how you get here."
     },
     {
       "link": [4, 4],
       "name": "Crystal Flash",
       "requires": [
-        "h_canCrystalFlash"
+        "h_canCrystalFlash",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "flashSuitChecked": true
     },
@@ -1159,7 +1311,12 @@
       "link": [4, 6],
       "name": "Base",
       "requires": [
-        "h_canBombThings"
+        "h_canBombThings",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ]
     },
     {
@@ -1296,6 +1453,10 @@
             }},
             {"doorUnlockedAtNode": 5}
           ]}
+        ]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
         ]}
       ],
       "clearsObstacles": ["A"]
@@ -1633,13 +1794,21 @@
           "length": 13,
           "openEnd": 0
         }
-      }
+      },
+      "devNote": [
+        "This is relatively tight when coming in from the bottom left and using a Power Bomb to break the wall.",
+        "It wouldn't work if the door was Missile or Power Bomb locked."
+      ]
     },
     {
       "link": [5, 5],
       "name": "Leave with Extended Runway",
       "requires": [
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -1653,7 +1822,11 @@
       "name": "Leave with Extended Runway, Open Both Doors",
       "requires": [
         {"obstaclesCleared": ["A"]},
-        {"doorUnlockedAtNode": 2}
+        {"doorUnlockedAtNode": 2},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -1680,6 +1853,11 @@
         {"or": [
           "h_canDestroyBombWalls",
           {"obstaclesCleared": ["A"]}
+        ]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
         ]}
       ],
       "clearsObstacles": ["A"]
@@ -1688,7 +1866,8 @@
       "link": [6, 2],
       "name": "Zebes Ablaze",
       "requires": [
-        "f_ZebesSetAblaze"
+        "f_ZebesSetAblaze",
+        {"obstaclesNotCleared": ["B"]}
       ],
       "clearsObstacles": ["A"],
       "devNote": "These are destroyed on entry if Zebes is Ablaze."
@@ -1711,7 +1890,11 @@
           "openEnd": 0
         }},
         {"shinespark": {"frames": 147}},
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "reusableRoomwideNotable": "Climb Behemoth Shinespark",
       "note": "Starting with a crouch, diagonal shinespark to the top to break the bomb blocks to the morph tunnels on the right."
@@ -1729,7 +1912,11 @@
           "usedTiles": 27.5,
           "openEnd": 0
         }},
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
       "flashSuitChecked": true,
@@ -1757,7 +1944,11 @@
           "frames": 147,
           "excessFrames": 124
         }},
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "reusableRoomwideNotable": "Climb Behemoth Shinespark",
       "note": "Diagonal shinespark up the climb to break the bomb blocks to the morph tunnels on the right."
@@ -1769,7 +1960,12 @@
       "requires": [
         "Morph",
         "ScrewAttack",
-        "canMoonfall"
+        "canMoonfall",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "note": [
         "The bomb blocks can be broken by spinjumping with Screw attack and holding right, if moonfall makes Samus clip through the platform.",
@@ -1788,7 +1984,11 @@
           "usedTiles": 27.5,
           "openEnd": 0
         }},
-        {"obstaclesCleared": ["A"]}
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "reusableRoomwideNotable": "Climb Temporary Blue Chain Through Bomb Blocks",
       "flashSuitChecked": true,
@@ -1819,6 +2019,10 @@
             }},
             {"doorUnlockedAtNode": 2}
           ]}
+        ]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          {"obstaclesNotCleared": ["B"]}
         ]}
       ],
       "unlocksDoors": [{"nodeId": 2, "types": ["ammo"], "requires": []}],
@@ -1840,7 +2044,12 @@
           "nodes": [1, 5],
           "mustStayPut": false
         }},
-        {"refill": ["Energy", "Missile"]}
+        {"refill": ["Energy", "Missile"]},
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "devNote": [
         "The Space Pirates (wall) drop Supers and Power Bombs each at a 0.4% rate, too low to put into logic.",
@@ -1851,10 +2060,22 @@
       "link": [6, 6],
       "name": "Crystal Flash",
       "requires": [
-        "h_canCrystalFlash"
+        "h_canCrystalFlash",
+        {"or": [
+          "h_ClimbWithoutLava",
+          "h_lavaProof",
+          {"obstaclesNotCleared": ["B"]}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true
+    },
+    {
+      "link": [7, 2],
+      "name": "Base",
+      "requires": [],
+      "clearsObstacles": ["B"],
+      "devNote": "When Samus enters the room from the bottom left, lava starts to rise. In the escape it is acid instead."
     }
   ]
 }
