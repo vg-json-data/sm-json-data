@@ -42,6 +42,13 @@
       "doorEnvironments": [{"physics": "air"}]
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Top Space Pirates",
+      "obstacleType": "enemies"
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -58,6 +65,7 @@
       "homeNodes": [2]
     }
   ],
+
   "links": [
     {
       "from": 1,
@@ -102,11 +110,98 @@
     },
     {
       "link": [1, 1],
+      "name": "Leave Spinning",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 43,
+            "openEnd": 1
+          }
+        }
+      },
+      "note": "Use the lower runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 43,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 2,
+            "openEnd": 1
+          }
+        }
+      },
+      "note": "Use the lower runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 43,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      },
+      "note": "Use the upper runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 43,
+            "openEnd": 1
+          }
+        }
+      },
+      "note": "Use the upper runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
         "h_canCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Pirates Already Dead",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly"
+        ]}
+      ]
     },
     {
       "link": [1, 2],
@@ -170,6 +265,7 @@
           ]}
         ]}
       ],
+      "clearsObstacles": ["A"],
       "note": [
         "Run from or Roll under the pirate lazers.",
         "The Pirates will also not shoot if they come on screen while Samus is crouched."
@@ -208,6 +304,7 @@
           }}
         ]}
       ],
+      "clearsObstacles": ["A"],      
       "note": "Kill the Pirates fast enough that they won't attack, or shoot them from below with Wave."
     },
     {
@@ -216,25 +313,11 @@
       "requires": [
         "h_getBlueSpeedMaxRunway"
       ],
+      "clearsObstacles": ["A"],
       "note": [
         "Run into the pirates with speedbooster to save health over shinesparking.",
         "A speedy jump can reach the top platform."
       ]
-    },
-    {
-      "link": [1, 2],
-      "name": "Leave Shinecharged",
-      "requires": [
-        "h_canShineChargeMaxRunway"
-      ],
-      "exitCondition": {
-        "leaveShinecharged": {
-          "framesRemaining": 120
-        }
-      },
-      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
-      "flashSuitChecked": true,
-      "note": "Coming from the left only requires SpeedBooster to kill all the Pirates."
     },
     {
       "link": [1, 2],
@@ -252,6 +335,7 @@
         ]},
         {"ammo": {"type": "PowerBomb", "count": 5}}
       ],
+      "clearsObstacles": ["A"],
       "flashSuitChecked": true,
       "note": "IBJ or spring ball bomb jump to avoid the wall jump. The first pirate takes 2 PBs, the next 3 can be killed with 3 total PBs if they are placed under the middle pirate."
     },
@@ -321,6 +405,13 @@
     },
     {
       "link": [2, 1],
+      "name": "Pirates Already Dead",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Pass Through Pirates",
       "requires": [
         {"or": [
@@ -336,74 +427,6 @@
         ]}
       ],
       "note": "Walk through the pirates either by taking damage or by using Plasma Beam."
-    },
-    {
-      "link": [2, 1],
-      "name": "Fight Pirates Slowly",
-      "requires": [
-        {"or": [
-          {"and": [
-            "canDodgeWhileShooting",
-            "canCameraManip",
-            {"or": [
-              "Plasma",
-              {"and": [
-                "h_hasBeamUpgrade",
-                "canBePatient"
-              ]},
-              "canBeVeryPatient"
-            ]}
-          ]},
-          {"and": [
-            {"or": [
-              "canBePatient",
-              {"enemyDamage": {
-                "enemy": "Tourian Space Pirate (all)",
-                "type": "contact",
-                "hits": 1
-              }}
-            ]},
-            {"or": [
-              "Morph",
-              "canTurnaroundAimCancel",
-              "canXRayTurnaround"
-            ]}
-          ]}
-        ]}
-      ],
-      "note": [
-        "Run from or Roll under the pirate lazers.",
-        "The Pirates will also not shoot if they come on screen while Samus is crouched."
-      ]
-    },
-    {
-      "link": [2, 1],
-      "name": "Kill Pirates Fast",
-      "requires": [
-        {"or": [
-          "Wave",
-          "ScrewAttack",
-          {"and": [
-            "Plasma",
-            "canXRayWaitForIFrames"
-          ]},
-          {"enemyKill": {
-            "enemies": [
-              [
-                "Tourian Space Pirate (all)",
-                "Tourian Space Pirate (all)"
-              ],
-              [
-                "Tourian Space Pirate (all)",
-                "Tourian Space Pirate (all)"
-              ],
-              ["Tourian Space Pirate (all)"]
-            ],
-            "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
-          }}
-        ]}
-      ],
-      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from above with Wave."
     },
     {
       "link": [2, 1],
@@ -505,30 +528,80 @@
     },
     {
       "link": [2, 2],
-      "name": "Leave Shinecharged",
+      "name": "Fight Pirates Slowly",
       "requires": [
-        "h_canShineChargeMaxRunway",
         {"or": [
-          {"enemyDamage": {
-            "enemy": "Tourian Space Pirate (all)",
-            "type": "contact",
-            "hits": 1
-          }},
-          {"and": [
-            "Plasma",
-            "canHitbox"
-          ]},
-          "Morph",
-          "ScrewAttack",
           {"and": [
             "canDodgeWhileShooting",
             "canCameraManip",
             {"or": [
-              "h_hasBeamUpgrade",
-              "canBePatient"
+              "Plasma",
+              {"and": [
+                "h_hasBeamUpgrade",
+                "canBePatient"
+              ]},
+              "canBeVeryPatient"
+            ]}
+          ]},
+          {"and": [
+            {"or": [
+              "canBePatient",
+              {"enemyDamage": {
+                "enemy": "Tourian Space Pirate (all)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]},
+            {"or": [
+              "Morph",
+              "canTurnaroundAimCancel",
+              "canXRayTurnaround"
             ]}
           ]}
         ]}
+      ],
+      "clearsObstacles": ["A"],      
+      "note": [
+        "Run from or Roll under the pirate lazers.",
+        "The Pirates will also not shoot if they come on screen while Samus is crouched."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Kill Pirates Fast",
+      "requires": [
+        {"or": [
+          "Wave",
+          "ScrewAttack",
+          {"and": [
+            "Plasma",
+            "canXRayWaitForIFrames"
+          ]},
+          {"enemyKill": {
+            "enemies": [
+              [
+                "Tourian Space Pirate (all)",
+                "Tourian Space Pirate (all)"
+              ],
+              [
+                "Tourian Space Pirate (all)",
+                "Tourian Space Pirate (all)"
+              ],
+              ["Tourian Space Pirate (all)"]
+            ],
+            "explicitWeapons": ["Missile", "Super", "Ice+Plasma"]
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Kill the Pirates fast enough that they won't attack, or shoot them from above with Wave."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canShineChargeMaxRunway"
       ],
       "exitCondition": {
         "leaveShinecharged": {
@@ -536,6 +609,76 @@
         }
       },
       "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Mockball",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 23,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 19,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Space Jumping",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 37,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canShineChargeMaxRunway",
+        "can4HighMidAirMorph",
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "note": [
+        "Gain temporary blue with a shinecharge; then do a tight lateral mid-air morph to jump past the speed blocks.",
+        "Alernatively, start the temporary blue chain by doing a running jump over them rather than doing a shinecharge."
+      ]
     },
     {
       "link": [2, 2],
