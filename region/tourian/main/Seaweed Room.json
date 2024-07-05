@@ -10,51 +10,62 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Seaweed Room Top Right Doorway (to Big Boy)",
+      "name": "Top Right Doorway",
       "nodeType": "door",
       "nodeSubType": "doorway",
       "nodeAddress": "0x001aa50",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Seaweed Room Left Door (to Recharge)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001aa68",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Seaweed Room Bottom Right Door (to Eye Room)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "red",
       "nodeAddress": "0x001aa5c",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Seaweed Room Red Lock (to Eye Room)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenRedDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway, Extended Seaweed Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -65,17 +76,234 @@
       "note": "If coming from below, carefully get up on the left side of the room without breaking the runway blocks."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "devNote": "If it is needed to use one of the extended runways, then the Crystal Flash can be performed on the opposite side of the room from the needed runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave With Spark (Wave)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 5}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "note": "Use Wave to clear the seaweed quickly."
+    },
+    {
+      "link": [1, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28], [2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      }
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [1, 3],
+      "name": "Come in Shinecharging, Leave Shinecharged (Wave or Spazer)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"or": [
+          {"and": [
+            "Wave",
+            "canShinechargeMovementComplex"
+          ]},
+          {"and": [
+            "Spazer",
+            "canShinechargeMovementTricky"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": "Use Wave or Spazer to clear the seaweed quickly."
+    },
+    {
+      "link": [1, 3],
+      "name": "Come in Shinecharging, Leave Shinecharged (Missiles)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"ammo": {"type": "Missile", "count": 7}}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 30
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": "Use Missiles to clear the seaweed quickly.",
+      "devNote": "It may be possible to use fewer Missiles by switching weapons."
+    },
+    {
+      "link": [1, 3],
+      "name": "Come in Shinecharging, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 2}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "note": "Clear the seaweed one block at a time, with just barely enough time remaining to spark out the door."
+    },
+    {
+      "link": [1, 3],
+      "name": "Carry Shinecharge (Wave)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 135
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": "Use Wave to clear the seaweed quickly."
+    },
+    {
+      "link": [1, 3],
+      "name": "Come in Shinecharged, Leave with Spark (Wave)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 125
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 2}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": "Use Wave to clear the seaweed quickly."
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway, Extended Seaweed Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -85,31 +313,317 @@
       }
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [2, 3],
+      "name": "Come in Shinecharging, Leave Shinecharged (Wave)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": [
+        "Gain a shinecharge while entering the room.",
+        "Hold run and forward to stand up and press against the seaweed.",
+        "Then fire a Wave shot to clear the seaweed and open the door, and run and jump across the room.",
+        "If you fire the Wave shot too early (while having forward momentum), it will shoot too high and not break the blocks at Samus' knees."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Come in Shinecharging, Leave with Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 5}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "note": [
+        "Gain a shinecharge while entering the room.",
+        "Angle down to shoot the first seaweed block at the level of Samus' knees.",
+        "Take four tiny steps forward, firing a shot with forward momentum on each step, destroying the seaweed at the level of Samus' head, with the last shot continuing on to open the door.",
+        "Do one more angle down shot to destroy the last seaweed block at Samus' knees.",
+        "To minimize energy usage, jump across the room before shinesparking through the door."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Carry Shinecharge (Wave)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": "Use Wave to clear the seaweed quickly."
+    },
+    {
+      "link": [2, 3],
+      "name": "Come in Shinecharged, Leave with Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 18}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": [
+        "Angle down to shoot the first seaweed block at the level of Samus' knees.",
+        "Take four tiny steps forward, firing a shot with forward momentum on each step, destroying the seaweed at the level of Samus' head, with the last shot continuing on to open the door.",
+        "Do one more angle down shot to destroy the last seaweed block at Samus' knees.",
+        "Then shinespark through the door."
+      ]
+    },
+    {
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 1],
+      "name": "Carry Shinecharge (HiJump Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canWalljump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 125
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Come In Shinecharged, Leave With Spark (HiJump Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 5}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Come In Shinecharged, Leave With Spark (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 130
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 4}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 2],
+      "name": "Carry Shinecharge (Wave)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": "Use single well-timed Wave shot to clear the seaweed quickly."
+    },
+    {
+      "link": [3, 2],
+      "name": "Come in Shinecharged, Leave with Spark (Wave)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "Wave",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 18}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": [
+        "Use single well-timed Wave shot to clear the seaweed quickly."
+      ]
+    },   
+    {
+      "link": [3, 2],
+      "name": "Come in Shinecharged, Leave with Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 14}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": ["never"]}],
+      "flashSuitChecked": true,
+      "note": [
+        "Use five shots to destroy the seaweed blocks:",
+        "Buffer the first shot while entering the room.",
+        "Spin jump for the second shot (landing on the slightly raised platform), firing at an intermediate height in order to destroy two blocks.",
+        "Fire two shots while standing on the platform.",
+        "Spin jump for the final shot, and activate the shinespark mid-air."
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28], [2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [3, 2],
+      "name": "Carry Grapple Teleport (Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      }
+    },
+    {
+      "link": [3, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      }
+    },
+    {
+      "link": [3, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {

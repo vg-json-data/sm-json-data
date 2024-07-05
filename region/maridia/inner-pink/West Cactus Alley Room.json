@@ -11,51 +11,21 @@
   "nodes": [
     {
       "id": 1,
-      "name": "West Cactus Alley Left Door (to Butterfly Room)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a93c",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - West Cactus Alley Left Door (to Butterfly Room)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
-      "name": "West Cactus Alley Right Door (to East Cactus Alley)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a948",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - West Cactus Alley Right Door (to East Cactus Alley)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -81,12 +51,37 @@
       "betweenNodes": [1, 2]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Single Cacatac Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1],
@@ -96,10 +91,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Cacatac Farm",
-      "notable": false,
       "requires": [
         "HiJump",
         {"resetRoom": {
@@ -110,10 +103,16 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -124,15 +123,13 @@
           "HiJump",
           "canSpringBallJumpMidAir",
           "h_canFly",
-          "h_canSpringBallBombJump"
+          "canSpringBallBombJump"
         ]}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Gravity Damage Boost",
-      "notable": false,
       "requires": [
         "Gravity",
         "canHorizontalDamageBoost",
@@ -146,10 +143,8 @@
       "note": "Damage boost up to the higher ledge using a Cacatac spike. Spikes only exist on camera so follow a vertically fired spike up to the correct height."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Suitless HiJump plus Assist",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -161,79 +156,206 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Suitless SpringBall Frozen Cacatac",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canUseFrozenEnemies",
-        "canSpringBallJumpMidAir"
+        "canTrickySpringBallJump",
+        "canCrouchJump"
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
       "requires": [
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": "Climb up a little less than 1 screen."
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Cross Room Jump",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Cross Room Jump, Bootless",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": false,
+          "minTiles": 4.4375
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canDisableEquipment"
+      ],
+      "note": [
+        "The lenient version requires a runway of at least 5 tiles (with no open end) in the adjacent room.",
+        "This is easier without Speed Booster and requires disabling HiJump."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Tricky Cross Room Jump, Bootless",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": false,
+          "minTiles": 1.4375
+        }
+      },
       "requires": [
         "canCrossRoomJumpIntoWater",
         "canMomentumConservingTurnaround",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 2,
-          "inRoomPath": [1, 2],
-          "physics": ["air"]
-        }}
+        "canTrickyJump",
+        "canDisableEquipment"
       ],
-      "note": "Requires a runway of approximately 2 tiles in the adjacent room."
+      "note": [
+        "Requires a runway of at least 2 tiles (with no open end) in the adjacent room.",
+        "This is typically easier without Speed Booster depending on the exact runway length and requires disabling HiJump."
+      ],
+      "devNote": "Although speedBooster false includes canDisableEquipment, the strat still includes it to indicate disabling HiJump."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
+      "name": "West Cac Alley Tricky Dash Cross Room Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 1
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canMomentumConservingTurnaround",
+        "canTrickyDashJump",
+        "canDisableEquipment"
+      ],
+      "note": [
+        "It is possible to jump to the top door using a runway of just one tile with Speed Booster and no HiJump.",
+        "Requires a last-frame jump and down press that is late but not immediately before the turnaround.",
+        "With a second-to-last-frame jump it is still possible but more precise."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross Room Space Jump",
+      "entranceCondition": {
+        "comeInSpaceJumping": {
+          "speedBooster": "any",
+          "minTiles": 5
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater"
+      ],
+      "note": "Gain speed from a remote runway in the previous room, and Space Jump through the bottom of the doorway."
+    },
+    {
+      "link": [1, 2],
+      "name": "Tricky Cross Room Space Jump",
+      "entranceCondition": {
+        "comeInSpaceJumping": {
+          "speedBooster": "any",
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canMomentumConservingTurnaround",
+        "canTrickyJump"
+      ],
+      "note": "Gain speed from a remote runway in the previous room, and Space Jump through the bottom of the doorway."
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross Room Spring Ball Bounce (Uncontrolled)",
+      "entranceCondition": {
+        "comeInWithSpringBallBounce": {
+          "remoteAndLandingMinTiles": [[2.5625, 1]],
+          "movementType": "uncontrolled"
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canTrickyJump"
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross Room Spring Ball Bounce (Controlled)",
+      "entranceCondition": {
+        "comeInWithSpringBallBounce": {
+          "remoteAndLandingMinTiles": [[3.5625, 1]],
+          "movementType": "controlled"
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater"
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross Room Tricky Spring Ball Bounce (Uncontrolled)",
+      "entranceCondition": {
+        "comeInWithSpringBallBounce": {
+          "remoteAndLandingMinTiles": [[1.5625, 1]],
+          "movementType": "uncontrolled"
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canTrickyJump",
+        "canMomentumConservingMorph"
+      ],
+      "note": "Unmorph just before hitting the overhang, to conserve momentum to make it on top."
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross Room Tricky Spring Ball Bounce (Controlled)",
+      "entranceCondition": {
+        "comeInWithSpringBallBounce": {
+          "remoteAndLandingMinTiles": [[2.5625, 1]],
+          "movementType": "controlled"
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canMomentumConservingMorph"
+      ],
+      "note": "Unmorph just before hitting the overhang, to conserve momentum to make it on top."
+    },
+    {
+      "link": [1, 2],
       "name": "Gravity Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 4
+        }
+      },
       "requires": [
         "Gravity",
-        {"canComeInCharged": {
-          "framesRemaining": 4,
-          "fromNode": 1
-        }},
         {"shinespark": {"frames": 20, "excessFrames": 0}}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Suitless Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 20
+        }
+      },
       "requires": [
         "canSuitlessMaridia",
-        {"canComeInCharged": {
-          "framesRemaining": 20,
-          "fromNode": 1
-        }},
         {"shinespark": {"frames": 20, "excessFrames": 0}}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Underwater Walljumps",
-      "notable": false,
       "requires": [
         "canUnderwaterWalljump"
       ],
@@ -243,17 +365,142 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12], [12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Upper Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 19]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 19]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Lower Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Cacatac Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [2],
@@ -261,6 +508,14 @@
         }},
         {"refill": ["Energy", "Super"]}
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

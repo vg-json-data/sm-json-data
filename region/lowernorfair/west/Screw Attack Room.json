@@ -11,104 +11,35 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Screw Attack Left Door (to Golden Torizo)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019a86",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Screw Attack Left Door (to Golden Torizo)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Screw Attack Bottom Right Door (to Recharge)",
+      "name": "Middle Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019a7a",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Screw Attack Bottom Right Door (to Recharge)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "spawnAt": 6
     },
     {
       "id": 3,
-      "name": "Screw Attack Top Right Door (to Fast Rippers)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019a6e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Broken Runway - Screw Attack Top Right Door (to Fast Rippers)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesCleared": ["A"]},
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1,
-          "usableComingIn": false
-        },
-        {
-          "name": "Runway with Intact Blocks - Screw Attack Top Right Door (to Fast Rippers)",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"obstaclesNotCleared": ["A"]},
-                {"heatFrames": 220}
-              ],
-              "note": "This longer runway is not usable if the bomb blocks are destroyed."
-            }
-          ],
-          "openEnd": 0,
-          "usableComingIn": true
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Screw Attack",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "chozo",
       "nodeItem": "ScrewAttack",
@@ -116,10 +47,15 @@
     },
     {
       "id": 5,
-      "name": "Screw Attack Junction (Above Bottom Blocks with Top Blocks Broken)",
+      "name": "Junction Above Bottom Blocks",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "note": "This exists because many strats for going up are somehwat independant from the strat for breaking the bomb blocks."
+      "nodeSubType": "junction"
+    },
+    {
+      "id": 6,
+      "name": "Middle Right Door Spawn At Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -147,62 +83,142 @@
         "Screw Attack is easier to excute but has fewer shinespark frames to work with.",
         "Using Temporary Blue is difficult to initiate but moves through the room quickly."
       ]
+    },
+    {
+      "name": "Screw Attack Room Transition Screwjump",
+      "note": "Run through the doorway with enough momentum to break the bomb blocks with Screw."
+    },
+    {
+      "name": "Screw Attack Room Transition Speedjump with Bombs",
+      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the obstacle."
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 2,
+      "to": [
+        {"id": 1},
+        {
+          "id": 2,
+          "note": "Shinespark and XRayClimb have a direct link. Other strats should go 1 -> 4 -> 2."
+        },
+        {
+          "id": 3,
+          "note": "Shinespark and XRayClimb have a direct link. Other strats should go 1 -> 4 -> 2 -> 3."
+        },
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {
+          "id": 5,
+          "note": "The heat frames for these strats assumes you've already fallen from the door, because the cost is already baked into the subsequent 5-> 3 heat costs when relevant."
+        }
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesNotCleared": ["C"]},
+        {"heatFrames": 10},
+        "h_canHeatedCrystalFlash",
+        {"heatFrames": 10}
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 25
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 25
-        }},
         {"heatFrames": 200},
         {"shinespark": {"frames": 31, "excessFrames": 10}}
       ],
-      "clearsObstacles": ["B"]
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Screw Attack Room Left-Side X-Ray Climb (to Middle Door)",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Shinespark",
       "entranceCondition": {
-        "comeInWithDoorStuckSetup": {}
+        "comeInShinecharged": {
+          "framesRequired": 50
+        }
       },
       "requires": [
-        "canXRayClimb",
-        {"heatFrames": 1000}
-      ],
-      "note": "Climb up half a screen.",
-      "devNote": "Heat frames split into the actual climb and the setup in the adjacent room."
-    },
-    {
-      "from": 1,
-      "to": 3,
-      "name": "Shinespark",
-      "notable": false,
-      "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 50
-        }},
         {"heatFrames": 250},
         {"shinespark": {"frames": 41, "excessFrames": 4}}
       ],
-      "clearsObstacles": ["A", "B"]
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Screw Attack Room Left-Side X-Ray Climb (to Top Door)",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -210,90 +226,316 @@
         "canXRayClimb",
         {"heatFrames": 2800}
       ],
+      "flashSuitChecked": true,
       "note": "Climb up 2 screens.",
       "devNote": "Heat frames split into the actual climb and the setup in the adjacent room."
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 3],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12], [12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      }
+    },
+    {
+      "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 60}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Space Screw",
-      "notable": false,
+      "link": [1, 5],
+      "name": "Screw Attack Room Left-Side X-Ray Climb (to Middle Door)",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canXRayClimb",
+        {"heatFrames": 900}
+      ],
+      "flashSuitChecked": true,
+      "note": "Climb up half a screen."
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      }
+    },    
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        {"heatFrames": 40},
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "SpaceJump",
+          "canWalljump",
+          "HiJump",
+          "canSpringBallJumpMidAir",
+          "SpeedBooster",
+          "h_canCrouchJumpDownGrab",
+          "canIBJ"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canArtificialMorph"
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "devNote": "Artificial morph will allow Samus not to fall; real Morph is not sufficient."
+    },
+    {
+      "link": [2, 3],
+      "name": "Space Screw",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
         "SpaceJump",
         "ScrewAttack",
-        {"heatFrames": 400}
+        {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
+      "name": "Doorway Speedjump",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "HiJump",
+        "SpeedBooster",
+        "canWalljump",
+        "canCarefulJump",
+        {"doorUnlockedAtNode": 2},
+        {"heatFrames": 160}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "note": "Position yourself in the door way, then run and jump. Makes it possible to walljump up."
+    },
+    {
+      "link": [2, 3],
+      "name": "Doorway Spring Ball Jump",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "HiJump",
+        {"doorUnlockedAtNode": 2},
+        "canTrickySpringBallJump",
+        {"heatFrames": 120}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Screw Attack Room Doorway CWJ",
+      "notable": true,
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatProof",
+        "HiJump",
+        "canCWJ",
+        "canStationarySpinJump",
+        "canInsaneJump",
+        "canInsaneWalljump",
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"nodeId": 2, "types": ["super"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "note": "Position Samus in the doorway a few pixels from the edge. Dashing stationary spinjump into a delayed CWJ and hopefully catch the upper ledge with a walljump."
+    },
+    {
+      "link": [2, 3],
       "name": "Screw Attack Room Transition Screwjump",
       "notable": true,
+      "reusableRoomwideNotable": "Screw Attack Room Transition Screwjump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 6,
+          "speedBooster": true
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
         "HiJump",
-        "SpeedBooster",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 2,
-          "physics": ["normal"]
-        }},
         {"heatFrames": 150}
       ],
       "clearsObstacles": ["A"],
       "note": "Run through the doorway with enough momentum to break the bomb blocks with Screw."
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Shinespark",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Screw Attack Room Transition Screwjump (Tricky Dash Jump)",
+      "notable": true,
+      "reusableRoomwideNotable": "Screw Attack Room Transition Screwjump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": true
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 50
-        }},
+        "ScrewAttack",
+        "HiJump",
+        "canTrickyDashJump",
+        {"heatFrames": 150}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Run through the doorway with enough momentum to break the bomb blocks with Screw."
+    },
+    {
+      "link": [2, 3],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 50
+        }
+      },
+      "requires": [
+        "h_canNavigateHeatRooms",
         {"heatFrames": 250},
         {"shinespark": {"frames": 35, "excessFrames": 4}}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Jump into Room Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 15
+        }
+      },
       "requires": [
         "h_canNavigateHeatRooms",
         "canMidairShinespark",
         "canShinechargeMovement",
         "canPrepareForNextRoom",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 15
-        }},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5
-        }},
         {"heatFrames": 250},
         {"shinespark": {"frames": 18, "excessFrames": 4}}
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "note": [
         "Jump into Screw Attack Room and spark diagonally once above the center of the door vertically.",
         "Or diagonally spark anywhere that is not the bottom of the door in the previous room."
@@ -301,10 +543,8 @@
       "devNote": "TODO: Sparking diagonally through the door cannot be shown as an alternative."
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Screw Attack Right-Side X-Ray Climb",
-      "notable": false,
+      "link": [2, 3],
+      "name": "X-Ray Climb",
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -312,307 +552,344 @@
         "canXRayClimb",
         {"heatFrames": 1600}
       ],
+      "flashSuitChecked": true,
       "note": "Climb up 1 screen.",
       "devNote": "Heat frames split into the actual climb and the setup in the adjacent room."
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 90},
+        "h_heatProof",
         {"or": [
-          {"obstaclesCleared": ["B"]},
-          {"and": [
-            "ScrewAttack",
-            {"or": [
-              "canPrepareForNextRoom",
-              {"heatFrames": 30}
-            ]}
-          ]}
-        ]}
+          "canWalljump",
+          "h_canCrouchJumpDownGrab",
+          "HiJump",
+          "h_canFly",
+          "canArtificialMorph"
+        ]},
+        "canXRayClimb"
       ],
-      "clearsObstacles": ["B"]
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 1 screen, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Power Bomb",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        {"heatFrames": 190}
-      ],
-      "clearsObstacles": ["B"]
+        {"heatFrames": 65}
+      ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Bombs",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Screw Attack Room Grapple Teleport Inside Wall",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        {"heatFrames": 180}
+        "canOffScreenMovement",
+        "Morph",
+        {"heatFrames": 200}
       ],
-      "clearsObstacles": ["B"]
+      "note": [
+        "After teleporting, Samus should be standing inside the wall.",
+        "Retract Grapple by pressing up, which will pull Samus down and right.",
+        "Hold right, and release Grapple while still holding right.",
+        "Perform a turn-around spin jump (to the left).",
+        "Then morph and roll out to the right."
+      ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Temporary Blue",
-      "notable": false,
+      "link": [2, 4],
+      "name": "Prepared Screw Attack",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
-        "canTemporaryBlue",
+        "ScrewAttack",
         "canPrepareForNextRoom",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2
-        }},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 1,
-          "useFrames": 70,
-          "physics": ["normal"]
-        }},
+        {"heatFrames": 90}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [2, 4],
+      "name": "Temporary Blue",
+      "entranceCondition": {
+        "comeInWithTemporaryBlue": {}
+      },
+      "requires": [
         {"heatFrames": 75}
       ],
       "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
       "note": "This expects the more controlled Temporary Blue to fall though the blocks, not storing a shinecharge through the door."
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Screw Attack Room Temporary Blue Descent and Shinespark Escape Middle Door Part 1",
       "notable": true,
+      "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 0,
+          "openEnd": 1
+        }
+      },
       "requires": [
         "canTemporaryBlue",
         "canPrepareForNextRoom",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2
-        }},
         {"heatFrames": 75}
       ],
       "clearsObstacles": ["B", "C"],
-      "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
+      "flashSuitChecked": true,
       "note": "Store the shinecharge while hitting the door transition to maintain the ability to break blocks."
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Screw Attack Room Screw Descent and Shinespark Escape Middle Door Part 1",
       "notable": true,
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 125
+        }
+      },
       "requires": [
         "ScrewAttack",
         "canShinechargeMovement",
-        {"canComeInCharged": {
-          "framesRemaining": 125,
-          "fromNode": 2
-        }},
         {"heatFrames": 120}
       ],
       "clearsObstacles": ["B", "C"],
       "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
+      "flashSuitChecked": true,
       "note": "Enter with a shinespark stored and screw attack down to the item."
     },
     {
-      "from": 2,
-      "to": 5,
-      "name": "Upper Bomb Blocks Already Broken",
-      "notable": false,
+      "link": [2, 5],
+      "name": "Base",
       "requires": [
-        {"obstaclesCleared": ["A"]}
+        {"heatFrames": 50}
       ]
     },
     {
-      "from": 2,
-      "to": 5,
-      "name": "Power Bombs",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        {"heatFrames": 200}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "from": 2,
-      "to": 5,
-      "name": "Screw Attack Room IBJ to Break the Top Blocks",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canIBJ",
-        {"heatFrames": 1200}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Expects that you fall down afterwards."
-    },
-    {
-      "from": 2,
-      "to": 5,
-      "name": "Space Bombs",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        "SpaceJump",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "from": 2,
-      "to": 5,
-      "name": "Screw Attack Room Springwall with Bombs",
-      "notable": true,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        "canSpringwall",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Use a Springwall to get up to the bomb blocks, to break them with a bomb."
-    },
-    {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Screw Attack Room Transition Speedjump with Bombs",
       "notable": true,
+      "reusableRoomwideNotable": "Screw Attack Room Transition Speedjump with Bombs",
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 6,
+          "speedBooster": true
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
-        "SpeedBooster",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 2
-        }},
+        "canMidAirMorph",
         "h_canUseMorphBombs",
         {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"],
-      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the obstacle."
+      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the top bomb blocks."
     },
     {
-      "from": 3,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 5],
+      "name": "Screw Attack Room Transition Speedjump with Bombs (Tricky Dash Jump)",
+      "notable": true,
+      "reusableRoomwideNotable": "Screw Attack Room Transition Speedjump with Bombs",
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 2,
+          "speedBooster": true
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 200},
-        {"or": [
-          "ScrewAttack",
-          {"obstaclesCleared": ["A"]}
-        ]}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "from": 3,
-      "to": 2,
-      "name": "Power Bombs",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "from": 3,
-      "to": 2,
-      "name": "Bombs",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
+        "HiJump",
+        "canTrickyDashJump",
+        "canMidAirMorph",
         "h_canUseMorphBombs",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "from": 3,
-      "to": 2,
-      "name": "SpeedBooster",
-      "notable": false,
-      "requires": [
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 3,
-          "unusableTiles": 4
-        }},
         {"heatFrames": 200}
       ],
       "clearsObstacles": ["A"],
-      "devNote": "FIXME: Running in is not required.  Entering the room with canBlueSpaceJump could work, for example."
+      "note": "Run in the adjacent room and jump through the door, to place a Bomb to break the top bomb blocks."
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "Temporary Blue",
-      "notable": false,
+      "link": [3, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Carry Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      }
+    },
+    {
+      "link": [3, 2],
+      "name": "Reset Fall Speed (Wave)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"doorUnlockedAtNode": 2},
+        "canResetFallSpeed",
+        "Wave",
+        {"heatFrames": 200}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Reset Fall Speed (Quick Shot)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"doorUnlockedAtNode": 2},
+        "canResetFallSpeed",
+        "canTrickyJump",
+        {"heatFrames": 145}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": ["canPrepareForNextRoom"]},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Runway (Blocks Broken)",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Runway (Blocks Intact)",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
+      "name": "Temporary Blue (Full Runway)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "canTemporaryBlue",
-        {"or": [
-          {"and": [
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 3,
-              "unusableTiles": 9
-            }},
-            {"heatFrames": 240}
-          ]},
-          {"and": [
-            "canXRayTurnaround",
-            {"canComeInCharged": {
-              "framesRemaining": 180,
-              "fromNode": 3
-            }},
-            {"heatFrames": 285}
-          ]}
-        ]}
+        "canXRayTurnaround",
+        {"heatFrames": 285}
       ],
       "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
       "note": "This expects the more controlled Temporary Blue to fall though the blocks, not storing a shinecharge on the first breakable block."
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "Screw Attack Room Temporary Blue Descent and Shinespark Escape Top Door Part 1",
-      "notable": true,
+      "link": [3, 4],
+      "name": "Temporary Blue (Short Runway)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "canTemporaryBlue",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 3,
-          "unusableTiles": 9
-        }},
+        {"heatFrames": 240}
+      ],
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "note": "This expects the more controlled Temporary Blue to fall though the blocks, not storing a shinecharge on the first breakable block."
+    },
+    {
+      "link": [3, 4],
+      "name": "Screw Attack Room Temporary Blue Descent and Shinespark Escape Top Door Part 1",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canTemporaryBlue",
+        "canShinechargeMovementTricky",
         {"heatFrames": 130}
       ],
       "clearsObstacles": ["A", "B", "C"],
       "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
-      "note": "Simultaneously store a shinespark and break through the bomb blocks down to the Screw Attack item location."
+      "flashSuitChecked": true,
+      "note": "Simultaneously store a shinespark and break through the bomb blocks down to the Screw Attack item location.",
+      "devNote": "canShinechargeMovementTricky is to represent the difficulty of activating the shinecharge in a precise place near the edge."
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 4],
       "name": "Screw Attack Room Screw Descent and Shinespark Escape Top Door Part 1",
       "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "ScrewAttack",
         "canShinechargeMovement",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 3
-        }},
         {"heatFrames": 170}
       ],
       "clearsObstacles": ["A", "B", "C"],
@@ -621,113 +898,225 @@
       "devNote": "Storing the spark on the left side of the runway takes fine control over shinecharge spacing, but that is ok at this difficulty."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [3, 4],
+      "name": "Stored Moonfall Clip",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canMoonfall",
+        "canFreeFallClip",
+        {"heatFrames": 85}
+      ],
+      "note": [
+        "Moonfall to clip through the Bomb blocks to the bottom of the room."
+      ]
+    },
+    {
+      "link": [3, 5],
       "name": "Base",
-      "notable": false,
+      "requires": [
+        {"heatFrames": 120},
+        {"or": [
+          "ScrewAttack",
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 5],
+      "name": "Power Bombs",
+      "requires": [
+        "h_canUsePowerBombs",
+        {"heatFrames": 220}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 5],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        {"heatFrames": 220}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 5],
+      "name": "Come in Getting Blue Speed",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 8,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        {"heatFrames": 120}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": "FIXME: Running in is not required. Entering the room with canBlueSpaceJump could work, for example."
+    },
+    {
+      "link": [3, 5],
+      "name": "Grapple Teleport Extension Clip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 170}
+      ],
+      "note": [
+        "After teleporting, as Samus swings to the right, begin holding down to extend Grapple just as Samus is slightly right of vertical.",
+        "Samus should swing back left and get stuck on the floor one tile to the right of the Grapple attachment point.",
+        "Release Grapple and Samus will clip through the floor."
+      ]
+    },
+    {
+      "link": [3, 5],
+      "name": "Stored Moonfall Clip",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canMoonfall",
+        {"heatFrames": 90}
+      ],
+      "note": [
+        "Moonfall to clip through the Bomb blocks",
+        "Break spin with Shot or Angle Aim to avoid clipping all the way to the bottom of the room."
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Base",
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 60}
       ]
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "Lower Bomb Blocks Already Broken",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 200},
-        {"obstaclesCleared": ["B"]}
-      ]
-    },
-    {
-      "from": 4,
-      "to": 2,
-      "name": "Screw",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "ScrewAttack",
-        {"heatFrames": 200}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "from": 4,
-      "to": 2,
-      "name": "Power Bomb",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUsePowerBombs",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "from": 4,
-      "to": 2,
-      "name": "Bomb",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canUseMorphBombs",
-        {"heatFrames": 300}
-      ],
-      "clearsObstacles": ["B"]
-    },
-    {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Screw Attack Room Shinespark Escape Mid Door Part 2",
       "notable": true,
       "requires": [
         "canShinechargeMovement",
         {"obstaclesCleared": ["C"]},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
         {"heatFrames": 240},
         {"shinespark": {"frames": 31, "excessFrames": 10}}
       ],
       "clearsObstacles": ["B"],
       "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
       "note": "Diagonally shinespark towards the middle door.",
       "devNote": [
-        "There is no actual runway. Obstacle C is indicating that Samus has a shinecharge ready to be used.",
+        "Obstacle C is indicating that Samus has a shinecharge ready to be used.",
         "Useful only if you cannot reach the door at 2."
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Screw Attack Room Shinespark Escape Top Door Part 2",
       "notable": true,
       "requires": [
         "canShinechargeMovement",
         {"obstaclesCleared": ["C"]},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
         {"heatFrames": 270},
         {"shinespark": {"frames": 41, "excessFrames": 4}}
       ],
       "clearsObstacles": ["A", "B"],
       "reusableRoomwideNotable": "Screw Attack Room Descent and Shinespark Escape",
       "note": "Carry a shinecharge down though the bomb blocks and shinespark back up.",
-      "devNote": "There is no actual runway. Obstacle C is indicating that Samus has a shinecharge ready to be used."
+      "devNote": "Obstacle C is indicating that Samus has a shinecharge ready to be used."
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Screw Attack Room IBJ",
-      "notable": false,
+      "link": [4, 4],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canIBJ",
+        {"obstaclesNotCleared": ["C"]},
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 5],
+      "name": "Lower Bomb Blocks Already Broken",
+      "requires": [
+        {"heatFrames": 120},
+        {"obstaclesCleared": ["B"]}
+      ]
+    },
+    {
+      "link": [4, 5],
+      "name": "Screw",
+      "requires": [
+        "ScrewAttack",
+        {"heatFrames": 120}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [4, 5],
+      "name": "Power Bomb",
+      "requires": [
+        "h_canUsePowerBombs",
+        {"heatFrames": 220}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [4, 5],
+      "name": "Bomb",
+      "requires": [
+        {"or": [
+          "canTrivialMidAirMorph",
+          "h_canUseSpringBall"
+        ]},
+        "h_canUseMorphBombs",
+        {"heatFrames": 220}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 2],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 80},
+        {"or": [
+          "HiJump",
+          "SpaceJump",
+          "canWalljump",
+          "h_canCrouchJumpDownGrab",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "canIBJ",
+            {"heatFrames": 440}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 80}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [5, 3],
+      "name": "Screw Attack Room IBJ",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canIBJ",
         {"heatFrames": 1300}
       ],
       "devNote": [
@@ -736,57 +1125,133 @@
       ]
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Space",
-      "notable": false,
+      "link": [5, 3],
+      "name": "Screw Attack Room IBJ to Break the Top Blocks",
       "requires": [
         "h_canNavigateHeatRooms",
+        "canPowerBombMidIBJ",
+        {"heatFrames": 1300}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Place a Power Bomb during the IBJ to break the blocks without falling."
+    },
+    {
+      "link": [5, 3],
+      "name": "Space Jump",
+      "requires": [
         "SpaceJump",
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "ScrewAttack"
+        ]},
         {"heatFrames": 400}
       ]
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Screw Attack Room Springwall",
-      "notable": false,
+      "link": [5, 3],
+      "name": "Springwall",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canSpringwall",
-        {"heatFrames": 400}
+        {"obstaclesCleared": ["A"]},
+        "h_HeatedSpringwall",
+        {"heatFrames": 245}
       ]
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Screw Attack Room Doorway Speedjump",
-      "notable": false,
+      "link": [5, 4],
+      "name": "Base",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "HiJump",
-        "SpeedBooster",
-        "canWalljump",
-        "canCarefulJump",
-        {"doorUnlockedAtNode": 2},
-        {"heatFrames": 400}
+        {"heatFrames": 40},
+        {"or": [
+          {"obstaclesCleared": ["B"]},
+          {"and": [
+            "ScrewAttack",
+            {"heatFrames": 30}
+          ]}
+        ]}
       ],
-      "note": "Position yourself in the door way, then run and jump. Makes it possible to walljump up."
+      "clearsObstacles": ["B"]
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Screw Attack Room Doorway CWJ",
-      "notable": true,
+      "link": [5, 4],
+      "name": "Power Bomb",
       "requires": [
-        "h_heatProof",
-        "HiJump",
-        "canCWJ",
-        "canStationarySpinJump",
-        "canInsaneWalljump",
-        {"doorUnlockedAtNode": 2}
+        "h_canUsePowerBombs",
+        {"heatFrames": 140}
       ],
-      "note": "Position yourself in the door way a few pixels from the edge.  Dashing stationary spinjump into a delayed CWJ and hopefully catch the upper ledge with a walljump."
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 4],
+      "name": "Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        {"heatFrames": 130}
+      ],
+      "clearsObstacles": ["B"]
+    },
+    {
+      "link": [5, 5],
+      "name": "Power Bombs",
+      "requires": [
+        "h_canUsePowerBombs",
+        "canTrivialMidAirMorph",
+        {"heatFrames": 150}
+      ],
+      "clearsObstacles": ["A"],
+      "devNote": [
+        "FIXME: This doesn't quite break the blocks above, but going up after has more requirements.",
+        "The canTrivialMidAirMorph could be avoided by using Spring Ball on entry or from the doorsill."
+      ]
+    },
+    {
+      "link": [5, 5],
+      "name": "IBJ to Break the Top Blocks",
+      "requires": [
+        "canIBJ",
+        {"heatFrames": 1150}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Expects that Samus falls down afterwards.",
+      "devNote": "FIXME: This assumes B is not broken, add other IBJ variants."
+    },
+    {
+      "link": [5, 5],
+      "name": "Space Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        "SpaceJump",
+        "canMidAirMorph",
+        {"heatFrames": 250}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [5, 5],
+      "name": "Springwall with Bombs",
+      "requires": [
+        "h_canUseMorphBombs",
+        "h_HeatedSpringwall",
+        {"heatFrames": 250}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Use a Springwall to get up to the bomb blocks, to break them with a bomb."
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        {"heatFrames": 40},
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [6, 5],
+      "name": "Fall into Room",
+      "requires": [
+        {"heatFrames": 50}
+      ]
     }
   ]
 }

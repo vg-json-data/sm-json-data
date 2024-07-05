@@ -11,93 +11,39 @@
   "nodes": [
     {
       "id": 1,
-      "name": "West Sand Hall Left Door (to West Sand Hall Tunnel)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a63c",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - West Sand Hall Left Door (to West Sand Hall Tunnel)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 2,
-      "name": "West Sand Hall Right Door (to Oasis)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a648",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - West Sand Hall Right Door (to Oasis)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Evir Projectile",
-            "notable": false,
-            "requires": [
-              "Gravity"
-            ]
-          },
-          {
-            "name": "Get Hit By Evir Projectile Suitless",
-            "notable": false,
-            "requires": [
-              "canSuitlessMaridia",
-              "canTurnaroundSpinJump",
-              "canTrickyJump"
-            ],
-            "note": [
-              "The Evir won't shoot unless Samus is on the left tile of the platform. Getting to the transition tiles while standing before the projectile can be tricky.",
-              "Either do two quick small spin jumps, one onto it and one back, breaking spin before landing both times,",
-              "or start with Samus' toe barely on the last tile, move left then do a short spin jump to the right, also breaking spin before landing."
-            ]
-          }
-        ]}
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
-      "name": "West Sand Hall Sand Entrance (from West Sand Hole)",
+      "name": "Top Sand Entrance",
       "nodeType": "entrance",
       "nodeSubType": "sandpit",
-      "nodeAddress": "0x001a654"
+      "nodeAddress": "0x001a654",
+      "doorOrientation": "up"
     },
     {
       "id": 4,
-      "name": "West Sand Hall Middle Junction (Below Sand Entrance)",
+      "name": "Below Sand Entrance",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 5,
-      "name": "West Sand Hall Left Pillar Junction",
+      "name": "Left Pillar Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -124,36 +70,149 @@
       "note": [
         "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
         "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
-        "Falling into the sand will often result in a soft lock."
+        "Falling into the sand will often result in a soft lock and jumping from the top of sand may be required.",
+        "Timing a Spring Ball jump to counteract the push of a sandfall requires a more precise jump timing."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {
+          "id": 2,
+          "devNote": "This link is only for sparking and G-Mode. All other strats should go 1 -> 5 -> 4 -> 2."
+        },
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {
+          "id": 1,
+          "devNote": "This link is only for sparking and G-Mode. All other strats should go 2 -> 4 -> 5 -> 1."
+        },
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 4}
       ]
     }
   ],
   "strats": [
     {
-      "from": 1,
-      "to": 2,
-      "name": "Shinespark",
-      "notable": false,
-      "requires": [
-        {"canComeInCharged": {
-          "fromNode": 1,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 98}}
-      ],
-      "devNote": "Frame cost assumes no Gravity"
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "G-Mode",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
-          "mode": "any",
-          "artificialMorph": false
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 99, "excessFrames": 5}}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark Into Room",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "Gravity",
+        {"shinespark": {"frames": 77, "excessFrames": 4}}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 76, "excessFrames": 4}}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Suitless Shinespark, Careful Slow Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canSlowShortCharge",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 0
         }},
+        {"shinespark": {"frames": 88, "excessFrames": 5}}
+      ],
+      "note": "Gain an extra half-tile of runway by coming in very slowly to prevent falling off.",
+      "devNote": [
+        "If applicable, the heat frames in the adjacent room may be underrepresented, particularly on a longer runway,",
+        "but it shouldn't be too bad because with a longer runway, Samus can just come in fully shinecharged."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
         "h_canNavigateUnderwater",
         {"or": [
           "canCarefulJump",
@@ -170,32 +229,29 @@
             "hits": 1
           }}
         ]}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity"
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Suitless SpringBall Jump",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
         "canTrickySpringBallJump",
         "canPlayInSand"
-      ]
+      ],
+      "note": "Time the springball jump to be just before Samus enters the sand."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "West Sand Hall Insane Bomb Jump",
       "notable": true,
       "requires": [
@@ -207,7 +263,7 @@
           "canSandIBJ",
           {"and": [
             "HiJump",
-            "can3HighMidAirMorph"
+            "can4HighMidAirMorph"
           ]}
         ]}
       ],
@@ -218,162 +274,315 @@
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "HiJump with Momentum",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": "any",
+          "minTiles": 1.4375
+        }
+      },
       "requires": [
         "HiJump",
         "canCrossRoomJumpIntoWater",
         "canTrickyJump",
-        "canPlayInSand",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 1,
-          "physics": ["air"]
-        }}
+        "canPlayInSand"
       ],
       "note": [
         "Gain momentum in the room to the left, then jump at the edge of the runway in order to land on the first pillar.",
-        "Requires a runway of only approximately 1 tile in the adjacent room."
+        "Requires a runway of at least 2 tiles (with no open end) in the adjacent room.",
+        "Shrinking Samus' hitbox before landing makes the jump a little easier."
       ],
       "devNote": "This is not technically a canCrossRoomJumpIntoWater, but it is used here because of the way the momentum changes as Samus enters the water."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Jump with Momentum",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": false,
+          "minTiles": 5
+        }
+      },
       "requires": [
         "canCrossRoomJumpIntoWater",
         "canPlayInSand",
-        {"or": [
-          {"and": [
-            "canCarefulJump",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 5.5,
-              "physics": ["air"]
-            }}
-          ]},
-          {"and": [
-            "canTrickyJump",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 5,
-              "physics": ["air"]
-            }}
-          ]}
-        ]}
+        "canCarefulJump"
       ],
       "note": [
-        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar.",
+        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar. Ensure that Speed Booster is disabled.",
         "With a short runway of 5 tiles in the adjacent room, it is required to jump as late as possible at the edge of the runway in this room.",
         "With any longer of a runway, the jump is much less precise."
       ],
       "devNote": "This is not technically a canCrossRoomJumpIntoWater, but it is used here because of the way the momentum changes as Samus enters the water."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
+      "name": "Tricky Jump with Momentum",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": false,
+          "minTiles": 4
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canPlayInSand",
+        "canTrickyJump"
+      ],
+      "note": [
+        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar. Ensure that Speed Booster is disabled.",
+        "With a short runway of 5 tiles (with no open end) in the adjacent room, it is required to jump as late as possible at the edge of the runway in this room.",
+        "With any longer of a runway, the jump is much less precise.",
+        "Shrinking Samus' hitbox before landing makes the jump a little easier."
+      ],
+      "devNote": "This is not technically a canCrossRoomJumpIntoWater, but it is used here because of the way the momentum changes as Samus enters the water."
+    },
+    {
+      "link": [1, 5],
+      "name": "West Sand Hall Spring Fling with Momentum",
+      "notable": true,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 1
+        }
+      },
+      "requires": [
+        "canCrossRoomJumpIntoWater",
+        "canPlayInSand",
+        "canLateralMidAirMorph",
+        "canTrickySpringBallJump",
+        "canSpringFling"
+      ],
+      "note": [
+        "Enter with at least 1 tile of run speed from an air room, with Speedbooster unequipped.",
+        "Jump from near the end of the runway (though a jump from 1-2 tiles away from the end can still work).",
+        "Press pause while crossing the narrow first sandfall, then perform a lateral mid-air morph after exiting the sandfall.",
+        "Equip both Spring Ball and Speed Booster, and perform a mid-air Spring Ball jump at somewhere close to the maximum height.",
+        "Unequip Spring Ball while descending through the wide second sidefall."
+      ]
+    },
+    {
+      "link": [1, 5],
       "name": "Cross Room Jump into Air Ball",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": false,
+          "minTiles": 6
+        }
+      },
+      "requires": [
+        "canLateralMidAirMorph",
+        "canCrossRoomJumpIntoWater",
+        "canPlayInSand"
+      ],
+      "note": [
+        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar. Ensure that Speed Booster is disabled.",
+        "Perform an air ball before hitting the ceiling in order to land on the first pillar.",
+        "Requires a runway of 6 tiles in the adjacent room."
+      ]
+    },
+    {
+      "link": [1, 5],
+      "name": "Tricky Cross Room Jump into Air Ball",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": false,
+          "minTiles": 5
+        }
+      },
       "requires": [
         "canLateralMidAirMorph",
         "canCrossRoomJumpIntoWater",
         "canPlayInSand",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 7,
-          "physics": ["air"]
-        }}
+        "canTrickyJump"
       ],
       "note": [
-        "Requires a runway of approximately 7 tiles in the adjacent room.",
-        "Perform an air ball before hitting the ceiling in order to land on the first pillar."
+        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar. Ensure that Speed Booster is disabled.",
+        "Perform an air ball before hitting the ceiling in order to land on the first pillar.",
+        "Requires a runway of 5 tiles in the adjacent room."
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Cross Room Jump into Air Ball with HiJump",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": false,
+          "minTiles": 1
+        }
+      },
       "requires": [
         "canLateralMidAirMorph",
         "canCrossRoomJumpIntoWater",
         "HiJump",
-        "canPlayInSand",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 0.5,
-          "physics": ["air"]
-        }}
+        "canPlayInSand"
       ],
       "note": [
+        "Gain momentum in the room to the left, then jump in this room in order to land on the first pillar. Ensure that Speed Booster is disabled.",
         "Requires a runway of only approximately 0.5 tiles in the adjacent room.",
         "Perform an air ball before hitting the ceiling in order to land on the first pillar."
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Cross Room Jump with Bomb Boost",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithBombBoost": {}
+      },
       "requires": [
-        "h_canBombHorizontally",
-        "canCrossRoomJumpIntoWater",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 0.5,
-          "physics": ["air"]
-        }}
+        "canCrossRoomJumpIntoWater"
       ],
       "note": "Bomb boost through the doorway. Get the bomb boost while as close to the door transition as possible in order to get to the first pillar."
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Shinespark",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Suitless Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 0
-        }},
-        {"shinespark": {"frames": 98}}
-      ],
-      "devNote": "Frame cost assumes no Gravity"
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "G-Mode",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": false
-        }},
-        "h_canNavigateUnderwater",
-        "canCarefulJump"
+        {"shinespark": {"frames": 99, "excessFrames": 5}}
       ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Base",
+      "link": [2, 1],
+      "name": "Shinespark Into Room",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        "Gravity",
+        {"shinespark": {"frames": 78, "excessFrames": 4}}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity",
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 76, "excessFrames": 4}}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Shinespark, Careful Slow Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canSlowShortCharge",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 14,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 90, "excessFrames": 5}}
+      ],
+      "note": "Gain an extra half-tile of runway by coming in very slowly to prevent falling off.",
+      "devNote": [
+        "If applicable, the heat frames in the adjacent room may be underrepresented, particularly on a longer runway,",
+        "but it shouldn't be too bad because with a longer runway, Samus can just come in fully shinecharged."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_canNavigateUnderwater",
+        "canCarefulJump"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Evir Projectile",
       "notable": false,
+      "requires": [
+        "Gravity"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Evir Projectile Suitless",
+      "notable": false,
+      "requires": [
+        "canSuitlessMaridia",
+        "canTurnaroundSpinJump",
+        "canTrickyJump"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "The Evir won't shoot unless Samus is on the left tile of the platform. Getting to the transition tiles while standing before the projectile can be tricky.",
+        "Either do two quick small spin jumps, one onto it and one back, breaking spin before landing both times,",
+        "or start with Samus' toe barely on the last tile, move left then do a short spin jump to the right, also breaking spin before landing."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
       "requires": [
         "Gravity",
         "SpaceJump"
       ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Gravity Platforming (Right to Center)",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -388,10 +597,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Suitless HiJump (Right to Center)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -407,10 +614,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Suitless Itemless (Right to Center)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canTrickyJump",
@@ -419,46 +624,16 @@
       "note": "It is possible to cross this segment with nothing. Cancel spin before hitting the sand, then get a good jump off the sand in multiple places."
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        {"enemyDamage": {
-          "enemy": "Evir",
-          "type": "particle",
-          "hits": 1
-        }}
-      ]
-    },
-    {
-      "from": 3,
-      "to": 4,
-      "name": "Evir Dodge",
-      "notable": false,
-      "requires": [
-        "canPrepareForNextRoom",
-        "canPlayInSand",
-        "canTrickyJump",
-        {"or": [
-          "Gravity",
-          "HiJump",
-          "canSandfallBounce"
-        ]}
-      ],
-      "note": "Enter on the right side of the transition and move left to avoid damage."
-    },
-    {
-      "from": 4,
-      "to": 1,
+      "link": [3, 1],
       "name": "G-Mode",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }},
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
         "h_canNavigateUnderwater",
         {"or": [
           "canCarefulJump",
@@ -475,23 +650,65 @@
             "hits": 1
           }}
         ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 2],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "h_canNavigateUnderwater"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Evir",
+          "type": "particle",
+          "hits": 1
+        }}
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [3, 4],
+      "name": "Evir Dodge",
+      "requires": [
+        "canPrepareForNextRoom",
+        "canPlayInSand",
+        "canTrickyJump",
+        {"or": [
+          "Gravity",
+          "HiJump",
+          "canInsaneJump"
+        ]}
+      ],
+      "note": "Enter on the right side of the transition and move left to avoid damage.",
+      "devNote": [
+        "Entering from a non-sand room makes the suitless+hijumpless dodge only possible with a walljump.",
+        "Entering through the Toilet does not affect this dodge strat much."
+      ]
+    },
+    {
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         "SpaceJump"
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Gravity Platforming (Center to Right)",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -510,10 +727,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Suitless Platforming (Center to Right)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
@@ -529,17 +744,15 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "West Sand Hall Suitless Bootless Spring Ball (Center to Right)",
       "notable": true,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
-        "canTrickyJump",
-        "canCrouchJump",
-        "canTrickySpringBallJump",
+        "h_canMaxHeightSpringBallJump",
         "canStationaryLateralMidAirMorph",
+        "canInsaneJump",
         {"or": [
           {"enemyKill": {
             "enemies": [["Evir"]],
@@ -565,8 +778,7 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "West Sand Hall Ice Only (Center to Right)",
       "notable": true,
       "requires": [
@@ -583,34 +795,16 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "G-Mode",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
-          "mode": "any",
-          "artificialMorph": false
-        }},
-        "h_canNavigateUnderwater"
-      ]
-    },
-    {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         "SpaceJump"
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "Gravity Platforming (Center to Left)",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -634,10 +828,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "Suitless Platforming (Center to Left)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -649,21 +841,25 @@
             "type": "particle",
             "hits": 1
           }}
+        ]},
+        {"or": [
+          "canSandfallBounce",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
         ]}
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "West Sand Hall Suitless Bootless Spring Ball (Center to Left)",
       "notable": true,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
-        "canTrickyJump",
-        "canCrouchJump",
-        "canTrickySpringBallJump",
-        "canStationaryLateralMidAirMorph",
+        "h_canMaxHeightSpringBallJump",
         {"or": [
           {"enemyKill": {
             "enemies": [["Evir"]],
@@ -683,14 +879,15 @@
       ],
       "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
       "note": [
-        "Perform multiple stationary lateral mid-air morphs, while avoiding the Evir projectiles, to cross the room.",
-        "It is necessary to start the jumps from the far side of the platforms in order to gain more horizontal momentum before entering the sand falls.",
-        "Falling into the sand will often result in a soft lock."
+        "The first Spring Ball jump is performed farther away from the sand tile so Samus can build up momentum and height before entering the sand fall.",
+        "The second jump must be made from the right half of the solid tile (but not the rightmost pixels.)",
+        "The third jump will land on the sand and must be followed by a jump off of the sand.",
+        "Falling into the sand will often result in a soft lock.",
+        "Only the far left section of sand, near the door, can be escaped with a crouch jump."
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "West Sand Hall Ice Beam Only (Center to Left)",
       "notable": true,
       "requires": [
@@ -706,14 +903,13 @@
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "West Sand Hall Suitless Damage Boost (Center to Left)",
       "notable": true,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
-        "canTrickyJump",
+        "canInsaneJump",
         "canCrouchJump",
         "canNeutralDamageBoost",
         {"enemyDamage": {
@@ -731,10 +927,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         {"or": [
@@ -745,10 +939,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Hidden Tunnel",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "Morph",
@@ -763,20 +955,16 @@
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         "SpaceJump"
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Gravity Platforming (Left to Center)",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
@@ -795,10 +983,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Suitless Platforming (Left to Center)",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -814,21 +1000,27 @@
             "type": "particle",
             "hits": 1
           }}
+        ]},
+        {"or": [
+          "canSandfallBounce",
+          {"enemyDamage": {
+            "enemy": "Evir",
+            "type": "particle",
+            "hits": 1
+          }}
         ]}
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "West Sand Hall Suitless Bootless Spring Ball (Left to Center)",
       "notable": true,
       "requires": [
         "canSuitlessMaridia",
         "canPlayInSand",
-        "canTrickyJump",
-        "canCrouchJump",
-        "canTrickySpringBallJump",
-        "canStationaryLateralMidAirMorph"
+        "h_canMaxHeightSpringBallJump",
+        "canStationaryLateralMidAirMorph",
+        "canInsaneJump"
       ],
       "reusableRoomwideNotable": "West Sand Hall Suitless Bootless Spring Ball",
       "note": [

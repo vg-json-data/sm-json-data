@@ -11,62 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Bat Cave Left Door (to Bubble Mountain)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197aa",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Bat Cave Left Door (to Bubble Mountain)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 70}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Bat Cave Right Door (to Speed Booster Hall)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00197b6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Bat Cave Right Door (to Speed Booster Hall)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ]
-            }
-          ],
-          "openEnd": 1,
-          "devNote": [
-            "The blocks respawn, so no need to split this in two runways.",
-            "While waiting for respawn would take additional heat frames, the spawner makes that more or less inconsequential."
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Bat Cave Farm Spot",
+      "name": "Gamet Farm Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -91,21 +54,69 @@
           "name": "Crouch over Gamets",
           "cycleFrames": 120,
           "requires": [
-            "h_canNavigateHeatRooms",
             {"heatFrames": 120}
           ]
         }
       ]
     }
   ],
-  "strats": [
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Camera Broken",
+      "obstacleType": "abstract",
+      "note": "Represents being off-camera in the top part of the room."
+    }
+  ],
+  "links": [
     {
       "from": 1,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "requires": [
         {"or": [
           "canWalljump",
           "HiJump",
@@ -117,23 +128,121 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Precise Walljump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canPreciseWalljump",
+        "canTrickyJump",
         {"heatFrames": 220}
+      ],
+      "note": [
+        "Shoot the Skree and shotblock from the door.",
+        "While avoiding Skree projectiles, jump to the next bubble platform followed by jumping directly up where the shot block used to be."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Jump into Respawning Block",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canJumpIntoRespawningBlock",
+        {"heatFrames": 625}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Enter Running Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"heatFrames": 300},
+        {"shinespark": {"frames": 14, "excessFrames": 3}}
+      ],
+      "note": "Shoot diagonally to clear the Skree and shot block before jumping and sparking diagonally mid-air to the above area."
+    },
+    {
+      "link": [1, 2],
+      "name": "Enter Shinecharged and Shinespark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 80
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"heatFrames": 270},
+        {"shinespark": {"frames": 13, "excessFrames": 3}}
+      ],
+      "flashSuitChecked": true,
+      "note": "Shoot diagonally to clear the Skree and shot block before jumping and sparking diagonally mid-air to the above area."
+    },
+    {
+      "link": [1, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12], [12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      }
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[12, 13]]
+        }
+      }
+    },
+    {
+      "link": [1, 3],
+      "name": "X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": "Climb up 1 screen."
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [
         {"or": [
           {"heatFrames": 230},
           {"and": [
@@ -149,12 +258,114 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Enter Running and Leave Shinesparking",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canShinechargeMovementTricky",
+        {"heatFrames": 165},
+        {"shinespark": {"frames": 15}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
+    },
+    {
+      "link": [2, 1],
+      "name": "Enter Shinecharged and Leave Shinesparking",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 115
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"heatFrames": 165},
+        {"shinespark": {"frames": 15}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": "Fall through the shot blocks and shoot around the Skree to open the door without falling into the lava to shinespark out of the room."
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 19]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 19]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Fix the Camera",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canOffScreenMovement",
+        {"heatFrames": 160}
+      ],
+      "resetsObstacles": ["A"],
+      "note": [
+        "Destroy the shot block by standing on top of it, jumping, aiming down, and shooting at the moment that you land.",
+        "This requires precision because the beam projectile will immediately despawn while off-camera.",
+        "Less precise alternatives include using a bomb, Power Bomb, or Grapple, if available.",
+        "With the shot block destroyed, fall down through the opening and jump back up, and the camera will be fixed."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 10}
       ],
       "devNote": [
@@ -163,27 +374,60 @@
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50}
       ]
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "devNote": [
+        "The blocks respawn, so no need to split this in two runways.",
+        "While waiting for respawn would take additional heat frames, the spawner makes that more or less inconsequential."
+      ]
+    },
+    {
+      "link": [3, 3],
       "name": "Gamet Farm",
-      "notable": false,
       "requires": [
+        {"obstaclesNotCleared": ["A"]},
         {"or": [
           "canPauseAbuse",
           {"heatFrames": 50}
         ]},
         {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
       ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Off-Camera Gamet Farm",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canOffScreenMovement",
+        {"or": [
+          "ScrewAttack",
+          "h_canUseMorphBombs",
+          "Grapple"
+        ]},
+        {"or": [
+          "canPauseAbuse",
+          {"heatFrames": 50}
+        ]},
+        {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
+      ],
+      "note": "When off-camera, the Gamets still spawn but cannot be destroyed with beams or other projectiles."
     }
   ]
 }

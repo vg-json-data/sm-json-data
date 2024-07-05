@@ -11,125 +11,41 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Speed Booster Hall Left Door (to Bat Cave)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00195a6",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Speed Booster Hall Left Door (to Bat Cave)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ]
-            }
-          ],
-          "openEnd": 1
-        },
-        {
-          "name": "Runway When Running Through - Speed Booster Hall Left Door (to Bat Cave)",
-          "length": 45,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"resetRoom": {
-                  "nodes": [2],
-                  "mustStayPut": false
-                }},
-                {"heatFrames": 300}
-              ],
-              "devNote": [
-                "Although technically meaningless, mustStayPut false is used here to make this resetRoom structurally valid.",
-                "This is a rare situation where visiting a node or destroying an obstacle isn't stricly what makes the strat impossible.",
-                "In this case, you can destroy the crumble blocks and still do the strat as long as you break them moving towards the door and don't lose momentum."
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Speed Booster Hall Right Door (to Speed Booster)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "red",
       "nodeAddress": "0x00195b2",
+      "doorOrientation": "right",
       "doorEnvironments": [
         {
           "physics": "air",
           "note": "This can be lava when entering from node 2, but it's still possible to have air physics"
         }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Speed Booster Hall Right Door (to Speed Booster)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 110}
-              ]
-            }
-          ],
-          "openEnd": 1
-        },
-        {
-          "name": "Runway When Running Through - Speed Booster Hall Right Door (to Speed Booster)",
-          "length": 45,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"resetRoom": {
-                  "nodes": [1],
-                  "nodesToAvoid": [3]
-                }},
-                {"heatFrames": 300}
-              ],
-              "note": "Unlike with node 1, here we can count visiting node 3 as 'breaking momentum after using the crumble blocks'."
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "locks": [
-        {
-          "name": "Speed Booster Hall Red Lock (to Speed Booster)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenRedDoors"
-              ]
-            }
-          ]
-        }
       ]
     },
     {
       "id": 3,
-      "name": "Missile (Speed Booster)",
+      "name": "Hidden Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
       "nodeAddress": "0x78C74"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Crumble Blocks Broken",
+      "obstacleType": "inanimate"
     }
   ],
   "enemies": [
@@ -151,12 +67,44 @@
       "devNote": "Accessible without Gravity going left to right but not right to left with speedbooster. Letting it slide"
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Geruta Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"or": [
@@ -170,82 +118,460 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "devNote": [
+        "FIXME: A Crystal Flash at node 2 could be added to logic, but would have to take into account the lava rising (if entering from the right door, with Speedbooster collected, without the lava having finished rising before)."
+      ]
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [1],
-          "nodesToAvoid": [2]
-        }},
+        {"obstaclesNotCleared": ["A"]},
         {"heatFrames": 650}
+      ],
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 20}]}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
+      "name": "Leave with Runway",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"heatFrames": 630}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Crumble Bridges Broken",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatProof"
+      ],
+      "devNote": "There is no reason to logically run back through the room this way."
+    },
+    {
+      "link": [1, 2],
       "name": "Speed Run",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [1],
-          "nodesToAvoid": [2]
-        }},
-        {"and": [
-          "SpeedBooster",
-          {"heatFrames": 360}
-        ]}
-      ]
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [2],
-          "nodesToAvoid": [1]
-        }},
-        {"heatFrames": 650}
-      ]
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "Speed Run",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"resetRoom": {
-          "nodes": [2],
-          "nodesToAvoid": [1]
-        }},
+        {"obstaclesNotCleared": ["A"]},
         "SpeedBooster",
         {"heatFrames": 360}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 2],
+      "name": "Speed Run and Leave Shinecharged",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "h_canShineChargeMaxRunway",
+        {"heatFrames": 360}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Speed Run and Leave Running",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        "canHeroShot",
+        {"heatFrames": 290}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Shoot from the middle of the second set of crumble blocks from the left."
+    },
+    {
+      "link": [1, 2],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        {"or": [
+          {"heatFrames": 650},
+          {"and": [
+            "SpeedBooster",
+            {"heatFrames": 360}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          {"heatFrames": 650},
+          {"and": [
+            "SpeedBooster",
+            {"heatFrames": 360}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"heatFrames": 650}
+      ],
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 20}]}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Crumble Bridges Broken",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_heatProof",
+          {"and": [
+            {"heatFrames": 690},
+            {"or": [
+              {"ammo": {"type": "Super", "count": 3}},
+              {"ammo": {"type": "Missile", "count": 6}},
+              "ScrewAttack",
+              "Plasma",
+              "Spazer",
+              "Wave"
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"and": [
+            "canCarefulJump",
+            {"heatFrames": 420}
+          ]},
+          {"and": [
+            {"heatFrames": 720},
+            {"lavaFrames": 60}
+          ]}
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 20}]}
+      ],
+      "devNote": "This can be used for collecting the item without needing to reset the room."
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave with Runway",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"heatFrames": 630}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Speed Run",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        {"heatFrames": 360}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 1],
+      "name": "Speed Run and Leave Shinecharged",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "h_canShineChargeMaxRunway",
+        {"heatFrames": 360}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 145
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Speed Run and Leave Running",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "SpeedBooster",
+        "canHeroShot",
+        {"heatFrames": 290}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 45,
+          "openEnd": 1
+        }
+      },
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Shoot while climbing the highest ramp for the shot to open the door."
+    },
+    {
+      "link": [2, 1],
+      "name": "Return Shinespark",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "canShinechargeMovementComplex",
+        "canHorizontalShinespark",
+        "h_canShineChargeMaxRunway",
+        {"heatFrames": 335},
+        {"shinespark": {"frames": 221}}
+      ],
+      "note": "Align with the right side of a wall or door then turn around and shinespark in order to avoid colliding with a slope.",
+      "devNote": [
+        "There is enough time to visit 3 and return to 2 before performing this strat with the shinespark.",
+        "The obstacle being broken means Samus has run far enough to charge a shinespark."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600},
+        {"lavaFrames": 1600}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ],
+      "devNote": [
+        "FIXME: Add a way to model the flag that gets set in this room after outrunning the lava, with SpeedBooster collected.",
+        "That would be a way to avoid the lavaFrames.",
+        "We also could have a canRiskPermanentLossOfAccess version based on not having SpeedBooster."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Transition with Stored Fall Speed",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        {"or": [
+          {"heatFrames": 650},
+          {"and": [
+            "SpeedBooster",
+            {"heatFrames": 360}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Transition with Stored Fall Speed (more speed)",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        {"or": [
+          {"heatFrames": 650},
+          {"and": [
+            "SpeedBooster",
+            {"heatFrames": 360}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 25}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 25}
       ]
     }

@@ -11,84 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Fast Rippers Left Door (to Screw Attack)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001988e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Fast Rippers Left Door (to Screw Attack)",
-          "length": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 200}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Fast Rippers Right Door (to Fast Pillars Setup Room)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001989a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Fast Rippers Right Door (to Fast Pillars Setup Room)",
-          "length": 9,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 120}
-              ]
-            }
-          ],
-          "openEnd": 0
-        },
-        {
-          "name": "Runway with Gate Open - Fast Rippers Right Door (to Fast Pillars Setup Room)",
-          "length": 28,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 250},
-                {"enemyDamage": {
-                  "enemy": "Ripper 2 (red)",
-                  "type": "contact",
-                  "hits": 2
-                }},
-                {"or": [
-                  "h_canHeatedGreenGateGlitch",
-                  {"obstaclesCleared": ["A"]}
-                ]}
-              ],
-              "clearsObstacles": ["A"],
-              "note": "This longer runway requires the green gate to be open, and usually involves tanking some ripper hits."
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Fast Rippers Junction (Left of Green Gate)",
+      "name": "Junction Left of Green Gate",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -110,12 +51,60 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [
+        {"heatFrames": 120},
+        {"or": [
+          "Morph",
+          "Ice",
+          "ScrewAttack",
+          {"ammo": {"type": "Super", "count": 2}},
+          {"enemyDamage": {
+            "enemy": "Ripper 2 (red)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "devNote": "This assumes we must wait for the Rippers to pass (or freeze or kill them)."
+    },
+    {
+      "link": [1, 1],
       "name": "Ripper Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "ScrewAttack",
@@ -127,10 +116,29 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Ripper 2 (red)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
       "name": "Tank the Rippers",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 450},
@@ -142,10 +150,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Screw Attack",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 350},
@@ -153,10 +159,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Kill some Rippers",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 450},
@@ -168,10 +172,106 @@
       "note": "The time lost by setting up a few strategic kills is pretty much offset by not having damage recoil."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Gate Closed)",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway (Gate Open)",
+      "requires": [
+        {"or": [
+          "h_canHeatedGreenGateGlitch",
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"enemyDamage": {
+          "enemy": "Ripper 2 (red)",
+          "type": "contact",
+          "hits": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -180,13 +280,12 @@
         ]},
         {"heatFrames": 100}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Tank the Rippers",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 600},
@@ -198,10 +297,8 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Screw Attack",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 600},
@@ -209,10 +306,8 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Kill some Rippers",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 600},
@@ -224,10 +319,8 @@
       "note": "It's more chaotic because the GGG's unreliability makes the room more variable, but one PB or 2 Super kills should usually do it."
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 100},
@@ -240,6 +333,14 @@
         ]}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

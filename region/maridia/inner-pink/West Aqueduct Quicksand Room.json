@@ -11,60 +11,19 @@
   "nodes": [
     {
       "id": 1,
-      "name": "West Aqueduct Quicksand Room Top Sand Entrance (From Aqueduct Left)",
+      "name": "Top Sand Entrance",
       "nodeType": "entrance",
       "nodeSubType": "sandpit",
       "nodeAddress": "0x001a6d8",
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Bull",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorOrientation": "up"
     },
     {
       "id": 2,
-      "name": "West Aqueduct Quicksand Room Bottom Sand Exit (to West Sand Hole)",
+      "name": "Bottom Sand Exit",
       "nodeType": "exit",
       "nodeSubType": "sandpit",
       "nodeAddress": "0x001a6e4",
-      "leaveWithGMode": [
-        {
-          "leavesWithArtificialMorph": false,
-          "strats": [
-            {
-              "name": "G-Mode",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1],
-                  "mode": "any",
-                  "artificialMorph": false
-                }}
-              ]
-            }
-          ]
-        },
-        {
-          "leavesWithArtificialMorph": true,
-          "strats": [
-            {
-              "name": "G-Mode Morph",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1],
-                  "mode": "any",
-                  "artificialMorph": true
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "down"
     }
   ],
   "enemies": [
@@ -76,12 +35,93 @@
       "homeNodes": [1, 2]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "devNote": "A 10 Power Bomb Crystal Flash strat may also be possible here, but it seems tricky to ensure that health-bomb won't interfere."
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Bull",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
       "requires": []
     }
   ]

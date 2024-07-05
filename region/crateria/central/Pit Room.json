@@ -10,14 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Pit Room Left Door (to Climb)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x0018b7a",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
-          "name": "Pit Room Left Grey Lock (to Climb)",
+          "name": "Pit Room Left Gray Lock (to Climb)",
           "lockType": "killEnemies",
           "unlockStrats": [
             {
@@ -41,26 +42,15 @@
     },
     {
       "id": 2,
-      "name": "Pit Room Right Door (to Elevator)",
+      "name": "Right Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x0018b86",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Grey Space Pirate (wall)",
-            "type": "contact",
-            "hits": 1
-          }},
-          "Missile",
-          "Morph"
-        ],
-        "note": "The enemies do not spawn in this room unless Missiles and Morph are collected (even if Zebes is awake)."
-      },
       "locks": [
         {
-          "name": "Pit Room Right Grey Lock (to Elevator)",
+          "name": "Pit Room Right Gray Lock (to Elevator)",
           "lockType": "killEnemies",
           "lock": ["Missile", "Morph"],
           "unlockStrats": [
@@ -77,7 +67,7 @@
     },
     {
       "id": 3,
-      "name": "Missile (Crateria bottom)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -94,12 +84,14 @@
                 {"or": [
                   {"and": [
                     "Missile",
-                    "Morph"
+                    "Morph",
+                    "canAwakenZebes"
                   ]},
                   "h_AllItemsSpawned"
                 ]}
               ],
-              "note": "Item doesn't spawn unless Samus has Morph and Missiles, even if Zebes is awake."
+              "note": "Item doesn't spawn unless Samus has Morph and Missiles, even if Zebes is awake.",
+              "devNote": "canAwakenZebes is included to indicate the knowledge for how to spawn the item, the tech's description discusses this item as well."
             }
           ]
         }
@@ -139,12 +131,34 @@
       "name": "Pit Room Bomb Blocks"
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["A"]}
       ],
@@ -156,10 +170,8 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Leave with Runway, Broken Floor",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -169,17 +181,41 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave With Temporary Blue",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canLongChainTemporaryBlue",
+        "canInsaneJump"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canDestroyBombWalls",
@@ -189,10 +225,8 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "Temporary Blue",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Temporary Blue (Come In Shinecharging)",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 3,
@@ -203,23 +237,52 @@
         "canTemporaryBlue"
       ],
       "clearsObstacles": ["A"],
-      "note": "Breaking the side blocks can be done with a shinespark, or by moving into them once past the solid blocks.",
-      "devNote": "FIXME: Add chain strat with x-ray turnaround and a 7 tile runway."
+      "flashSuitChecked": true,
+      "note": "Breaking the side blocks can be done with a shinespark, or by moving into them once past the solid blocks."
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "G-Mode Morph to Bomb the Bomb Blocks",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Temporary Blue With X-Ray (Come In Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "Bombs"
+        "canChainTemporaryBlue",
+        "canXRayTurnaround"
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": "Breaking the side blocks can be done by moving into them once past the solid blocks."
+    },
+    {
+      "link": [1, 3],
+      "name": "Temporary Blue (Come In With Temporary Blue)",
+      "entranceCondition": {
+        "comeInWithTemporaryBlue": {}
+      },
+      "requires": [
+        "canChainTemporaryBlue"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "G-Mode Morph to Bomb the Bomb Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphBombs"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "note": [
         "Overload PLMs using the scroll block directly above the bomb block leading down to the item.",
         "When the bomb blocks turn to air, lay bombs as Samus falls.",
@@ -227,54 +290,107 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "G-Mode Morph to Power Bomb the Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
-        {"ammo": {"type": "PowerBomb", "count": 1}}
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphPowerBomb"
       ],
       "clearsObstacles": ["A"],
-      "note": [
-        "As soon as you enter the room, lay a Power Bomb to break the bomb blocks leading down to the item.",
-        "After the Pirate is destroyed, move to the right to a location safe from the path of the lasers.",
-        "Then unmorph and use X-ray to cancel G-mode, which will clear the blocks."
-      ]
+      "flashSuitChecked": true,
+      "note": "Lay a Power Bomb to break the bomb blocks leading down to the item, then use X-ray to cancel G-mode, to clear the blocks."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "G-Mode Through the Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true,
       "note": [
         "Overload PLMs using the scroll block directly above the bomb block leading down to the item.",
         "Using X-Ray to cancel G-mode will lead to a soft lock if the item there can't be used to get Samus out."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Come in Shinecharging, Leave With Temporary Blue",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canLongChainTemporaryBlue",
+        "canInsaneJump"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -284,10 +400,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Space Pirate Farm",
-      "notable": false,
       "requires": [
         "Morph",
         "Missile",
@@ -299,10 +413,24 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Full Room Temporary Blue",
-      "notable": false,
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Grey Space Pirate (wall)",
+          "type": "contact",
+          "hits": 1
+        }},
+        "Missile",
+        "Morph"
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": "The enemies do not spawn in this room unless Missiles and Morph are collected (even if Zebes is awake)."
+    },
+    {
+      "link": [2, 3],
+      "name": "Full Room Temporary Blue (Come in Shinecharging)",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 1,
@@ -311,9 +439,9 @@
       },
       "requires": [
         "canTemporaryBlue",
-        "canCarefulJump",
+        "canInsaneJump",
         {"or": [
-          "canChainTemporaryBlue",
+          "canLongChainTemporaryBlue",
           {"and": [
             "canSpeedball",
             "canSpringBallBounce",
@@ -322,117 +450,37 @@
           {"and": [
             "canBlueSpaceJump",
             "canMockball",
-            "canTrickyJump",
             "canSlowShortCharge"
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Bring temporary blue from the right side door all the way to the missile location using Springball, SpaceJump, or Morph-UnMorphs.",
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "G-Mode Morph to Bomb the Bomb Blocks",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Full Room Temporary Blue (Come in With Temporary Blue)",
+      "entranceCondition": {
+        "comeInWithTemporaryBlue": {}
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "h_canArtificialMorphIBJ"
+        "canLongChainTemporaryBlue",
+        "canInsaneJump"
       ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "Be careful not to touch any of the pirates or their spawned lasers. It may be worthwhile to drop into the pit until the wall pirate is in a good position.",
-        "Overload PLMs using the scroll block directly above the bomb block leading down to the item.",
-        "When the bomb blocks turn to air, lay bombs as Samus falls.",
-        "After landing on the first platform, quickly unmorph and use X-Ray to cancel G-mode before the bombs explode."
-      ]
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "G-Mode Morph to Power Bomb the Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "h_canArtificialMorphBombHorizontally",
-        {"ammo": {"type": "PowerBomb", "count": 2}},
-        {"or": [
-          {"ammo": {"type": "PowerBomb", "count": 2}},
-          {"and": [
-            "canTrickyJump",
-            {"ammo": {"type": "PowerBomb", "count": 1}}
-          ]},
-          {"and": [
-            "f_ZebesAwake",
-            "canNeutralDamageBoost",
-            "canTrickyJump",
-            {"enemyDamage": {
-              "enemy": "Grey Space Pirate (standing)",
-              "type": "contact",
-              "hits": 1
-            }},
-            {"or": [
-              {"ammo": {"type": "PowerBomb", "count": 1}},
-              {"enemyDamage": {
-                "enemy": "Grey Space Pirate (standing)",
-                "type": "contact",
-                "hits": 2
-              }}
-            ]}
-          ]}
-        ]}
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "Be careful around the pirates and their spawned lasers.",
-        "Use Power Bomb horizontal boosts to move toward the left side of the room in artificial morph.",
-        "If the health is available, damage boosts using the pirates can be used to save Power Bombs, but the movements are very precise.",
-        "Roll off the third blue platform from the right door and lay a Power Bomb against the left wall to get into range of the bomb blocks.",
-        "Unmorph and use X-ray to cancel G-mode. It may be best to do this before the PB explodes, in case PLMs are already overloaded."
-      ]
-    },
-    {
-      "from": 2,
-      "to": 3,
-      "name": "G-Mode Morph Spring Ball to Power Bomb the Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "SpringBall",
-        {"ammo": {"type": "PowerBomb", "count": 1}}
-      ],
-      "clearsObstacles": ["A"],
-      "note": [
-        "Be careful not to touch any of the pirates or their spawned lasers. It may be worthwhile to drop into the pit until the wall pirate is in a good position.",
-        "Use SpringBall to go under the Pirates and reach the left side of the room in artificial morph.",
-        "Use a Power Bomb to break the bomb blocks.",
-        "Unmorph and use X-ray to cancel G-mode, which will clear the blocks."
-      ]
-    },
-    {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "G-Mode Through the Bomb Blocks",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": false
-        }}
-      ],
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true,
       "note": [
         "Be careful not to touch any of the pirates spawned lasers.",
         "Overload PLMs using the scroll block directly above the bomb block leading down to the item.",
@@ -440,10 +488,87 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [2, 3],
+      "name": "G-Mode Morph to Bomb the Bomb Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphIBJ"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Without Morph, the pirates will not spawn.",
+        "Overload PLMs using the scroll block directly above the bomb block leading down to the item.",
+        "When the bomb blocks turn to air, lay bombs as Samus falls.",
+        "After landing on the first platform, quickly unmorph and use X-Ray to cancel G-mode before the bombs explode."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "G-Mode Morph to Power Bomb the Bomb Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphBombHorizontally",
+        "h_canArtificialMorphPowerBomb",
+        "h_canArtificialMorphPowerBomb",
+        "h_canArtificialMorphPowerBomb",
+        {"or": [
+          "h_canArtificialMorphPowerBomb",
+          "canTrickyJump"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Without Morph, the pirates will not spawn.",
+        "Use Power Bomb horizontal boosts to move toward the left side of the room in artificial morph.",
+        "Roll off the third blue platform from the right door and lay a Power Bomb against the left wall to get into range of the bomb blocks.",
+        "Unmorph and use X-ray to cancel G-mode. It may be best to do this before the PB explodes, in case PLMs are already overloaded."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "G-Mode Morph Spring Ball to Power Bomb the Bomb Blocks",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphSpringBall",
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Without Morph, the pirates will not spawn.",
+        "While near the bomb blocks, use a Power Bomb and then use X-ray to cancel G-mode, which will clear the blocks."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"obstaclesCleared": ["A"]},

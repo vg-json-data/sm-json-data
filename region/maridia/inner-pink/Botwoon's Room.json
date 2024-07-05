@@ -11,14 +11,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Botwoon Left Door (to Botwoon Hallway)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x001a90c",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "water"}],
       "locks": [
         {
-          "name": "Botwoon Grey Lock (to Botwoon Hallway)",
+          "name": "Botwoon Gray Lock (to Botwoon Hallway)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -30,86 +31,20 @@
             }
           ]
         }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Botwoon Left Door (to Botwoon Hallway)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 16,
-          "framesRemaining": 100,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                "f_DefeatedBotwoon"
-              ]
-            }
-          ]
-        }
       ]
     },
     {
       "id": 2,
-      "name": "Botwoon Right Door (to E-Tank)",
+      "name": "Right Door",
       "nodeSubType": "blue",
       "nodeType": "door",
       "nodeAddress": "0x001a918",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Botwoon Right Door (to E-Tank)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 16,
-          "framesRemaining": 40,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity",
-                "f_DefeatedBotwoon"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
-      "name": "Botwoon 1",
+      "name": "Botwoon Phase 1",
       "nodeType": "event",
       "nodeSubType": "boss"
     },
@@ -124,12 +59,20 @@
           "lockType": "bossFight",
           "unlockStrats": [
             {
-              "name": "Back-Side Botwoon Fight: Gravity, Charge, Wave",
+              "name": "Back-Side Botwoon Fight - Gravity, Charge, Wave",
               "notable": true,
               "requires": [
                 "Gravity",
                 "Charge",
-                "Wave"
+                "Wave",
+                {"or": [
+                  "canDodgeWhileShooting",
+                  {"enemyDamage": {
+                    "enemy": "Botwoon 1",
+                    "type": "acid",
+                    "hits": 2
+                  }}
+                ]}
               ],
               "reusableRoomwideNotable": "Back-Side Botwoon Fight with Charge and Wave",
               "note": [
@@ -138,12 +81,21 @@
               ]
             },
             {
-              "name": "Back-Side Botwoon Fight: Suitless, Charge, Wave",
+              "name": "Back-Side Botwoon Fight - Suitless, Charge, Wave",
               "notable": true,
               "requires": [
                 "canSuitlessMaridia",
                 "Charge",
-                "Wave"
+                "Wave",
+                "canDodgeWhileShooting",
+                {"or": [
+                  "Morph",
+                  {"enemyDamage": {
+                    "enemy": "Botwoon 1",
+                    "type": "acid",
+                    "hits": 2
+                  }}
+                ]}
               ],
               "reusableRoomwideNotable": "Back-Side Botwoon Fight with Charge and Wave",
               "note": [
@@ -161,6 +113,7 @@
                 "canXRayWaitForIFrames"
               ],
               "reusableRoomwideNotable": "Back-Side Botwoon Magic Pixel Beam Fight",
+              "flashSuitChecked": true,
               "note": [
                 "Stand on the appropriate pixel for shooting diagonally through the wall and use the microwave trick to defeat Botwoon.",
                 "Using angle up, it is where Samus' front foot is on the seam in the floor.",
@@ -198,6 +151,7 @@
                 "canXRayWaitForIFrames",
                 {"ammo": {"type": "PowerBomb", "count": 2}}
               ],
+              "flashSuitChecked": true,
               "note": [
                 "Wait for Botwoon to spawn then use a Plasma Special Beam Attack.",
                 "Use XRay to slow time and watch for a particle to overlap Botwoons head, then proceed to Microwave."
@@ -224,7 +178,7 @@
               "notable": true,
               "requires": [
                 "h_canNavigateUnderwater",
-                "canBeVeryPatient",
+                "canBeExtremelyPatient",
                 {"enemyKill": {
                   "enemies": [
                     ["Reverse Botwoon 1"],
@@ -246,7 +200,7 @@
     },
     {
       "id": 5,
-      "name": "Botwoon 2",
+      "name": "Botwoon Phase 2",
       "nodeType": "event",
       "nodeSubType": "boss",
       "locks": [
@@ -317,35 +271,177 @@
       ]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
     },
     {
       "from": 2,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
     },
     {
       "from": 3,
-      "to": 5,
+      "to": [
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 4}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Charged",
+      "requires": [
+        "canShinechargeMovement",
+        "Gravity",
+        "f_DefeatedBotwoon",
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 125
+        }
+      },
+      "devNote": "FIXME: Removing Gravity for a water stutter shinecharge may be helpful here."
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Charged",
+      "requires": [
+        "canShinechargeMovement",
+        "Gravity",
+        "f_DefeatedBotwoon",
+        {"canShineCharge": {
+          "usedTiles": 16,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 55
+        }
+      },
+      "devNote": "FIXME: Removing Gravity for a water stutter shinecharge may be helpful here."
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [3, 5],
       "name": "Already Killed",
-      "notable": false,
       "requires": [
         "f_DefeatedBotwoon"
       ]
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "Gravity",
-      "notable": false,
       "requires": [
         "Gravity",
         {"enemyKill": {
@@ -354,8 +450,7 @@
       ]
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "Suitless Botwoon Kill",
       "notable": true,
       "requires": [
@@ -370,33 +465,25 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "f_DefeatedBotwoon"
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "f_DefeatedBotwoon"
       ]

@@ -11,32 +11,16 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Norfair Reserve Door (to Bubble Missiles)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001952e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Norfair Reserve Door (to Bubble Missiles)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Reserve Tank, Norfair",
+      "name": "Chozo Ball Item",
       "nodeType": "item",
       "nodeSubType": "chozo",
       "nodeItem": "ReserveTank",
@@ -44,7 +28,7 @@
     },
     {
       "id": 3,
-      "name": "Missile (Norfair Reserve Tank)",
+      "name": "Hidden Platform Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
@@ -52,7 +36,7 @@
     },
     {
       "id": 4,
-      "name": "Norfair Reserve Junction (above Missile)",
+      "name": "Junction Above Hidden Platform Item",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -96,12 +80,56 @@
       "obstacleType": "enemies"
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
       "name": "Sova Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"or": [
@@ -113,33 +141,54 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "SpaceJump",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"ammo": {"type": "Super", "count": 1}},
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": "Use a Super to knock off the Sova to regain mobility."
+    },
+    {
+      "link": [1, 2],
+      "name": "SpaceJump",
+      "requires": [
         "SpaceJump",
-        {"or": [
-          {"heatFrames": 199},
-          {"and": [
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 2,
-              "physics": ["normal"]
-            }},
-            {"heatFrames": 140}
-          ]}
-        ]}
+        {"heatFrames": 199}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Space Screw Dragon Kill",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Running SpaceJump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 2,
+          "speedBooster": "any"
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "SpaceJump",
+        {"heatFrames": 140}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Space Screw Dragon Kill",
+      "requires": [
         "SpaceJump",
         "ScrewAttack",
         "canTrickyJump",
@@ -149,26 +198,37 @@
       "note": "Clear the Dragons while moving towards the items with Space Jump and Screw Attack to make for a faster exit later."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
         "canMidairShinespark",
-        {"canComeInCharged": {
-          "framesRemaining": 15,
-          "fromNode": 1
-        }},
         {"shinespark": {"frames": 38, "excessFrames": 1}},
         {"heatFrames": 160}
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 120}
+      ],
+      "note": [
+        "After teleporting, press down to retract Grapple and swing to the right.",
+        "Then swing to the left to the platform with the Chozo ball item.",
+        "The Sova should fall from the ceiling before Samus would hit it."
+      ]
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_lavaProof",
         {"or": [
@@ -181,12 +241,9 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Lava Proof",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_lavaProof",
         {"or": [
           {"and": [
@@ -214,12 +271,9 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           "canTrickyJump",
           {"and": [
@@ -236,23 +290,17 @@
       ]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
         {"heatFrames": 180}
       ]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Kill the Dragons",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"ammo": {"type": "Super", "count": 3}},
           "Plasma",
@@ -264,12 +312,9 @@
       "devNote": "Ice can move through the room more quickly but must spend time refreezing the dragons."
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Avoid Dragon Fireballs",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canDodgeWhileShooting",
         {"heatFrames": 840}
       ],
@@ -279,12 +324,9 @@
       ]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Avoid and Power Bomb the Dragons",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canDodgeWhileShooting",
         {"enemyKill": {
           "enemies": [
@@ -303,31 +345,31 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "SpaceJump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
         {"heatFrames": 210}
       ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 90}
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_lavaProof",
         {"or": [
@@ -340,12 +382,9 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Lava Proof",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_lavaProof",
         {"or": [
           {"and": [
@@ -373,12 +412,9 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 70},
         {"or": [
           {"and": [
@@ -399,24 +435,18 @@
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "SpringBall Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canSpringBallJumpMidAir",
         {"heatFrames": 80},
         {"lavaFrames": 25}
       ]
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50},
         {"or": [
           {"and": [
@@ -432,7 +462,7 @@
             {"lavaFrames": 20}
           ]},
           {"and": [
-            "canUseFrozenEnemies",
+            "canTrickyUseFrozenEnemies",
             {"obstaclesNotCleared": ["A"]},
             {"lavaFrames": 30}
           ]},
@@ -444,24 +474,30 @@
       ]
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "SpringBall Jump",
-      "notable": false,
+      "link": [3, 4],
+      "name": "Buffered Item Pickup",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canInsaneJump",
+        {"heatFrames": 30}
+      ],
+      "note": [
+        "Time the breaking of the hidden item block with a spinjump to avoid falling into the lava.",
+        "Turnaround just before the item fanfare begins and then hold jump to buffer a spinjump."
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "SpringBall Jump",
+      "requires": [
         "canSpringBallJumpMidAir",
         {"heatFrames": 80},
         {"lavaFrames": 25}
       ]
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 4],
       "name": "Frozen Sova Platform",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canTrickyUseFrozenEnemies",
         {"heatFrames": 30}
       ],
@@ -469,12 +505,9 @@
       "devNote": "The cost comes from setting up the freeze.  Collecting the item and returning to 4 will be instantaneous."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           "canTrickyJump",
           "SpaceJump",
@@ -494,12 +527,9 @@
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Kill the Dragons",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           {"ammo": {"type": "Missile", "count": 9}},
           {"ammo": {"type": "Super", "count": 3}},
@@ -512,20 +542,15 @@
       "devNote": "Ice can move through the room more quickly but must spend time refreezing the dragons."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 60}
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     }
   ]

@@ -10,10 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "X-Ray Room Door (to Firefleas)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019072",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
       "viewableNodes": [
         {
@@ -33,7 +34,7 @@
     },
     {
       "id": 2,
-      "name": "X-Ray Scope",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "chozo",
       "nodeItem": "XRayScope",
@@ -41,12 +42,25 @@
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -56,20 +70,84 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ],
       "devNote": "There are additional requirements to get back out. It's a softlock if they aren't met."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [],
+      "note": [
+        "This allows reaching the item without Morph.",
+        "The item will need to be Morph in order to get out."
+      ],
+      "devNote": [
+        "FIXME: Once we have a way to represent grapple teleporting while carrying a shinecharge, a strat could be added that uses a spark to break the bomb block."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph Overload PLMs (Bomb the Crumbles)",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphBombThings"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Overload the PLMs with Bombs by bombing the crumble block on the ground behind the first moving elevator.",
+        "After PLMs are overloaded, go through to the item (through the intended entrance or exit path)."
+      ],
+      "devNote": "This is only useful if the item is Morph."
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph Overload PLMs (Power Bomb the Item)",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphPowerBomb",
+        "h_additionalBomb",
+        {"or": [
+          "h_canArtificialMorphSpringBall",
+          "h_additionalBomb"
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Overload PLMs before touching the crumble block in the morph tunnel, then go through it after they are overloaded.",
+        "This can be done with 2 Power Bombs by placing them on the center of the rightmost tile inside the ceiling morph tunnel. One tile left of the elevator."
+      ],
+      "devNote": "This is only useful if the item is Morph."
+    },
+    {
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canDestroyBombWalls",
         {"or": [
@@ -80,20 +158,16 @@
       "note": "If using Power Bombs, 1 is used to break the blocks and another is used to escape."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Jump Morph",
-      "notable": false,
       "requires": [
         "h_canDestroyBombWalls",
-        "h_canTwoTileJumpMorph"
+        "h_canThreeTileJumpMorph"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Running Jump Morph",
-      "notable": false,
       "requires": [
         "h_canDestroyBombWalls",
         "canLateralMidAirMorph",

@@ -11,58 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Green Bubbles Missile Room Left Door (to Norfair Reserve)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019546",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Bubbles Missile Room Left Door (to Norfair Reserve)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Green Bubbles Missile Room Right Door (to Bubble Mountain)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001953a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Bubbles Missile Room Right Door (to Bubble Mountain)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 70}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Missile (bubble Norfair green door)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -79,14 +46,102 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 3,
-      "name": "Quick Geruta Kill",
-      "notable": false,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Tricky Movement Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        "canMidairShinespark",
+        "canMockball",
+        {"or": [
+          {"enemyKill": {
+            "enemies": [["Geruta"]],
+            "explicitWeapons": [
+              "Missile",
+              "Super",
+              "Wave",
+              "Spazer",
+              "Plasma"
+            ]
+          }},
+          {"enemyDamage": {
+            "enemy": "Geruta",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"heatFrames": 200},
+        {"shinespark": {"frames": 16, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Fire a shot on the way up to clear the shot block.",
+        "Perform a mockball but unmorph after exiting the Morph hole and Kill the Geruta while falling, if possible.",
+        "Fire a shot to open the door, then jump forward and Shinespark out."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Quick Geruta Kill",
+      "requires": [
         "Morph",
         {"heatFrames": 170},
         {"enemyKill": {
@@ -96,46 +151,144 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Slow Geruta Kill",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 300}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"heatFrames": 50}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 150}
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "Morph",
-        "h_canNavigateHeatRooms",
+        {"or": [
+          "canTrivialMidAirMorph",
+          "h_canUseSpringBall",
+          {"and": [
+            "h_canUsePowerBombs",
+            {"heatFrames": 260}
+          ]},
+          {"and": [
+            "Morph",
+            "Wave",
+            {"heatFrames": 180}
+          ]}
+        ]},
         {"heatFrames": 200}
+      ],
+      "devNote": [
+        "The Wave and Power Bomb options ride the rising tower, to avoid a mid-air morph."
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 150}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 20}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 80}]}
       ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Leave with Runway",
+      "requires": [
+        {"heatFrames": 130}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 80}]}
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

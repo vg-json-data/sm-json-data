@@ -10,42 +10,44 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Final Missile Bombway Left Door (to Final Missile)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c82",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Final Missile Bombway Right Door (to Parlor)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018c8e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Final Missile Bombway Right Door (to Parlor)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -55,87 +57,182 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "Morph"
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          "canMidAirMorph",
+          "h_canUseSpringBall",
+          "h_canBombThings"
+        ]}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
+      "name": "Final Missile Bombway Shinespark",
+      "notable": true,
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canMidAirMorph",
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 7}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Tight movement is needed to enter with a shinecharge, carry it through the morph tunnel, and spark out the right door in time.",
+      "devNote": "There doesn't appear to be enough time to spark out in a 'top' position."
+    },
+    {
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Speedball",
-      "notable": false,
-      "requires": [
-        "canSpeedball",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2,
-          "unusableTiles": 14
-        }}
-      ]
+      "entranceCondition": {
+        "comeInSpeedballing": {
+          "runway": {
+            "length": 3,
+            "openEnd": 0
+          }
+        }
+      },
+      "requires": []
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Slow Speedball",
-      "notable": false,
-      "requires": [
-        "canSpeedball",
-        "canSlowShortCharge",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2,
-          "unusableTiles": 5
-        }}
-      ]
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "Temporary Blue Bounce",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Temporary Blue Bounce (Come in Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "canTemporaryBlue",
-        "canSpringBallBounce",
-        {"canComeInCharged": {
-          "framesRemaining": 180,
-          "fromNode": 2,
-          "unusableTiles": 1
-        }}
+        "canSpringBallBounce"
+      ],
+      "flashSuitChecked": true,
+      "devNote": "There is 1 unusable tile in this runway."
+    },
+    {
+      "link": [2, 1],
+      "name": "Temporary Blue Bounce (Come in With Spring Ball Bounce)",
+      "entranceCondition": {
+        "comeInWithBlueSpringBallBounce": {
+          "movementType": "controlled"
+        }
+      },
+      "requires": [
+        "canInsaneJump"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "G-mode Morph with Bombs",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Temporary Blue Bounce (Come in With Temporary Blue)",
+      "entranceCondition": {
+        "comeInWithTemporaryBlue": {}
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
-        }},
-        "Bombs"
+        "canChainTemporaryBlue",
+        "canSpringBallBounce"
       ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "G-mode Morph with Bombs",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphBombs"
+      ],
+      "flashSuitChecked": true,
       "note": "Repeatedly bomb the crumble blocks until the PLMs are overloaded."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -143,6 +240,14 @@
           "openEnd": 0
         }
       }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

@@ -11,23 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Crocomire Escape Left Door (to Business Center)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019402",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Crocomire Escape Right Door (to Crocomire Speedway)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001940e",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Missile (above Crocomire)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -59,12 +61,54 @@
       ]
     }
   ],
-  "strats": [
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Green Gate Opened",
+      "obstacleType": "inanimate"
+    }
+  ],
+  "reusableRoomwideNotable": [
+    {
+      "name": "Croc Escape Frozen Geruta Shinecharge",
+      "note": [
+        "Enter from the right door and spin jump onto the first ledge while barely landing on the ledge in order to prevent getting the Geruta on camera.",
+        "Walk against the left wall and jump to trigger the Geruta. It should now be moving leftwards.",
+        "Stand on the next platform against the right wall and shoot the Geruta to get it one shot away from being frozen.",
+        "After a few swoops, it will come down; either freeze it or tank a hit. Then go up and stand on the corner and freeze it when it is in position.",
+        "The Geruta will be stuck below and keep swooping, so if Energy permits, Samus will have several attempts."
+      ]
+    }
+  ],
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -74,10 +118,136 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [1, 3],
+      "name": "Crocomire Escape High Speed Gate Glitch",
+      "notable": true,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 34
+        }
+      },
+      "requires": [
+        "h_canHeatedGreenGateGlitch",
+        {"ammo": {"type": "Super", "count": 1}},
+        "canInsaneJump"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Build up 34 tiles worth of run speed and jump into the door on the last frame.",
+        "Hold angle up through the transition but also aim down to duck below the ceiling until Samus is past it.",
+        "Fire the Super Missile frame perfectly to open the gate."
+      ],
+      "devNote": [
+        "1 extra tile is added so that you can jump into the door, simplifying the inputs a bit."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door.",
+        "Samus will not be visible during the climb."
+      ]
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -87,10 +257,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Short Short Charge Leave Shinecharged",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"canShineCharge": {
@@ -103,37 +271,68 @@
           "framesRemaining": 15
         }
       },
-      "devNote": "FIXME: A frozen Geruta can be used to extend the runway."
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Grapple",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Croc Escape Frozen Geruta Shinecharge (Shinespark Out Right)",
+      "reusableRoomwideNotable": "Croc Escape Frozen Geruta Shinecharge",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canTrickyFrozenEnemyRunway",
+        "canCarefulJump",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementTricky",
+        {"heatFrames": 1260},
+        {"shinespark": {"frames": 2, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": [
+        "Enter from the right door and spin jump onto the first ledge while barely landing on the ledge in order to prevent getting the Geruta on camera.",
+        "Walk against the left wall and jump to trigger the Geruta. It should now be moving leftwards.",
+        "Stand on the next platform against the right wall and shoot the Geruta to get it one shot away from being frozen.",
+        "After a few swoops, it will come down; either freeze it or tank a hit. Then go up and stand on the corner and freeze it when it is in position.",
+        "The Geruta will be stuck below and keep swooping, so if Energy permits, Samus will have several attempts.",
+        "Quickly shinecharge left to right, kill the Geruta and spark out the bottom right door."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
+      "name": "Grapple",
+      "requires": [
         "Grapple",
         {"heatFrames": 600}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
         {"heatFrames": 600}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Speedjump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "SpeedBooster",
         "canWalljump",
@@ -141,47 +340,37 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape Jump IBJ",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "h_canJumpIntoIBJ",
+        "canJumpIntoIBJ",
         {"heatFrames": 1650}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape Lava IBJ",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "Gravity",
-        "h_canIBJ"
+        "canIBJ"
       ],
       "note": "Kill the Dragon with bombs, then start the IBJ in the lava. It's an option without canJumpIntoIBJ."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "MidAir SpringBall",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "canSpringBallJumpMidAir",
         {"heatFrames": 600}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape SpringBall Bomb Boost",
       "notable": true,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canSpringBallJumpMidAir",
         "canUnmorphBombBoost",
         "h_canCrouchJumpDownGrab",
@@ -193,12 +382,10 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape SpringBall Freeze",
       "notable": true,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canTrickyUseFrozenEnemies",
         "canSpringBallJumpMidAir",
         {"heatFrames": 1600},
@@ -211,25 +398,20 @@
       "note": "Do a series of mid-air SpringBall jumps to bring the Geruta over, then freeze it and step on it."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape HiJump Freeze",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canUseFrozenEnemies",
+        "canTrickyUseFrozenEnemies",
         "HiJump",
         {"heatFrames": 1150}
       ],
       "note": "Lure the Geruta left by jumping towards it from below. Freeze it and use it as a platform."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape Ice Only Geruta Platforming",
       "notable": true,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canTrickyUseFrozenEnemies",
         "canCarefulJump",
         {"or": [
@@ -253,28 +435,25 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Enter with Shinespark Stored",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 110
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canHorizontalShinespark",
         {"shinespark": {"frames": 70, "excessFrames": 12}},
         "canShinechargeMovementComplex",
         {"heatFrames": 330}
       ],
-      "note": "Watch out for the Geruda.  Running left before jumping to bring it on camera will make it swoop left."
+      "flashSuitChecked": true,
+      "note": "Watch out for the Geruda. Running left before jumping to bring it on camera will make it swoop left."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Enter Shinecharging",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 4,
@@ -282,86 +461,125 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canHorizontalShinespark",
         {"shinespark": {"frames": 70, "excessFrames": 12}},
         "canShinechargeMovementComplex",
         {"heatFrames": 330}
       ],
-      "note": "Watch out for the Geruda.  Running left before jumping to bring it on camera will make it swoop left."
+      "note": "Watch out for the Geruda. Running left before jumping to bring it on camera will make it swoop left."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Croc Escape Short Short Charge",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canHorizontalShinespark",
         {"canShineCharge": {
           "usedTiles": 15,
           "openEnd": 2
         }},
         {"shinespark": {"frames": 50}},
         {"heatFrames": 600}
-      ],
-      "devNote": "FIXME: A frozen Geruta can be used to extend the runway."
-    },
-    {
-      "from": 3,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"ammo": {"type": "Super", "count": 1}},
-        {"heatFrames": 180}
       ]
     },
     {
-      "from": 3,
-      "to": 1,
-      "name": "Leave with Runway",
-      "notable": false,
+      "link": [2, 3],
+      "name": "Croc Escape Frozen Geruta Shinecharge (Shinespark Left)",
+      "reusableRoomwideNotable": "Croc Escape Frozen Geruta Shinecharge",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"ammo": {"type": "Super", "count": 1}},
-        {"heatFrames": 160}
+        "h_canTrickyFrozenEnemyRunway",
+        "canCarefulJump",
+        "canHorizontalShinespark",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        {"heatFrames": 1050},
+        {"or": [
+          {"shinespark": {"frames": 55, "excessFrames": 15}},
+          {"and": [
+            "h_heatProof",
+            "canMidairShinespark",
+            {"shinespark": {"frames": 32, "excessFrames": 15}}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Enter from the right door and spin jump onto the first ledge while barely landing on the ledge in order to prevent getting the Geruta on camera.",
+        "Walk against the left wall and jump to trigger the Geruta. It should now be moving leftwards.",
+        "Stand on the next platform against the right wall and shoot the Geruta to get it one shot away from being frozen.",
+        "After a few swoops, it will come down; either freeze it or tank a hit. Then go up and stand on the corner and freeze it when it is in position.",
+        "The Geruta will be stuck below and keep swooping, so if Energy permits, Samus will have several attempts.",
+        "With full heat protection, Samus can quickly shinecharge left to right then run and spark midair to the left to save Energy."
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          {"and": [
+            {"ammo": {"type": "Super", "count": 1}},
+            {"heatFrames": 180}
+          ]},
+          {"and": [
+            {"obstaclesCleared": ["A"]},
+            {"heatFrames": 50}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [3, 1],
+      "name": "Leave with Runway",
+      "requires": [
+        {"or": [
+          {"and": [
+            {"ammo": {"type": "Super", "count": 1}},
+            {"heatFrames": 160}
+          ]},
+          {"and": [
+            {"obstaclesCleared": ["A"]},
+            {"heatFrames": 50}
+          ]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithRunway": {
           "length": 17,
           "openEnd": 1
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 70}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 120}]}
+      ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Grapple",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Grapple",
         {"heatFrames": 500}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
         {"heatFrames": 500}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Speedjump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "SpeedBooster",
         {"heatFrames": 500}
@@ -369,12 +587,9 @@
       "note": "This can be done from the top right, single tile block."
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "HiJump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "HiJump",
         "canWalljump",
         {"heatFrames": 600}
@@ -382,23 +597,17 @@
       "note": "This can be done from the top right, single tile block."
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Morph",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 400}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Quick Lava Bath",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 350},
         {"or": [
           {"lavaFrames": 70},
@@ -422,15 +631,57 @@
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Safe Lava Bath",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "Gravity"
       ],
       "note": "This strat just waits out the Dragon."
+    },
+    {
+      "link": [3, 2],
+      "name": "Reverse Shinespark",
+      "requires": [
+        "canHorizontalShinespark",
+        {"or": [
+          {"and": [
+            {"ammo": {"type": "Super", "count": 1}},
+            {"heatFrames": 90}
+          ]},
+          {"obstaclesCleared": ["A"]}
+        ]},
+        {"or": [
+          {"and": [
+            {"doorUnlockedAtNode": 1},
+            {"heatFrames": 30},
+            {"canShineCharge": {
+              "usedTiles": 17,
+              "openEnd": 0
+            }}
+          ]},
+          {"canShineCharge": {
+            "usedTiles": 16,
+            "openEnd": 0
+          }}
+        ]},
+        {"shinespark": {"frames": 62, "excessFrames": 20}},
+        {"heatFrames": 450}
+      ],
+      "clearsObstacles": ["A"],
+      "unlocksDoors": [
+        {"nodeId": 1, "types": ["missiles"], "requires": [{"heatFrames": 30}]},
+        {"nodeId": 1, "types": ["super"], "requires": []},
+        {"nodeId": 1, "types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

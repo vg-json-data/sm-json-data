@@ -10,45 +10,43 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Green Brinstar Elevator Room Door (to Lower Mushrooms)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018bfe",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Elevator to Green Brinstar",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
       "nodeAddress": "0x0018c0a",
-      "leaveWithGMode": [
-        {
-          "leavesWithArtificialMorph": false,
-          "strats": [
-            {
-              "name": "Carry G-Mode Down the Elevator",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1, 2],
-                  "artificialMorph": false,
-                  "mode": "any"
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "down"
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -58,17 +56,21 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 13,
@@ -80,13 +82,31 @@
         "leaveShinecharged": {
           "framesRemaining": 130
         }
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
+      "name": "Leave Shinecharged (Short Runway)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 170
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Leave Shinecharged, In-Room Shortcharge",
-      "notable": false,
       "requires": [
         {"or": [
           {"canShineCharge": {
@@ -106,32 +126,115 @@
         "leaveShinecharged": {
           "framesRemaining": 130
         }
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
+      "link": [1, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 30
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry G-Mode Down Elevator",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
-      "name": "Leave Shinecharged, In-Room Shortcharge",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 48
+        }
+      },
       "requires": [
-        {"doorUnlockedAtNode": 1},
-        {"canShineCharge": {
-          "usedTiles": 14,
-          "openEnd": 0
-        }}
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged, In-Room Shortcharge",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 13,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 1},
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 0
+            }}  
+          ]}
+        ]}
       ],
       "exitCondition": {
         "leaveShinecharged": {
           "framesRemaining": 130
         }
-      }
+      },
+      "unlocksDoors": [{"nodeId": 1, "types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Down Elevator",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
     }
   ]
 }

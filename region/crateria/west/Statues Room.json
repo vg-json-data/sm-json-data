@@ -10,14 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Statues Room Left Door (to Statues Hallway)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x0019216",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
-          "name": "Statues Room Grey Lock (to Statues Hallway)",
+          "name": "Statues Room Gray Lock (to Statues Hallway)",
           "lockType": "cutscene",
           "unlockStrats": [
             {
@@ -31,28 +32,11 @@
     },
     {
       "id": 2,
-      "name": "Elevator to Tourian",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
       "nodeAddress": "0x0019222",
-      "leaveWithGMode": [
-        {
-          "leavesWithArtificialMorph": false,
-          "strats": [
-            {
-              "name": "Carry G-Mode Down the Elevator",
-              "notable": false,
-              "requires": [
-                {"comeInWithGMode": {
-                  "fromNodes": [1, 2],
-                  "artificialMorph": false,
-                  "mode": "any"
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "down"
     },
     {
       "id": 3,
@@ -108,12 +92,55 @@
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {
+          "id": 3,
+          "devNote": "The path to the node is considered clear, but the node itself must be unlocked to actually cross below"
+        }
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {
+          "id": 4,
+          "note": "The path to the node is considered clear, and the event can trigger coming up from the elevator, but the node itself must be unlocked to actually cross above"
+        }
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {
+          "id": 3,
+          "note": [
+            "If Tourian is locked, coming in from below results in glitched graphics.",
+            "You can reach the elevator to go back down again or sit through the unlock to get up which in turn can result in persisting glitched graphics."
+          ]
+        }
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -123,65 +150,266 @@
       }
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "Base",
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge (Gravity)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "Gravity",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge (Suitless)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "canSuitlessMaridia",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry G-Mode Down the Elevator",
       "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
       "requires": []
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Shinespark",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Carry Shinecharge (Gravity HiJump Wall Jump)",
       "entranceCondition": {
         "comeInShinecharged": {
-          "framesRequired": 40
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "Gravity",
+        "HiJump",
+        "canWalljump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Gravity HiJump Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 95
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "Gravity",
+        "HiJump",
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Gravity HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "Gravity",
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 7}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Gravity Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "Gravity",
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 8}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Down the Elevator",
+      "notable": false,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
+      "name": "Diagonal Shinespark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 35
         }
       },
       "requires": [
         "f_TourianOpen",
         "h_canNavigateUnderwater",
         "canShinechargeMovement",
-        {"shinespark": {"frames": 21, "excessFrames": 7}}
+        {"shinespark": {"frames": 21, "excessFrames": 8}}
       ],
-      "note": "Jump to either side and diagonal spark out."
+      "flashSuitChecked": true,
+      "note": [
+        "Jump to the right side and diagonal spark left to escape the water.",
+        "To spark as quickly as possible, buffer a spin jump by holding left (or right) and jump while riding the elevator."
+      ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 3],
+      "name": "Vertical Shinespark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 20
+        }
+      },
+      "requires": [
+        "f_TourianOpen",
+        "h_canNavigateUnderwater",
+        "canShinechargeMovement",
+        {"shinespark": {"frames": 24, "excessFrames": 9}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Jump to either side and vertically spark out.",
+        "To spark as quickly as possible, buffer a spin jump by holding left (or right) and jump while riding the elevator."
+      ]
+    },
+    {
+      "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "f_TourianOpen"
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Gravity",
-      "notable": false,
       "requires": [
         "f_TourianOpen",
         "Gravity",
@@ -195,10 +423,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Suitless Base",
-      "notable": false,
       "requires": [
         "f_TourianOpen",
         "canSuitlessMaridia",
@@ -207,8 +433,7 @@
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Golden Four Underwater Walljumps",
       "notable": true,
       "requires": [
@@ -218,10 +443,8 @@
       "note": "Walljump up the elevator room walls without Gravity suit.  Space Jump helps once the waterline is reached."
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Underwater Bomb into SpringBall Jump",
-      "notable": false,
       "requires": [
         "canDoubleSpringBallJumpMidAir",
         "canUnderwaterBombIntoSpringBallJump"

@@ -10,14 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Bomb Torizo Room Door (to Flyway)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x0018baa",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
-          "name": "Bomb Torizo Room Grey Lock (to Flyway)",
+          "name": "Bomb Torizo Room Gray Lock (to Flyway)",
           "lockType": "gameFlag",
           "lock": ["Bombs"],
           "unlockStrats": [
@@ -32,7 +33,7 @@
           "note": "If no Bombs in inventory, door stays open"
         },
         {
-          "name": "Animal Escape Grey Lock (to Flyway)",
+          "name": "Animal Escape Gray Lock (to Flyway)",
           "lockType": "gameFlag",
           "lock": ["f_ZebesSetAblaze"],
           "unlockStrats": [
@@ -49,7 +50,7 @@
     },
     {
       "id": 2,
-      "name": "Bombs",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "chozo",
       "nodeItem": "Bombs",
@@ -69,9 +70,17 @@
               "name": "Base",
               "notable": false,
               "requires": [
-                "Bombs"
-              ],
-              "note": "Killing Bomb Torizo requires only Power Beam, but Bombs are needed for it to activate."
+                "h_canActivateBombTorizo",
+                {"or": [
+                  "canDodgeWhileShooting",
+                  {"ammo": {"type": "Super", "count": 2}},
+                  {"enemyDamage": {
+                    "enemy": "Bomb Torizo",
+                    "type": "contact",
+                    "hits": 3
+                  }}
+                ]}
+              ]
             }
           ]
         }
@@ -80,7 +89,7 @@
     },
     {
       "id": 4,
-      "name": "Animals",
+      "name": "Save the Animals",
       "nodeType": "event",
       "nodeSubType": "flag",
       "locks": [
@@ -94,7 +103,7 @@
               "requires": [
                 "f_ZebesSetAblaze"
               ],
-              "note": "Technically this also requires opening the wall."
+              "devNote": "Technically this also requires opening the wall."
             }
           ]
         }
@@ -118,13 +127,40 @@
       ]
     }
   ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
   "devNote": "Could it be a different actual room during the escape sequence?",
   "strats": [
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -134,45 +170,188 @@
       }
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 1],
+      "name": "Leave Shinecharged",
+      "requires": [
+        "f_DefeatedBombTorizo",
+        {"canShineCharge": {
+          "usedTiles": 13,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 140
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Spinning (Bomb Torizo Intact)",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 7,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball (Bomb Torizo Intact)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 6,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce (Bomb Torizo Intact)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 5,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping (Bomb Torizo Intact)",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 3,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Spinning (Bomb Torizo Dead)",
+      "requires": [
+        "f_DefeatedBombTorizo"
+      ],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball (Bomb Torizo Dead)",
+      "requires": [
+        "f_DefeatedBombTorizo"
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 9,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce (Bomb Torizo Dead)",
+      "requires": [
+        "f_DefeatedBombTorizo"        
+      ],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 8,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping (Bomb Torizo Dead)",
+      "requires": [
+        "f_DefeatedBombTorizo"        
+      ],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 5,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     }
   ]

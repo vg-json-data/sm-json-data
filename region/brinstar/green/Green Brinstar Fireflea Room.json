@@ -10,97 +10,21 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Green Brinstar Firefleas Left Door (to Missile Recharge)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d7e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Brinstar Firefleas Left Door (to Missile Recharge)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 50,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeThornHit",
-                "h_XModeThornHit",
-                "h_XModeThornHit",
-                "canShinechargeMovement"
-              ],
-              "note": "Jump into the large patch of thorns from below.",
-              "devNote": "Three thorns hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Green Brinstar Firefleas Right Door (to Green Shaft)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d8a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Brinstar Firefleas Right Door (to Green Shaft)",
-          "length": 16,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "framesRemaining": 0,
-          "usedTiles": 33,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "XMode",
-              "notable": false,
-              "requires": [
-                "h_canXMode",
-                "h_XModeThornHit",
-                "h_XModeThornHit",
-                "h_XModeThornHit",
-                "canShinechargeMovement",
-                {"or": [
-                  "HiJump",
-                  "canWalljump",
-                  "SpaceJump"
-                ]},
-                {"shinespark": {"frames": 45}}
-              ],
-              "note": "Jump into the large patch of thorns from below.",
-              "devNote": "Three thorns hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -112,33 +36,210 @@
       "homeNodes": [1]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (X-Mode)",
+      "requires": [
+        "canXMode",
+        "h_XModeThornHit",
+        "h_XModeThornHit",
+        "h_XModeThornHit",
+        "h_canShineChargeMaxRunway",
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "flashSuitChecked": true,
+      "note": "Jump into the large patch of thorns from below.",
+      "devNote": "Three thorns hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball",
+      "requires": [
+        "canInsaneJump",
+        "canBeVeryPatient"
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 17,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 0,
+            "openEnd": 1
+          },
+          "minExtraRunSpeed": "$3.2",
+          "maxExtraRunSpeed": "$3.3"
+        }
+      },
+      "note": [
+        "This uses the runway at the top-right of the room, requiring an extremely precise jump in order to thread the needle between the platforms and reach the left door.",
+        "If obtaining blue speed, a multi-stutter should be used with a 2-tap shortcharge, with an early second tap and a last-frame jump, in order to gain enough momentum for the jump;",
+        "bonk the ceiling, and wait to aim down until passing between the platforms."
+      ],
+      "devNote": [
+        "TODO: The canBeVeryPatient requirement is for difficulty placement; it could be replaced with a more specific tech if one becomes applicable."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 16,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 17,
+              "openEnd": 0
+            }},
+            {"doorUnlockedAtNode": 2}
+          ]}
+        ]},
+        "canLongChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"nodeId": 2, "types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
       "name": "Fireflea Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2],
           "mustStayPut": false
         }},
         {"refill": ["Energy", "PowerBomb"]}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Gain Flash Suit (Spikesuit)",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 16,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"doorUnlockedAtNode": 2},
+            {"canShineCharge": {
+              "usedTiles": 17,
+              "openEnd": 0
+            }}
+          ]}
+        ]},
+        {"thornHits": 1},
+        "canSpikeSuit",
+        {"shinespark": {"frames": 5, "excessFrames": 5}}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 17,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
     }
   ]
 }

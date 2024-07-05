@@ -10,91 +10,29 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Blue Hopper Room Top Door (to Metroid Room 4)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001aa08",
-      "doorEnvironments": [{"physics": "air"}],
-      "jumpways": [
-        {
-          "name": "Door frame",
-          "jumpwayType": "doorFrameBelow",
-          "height": 3,
-          "requires": []
-        },
-        {
-          "name": "Platform",
-          "jumpwayType": "platformBelow",
-          "height": 8.5,
-          "leftPosition": -1.5,
-          "rightPosition": 1.5,
-          "requires": [],
-          "devNote": "Additional platforms could be added, but they don't yet appear to have applications."
-        }
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Blue Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorOrientation": "up",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Blue Hopper Room Left Door (to Dust Torizo)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001aa14",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Tank During Setup",
-            "notable": false,
-            "requires": [
-              {"enemyDamage": {
-                "enemy": "Blue Sidehopper",
-                "type": "contact",
-                "hits": 1
-              }}
-            ]
-          },
-          {
-            "name": "Prepared Dodge",
-            "notable": false,
-            "requires": [
-              "canPrepareForNextRoom",
-              {"or": [
-                {"and": [
-                  "ScrewAttack",
-                  "SpaceJump"
-                ]},
-                {"and": [
-                  "Morph",
-                  {"or": [
-                    "canTrickyJump",
-                    {"enemyKill": {
-                      "enemies": [["Blue Sidehopper"]]
-                    }}
-                  ]}
-                ]}
-              ]}
-            ]
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Blue Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "useImplicitDoorUnlocks": false,
+      "spawnAt": 3
+    },
+    {
+      "id": 3,
+      "name": "Left Door Spawn At Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -106,50 +44,256 @@
       "homeNodes": [1, 2]
     }
   ],
-  "strats": [
+  "reusableRoomwideNotable": [
+    {
+      "name": "Blue Hopper Dodge",
+      "note": [
+        "Enter through the far left side of the door.",
+        "Wait for the top hopper to move right to start running.",
+        "Run under the right Hopper and jump over the left Hopper to avoid all damage.",
+        "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper.",
+        "It helps to keep the camera scrolled to the right."
+      ]
+    }
+  ],
+  "links": [
     {
       "from": 1,
-      "to": 2,
-      "name": "Blue Hopper Dodge",
-      "notable": true,
-      "requires": [
-        "canTrickyJump"
-      ],
-      "note": [
-        "When coming from the right, run under the right Hopper and jump over the left Hopper to avoid all damage.",
-        "Wait for the top hopper to move right to start running.",
-        "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper for all patterns."
+      "to": [
+        {"id": 1},
+        {"id": 2}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Screw Attack",
-      "notable": false,
-      "requires": [
-        "ScrewAttack",
-        {"or": [
-          "SpaceJump",
-          "canCarefulJump"
-        ]}
-      ],
-      "note": "Wait for the top hopper to move right, then jump through the left hopper."
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Kill the enemies",
-      "notable": false,
+      "from": 3,
+      "to": [
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Door Frame Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithDoorFrameBelow": {
+          "height": 3
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Platform Below",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithPlatformBelow": {
+          "height": 8.5,
+          "leftPosition": -1.5,
+          "rightPosition": 1.5
+        }
+      },
+      "devNote": "Additional platforms could be added, but they don't yet appear to have applications."
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
       "requires": [
-        "canDodgeWhileShooting",
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Carry G-Mode Back Up",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Carry G-Mode Morph Back Up",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "h_canArtificialMorphSpringBall",
+        "HiJump"
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "devNote": "FIXME: This could be possible with Bombs by luring the hoppers to the left."
+    },
+    {
+      "link": [1, 1],
+      "name": "Carry G-Mode Morph Back Up, Spring Ball Bomb Jump",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true,
+          "mobility": "mobile"
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "canTrickyJump",
+        "h_canArtificialMorphSpringBallBombJump"
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": "Immediately on entry Spring Ball Bomb Jump. Be sure not to land left of the pillar below the door or it is harder to get up in time.",
+      "devNote": "FIXME: This could be possible with Bombs by luring the hoppers to the left."
+    },
+    {
+      "link": [1, 2],
+      "name": "Blue Hopper Dodge (Normal Entry)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {},
+        "comesThroughToilet": "no"
+      },
+      "requires": [
+        "canTrickyJump",
+        {"or": [
+          "canPrepareForNextRoom",
+          {"and": [
+            "canCameraManip",
+            "canMoonwalk",
+            "canInsaneJump"
+          ]}
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}  
+        ]}
+      ],
+      "reusableRoomwideNotable": "Blue Hopper Dodge",
+      "note": [
+        "Enter through the far left side of the door.",
+        "Wait for the top hopper to move right to start running.",
+        "Run under the right Hopper and jump over the left Hopper to avoid all damage.",
+        "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper.",
+        "It helps to keep the camera scrolled to the right."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Blue Hopper Dodge (Toilet Entry)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {},
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "canCameraManip",
+        "canMoonwalk",
+        "canInsaneJump"
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}  
+        ]}
+      ],
+      "reusableRoomwideNotable": "Blue Hopper Dodge",
+      "note": [
+        "Try to scroll the camera to the right to keep the left Hopper off-camera for longer.",
+        "Wait for the top hopper to move right to start running.",
+        "Run under the right Hopper and jump over the left Hopper to avoid all damage.",
+        "Jump when Samus reaches the leftmost lump in the ground to avoid the left hopper."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Screw Attack",
+      "requires": [
+        "ScrewAttack",
+        "canCarefulJump",
         {"or": [
           "canTrickyJump",
-          "canCameraManip"
-        ]},
+          "SpaceJump",
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}  
+        ]}
+      ],
+      "note": [
+        "Wait for the top hopper to move right, then jump through the left hopper.",
+        "The left hopper may be harder to dodge if the camera is scrolled to the left."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Kill the Enemies",
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        "canCameraManip",
         {"enemyKill": {
           "enemies": [["Blue Sidehopper", "Blue Sidehopper"]]
         }}
       ],
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
       "note": [
         "Kill the top hopper quickly; the left hopper is more random.",
         "To be safe, plan to retreat right while attacking.",
@@ -157,9 +301,71 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
+      "name": "Kill the Enemies, Leave With Runway",
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        "canCameraManip",
+        {"enemyKill": {
+          "enemies": [["Blue Sidehopper", "Blue Sidehopper"]]
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "note": [
+        "Kill the top hopper quickly; the left hopper is more random.",
+        "To be safe, plan to retreat right while attacking.",
+        "It also helps to attempt to move the hopper off camera between attacks."
+      ],
+      "devNote": [
+        "FIXME: An alternative strat may be possible where the enemies are lured off-camera to the right instead of killed."
+      ]
+    },
+    {
+      "link": [1, 2],
       "name": "Take the Damage",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }},
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "canHitbox"
+          ]},
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}  
+        ]}
+      ],
+      "note": [
+        "Wait for the left hopper to move right so it does not follow Samus as IFrames run out.",
+        "A damage boost using the top hopper also moves through the room fast enough to be safe."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Setup - Tank During Setup",
       "notable": false,
       "requires": [
         {"enemyDamage": {
@@ -168,64 +374,107 @@
           "hits": 1
         }}
       ],
-      "note": [
-        "Wait for the left hopper to move right so it does not follow Samus as IFrames run out.",
-        "A damage boost using the top hopper also moves through the room fast enough to be safe."
-      ]
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "Screw Attack with Space Jump",
-      "notable": false,
-      "requires": [
-        "canPrepareForNextRoom",
-        "ScrewAttack",
-        "SpaceJump"
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
       ],
-      "note": "Samus must enter the room in a screw attack space jump to avoid hopper damage."
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Screw Attack",
+      "link": [1, 2],
+      "name": "G-Mode Setup - Prepared Dodge",
       "notable": false,
       "entranceCondition": {
-        "comeInJumping": {
-          "speedBooster": "any",
-          "minTiles": 2
-        }
+        "comeInNormally": {},
+        "comesThroughToilet": "no"
       },
       "requires": [
-        "canPrepareForNextRoom",
-        "ScrewAttack",
-        "canCarefulJump"
+        {"or": [
+          "ScrewAttack",
+          "canTrickyJump",
+          {"and": [
+            "canDodgeWhileShooting",
+            "canCameraManip",
+            {"enemyKill": {
+              "enemies": [["Blue Sidehopper", "Blue Sidehopper"]]
+            }}
+          ]}
+        ]}
       ],
-      "note": "Samus must enter the room in a screw attack spin jump, with enough speed to go deep into the room, to avoid hopper damage."
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": [
+          {"enemyDamage": {
+            "enemy": "Blue Sidehopper",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": "FIXME: add a Toilet entry version of this"
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Screw Attack Tricky Jump",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Come in Shinecharged, Leave With Spark (Tank the Damage)",
       "entranceCondition": {
-        "comeInJumping": {
-          "speedBooster": "any",
-          "minTiles": 1
-        }
+        "comeInShinecharged": {
+          "framesRequired": 95
+        },
+        "comesThroughToilet": "no"
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }},
+        "canMidairShinespark",
+        {"shinespark": {"frames": 21}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Blue Hopper Room Screw Attack Jumps",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {}
       },
       "requires": [
         "canPrepareForNextRoom",
         "ScrewAttack",
         "canTrickyJump"
       ],
-      "note": "Samus must enter the room in a screw attack spin jump, with a very short runway, land just past the first Sidehopper and carefully traverse the room."
+      "note": [
+        "Spin jump into the room with Screw Attack, holding left through the transition to land near the door.",
+        "Do a turn-around spin jump to the right, bonking the ceiling and overhang and then falling straight down.",
+        "Then run and spin jump to the right through the Hoppers, to make it to the door without taking damage."
+      ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -234,10 +483,12 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Blue Hopper Room Roll Under Hoppers",
       "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
         "Morph",
         "canPrepareForNextRoom",
@@ -245,15 +496,36 @@
       ],
       "note": [
         "Time Samus' movement carefully to roll underneath a Blue Hopper and also race it to the far door.",
-        "Enter the room in ball mode and let the hoppers jump against the wall a couple of times.",
+        "Enter the room morphed and let the hoppers jump against the wall a couple of times.",
         "After the lower hopper has long enough time between jumps, roll under and run to the door."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
+      "name": "Blue Hopper Room Squeeze Under Hoppers",
+      "notable": true,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 4,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canTwoTileSqueeze"
+      ],
+      "note": [
+        "Use at least 4 tiles of runway to gain speed, running through the transition.",
+        "Hold down during and after the transition in order to aim down and squeeze under the Hopper.",
+        "Then immediately run to the right to make it to the door without taking damage."
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Kill Hopper",
-      "notable": false,
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
         "Morph",
         "canPrepareForNextRoom",
@@ -262,6 +534,7 @@
         }},
         "canCameraManip"
       ],
+      "unlocksDoors": [{"nodeId": 1, "types": ["ammo"], "requires": []}],
       "note": [
         "Enter the room in ball mode and let the hoppers jump against the wall a couple of times.",
         "Between hops, unmorph and shoot the lower hopper.",
@@ -269,10 +542,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Take the Damage",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Take Another Hit",
       "requires": [
         {"enemyDamage": {
           "enemy": "Blue Sidehopper",
@@ -282,12 +553,17 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
+      "name": "Avoid Another Hit",
+      "requires": [
+        "canCarefulJump"
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Blue Speed Jump through Hoppers",
-      "notable": false,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 0,
           "openEnd": 0
         }
@@ -303,20 +579,179 @@
       "devNote": "This is not the level of precision that would call for canBlueSpaceJump."
     },
     {
-      "from": 2,
-      "to": 2,
-      "name": "Leave with Runway",
-      "notable": false,
-      "requires": [
-        "never"
-      ],
-      "exitCondition": {
-        "leaveWithRunway": {
-          "length": 1,
-          "openEnd": 1
+      "link": [2, 1],
+      "name": "Carry Shinecharge (Tank the Damage)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 160
         }
       },
-      "devNote": "FIXME: Add requirements to be able to use this runway."
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Tourian Blue Hopper Crystal Flash",
+      "notable": true,
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canTrickyJump",
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Enter the room from the left door, morph, and wait at the left wall.",
+        "After 6 hops, the bottom Hopper will do three big hops in a row.",
+        "Roll under the Hopper while it does the third of those three big hops.",
+        "Quickly unmorph and run to the right side of the room.",
+        "If successful, both Hoppers will remain off-camera, so you can safely Crystal Flash."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 2],
+      "name": "Sidehopper Hit on Entry",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Blue Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Sidehopper Prepared Screw Dodge",
+      "requires": [
+        "canPrepareForNextRoom",
+        "ScrewAttack",
+        "SpaceJump",
+        "canCarefulJump"
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Sidehopper Prepared Morph Dodge",
+      "requires": [
+        "canPrepareForNextRoom",
+        "Morph",
+        "canTrickyJump"
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": [
+        "Enter the room morphed to avoid a hopper hit on entry.",
+        "Roll under the bottom hopper to lead it to the right, and then roll back to reach the door safely."
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Sidehopper Prepared Morph Dodge Hopper Kill",
+      "requires": [
+        "canPrepareForNextRoom",
+        "Morph",
+        "canDodgeWhileShooting",
+        {"enemyKill": {
+          "enemies": [["Blue Sidehopper"]]
+        }}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "note": "Enter the room morphed to avoid a hopper hit on entry."
     }
+  ],
+  "devNote": [
+    "FIXME: This room could use obstacles indicating if each door is free of hoppers, allowing opening the door with missiles or a power bomb.",
+    "and to ensure hoppers are still alive to use for G-Mode setups."
   ]
 }

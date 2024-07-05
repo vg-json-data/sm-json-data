@@ -11,19 +11,27 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Cosine Room Left Door (to Shaft)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00194aa",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Missile (below Crocomire)",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
       "nodeAddress": "0x78C14"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "G-Mode Morph - Remote Acquire the item",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -50,12 +58,26 @@
       "devNote": "With the gamets spawning over acid, there probably isn't a more effective strat."
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -69,29 +91,107 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Base",
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Gamet",
       "notable": false,
+      "requires": [
+        "Morph"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Lure the Gamets while preventing them from going off camera.",
+        "Spawn them when the acid is high and rising to avoid running through it."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
       "requires": [
         "Morph"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true,
+      "note": "Wait for the acid to lower then quickly roll part way forward to trigger the Metarees and return. Then go again without any difficulty.",
+      "devNote": "This is only useful if the item is Morph."
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph Remote Acquire",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          {"and": [
+            "h_canArtificialMorphSpringBall",
+            {"or": [
+              "h_canArtificialMorphBombThings",
+              "canTrickyJump"
+            ]}
+          ]},
+          {"and": [
+            "canInsaneJump",
+            "h_canArtificialMorphBombHorizontally",
+            {"ammo": { "type": "PowerBomb", "count": 6}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Wait for the acid to lower then quickly roll part way forward to trigger the Metarees and return. Then go again without any difficulty.",
+        "Killing any of the Gamets will prevent them from respawning.",
+        "With Bombs, horizontally boost then wait for the acid and IBJ above it.",
+        "It is possible with Spring Ball alone, but it is easy to take damage; perform small jumps but hold jump before landing to prevent a small bounce in which Samus can't jump.",
+        "On the return route, jump over the Gamets to let them pass instead of racing to get them off screen.",
+        "With Power Bombs alone is particularly challenging.",
+        "Kill the Gamets then place a bomb at the edge of the runway; hit the bomb with momentum and precise timing to get a boost to skip the first and land on the next safe platform.",
+        "As quickly as possible place another and let it boost horizontally to the next platform, then another to get to the item."
+      ],
+      "devNote": [
+        "The requirements here are to get the item and return, as the item cannot be used during the return.",
+        "It appears that there is virtually no risk in overloading PLMs with the Power Bomb strat - the left runway isn't close enough, and even placing two on each pillar will not overload PLMs.",
+        "FIXME: Hitting the bomb with momentum needs a tech."
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ]
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "G-mode Morph Remote Acquire",
+      "requires": [
+        "canEnterGMode",
+        {"obstaclesCleared": ["A"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
       "name": "Gamet Farm",
-      "notable": false,
       "requires": [
+        {"obstaclesNotCleared": ["A"]},
         {"refill": ["Energy", "Missile", "Super", "PowerBomb"]}
       ]
     }

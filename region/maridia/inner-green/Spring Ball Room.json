@@ -11,29 +11,16 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Spring Ball Room Door (to Shaktool)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a7c8",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Spring Ball Room Door (to Shaktool)",
-          "length": 6,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 0
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Spring Ball",
+      "name": "Item",
       "nodeType": "item",
       "nodeSubType": "chozo",
       "nodeItem": "SpringBall",
@@ -41,42 +28,68 @@
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "Morph",
-        "Gravity",
-        {"or": [
-          "Bombs",
-          {"ammo": {"type": "PowerBomb", "count": 2}}
-        ]}
+      "to": [
+        {"id": 1},
+        {"id": 2}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "from": 2,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "requires": [
+        "Gravity",
+        "h_canBombThings",
+        "h_additionalBomb"
+      ]
+    },
+    {
+      "link": [1, 2],
       "name": "Spring Ball",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         "h_canUseSpringBall"
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "R Jump",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater",
         "canXRayStandUp",
         "canPartialFloorClip",
         "canRJump"
       ],
+      "flashSuitChecked": true,
       "note": [
         "Roll all the way right before using Xray to stand up, aligned with the right side tiles.",
         "Partially clip into the floor to enable the next jump.",
@@ -85,84 +98,87 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
-          "SpringBall",
+          "h_canArtificialMorphSpringBall",
           {"and": [
             "Gravity",
-            {"or": [
-              "Bombs",
-              {"ammo": {"type": "PowerBomb", "count": 2}}
-            ]}
+            "h_canArtificialMorphBombs"
+          ]},
+          {"and": [
+            "Gravity",
+            "h_canArtificialMorphPowerBomb",
+            "h_additionalBomb"
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "devNote": "The item is inside of a Chozo Ball, so there is no way to use artificial morph on the return."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "Morph",
         "Gravity",
         {"or": [
-          "canWalljump",
-          "HiJump",
           "canIBJ",
-          "canGravityJump",
-          "h_canSpringBallBombJump",
+          "canSpringBallBombJump",
           "canSpringBallJumpMidAir",
-          "SpaceJump",
           {"and": [
-            "canUnmorphBombBoost",
-            "canTrickyJump"
+            "canMidAirMorph",
+            {"or": [
+              "canWalljump",
+              "HiJump",
+              "canGravityJump",
+              "SpaceJump",
+              {"and": [
+                "canUnmorphBombBoost",
+                "canTrickyJump"
+              ]}
+            ]}
+          ]},
+          {"and": [
+            "h_canUseSpringBall",
+            {"or": [
+              "HiJump",
+              "canGravityJump"
+            ]}
           ]}
         ]}
       ],
       "note": "It may be necessary to turn off Gravity Suit in order have more time to jump and morph underwater."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Suitless Springball Jump",
-      "notable": false,
       "requires": [
-        "Morph",
         "canSuitlessMaridia",
         "HiJump",
         "canSpringBallJumpMidAir"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Suitless Space Jump",
-      "notable": false,
       "requires": [
-        "Morph",
         "canSuitlessMaridia",
         "HiJump",
         "canSpaceJumpWaterBounce",
-        "can3HighMidAirMorph"
+        "can4HighMidAirMorph"
       ],
       "note": "Space jump while partially submerged for more time to mid-air morph."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Suitless, Bootless, Bomb into Springball Jump",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "canSunkenTileWideWallClimb",
@@ -175,24 +191,22 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Spring Ball Room Escape - Suitless, Bootless, Space Jump",
       "notable": true,
       "requires": [
-        "Morph",
         "canSuitlessMaridia",
         "canSpringBallJumpMidAir",
         "canSunkenTileWideWallClimb",
         "canTrickyJump",
-        "can3HighMidAirMorph",
+        "can4HighMidAirMorph",
         "canSpaceJumpWaterBounce"
       ],
       "note": [
         "Perform a canSunkenTileWideWallClimb to get to the water surface, then use space jump at the water surface.",
         "Then either use space jump when the water is low then a spring ball jump to escape, or space jump when the water is high into a tight midair morph."
       ],
-      "devNote": "The canSpringBallJumpMidAir is for the bottom left part of the room. The can3HighMidAirMorph is to represent the quick morph during the escape."
+      "devNote": "The canSpringBallJumpMidAir is for the bottom left part of the room. The can4HighMidAirMorph is to represent the quick morph during the escape."
     }
   ]
 }

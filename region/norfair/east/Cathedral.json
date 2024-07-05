@@ -11,74 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Cathedral Left Door (to Cathedral Entrance)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001928e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Cathedral Left Door (to Cathedral Entrance)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Cathedral Right Door (to Rising Tide)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x001929a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Cathedral Right Door (to Rising Tide)",
-          "length": 5,
-          "gentleDownTiles": 2,
-          "startingDownTiles": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 90}
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "locks": [
-        {
-          "name": "Cathedral Green Lock (to Rising Tide)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenGreenDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Missile (lava room)",
+      "name": "Hidden Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
@@ -86,7 +37,7 @@
     },
     {
       "id": 4,
-      "name": "Cathedral Central Junction",
+      "name": "Junction Above Item",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -132,96 +83,228 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {
+          "position": "top"
+        }
+      },
+      "requires": [
+        {"heatFrames": 240},
+        {"shinespark": {"frames": 57, "excessFrames": 0}}
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 300}
       ]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Space Jump",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"or": [
-          {"and": [
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 3,
-              "physics": ["normal"]
-            }},
-            {"heatFrames": 140}
-          ]},
-          {"heatFrames": 200}
-        ]}
+        {"heatFrames": 200}
       ]
     },
     {
-      "from": 1,
-      "to": 4,
-      "name": "Tricky Platforming",
-      "notable": false,
+      "link": [1, 4],
+      "name": "Space Jump (Come in Running)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "SpaceJump",
+        {"heatFrames": 140}
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Tricky Platforming",
+      "requires": [
         "canTrickyJump",
-        {"or": [
-          {"and": [
-            "SpeedBooster",
-            {"adjacentRunway": {
-              "fromNode": 1,
-              "usedTiles": 5,
-              "physics": ["normal"]
-            }},
-            {"heatFrames": 200}
-          ]},
-          {"heatFrames": 220}
-        ]}
+        {"heatFrames": 220}
       ],
       "devNote": "FIXME: Jumping fully over the platform, and killing the sova before landing on it is a little faster, with no movement items."
     },
     {
-      "from": 1,
-      "to": 4,
-      "name": "Mockball",
-      "notable": false,
+      "link": [1, 4],
+      "name": "Tricky Platforming (Come In Running)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 5,
+          "speedBooster": true
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canTrickyJump"
+      ],
+      "devNote": "FIXME: Jumping fully over the platform, and killing the sova before landing on it is a little faster, with no movement items."
+    },
+    {
+      "link": [1, 4],
+      "name": "Mockball",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
         "canCarefulJump",
         "canMockball",
-        {"adjacentRunway": {
-          "fromNode": 1,
-          "usedTiles": 3,
-          "physics": ["normal"]
-        }},
         {"heatFrames": 180}
       ],
       "note": "Upon room entry, jump and mockball on top of the first pillar."
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 0,
+          "gentleUpTiles": 2
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canShinechargeMovementTricky",
+        "canHorizontalShinespark",
+        {"heatFrames": 225},
+        {"shinespark": {"frames": 53, "excessFrames": 0}},
+        {"heatFrames": 105}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0,
+          "gentleDownTiles": 2,
+          "startingDownTiles": 2
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 250}
       ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Tricky Platforming",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canTrickyJump",
         {"or": [
           "ScrewAttack",
@@ -242,12 +325,9 @@
       ]
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 200},
         {"or": [
           {"lavaFrames": 50},
@@ -267,12 +347,9 @@
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"or": [
           "Plasma",
           "ScrewAttack",
@@ -285,48 +362,93 @@
           {"obstaclesCleared": ["A"]}
         ]},
         {"heatFrames": 280}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Careful Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canCarefulJump",
         {"heatFrames": 176}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 25}]}
       ],
       "note": "Build speed on the central platform and jump to the door."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 250}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 60}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
       ]
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "Tricky Platforming",
-      "notable": false,
+      "link": [4, 2],
+      "name": "Base Platforming Leave with Runway",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"heatFrames": 240}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0,
+          "gentleDownTiles": 2,
+          "startingDownTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 60}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Tricky Platforming",
+      "requires": [
         "canTrickyJump",
         {"heatFrames": 160}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 60}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
       ]
     },
     {
-      "from": 4,
-      "to": 3,
-      "name": "Kill the Geruta",
-      "notable": false,
+      "link": [4, 2],
+      "name": "Tricky Platforming Leave with Runway",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canTrickyJump",
+        {"heatFrames": 150}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0,
+          "gentleDownTiles": 2,
+          "startingDownTiles": 2
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 60}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Kill the Geruta",
+      "requires": [
         "Morph",
         {"heatFrames": 350},
         {"or": [
@@ -359,12 +481,9 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Tank the Geruta",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 350},
         {"or": [
@@ -382,10 +501,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 4,
+      "link": [4, 4],
       "name": "Sova Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2],
@@ -394,6 +511,15 @@
         "h_heatProof",
         {"refill": ["Energy", "Missile", "Super"]}
       ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     }
   ]
 }

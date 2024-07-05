@@ -10,168 +10,51 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Green Hill Zone Left Door (to Big Pink)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018e7a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Hill Zone Left Door (to Big Pink)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Green Hill Zone Top Right Door (to Morph Ball)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018e86",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Hill Zone Top Right Door (to Morph Ball)",
-          "length": 10,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "locks": [
-        {
-          "name": "Green Hill Yellow Lock (to Morph Ball)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenYellowDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Green Hill Zone Bottom Right Door (to Noob Bridge)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018e92",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Green Hill Zone Bottom Right Door (to Noob Bridge)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Sidehopper",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Sm. Sidehopper",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
-      "canLeaveCharged": [
-        {
-          "usedTiles": 22,
-          "framesRemaining": 120,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement"
-              ]
-            }
-          ]
-        },
-        {
-          "usedTiles": 30,
-          "framesRemaining": 120,
-          "openEnd": 0,
-          "strats": [
-            {
-              "name": "Wave",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                "Wave"
-              ]
-            },
-            {
-              "name": "Gate Glitch",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                "h_canBlueGateGlitch"
-              ]
-            },
-            {
-              "name": "Arrive From Left",
-              "notable": false,
-              "requires": [
-                "canShinechargeMovement",
-                {"resetRoom": {
-                  "nodes": [1, 2],
-                  "mustStayPut": false
-                }}
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Missile (green Brinstar pipe)",
+      "name": "Item (Through the Pipe)",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
       "nodeAddress": "0x78676",
       "devNote": "Z3M3: Pink Brin"
+    },
+    {
+      "id": 5,
+      "name": "Junction The Left End of Morph Tube",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
     {
       "id": "A",
-      "name": "G-Mode Morph: Remote Acquire the item",
+      "name": "G-Mode Morph - Remote Acquire the item",
       "obstacleType": "abstract"
     }
   ],
@@ -274,21 +157,194 @@
       ]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
-      "name": "Geega Farm",
-      "notable": false,
-      "requires": [
-        {"refill": ["Energy", "Missile", "Super"]}
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 4}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (HiJump)",
+      "requires": [
+        "HiJump",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 50
+        }
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Use the runway below the bug pipe to gain a shinecharge.",
+        "Use HiJump to reach the door with shinecharge frames remaining."
+      ],
+      "devNote": [
+        "One tile of runway is considered unusable in order to have space to quickly jump up onto the bomb blocks above.",
+        "It could also be possible to break the bomb blocks, but this doesn't seem very worth considering."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Wall Jump)",
+      "requires": [
+        "canWalljump",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 10
+        }
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Use the runway below the bug pipe to gain a shinecharge.",
+        "Use a wall jump to reach the door with shinecharge frames remaining."
+      ],
+      "devNote": [
+        "One tile of runway is considered unusable in order to have space to quickly jump up onto the bomb blocks above.",
+        "It could also be possible to break the bomb blocks, potentially increasing the framesRemaining slightly."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Ledge Grabs)",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 5
+        }
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Use the runway below the bug pipe to gain a shinecharge.",
+        "Use precise ledge grabs to barely reach the door with shinecharge frames remaining."
+      ],
+      "devNote": [
+        "One tile of runway is considered unusable in order to have space to quickly jump up onto the bomb blocks above.",
+        "It could also be possible to break the bomb blocks, potentially increasing the framesRemaining slightly."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Blue Spinning",
+      "requires": [
+        "HiJump",
+        "canPreciseSpaceJump"
+      ],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 14,
+            "openEnd": 1
+          },
+          "maxExtraRunSpeed": "$2.0",
+          "blue": "yes"
+        }
+      },
+      "devNote": "TODO: Instead of using blue speed, the bomb blocks could also be broken in a different way (or gone around) but it's not clear if there's any application."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },    
+    {
+      "link": [1, 1],
+      "name": "Geega Farm",
+      "requires": [
+        {"refill": ["Energy", "Missile", "Super"]},
+        {"obstaclesNotCleared": ["A"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Exit G-Mode",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "resetsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "devNote": "This is important in order to farm before leaving, but not being able to continue using artificial morph strats."
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canFly",
@@ -299,288 +355,694 @@
             "canWalljump"
           ]}
         ]}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Green Hill Zone Wall Jump to Top Right Door",
       "notable": true,
       "requires": [
         "canPreciseWalljump"
       ],
+      "flashSuitChecked": true,
       "note": "Wall jump on the top half of the Geega pipe, then on the overhang."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Use Frozen Enemy",
-      "notable": false,
       "requires": [
         "canUseFrozenEnemies"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "In Room Shinespark",
+      "requires": [
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 1
+        }},
+        {"shinespark": {"frames": 9, "excessFrames": 5}}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
+      "requires": [
+        {"shinespark": {"frames": 42, "excessFrames": 14}}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Speedy Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 26
+        }
+      },
+      "requires": [
+        "canTrickyJump"
+      ],
+      "flashSuitChecked": true,
+      "note": "Requires an adjacent runway of at least 26 tiles. Jump either immediately before the transition or immediately after."
+    },
+    {
+      "link": [1, 2],
+      "name": "Insane Speedy Jump",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 20
+        }
+      },
+      "requires": [
+        "canInsaneJump",
+        "canDownGrab"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Jump after the transition on the last possible frame.",
+        "Aim down when close to the platform (while continuing to hold jump), in order to reduce Samus' hitbox."
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "G-Mode Morph",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Speedy Airball",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 17
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+        "canTrickyJump",
+        "canLateralMidAirMorph"
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Insane Speedy Airball",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 15
+        }
+      },
+      "requires": [
+        "canInsaneJump",
+        "canMomentumConservingMorph"
+      ],
+      "devNote": "This is technically possible with 14 tiles but it might require too much precision."
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "h_canArtificialMorphIBJ",
           "h_canArtificialMorphSpringBallBombJump"
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Kill or spring ball over the first bug. IBJ or bomb boost spring ball jump up to the door."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 3],
+      "name": "Leave Shinecharged (Open Gate)",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 30,
+          "openEnd": 0
+        }},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 120
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Leave Spinning (Open Gate)",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 27,
+            "openEnd": 1
+          }
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [1, 3],
+      "name": "Leave With Mockball (Open Gate)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 25,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          }
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [1, 3],
+      "name": "Leave With Spring Ball Bounce (Open Gate)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 24,
+            "openEnd": 0
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [1, 3],
+      "name": "Leave Space Jumping (Open Gate)",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 21,
+            "openEnd": 1
+          }
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [1, 3],
+      "name": "Leave With Temporary Blue (Open Gate)",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 29,
+          "openEnd": 0
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}]
+    },
+    {
+      "link": [1, 4],
+      "name": "Shinespark Down Grab",
       "requires": [
         "Morph",
-        {"or": [
-          "HiJump",
-          "h_canFly",
-          "canWalljump",
-          "canUseFrozenEnemies"
-        ]}
-      ]
-    },
-    {
-      "from": 1,
-      "to": 4,
-      "name": "Turnaround Aim Cancel",
-      "notable": false,
-      "requires": [
-        "canTurnaroundAimCancel",
-        {"or": [
-          "HiJump",
-          "h_canFly",
-          "canWalljump",
-          "canUseFrozenEnemies"
-        ]}
-      ],
-      "note": "It takes Morph or a Tunnel Crawl to get back out."
-    },
-    {
-      "from": 1,
-      "to": 4,
-      "name": "Green Hill Zone X-Ray Wiggle (In)",
-      "notable": true,
-      "requires": [
-        "canTwoTileSqueeze",
-        "canXRayTurnaround",
-        {"or": [
-          "HiJump",
-          "h_canFly",
-          "canWalljump",
-          "canUseFrozenEnemies"
-        ]}
-      ],
-      "reusableRoomwideNotable": "Green Hill Zone X-Ray Wiggle",
-      "note": [
-        "It's a long Wiggle, but you can see the item before going in too far.",
-        "Spin jumping directly into the tube will disable X-Ray, so enter aiming down to standup first."
-      ]
-    },
-    {
-      "from": 1,
-      "to": 4,
-      "name": "Green Hill Zone Tunnel Crawl (In)",
-      "notable": true,
-      "requires": [
-        "canTunnelCrawl",
-        {"or": [
-          "HiJump",
-          "h_canFly",
-          "canWalljump",
-          "canUseFrozenEnemies"
-        ]}
-      ],
-      "reusableRoomwideNotable": "Green Hill Zone Tunnel Crawl",
-      "note": "It's a long Tunnel Crawl, so there's a heavy softlock risk."
-    },
-    {
-      "from": 1,
-      "to": 4,
-      "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
-          "mode": "any",
-          "artificialMorph": true
+        "canDownGrab",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 1
         }},
+        {"shinespark": {"frames": 15}}
+      ],
+      "flashSuitChecked": true,
+      "note": "Spark flush against the right wall (diagonal helps) then quickly down grab or down back after to barely get into the pipe.",
+      "devNote": [
+        "This only gets one pixel into the pipe, so a wiggle isn't possible without doing the down back.",
+        "Assumes sparking from the ground, since there is an accessible farm before and after this strat."
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "h_canArtificialMorphIBJ",
           "h_canArtificialMorphSpringBallBombJump",
           {"and": [
             "HiJump",
-            "SpringBall"
+            "h_canArtificialMorphSpringBall"
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Roll under the first bug, wait for the second to spawn before rolling off the ledge. IBJ, bomb boost spring ball jump, or HiJump Spring Fling into the pipe.",
       "devNote": "FIXME: Add springFling tech."
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "G-Mode Morph Remote Acquire",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "h_canArtificialMorphIBJ",
           "h_canArtificialMorphSpringBallBombJump"
         ]}
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "note": "Roll under the first bug, wait for the second to spawn before rolling off the ledge. IBJ or bomb boost spring ball jump into the pipe."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 5],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [
+        {"or": [
+          "HiJump",
+          "h_canFly",
+          "canWalljump",
+          "canUseFrozenEnemies",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "G-Mode Morph",
-      "notable": false,
+      "link": [1, 5],
+      "name": "Airball",
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
-          "mode": "any",
-          "artificialMorph": true
+        "SpeedBooster",
+        "canTrickyJump",
+        "canLateralMidAirMorph",
+        "can4HighMidAirMorph"
+      ]
+    },
+    {
+      "link": [1, 5],
+      "name": "Shinespark Down Back",
+      "requires": [
+        "canDownBack",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 18,
+          "openEnd": 1
         }},
+        {"shinespark": {"frames": 15}}
+      ],
+      "flashSuitChecked": true,
+      "note": "Spark flush against the right wall (diagonal helps) then quickly down back to barely get into the pipe.",
+      "devNote": "Assumes sparking from the ground, since there is an accessible farm before and after this strat."
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29], [2, 34]]
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door.",
+        "Samus will not be visible during the climb."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 11,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged (HiJump)",
+      "requires": [
+        "HiJump",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 25
+        }
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Use the runway below the bug pipe to gain a shinecharge.",
+        "Use HiJump to reach the door with shinecharge frames remaining."
+      ],
+      "devNote": [
+        "One tile of runway is considered unusable in order to have space to quickly jump up onto the bomb blocks above.",
+        "It could also be possible to break the bomb blocks, but this doesn't seem very worth considering."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Spark",
+      "requires": [
+        "canPreciseWalljump",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 19}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Use the runway below the bug pipe to gain a shinecharge.",
+        "Then walljump off the bomb blocks and the bug pipe to approach the door and spark out."
+      ],
+      "devNote": [
+        "One tile of runway is considered unusable in order to have space to quickly jump up to the bomb blocks above.",
+        "It could also be possible to break the bomb blocks, but this doesn't seem very worth considering."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }},
+        "canChainTemporaryBlue",
+        "canXRayTurnaround",
+        {"or": [
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "HiJump",
+            "canTrickyUseFrozenEnemies"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "h_canArtificialMorphIBJ",
           "h_canArtificialMorphSpringBallBombJump"
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Fall past the first bug, wait for the second to spawn before rolling off the ledge. IBJ or bomb boost spring ball jump into the pipe."
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "G-Mode Morph Remote Acquire",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "direct",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "h_canArtificialMorphIBJ",
           "h_canArtificialMorphSpringBallBombJump",
           {"and": [
             "HiJump",
-            "SpringBall"
+            "h_canArtificialMorphSpringBall"
           ]}
         ]}
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "note": "Fall past the first bug, wait for the second to spawn before rolling off the ledge. IBJ, bomb boost spring ball jump, or HiJump Spring Fling into the pipe."
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Wave",
-      "notable": false,
       "requires": [
         "Wave"
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Gate Glitch",
-      "notable": false,
       "requires": [
         "h_canBlueGateGlitch"
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Green Hills Grapple Gate Glitch",
       "notable": true,
       "requires": [
         "Grapple",
         "SpeedBooster",
-        "canTrickyJump",
-        "canBePatient"
+        "canTrickyJump"
       ],
       "note": [
-        "Build up some run speed and then extend the Grapple Beam through the Blue Gate, while jumping, to open it from the wrong side.",
-        "This may take many attempts."
+        "Build up some run speed and then extend the Grapple Beam through the Blue Gate, while jumping, to open it from the wrong side."
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "G-Mode Indirect Despawn Gate",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": false
-        }}
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door.",
+        "Samus will not be visible during the climb."
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "G-Mode Morph Indirect Despawn Gate - To the Top Right Door",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "indirect",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "canTrickyJump",
           {"and": [
-            "Bombs",
-            {"ammo": {"type": "PowerBomb", "count": 1}}
+            "h_canArtificialMorphBombs",
+            "h_canArtificialMorphPowerBomb"
           ]},
           {"ammo": {"type": "PowerBomb", "count": 3}}
         ]},
         {"or": [
           "h_canArtificialMorphIBJ",
           {"and": [
-            "canSpringBallBombJump",
-            {"or": [
-              "Bombs",
-              {"ammo": {"type": "PowerBomb", "count": 2}}
-            ]}
+            "h_canArtificialMorphSpringBallBombJump",
+            "h_additionalBomb"
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": [
         "Use a Power Bombs to kill the first three hoppers,",
         "or carefully dodge them by quickly rolling between the first two tall flowers and waiting for the hopper to jump over Samus.",
@@ -594,21 +1056,192 @@
       "devNote": "The canTrickyJump is used for rolling into a precise location, dodging hoppers while rolling, and spring ball jumping past enemies."
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "G-Mode Morph Indirect Despawn Gate - Into the Pipe",
-      "notable": false,
+      "link": [3, 2],
+      "name": "Green Hills Grapple Teleport Fling to Right (from Moat)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
-          "mode": "indirect",
-          "artificialMorph": true
+        "canInsaneJump"
+      ],
+      "note": [
+        "After teleporting, extend the Grapple, and swing back and forth to fix the camera and then to gain momentum.",
+        "A precisely timed release of Grapple will allow Samus to fling onto the ledge on the right."
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Green Hills Grapple Teleport into Grapple Jump (from Red Brinstar Firefleas)",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3]]
+        }
+      },
+      "requires": [
+        "canTrickyGrappleJump",
+        "canInsaneJump"
+      ],
+      "note": [
+        "After teleporting, swing back and forth to fix the camera.",
+        "Swing to the right by soft-bouncing against the door followed by fully extending the Grapple Beam.",
+        "Release grapple low, but not too low, to get enough momentum while also leaving enough space to gain more height with a grapple jump to reach the ledge.",
+        "Holding jump just before releasing Grapple may help prevent losing momentum."
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave Shinecharged",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 0
         }},
+        "canShinechargeMovement"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 140
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave Spinning",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 19,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 17,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 16,
+            "openEnd": 0
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 14,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 21,
+          "openEnd": 0
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Get Hit By Sidehopper",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sm. Sidehopper",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
+      "name": "G-Mode Morph Indirect Despawn Gate - Into the Pipe",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
         {"or": [
           "canTrickyJump",
           {"and": [
-            "Bombs",
-            {"ammo": {"type": "PowerBomb", "count": 1}}
+            "h_canArtificialMorphBombs",
+            "h_canArtificialMorphPowerBomb"
           ]},
           {"ammo": {"type": "PowerBomb", "count": 3}}
         ]},
@@ -617,10 +1250,11 @@
           "h_canArtificialMorphSpringBallBombJump",
           {"and": [
             "HiJump",
-            "SpringBall"
+            "h_canArtificialMorphSpringBall"
           ]}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": [
         "Use a Power Bombs to kill the first three hoppers,",
         "or carefully dodge them by quickly rolling between the first two tall flowers and waiting for the hopper to jump over Samus.",
@@ -637,28 +1271,44 @@
       ]
     },
     {
-      "from": 4,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
+      "link": [4, 2],
+      "name": "G-mode Morph Remote Acquire at the Top Right Door",
       "requires": [
-        "Morph"
-      ]
+        "canEnterGMode",
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          {"and": [
+            "h_canArtificialMorphSpringBallBombJump",
+            "h_additionalBomb"
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "note": "While in g-mode, touch the item, roll out of the pipe, then get to the top right door before exiting g-mode and obtaining the item.",
+      "devNote": "FIXME: Need these items without counting the item at 4."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 5],
+      "name": "Base",
+      "requires": [
+        "Morph"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 5],
       "name": "Green Hill Zone X-Ray Wiggle (Out)",
       "notable": true,
       "requires": [
         "canXRayTurnaround"
       ],
       "reusableRoomwideNotable": "Green Hill Zone X-Ray Wiggle",
+      "flashSuitChecked": true,
       "note": "It's a long Wiggle, but you can see the item before going in too far."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 5],
       "name": "Green Hill Zone Tunnel Crawl (Out)",
       "notable": true,
       "requires": [
@@ -668,34 +1318,63 @@
       "note": "It's a long Tunnel Crawl, so there's a heavy softlock risk."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 5],
       "name": "G-mode Morph Remote Acquire",
-      "notable": false,
       "requires": [
+        "canEnterGMode",
         {"obstaclesCleared": ["A"]}
       ],
-      "note": "While in g-mode, touch the item, roll out of the pipe, then exit g-mode to obtain the item."
+      "flashSuitChecked": true,
+      "note": "While in g-mode, touch the item, roll out of the pipe, then exit g-mode to obtain the item.",
+      "devNote": "This technically goes to 1, but 5->1 is free, and this will make the room diagram cleaner."
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "G-mode Morph Remote Acquire at the Top Right Door",
-      "notable": false,
+      "link": [5, 1],
+      "name": "Base",
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 4],
+      "name": "Base",
       "requires": [
-        {"obstaclesCleared": ["A"]},
-        {"or": [
-          "h_canArtificialMorphIBJ",
-          {"and": [
-            "canSpringBallBombJump",
-            {"or": [
-              "Bombs",
-              {"ammo": {"type": "PowerBomb", "count": 2}}
-            ]}
-          ]}
-        ]}
+        "Morph"
       ],
-      "note": "While in g-mode, touch the item, roll out of the pipe, then get to the top right door before exiting g-mode and obtaining the item."
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 4],
+      "name": "Turnaround Aim Cancel",
+      "requires": [
+        "canTurnaroundAimCancel"
+      ],
+      "flashSuitChecked": true,
+      "note": "It takes Morph or a Tunnel Crawl to get back out."
+    },
+    {
+      "link": [5, 4],
+      "name": "Green Hill Zone X-Ray Wiggle (In)",
+      "notable": true,
+      "requires": [
+        "canTwoTileSqueeze",
+        "canXRayTurnaround"
+      ],
+      "reusableRoomwideNotable": "Green Hill Zone X-Ray Wiggle",
+      "flashSuitChecked": true,
+      "note": [
+        "It's a long Wiggle, but you can see the item before going in too far.",
+        "Spin jumping directly into the tube will disable X-Ray, so enter aiming down to standup first."
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Green Hill Zone Tunnel Crawl (In)",
+      "notable": true,
+      "requires": [
+        "canTunnelCrawl"
+      ],
+      "reusableRoomwideNotable": "Green Hill Zone Tunnel Crawl",
+      "note": "It's a long Tunnel Crawl, so there's a heavy softlock risk."
     }
   ]
 }

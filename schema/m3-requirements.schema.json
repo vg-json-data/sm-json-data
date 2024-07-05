@@ -120,6 +120,35 @@
               ]
             }
           },
+          "partialRefill": {
+            "$id": "#/definitions/logicalRequirement/items/properties/partialRefill",
+            "type": "object",
+            "title": "Partial Refill",
+            "description": "Always fulfilled, with an effect of refilling the given resource type up to a given limit.",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "$id": "#/definitions/logicalRequirement/items/properties/partialRefill/properties/type",
+                "type": "string",
+                "title": "Resource Type",
+                "description": "The name of a resource type that becomes partially refilled",
+                "enum": [
+                  "Missile",
+                  "Super",
+                  "PowerBomb",
+                  "RegularEnergy",
+                  "ReserveEnergy",
+                  "Energy"
+                ]
+              },
+              "limit": {
+                "$id": "#/definitions/logicalRequirement/items/properties/partialRefill/properties/limit",
+                "type": "integer",
+                "title": "Limit",
+                "description": "The level of resource quantity that the partial refill stops at."
+              }
+            }
+          },
           "enemyKill": {
             "$id": "#/definitions/logicalRequirement/items/properties/enemyKill",
             "type": "object",
@@ -205,6 +234,14 @@
             "title": "Draygon Electricity Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames grapples to a broken Draygon turret."
           },
+          "shineChargeFrames": {
+            "$id": "#/definitions/logicalRequirement/items/properties/shineChargeFrames",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 180,
+            "title": "Shinecharge Frames",
+            "description": "Fulfilled by spending the given amount of frames with an active shinecharge."
+          },
           "enemyDamage": {
             "$id": "#/definitions/logicalRequirement/items/properties/enemyDamage",
             "type": "object",
@@ -244,6 +281,44 @@
             "minimum": 1,
             "title": "Heat Frames",
             "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in a heat room."
+          },
+          "heatFramesWithEnergyDrops": {
+            "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops",
+            "type": "object",
+            "title": "Heat Frames With Energy Drops",
+            "description": "Fulfilled by spending an amount of energy that corresponds to spending a number of frames in a heat room, with some or all damage offset by collecting energy drops.",
+            "additionalProperties": false,
+            "properties": {
+              "frames": {
+                "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops/properties/frames",
+                "type": "integer",
+                "minimum": 1
+              },
+              "drops": {
+                "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops/properties/drops",
+                "type": "array",
+                "items": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops/properties/drops/items",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enemy": {
+                      "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops/properties/drops/items/enemy",
+                      "type": "string",
+                      "title": "Enemy Name",
+                      "description": "The name of an enemy that drops can be collected from, as found in the enemies file."
+                    },
+                    "count": {
+                      "$id": "#/definitions/logicalRequirement/items/properties/heatFramesWithEnergyDrops/properties/drops/items/count",
+                      "type": "integer",
+                      "title": "Count",
+                      "description": "The number of drops that can be collected from this enemy by executing this strat.."
+                    }
+                  }
+                }
+              }
+            }
+
           },
           "gravitylessHeatFrames": {
             "$id": "#/definitions/logicalRequirement/items/properties/gravitylessHeatFrames",
@@ -293,6 +368,27 @@
             "minimum": 1,
             "title": "Energy at Most",
             "description": "Fulfilled by having Samus' energy drop to a maximum of this value, regardless of how much she had coming in."
+          },
+          "autoReserveTrigger": {
+            "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger",
+            "type": "object",
+            "title": "Auto-reserve Trigger",
+            "description": "Fulfilled by taking damage to trigger auto-reserves, which results in Samus' energy becoming equal to the initial reserve energy, and reserve energy becoming zero.",
+            "additionalProperties": false,
+            "properties": {
+              "minReserveEnergy": {
+                "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger/properties/minReserveEnergy",
+                "type": "integer",
+                "description": "Minimum energy in reserves which will satisfy this requirement",
+                "default": 1
+              },
+              "maxReserveEnergy": {
+                "$id": "#/definitions/logicalRequirement/items/properties/autoReserveTrigger/properties/maxReserveEnergy",
+                "type": "integer",
+                "description": "Maximum energy in reserves which will satisfy this requirement",
+                "default": 400
+              }
+            }
           },
           "spikeHits": {
             "$id": "#/definitions/logicalRequirement/items/properties/spikeHits",
@@ -375,160 +471,81 @@
               }
             }
           },
-          "adjacentRunway": {
-            "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway",
-            "type": "object",
-            "title": "Adjacent Runway",
-            "description": "DEPRECATED: Fulfilled by being able to come in via a specific door, if the door in the adjacent room has a runway that fulfills the other properties of this logical element. This logical requirement will be deleted; the strat property 'entranceCondition' should be used instead.",
-            "required": [
-              "fromNode",
-              "usedTiles"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which the adjacent runway must be accessed."
-              },
-              "usedTiles": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/usedTiles",
-                "type": "number",
-                "title": "Used Tiles",
-                "description": "The number of effective tiles the runway in the adjacent room must have."
-              },
-              "inRoomPath": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/inRoomPath",
-                "type": "array",
-                "title": "In-Room Path",
-                "description": "The path of nodes that must have been followed by the player since entering the room in order for this adjacentRunway to be usable.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/inRoomPath/items",
+          "resourceAvailable": {
+            "$id": "#/definitions/logicalRequirement/items/properties/resourceAvailable",
+            "type": "array",
+            "title": "Resource Available",
+            "description": "Fulfilled by having at least the amount available for all given resource types",
+            "items": {
+              "$id": "#/definitions/logicalRequirement/items/properties/resourceAvailable/items",
+              "type": "object",
+              "required": [
+                "type",
+                "count"
+              ],
+              "minItems": 1,
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceAvailable/properties/items/type",
+                  "type": "string",
+                  "enum": [
+                    "Missile",
+                    "Super",
+                    "PowerBomb",
+                    "RegularEnergy",
+                    "ReserveEnergy",
+                    "Energy"
+                  ],
+                  "title": "Resource Type",
+                  "description": "The type of resource held."
+                },
+                "count": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceAvailable/properties/items/count",
                   "type": "integer",
-                  "title": "In-Room Path node",
-                  "description": "The ID of a node that is part of this path"
+                  "minimum": 0,
+                  "title": "Resource Count",
+                  "description": "The amount of the resource that Samus must have."
                 }
-              },
-              "physics": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics",
-                "type": "array",
-                "title": "Appropriate Physics",
-                "description": "An optional array describing which physics are acceptable in order for this adjacentRunway to be usable. All physics are acceptable if this is missing.",
-                "minItems": 1,
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/physics/items",
-                  "$ref" : "m3-room.schema.json#/definitions/physics",
-                  "description": "A physics that is acceptable in order for this adjacentRunway to be usable."
-                }
-              },
-              "useFrames":{
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/useFrames",
-                "type": "integer",
-                "title": "Use Frames",
-                "description": "An optional value that indicates a number of frames that Samus must spend at the adjacent runway. She should take appropriate damage according to that door's environment (acid/lava) and that room's environment (heat) when applicable.",
-                "minimum": 1
-              },
-              "overrideRunwayRequirements": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentRunway/properties/overrideRunwayRequirements",
-                "type": "boolean",
-                "title": "Override Runway Requirements",
-                "description": "An optional value that indicates whether logical requirements on the runway itself d be ignored. If missing, this should be interpreted as false."
               }
             }
           },
-          "adjacentJumpway": {
-            "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway",
-            "type": "object",
-            "title": "Adjacent Jumpway",
-            "description": "Fulfilled by the adjacent room having a jumpway with specified characteristics.",
-            "required": [
-              "fromNode",
-              "jumpwayType"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which Samus must enter."
-              },
-              "jumpwayType": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/jumpwayType",
-                "$ref": "m3-room.schema.json#/properties/nodes/items/properties/jumpways/items/properties/jumpwayType",
-                "title": "Jumpway Type",
-                "description": "Type of jumpway required in the adjacent room."
-              },
-              "minHeight": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minHeight",
-                "type": "number",
-                "title": "Minimum Height",
-                "description": "Minimum height of jumpway that will satisfy the requirement."
-              },
-              "maxHeight": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxHeight",
-                "type": "number",
-                "title": "Maximum Height",
-                "description": "Maximum height of jumpway that will satisfy the requirement."
-              },
-              "maxLeftPosition": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/maxLeftPosition",
-                "type": "number",
-                "title": "Maximum Left Position",
-                "description": "Maximum value of the jumpway leftPosition that will satisfy the requirement."
-              },
-              "minRightPosition": {
-                "$id": "#/definitions/logicalRequirement/items/properties/adjacentJumpway/properties/minRightPosition",
-                "type": "number",
-                "title": "Minimum Right Position",
-                "description": "Minimum value of the jumpway rightPosition that will satisfy the requirement."
-              }
-            }
-          },
-          "canComeInCharged": {
-            "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged",
-            "type": "object",
-            "title": "Can Come in Charged",
-            "description": "DEPRECATED: Fulfilled by being able to come into the room via a specific door, with a shinespark charge that has at least a number of frames remaining. This logical requirement will be deleted; the strat property 'entranceCondition' should be used instead.",
-            "required": [
-              "fromNode",
-              "framesRemaining"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/fromNode",
-                "type": "integer",
-                "title": "From Node",
-                "description": "The in-room ID of the node through which a shinespark charge must be carried."
-              },
-              "inRoomPath": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/inRoomPath",
-                "type": "array",
-                "title": "In-Room Path",
-                "description": "The path of nodes that must have been followed by the player since entering the room in order for this canComeInCharged to be usable.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/inRoomPath/items",
+          "resourceMissingAtMost": {
+            "$id": "#/definitions/logicalRequirement/items/properties/resourceMissingAtMost",
+            "type": "array",
+            "title": "Resource Missing At Most",
+            "description": "Fulfilled by only missing at most the given amount from being full on a given resource type.",
+            "items": {
+              "$id": "#/definitions/logicalRequirement/items/properties/resourceMissingAtMost/items",
+              "type": "object",
+              "required": [
+                "type",
+                "count"
+              ],
+              "minItems": 1,
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceMissingAtMost/properties/items/type",
+                  "type": "string",
+                  "enum": [
+                    "Missile",
+                    "Super",
+                    "PowerBomb",
+                    "RegularEnergy",
+                    "ReserveEnergy",
+                    "Energy"
+                  ],
+                  "title": "Resource Type",
+                  "description": "The type of resource held."
+                },
+                "count": {
+                  "$id": "#/definitions/logicalRequirement/items/properties/resourceMissingAtMost/properties/items/count",
                   "type": "integer",
-                  "title": "In-Room Path node",
-                  "description": "The ID of a node that is part of this path"
+                  "minimum": 0,
+                  "title": "Resource Count",
+                  "description": "The amount of the resource that Samus must not be missing, relative to being full."
                 }
-              },
-              "framesRemaining": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/framesRemaining",
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 180,
-                "title": "Frames Remaining",
-                "description": "The number of frames that must be left on the shinespark charge when coming in."
-              },
-              "unusableTiles": {
-                "$id": "#/definitions/logicalRequirement/items/properties/canComeInCharged/properties/unusableTiles",
-                "type": "number",
-                "minimum": 0,
-                "title": "Unusable Tiles",
-                "description": "The number of contiguous tiles that are part of the runway but cannot be used to charge this shinespark."
               }
             }
           },
@@ -547,7 +564,7 @@
                 "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/usedTiles",
                 "type": "number",
                 "minimum": 1,
-                "maximum": 33,
+                "maximum": 45,
                 "title": "Used Tiles",
                 "description": "The number of contiguous tiles that are available to charge a shinespark."
               },
@@ -588,6 +605,134 @@
               },
               "openEnd": {
                 "$id": "#/definitions/logicalRequirement/items/properties/canShineCharge/properties/openEnd",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "title": "Number of Open Ends",
+                "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
+              }
+            }
+          },
+          "getBlueSpeed": {
+            "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed",
+            "type": "object",
+            "title": "Get Blue Speed",
+            "description": "Fulfilled by being able to gain blue speed under the described conditions.",
+            "required": [
+              "usedTiles",
+              "openEnd"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "usedTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/usedTiles",
+                "type": "number",
+                "minimum": 1,
+                "maximum": 45,
+                "title": "Used Tiles",
+                "description": "The number of contiguous tiles that are available to gain blue speed."
+              },
+              "gentleUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/gentleUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Up Tiles",
+                "description": "The number of tiles that slope gently upward (going up by half a tile)."
+              },
+              "gentleDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/gentleDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Down Tiles",
+                "description": "The number of tiles that slope gently downward (going down by half a tile)."
+              },
+              "steepUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/steepUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Up Tiles",
+                "description": "The number of tiles that slope steeply upward (going up by a tile)."
+              },
+              "steepDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/steepDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Down Tiles",
+                "description": "The number of tiles that slope steeply downward (going down by a tile)."
+              },
+              "startingDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/startingDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Starting Down Tiles",
+                "description": "The number of tiles that slope downwards at the start of a run, preventing the execution of a stutter."
+              },
+              "openEnd": {
+                "$id": "#/definitions/logicalRequirement/items/properties/getBlueSpeed/properties/openEnd",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "title": "Number of Open Ends",
+                "description": "The number of open ends in the runway. An open end is a runway edge that ends in a dropoff rather than a wall. Each open end adds a bit of extra room."
+              }
+            }
+          },
+          "speedBall": {
+            "$id": "#/definitions/logicalRequirement/items/properties/speedBall",
+            "type": "object",
+            "title": "Speed Ball",
+            "description": "Fulfilled by being able to gain a speedball with a specified amount of runway.",
+            "required": [
+              "length",
+              "openEnd"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "length": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/length",
+                "type": "number",
+                "minimum": 1,
+                "maximum": 45,
+                "title": "Runway length",
+                "description": "The number of contiguous tiles that are available to gain blue speed and jump into a speedball."
+              },
+              "gentleUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/gentleUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Up Tiles",
+                "description": "The number of tiles that slope gently upward (going up by half a tile)."
+              },
+              "gentleDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/gentleDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Gentle Down Tiles",
+                "description": "The number of tiles that slope gently downward (going down by half a tile)."
+              },
+              "steepUpTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/steepUpTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Up Tiles",
+                "description": "The number of tiles that slope steeply upward (going up by a tile)."
+              },
+              "steepDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/steepDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Steep Down Tiles",
+                "description": "The number of tiles that slope steeply downward (going down by a tile)."
+              },
+              "startingDownTiles": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/startingDownTiles",
+                "type": "integer",
+                "minimum": 0,
+                "title": "Starting Down Tiles",
+                "description": "The number of tiles that slope downwards at the start of a run, preventing the execution of a stutter."
+              },
+              "openEnd": {
+                "$id": "#/definitions/logicalRequirement/items/properties/speedBall/properties/openEnd",
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 2,
@@ -664,90 +809,41 @@
               }
             }
           },
-          "comeInWithRMode": {
-            "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode",
-            "type": "object",
-            "title": "Come in With R-Mode",
-            "description": "Fulfilled by being able to come into the room via one of a specific set of doors to obtain R-mode (not including G-mode). This implicitly requires the tech canEnterRMode as well as XRayScope and ReserveTank items.",
-            "required": [
-              "fromNodes"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNodes": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode/properties/fromNodes",
-                "type": "array",
-                "title": "From Nodes",
-                "description": "A list of in-room node IDs, through one of which we must obtain R-mode (not including G-mode) in order to satisfy this logical element",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/comeInWithRMode/properties/fromNode/items",
-                  "type": "integer",
-                  "title": "From Node",
-                  "description": "The ID of a node through which we may obtain R-mode (not including G-mode) in order to satisfy this logical element"
-                }
-              }
-            }
-          },
-          "comeInWithGMode": {
-            "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode",
-            "type": "object",
-            "title": "Come in With G-Mode",
-            "description": "Fulfilled by being able to come into the room via one of a specific set of doors with G-mode (direct or indirect). This implicitly requires the tech canEnterGMode as well as XRayScope and ReserveTank items and a matching leaveWithGModeSetup (with non-zero reserve energy) or leaveWithGMode property on the neighboring door.",
-            "required": [
-              "fromNodes",
-              "mode",
-              "artificialMorph"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "fromNodes": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/fromNodes",
-                "type": "array",
-                "title": "From Nodes",
-                "description": "A list of in-room node IDs, one of which we must come in through with G-mode in order to satisfy this logical element.",
-                "items": {
-                  "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/fromNodes/items",
-                  "type": "integer",
-                  "title": "From Node",
-                  "description": "The ID of a node which we may come in through with G-mode in order to satisfy this logical element."
-                }
-              },
-              "mode": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/mode",
-                "type": "string",
-                "enum": [
-                  "direct",
-                  "indirect",
-                  "any"
-                ],
-                "title": "Mode",
-                "description": "Whether we must come in with direct G-mode, indirect G-mode, or either"
-              },
-              "artificialMorph": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/artificialMorph",
-                "type": "boolean",
-                "title": "Artificial Morph",
-                "description": "Whether we must come in with artificial morph (also satisfied by having Morph collected)"
-              },
-              "mobility": {
-                "$id": "#/definitions/logicalRequirement/items/properties/comeInWithGMode/properties/mobility",
-                "type": "string",
-                "enum": [
-                  "mobile",
-                  "immobile",
-                  "any"
-                ],
-                "default": "any",
-                "title": "Mobility",
-                "description": "Whether Samus must come in mobile, immobile, or either."
-              }
-            }
-          },
           "itemNotCollectedAtNode": {
             "$id": "#/definitions/logicalRequirement/items/properties/itemNotCollectedAtNode",
             "type": "integer",
             "title": "Item Not Collected",
             "description": "Fulfilled by an item at a given node not having been collected yet."
+          },
+          "gainFlashSuit": {
+            "$id": "#/definitions/logicalRequirement/items/properties/gainFlashSuit",
+            "type": "object",
+            "title": "Gain Flash Suit",
+            "description": "Always fulfilled, with an effect of Samus gaining a flash suit.",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "useFlashSuit": {
+            "$id": "#/definitions/logicalRequirement/items/properties/useFlashSuit",
+            "type": "object",
+            "title": "Use Flash Suit",
+            "description": "Fulfilled if Samus has a flash suit, with an effect of losing the flash suit.",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "noFlashSuit": {
+            "$id": "#/definitions/logicalRequirement/items/properties/noFlashSuit",
+            "type": "object",
+            "title": "No Flash Suit",
+            "description": "Fulfilled if Samus does not have a flash suit.",
+            "additionalProperties": false,
+            "properties": {}
+          },
+          "tech": {
+            "$id": "#/definitions/logicalRequirement/items/properties/tech",
+            "type": "string",
+            "title": "Tech Requirement",
+            "description": "A pure tech requirement, avoiding any other requirements normally associated with a tech."
           }
         }
       }

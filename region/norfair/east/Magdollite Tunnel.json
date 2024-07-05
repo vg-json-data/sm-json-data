@@ -11,53 +11,21 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Magdollite Tunnel Left Door (to Purple Shaft)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019696",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Magdollite Tunnel Left Door (to Purple Shaft)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Magdollite Tunnel Right Door (to Kronic Boost Room)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00196a2",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Magdollite Tunnel Right Door (to Kronic Boost Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -84,62 +52,422 @@
       ]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
       "name": "Magdollite Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"refill": ["Energy", "Missile"]}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 500}
-      ]
+        {"or": [
+          {"heatFrames": 440},
+          {"and": [
+            {"heatFrames": 360},
+            {"or": [
+              "canTrickyJump",
+              {"and": [
+                {"heatFrames": 30},
+                "canDodgeWhileShooting",
+                {"or": [
+                  "Plasma",
+                  "Wave",
+                  "Spazer",
+                  "ScrewAttack",
+                  "canPseudoScrew",
+                  {"ammo": {"type":"Missile", "count": 1}},
+                  {"ammo": {"type":"Super", "count": 1}}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"enemyKill": {
-          "enemies": [["Multiviola"]],
-          "explicitWeapons": ["Super", "Missile"]
-        }},
+        {"or": [
+          "ScrewAttack",
+          {"and": [
+            "canPrepareForNextRoom",
+            "canPseudoScrew"
+          ]}
+        ]},
         {"heatFrames": 300}
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Space Jump with Run Speed",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": "any",
+          "minTiles": 3
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 550}
-      ]
-    },
-    {
-      "from": 2,
-      "to": 1,
-      "name": "Space Jump",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
-        {"heatFrames": 350}
-      ]
+        "canCarefulJump",
+        {"or": [
+          "ScrewAttack",
+          {"and": [
+            "canPrepareForNextRoom",
+            "canPseudoScrew"
+          ]}
+        ]},
+        {"heatFrames": 230}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Blue Space Jump",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canPreciseSpaceJump",
+        {"heatFrames": 230}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark (Come In Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 57, "excessFrames": 4}},
+        {"heatFrames": 210}
+      ],
+      "note": [
+        "The height for the Shinespark can be easily gotten by jumping against the door, up to the ceiling."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark (Come In Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 16
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 57, "excessFrames": 4}},
+        {"heatFrames": 210}
+      ],
+      "note": [
+        "The height for the Shinespark can be easily gotten by jumping against the door, up to the ceiling."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Cross While Farming",
+      "requires": [
+        "canFarmWhileShooting",
+        {"heatFramesWithEnergyDrops": {
+          "frames": 440,
+          "drops": [
+            {"enemy": "Magdollite", "count": 7},
+            {"enemy": "Multiviola", "count": 1}
+          ]
+        }},
+        {"heatFrames": 100}
+      ],
+      "note": [
+        "The Magdollite flames can be killed for drops.",
+        "The left Multiviola will be in the way and should be killed too."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          {"heatFrames": 420},
+          {"and": [
+            {"heatFrames": 335},
+            {"or": [
+              "canInsaneJump",
+              {"and": [
+                "canDodgeWhileShooting",
+                {"or": [
+                  "Plasma",
+                  "Wave",
+                  "Spazer",
+                  "ScrewAttack",
+                  "canPseudoScrew",
+                  {"ammo": {"type":"Missile", "count": 1}},
+                  {"ammo": {"type":"Super", "count": 1}}
+                ]}
+              ]}
+            ]}
+          ]},
+          {"and": [
+            {"heatFrames": 360},
+            "canTrickyJump"
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Space Jump",
+      "requires": [
+        "SpaceJump",
+        {"or": [
+          "ScrewAttack",
+          {"and": [
+            "canPrepareForNextRoom",
+            "canPseudoScrew"
+          ]},
+          "canPreciseSpaceJump"
+        ]},
+        {"heatFrames": 310}
+      ],
+      "flashSuitChecked": true,
+      "note": "Without Screw or pseudo screw, it is possible to carefully space jump over the left Multiviola."
+    },
+    {
+      "link": [2, 1],
+      "name": "Space Jump with Run Speed",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": "any",
+          "minTiles": 3
+        }
+      },
+      "requires": [
+        "SpaceJump",
+        {"or": [
+          "ScrewAttack",
+          {"and": [
+            "canPrepareForNextRoom",
+            "canPseudoScrew"
+          ]}
+        ]},
+        {"heatFrames": 230}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Blue Space Jump",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canPreciseSpaceJump",
+        {"heatFrames": 220}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Shinespark (Come In Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 57, "excessFrames": 4}},
+        {"heatFrames": 210}
+      ],
+      "note": [
+        "The height for the Shinespark can be easily gotten by jumping against the door, up to the ceiling."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Shinespark (Come In Shinecharged)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 16
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"shinespark": {"frames": 57, "excessFrames": 4}},
+        {"heatFrames": 210}
+      ],
+      "note": [
+        "The height for the Shinespark can be easily gotten by jumping against the door, up to the ceiling."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Cross While Farming",
+      "requires": [
+        "canFarmWhileShooting",
+        {"heatFramesWithEnergyDrops": {
+          "frames": 240,
+          "drops": [
+            {"enemy": "Magdollite", "count": 5}
+          ]
+        }},
+        {"heatFramesWithEnergyDrops": {
+          "frames": 200,
+          "drops": [
+            {"enemy": "Magdollite", "count": 3}
+          ]
+        }},
+        {"heatFrames": 90}
+      ],
+      "note": [
+        "The Magdollite flames can be killed for drops."
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 50}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

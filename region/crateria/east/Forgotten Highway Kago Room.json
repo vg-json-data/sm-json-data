@@ -10,18 +10,20 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Forgotten Highway Kago Room Left Door (to East Ocean)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018a7e",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Forgotten Highway Kago Room Bottom Door (to Crab Maze)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018a8a",
+      "doorOrientation": "down",
       "doorEnvironments": [{"physics": "air"}]
     }
   ],
@@ -34,12 +36,26 @@
       "homeNodes": [2]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -51,10 +67,8 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Kago Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2],
@@ -64,29 +78,63 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
-      "requires": []
-    },
-    {
-      "from": 2,
-      "to": 2,
-      "name": "Shinespark",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave With Temporary Blue",
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInShinecharging": {
+          "length": 10,
+          "openEnd": 1,
+          "steepUpTiles": 2,
+          "steepDownTiles": 1
+        }
       },
       "requires": [
-        {"shinespark": {"frames": 2, "excessFrames": 2}}
+        "canLongChainTemporaryBlue",
+        "canXRayTurnaround"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {
+          "direction": "any"
+        }
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 2],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"shinespark": {"frames": 3, "excessFrames": 3}}
       ],
       "note": "Enter on the left side of the doorway to reduce the amount of energy used.",
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."

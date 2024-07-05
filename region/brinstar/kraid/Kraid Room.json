@@ -10,14 +10,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Kraid Room Left Door (to Eye Room)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x00191ce",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
-          "name": "Kraid Left Grey Lock (to Eye Room)",
+          "name": "Kraid Left Gray Lock (to Eye Room)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -33,14 +34,15 @@
     },
     {
       "id": 2,
-      "name": "Kraid Room Right Door (to Varia)",
+      "name": "Right Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x00191da",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
-          "name": "Kraid Right Grey Lock (to Varia)",
+          "name": "Kraid Right Gray Lock (to Varia)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -68,35 +70,92 @@
               "name": "Charge",
               "notable": false,
               "requires": [
-                "Charge"
-              ]
+                "Charge",
+                {"or": [
+                  "Wave",
+                  "Spazer",
+                  "Plasma",
+                  "canBePatient"
+                ]},
+                {"or": [
+                  "HiJump",
+                  "canWalljump",
+                  "SpaceJump",
+                  "canSpringBallJumpMidAir",
+                  {"and": [
+                    "canDodgeWhileShooting",
+                    {"or": [
+                      "canCarefulJump",
+                      "h_canCrouchJumpDownGrab"
+                    ]}
+                  ]}
+                ]}
+              ],
+              "note": "Getting up during Phase 2 can be done by jumping on Kraid's projectile platforms or a well timed crouch jump + down grab."
             },
             {
               "name": "Missiles",
               "notable": false,
               "requires": [
-                {"ammo": {"type": "Missile", "count": 2}}
+                {"ammo": {"type": "Missile", "count": 2}},
+                {"or": [
+                  "HiJump",
+                  "canWalljump",
+                  "SpaceJump",
+                  "canSpringBallJumpMidAir",
+                  {"and": [
+                    "canDodgeWhileShooting",
+                    {"or": [
+                      "canCarefulJump",
+                      "h_canCrouchJumpDownGrab"
+                    ]}
+                  ]}
+                ]}
               ],
-              "note": "Only 2 Missiles are needed to get Kraid to stand up, after which they are farmable."
+              "note": [
+                "Only 2 Missiles are needed to get Kraid to stand up, after which they are farmable.",
+                "Getting up during Phase 2 can be done by jumping on Kraid's projectile platforms or a well timed crouch jump + down grab."
+              ]
             },
             {
               "name": "Supers",
               "notable": false,
               "requires": [
                 {"or": [
-                  {"ammo": {"type": "Super", "count": 4}},
+                  {"ammo": {"type": "Super", "count": 5}},
+                  {"and": [
+                    {"ammo": {"type": "Super", "count": 4}},
+                    "canDodgeWhileShooting"
+                  ]},
                   {"and": [
                     {"ammo": {"type": "Super", "count": 3}},
-                    "canDodgeWhileShooting"
+                    "canDodgeWhileShooting",
+                    "canBePatient"
                   ]},
                   {"and": [
                     {"ammo": {"type": "Super", "count": 1}},
                     "canDodgeWhileShooting",
                     "canBeVeryPatient"
                   ]}
+                ]},
+                {"or": [
+                  "HiJump",
+                  "canWalljump",
+                  "SpaceJump",
+                  "canSpringBallJumpMidAir",
+                  {"and": [
+                    "canDodgeWhileShooting",
+                    {"or": [
+                      "canCarefulJump",
+                      "h_canCrouchJumpDownGrab"
+                    ]}
+                  ]}
                 ]}
               ],
-              "note": "4 supers are required to kill Kraid. Only 1 is needed to get him to stand up, after which they are farmable, even though the drop rate is low."
+              "note": [
+                "4 supers are required to kill Kraid. Only 1 is needed to get him to stand up, after which they are farmable, even though the drop rate is low.",
+                "Getting up during Phase 2 can be done by jumping on Kraid's projectile platforms or a well timed crouch jump + down grab."
+              ]
             }
           ]
         }
@@ -114,12 +173,34 @@
       "stopSpawn": ["f_DefeatedKraid"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -129,10 +210,8 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 22,
@@ -143,23 +222,125 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 90
+          "framesRemaining": 135
         }
       },
+      "flashSuitChecked": true,
       "devNote": "An X-Mode strat is likely possible but not included. It would require the doors unlocked and canRiskPermanentLossOfAccess."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Kraid's Talons",
+      "requires": [
+        {"not": "f_DefeatedKraid"},
+        "canRiskPermanentLossOfAccess",
+        {"or":[
+          "Charge",
+          {"ammo": {"type": "Missile", "count": 2}},
+          {"ammo": {"type": "Super", "count": 1}}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "The only projectiles that Kraid can hit Samus with through the transition are the spinning talons after he stands up.",
+        "This requires Kraid to not be defeated and the door to be open during the second phase."
+      ]
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28], [2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport (Kraid Alive)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "requires": [
+        {"not": "f_DefeatedKraid"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position, Kraid Alive)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "requires": [
+        {"not": "f_DefeatedKraid"},
+        "canRiskPermanentLossOfAccess"
+      ],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -169,10 +350,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 22,
@@ -183,35 +362,38 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 90
+          "framesRemaining": 135
         }
       },
+      "flashSuitChecked": true,
       "devNote": "An X-Mode strat is likely possible but not included. It would require the doors unlocked and canRiskPermanentLossOfAccess."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
       "name": "Kraid is Dead",
-      "notable": false,
       "requires": [
         "f_DefeatedKraid"
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"thornHits": 1}
       ],
       "note": "You can actually do the Kraid fight normally if entering from the right door, but it will put Samus into the thorns."
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Prepared with Space Jump",
-      "notable": false,
       "requires": [
         {"or": [
           "canPrepareForNextRoom",
@@ -222,18 +404,14 @@
       "note": "Being prepared and space jumping through the room can prevent a thorn hit."
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "note": "Door is reachable mid-fight but locked"
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "f_DefeatedKraid"
       ],

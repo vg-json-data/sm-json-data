@@ -10,110 +10,30 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Crateria Kihunter Room Left Door (to Crateria Tube)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018a2a",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Kihunter",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Kihunter (green)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Crateria Kihunter Room Right Door (to Moat)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018a36",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Crateria Kihunter Room Right Yellow Lock (to Moat)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenYellowDoors"
-              ]
-            }
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Kihunter",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Kihunter (green)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Crateria Kihunter Room Bottom Door (to Elevator)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x0018a42",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Crateria Kihunter Room Bottom Yellow Lock (to Elevator)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenYellowDoors"
-              ]
-            }
-          ]
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit by Thawing Sciser",
-            "notable": false,
-            "requires": [
-              "canWallIceClip",
-              "canDownwardGModeSetup",
-              {"ammo": {"type": "Super", "count": 1}}
-            ],
-            "note": [
-              "Run from the ledge into the open doorway while hitting the frozen Crab as it thaws and the door transition simultaneously.",
-              "Note that this requires a pixel perfect freeze, a small pixel starting window, and has tight timing. It then has a 50% success rate due to collision oscillation."
-            ]
-          }
-        ]}
-      ]
+      "doorOrientation": "down",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -132,12 +52,34 @@
       "homeNodes": [3]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -149,24 +91,103 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Base",
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit by Kihunter",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Kihunter (green)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
       "requires": []
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29], [2, 34]]
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -176,10 +197,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         "canShinechargeMovement",
         {"canShineCharge": {
@@ -193,26 +212,138 @@
         "leaveShinecharged": {
           "framesRemaining": 65
         }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Spinning",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 32,
+            "openEnd": 1,
+            "gentleUpTiles": 2,
+            "steepDownTiles": 4
+          },
+          "minExtraRunSpeed": "$3.E"
+        }
       }
     },
     {
-      "from": 2,
-      "to": 2,
-      "name": "Kihunter and Sciser Farm",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 32,
+            "openEnd": 1,
+            "gentleUpTiles": 2,
+            "steepDownTiles": 4
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "minExtraRunSpeed": "$0.8"
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 30,
+            "openEnd": 1,
+            "gentleUpTiles": 2,
+            "steepDownTiles": 4
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "minExtraRunSpeed": "$1.9",
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 25,
+            "openEnd": 1,
+            "gentleUpTiles": 2,
+            "steepDownTiles": 2
+          }
+        }
+      },
+      "devNote": [
+        "FIXME: A longer runway could be used if getting blue speed."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 0,
+          "steepUpTiles": 2,
+          "steepDownTiles": 5
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Sciser Farm",
       "requires": [
         {"resetRoom": {
           "nodes": [1, 2, 3],
           "mustStayPut": false
         }},
-        {"refill": ["Energy", "Missile", "PowerBomb"]}
+        {"refill": ["Energy", "PowerBomb"]}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit by Kihunter",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Kihunter (green)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
       "requires": [
         {"or": [
           "canCameraManip",
@@ -230,25 +361,92 @@
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [3, 3],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 33,
+          "openEnd": 0,
+          "steepUpTiles": 2,
+          "steepDownTiles": 5
+        }},
+        "canLongChainTemporaryBlue",
+        "canXRayTurnaround"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {
+          "direction": "any"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "Crateria Kihunter Room Ice Moonfall Door Lock Skip",
+      "notable": true,
+      "requires": [
+        "canEnemyStuckMoonfall",
+        "canFreeFallClip",
+        "canTrickyUseFrozenEnemies"
+      ],
+      "bypassesDoorShell": true,
+      "note": [
+        "Freeze the two Scisers to set up a moonfall between them, and aim down.",
+        "Hold left to move to the right at the correct time, which will set up an automatic turn-around, allowing Samus to clip past the floating platform below, past the door shell, and through the transition.",
+        "The amount of speed required is highly precise."
+      ]
+    },
+    {
+      "link": [3, 3],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         {"shinespark": {"frames": 2, "excessFrames": 2}}
       ],
       "note": "Enter on the right side of the doorway to reduce the amount of energy used.",
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Setup - Get Hit by Thawing Sciser",
+      "notable": false,
+      "requires": [
+        "canWallIceClip",
+        "canDownwardGModeSetup",
+        {"ammo": {"type": "Super", "count": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Run from the ledge into the open doorway while hitting the frozen Crab as it thaws and the door transition simultaneously.",
+        "Note that this requires a pixel perfect freeze, a small pixel starting window, and has tight timing. It then has a 50% success rate due to collision oscillation."
+      ]
     }
   ]
 }

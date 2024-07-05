@@ -10,41 +10,34 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Warehouse Kihunters Left Vertical Door (to Zeelas)",
+      "name": "Left Vertical Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001916e",
-      "doorEnvironments": [{"physics": "air"}],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Kihunter (green)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ],
-        "devNote": "It looks like the only way to remain in the room is by starting on the right side and triggering a turnaround, with or without artificial morph."
-      }
+      "doorOrientation": "down",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Warehouse Kihunters Bottom Right Door (to Baby Kraid)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001917a",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Warehouse Kihunters Right Door (to Save)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019186",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Missile (Kraid)",
+      "name": "Hidden Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
@@ -52,7 +45,7 @@
     },
     {
       "id": 5,
-      "name": "KiHunter Junction",
+      "name": "Kihunter Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -88,14 +81,59 @@
       "homeNodes": [5]
     }
   ],
-  "strats": [
+  "reusableRoomwideNotable": [
+    {
+      "name": "Warehouse Kihunter Room Tunnel Charge",
+      "note": "Generate a charge on the left side and carry it through the morph tunnel and out the right door."
+    }
+  ],
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         {"shinespark": {"frames": 5, "excessFrames": 5}}
@@ -103,10 +141,8 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
-      "from": 1,
-      "to": 1,
-      "name": "Leave Shinecharged, Open Door",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Open Door, Shot Block Intact)",
       "requires": [
         {"obstaclesCleared": ["C"]},
         {"obstaclesNotCleared": ["D"]},
@@ -117,43 +153,72 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 120
+          "framesRemaining": 145
         }
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 1,
-      "name": "Leave Shinecharged, Closed Door",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave Shinecharged (Open Door, Shot Block Broken)",
       "requires": [
-        {"obstaclesCleared": ["C"]},
-        {"obstaclesNotCleared": ["D"]},
+        {"obstaclesCleared": ["C", "D"]},
         {"canShineCharge": {
-          "usedTiles": 31,
-          "openEnd": 1
+          "usedTiles": 13,
+          "openEnd": 2
         }}
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 90
+          "framesRemaining": 145
         }
       },
-      "note": "Use the door for additional runway then open it once the Shinecharge is complete."
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "G-Mode Morph Overload PLMs",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [1],
+        {"obstaclesCleared": ["C"]},
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Kihunter (green)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "devNote": "It looks like the only way to remain in the room is by starting on the right side and triggering a turnaround, with or without artificial morph."
+    },
+    {
+      "link": [1, 3],
+      "name": "G-Mode Morph Overload PLMs",
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
         {"or": [
-          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "h_canArtificialMorphPowerBomb",
           {"enemyDamage": {
             "enemy": "Kihunter (green)",
             "type": "contact",
@@ -161,23 +226,20 @@
           }}
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Overload the PLMs by rolling through the camera scroll blocks which are just above the shot blocks.",
       "devNote": "In immobile, the Kihunters are in a worse location, but Samus starts with i-frames."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Already Killed",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["C"]}
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Take Damage",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Kihunter (green)",
@@ -187,10 +249,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Tricky Dodge",
-      "notable": false,
       "requires": [
         "canTrickyJump",
         "canDodgeWhileShooting"
@@ -206,10 +266,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Quick Kihunter Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [
@@ -226,10 +284,8 @@
       "clearsObstacles": ["C"]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Power Beam Kill",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Kihunter (green)",
@@ -259,10 +315,8 @@
       "clearsObstacles": ["C"]
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -272,10 +326,16 @@
       }
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "HiJump",
@@ -287,10 +347,8 @@
       "note": "The Kihunters can be killed from below but there is a chance one will drop down the hole.  Watch them before breaking the shot block."
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Crouch Jump Down Grab",
-      "notable": false,
       "requires": [
         "h_canCrouchJumpDownGrab"
       ],
@@ -301,10 +359,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Damage Boost",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["C"]},
         "canNeutralDamageBoost",
@@ -322,10 +378,8 @@
       "devNote": "2 leniency hits."
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Warehouse Kihunter Room X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -338,13 +392,12 @@
         }}
       ],
       "clearsObstacles": ["C"],
+      "flashSuitChecked": true,
       "note": "Climb up 1 screen"
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -354,10 +407,16 @@
       }
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 5],
       "name": "Block Already Broken",
-      "notable": false,
       "requires": [
         "Morph",
         {"obstaclesCleared": ["B"]}
@@ -366,10 +425,8 @@
       "note": "The Kihunters can be killed by retreating to the morph tunnel if needed."
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "Bomb the Block",
-      "notable": false,
       "requires": [
         "h_canUseMorphBombs"
       ],
@@ -377,10 +434,8 @@
       "note": "The Kihunters can be killed by retreating to the morph tunnel if needed."
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "Power Bomb the Block",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
@@ -391,12 +446,10 @@
       ]
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "Speedball",
-      "notable": false,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 3,
           "openEnd": 1
         }
@@ -413,46 +466,39 @@
       ]
     },
     {
-      "from": 3,
-      "to": 5,
+      "link": [3, 5],
       "name": "G-Mode Morph Overload PLMs",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [3],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }}
-      ],
+          "morphed": true
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true,
       "note": [
         "Rolling on the ground will overload PLMs by moving through camera scroll blocks.",
         "Lure all of the Kihunters to the top right position, then quickly move left, exit g-mode and retreat to one of the other exits."
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ],
       "note": "Reaching 4 means obstacle B is open."
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           {"obstaclesCleared": ["C"]},
@@ -465,16 +511,82 @@
       ]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 1],
+      "name": "Leave Shinecharged (Closed Door, Shot Block Intact)",
+      "requires": [
+        {"obstaclesCleared": ["C"]},
+        {"obstaclesNotCleared": ["D"]},
+        {"canShineCharge": {
+          "usedTiles": 31,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 105
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Use the door for additional runway then open it once the Shinecharge is complete.",
+      "devNote": [
+        "It could be useful to have a proper way to represent that this strat requires the door not to be open.",
+        "If it were a locked red or green door, you would not be able to unlock it as part of this strat unless you could reset the room."
+      ]
+    },
+    {
+      "link": [5, 1],
+      "name": "Leave Shinecharged (Closed Door, Shot Block Broken)",
+      "requires": [
+        {"obstaclesCleared": ["C", "D"]},
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 105
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Use the door for additional runway then open it once the Shinecharge is complete.",
+      "devNote": [
+        "It could be useful to have a proper way to represent that this strat requires the door not to be open.",
+        "If it were a locked red or green door, you would not be able to unlock it as part of this strat unless you could reset the room."
+      ]
+    },
+    {
+      "link": [5, 2],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "clearsObstacles": ["D"]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Warehouse Kihunter Room Bottom Spark Out",
       "notable": true,
       "requires": [
@@ -490,13 +602,56 @@
       "exitCondition": {
         "leaveWithSpark": {}
       },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
       "note": "Charge a spark, then break the shot blocks, drop through, and spark out the bottom right door."
     },
     {
-      "from": 5,
-      "to": 3,
+      "link": [5, 2],
+      "name": "Warehouse Kihunter Room Bottom Leave Shinecharged",
+      "notable": true,
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"obstaclesCleared": ["C"]},
+        {"obstaclesNotCleared": ["D"]},
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Break the shot block, then gain a shinecharge while sliding off the ledge, down toward the bottom right door."
+    },
+    {
+      "link": [5, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph",
         {"or": [
@@ -507,10 +662,8 @@
       "clearsObstacles": ["B"]
     },
     {
-      "from": 5,
-      "to": 3,
+      "link": [5, 3],
       "name": "Power Bomb the Block",
-      "notable": false,
       "requires": [
         "h_canUsePowerBombs"
       ],
@@ -518,8 +671,7 @@
       "note": "Placing the Power Bomb against the right wall will not break the shot blocks going down."
     },
     {
-      "from": 5,
-      "to": 3,
+      "link": [5, 3],
       "name": "Warehouse Kihunter Speedball",
       "notable": true,
       "requires": [
@@ -530,7 +682,7 @@
           {"and": [
             "canSlowShortCharge",
             "canSpeedball",
-            {"canShineCharge": {
+            {"getBlueSpeed": {
               "usedTiles": 17,
               "openEnd": 0
             }}
@@ -539,7 +691,7 @@
             "canTemporaryBlue",
             "canLateralMidAirMorph",
             {"canShineCharge": {
-              "usedTiles": 32,
+              "usedTiles": 30,
               "openEnd": 1
             }}
           ]}
@@ -552,10 +704,10 @@
       ]
     },
     {
-      "from": 5,
-      "to": 3,
-      "name": "Warehouse Kihunter Room Tunnel Charge",
+      "link": [5, 3],
+      "name": "Warehouse Kihunter Room Tunnel Charge (Shot Block Intact)",
       "notable": true,
+      "reusableRoomwideNotable": "Warehouse Kihunter Room Tunnel Charge",
       "requires": [
         {"obstaclesCleared": ["B", "C"]},
         {"obstaclesNotCleared": ["D"]},
@@ -563,34 +715,86 @@
           "usedTiles": 31,
           "openEnd": 1
         }},
-        "canShinechargeMovementComplex",
+        "canShinechargeMovementTricky",
         "Morph",
-        {"shinespark": {"frames": 15}}
+        {"shinespark": {"frames": 13}}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
       },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
       "note": "Generate a charge on the left side and carry it through the morph tunnel and out the right door."
     },
     {
-      "from": 5,
-      "to": 4,
-      "name": "Blocks Already Broken",
-      "notable": false,
+      "link": [5, 3],
+      "name": "Warehouse Kihunter Room Tunnel Charge (Shot Block Broken)",
+      "notable": true,
+      "reusableRoomwideNotable": "Warehouse Kihunter Room Tunnel Charge",
       "requires": [
+        {"obstaclesCleared": ["B", "C", "D"]},
+        {"canShineCharge": {
+          "usedTiles": 13,
+          "openEnd": 2
+        }},
+        "canShinechargeMovementTricky",
         "Morph",
+        {"shinespark": {"frames": 13}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "note": "Generate a charge on the left side and carry it through the morph tunnel and out the right door."
+    },
+    {
+      "link": [5, 4],
+      "name": "Blocks Already Broken",
+      "requires": [
+        {"or": [
+          "canMidAirMorph",
+          "h_canUseSpringBall",
+          "canIBJ"
+        ]},
         {"obstaclesCleared": ["A"]}
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Power Bomb",
-      "notable": false,
       "requires": [
-        "h_canUsePowerBombs"
+        "h_canUsePowerBombs",
+        {"or": [
+          "canMidAirMorph",
+          "h_canUseSpringBall",
+          "canIBJ"
+        ]}
       ],
       "clearsObstacles": ["A", "B", "C"]
     }
+  ],
+  "devNote": [
+    "FIXME: An ice moonfall might be possible to clip past the bottom left door shell?"
   ]
 }

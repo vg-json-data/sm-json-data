@@ -11,70 +11,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Precious Room Top Left Door (to Colosseum)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a834",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Precious Room Top Left Door (to Colosseum)",
-          "length": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Draygon Eye Door",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "eye",
       "nodeAddress": "0x001a840",
-      "doorEnvironments": [{"physics": "water"}],
-      "runways": [
-        {
-          "name": "Base Runway - Draygon Eye Door",
-          "length": 12,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "Gravity"
-              ]
-            }
-          ],
-          "openEnd": 0
-        }
-      ],
-      "locks": [
-        {
-          "name": "Draygon Eye Lock",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenEyeDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "water"}]
     },
     {
       "id": 3,
-      "name": "Missile (Draygon)",
+      "name": "Top Right Hidden Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "Missile",
@@ -82,32 +37,70 @@
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {
+          "id": 3,
+          "note": "Since this involves water and failure involves more water, it won't be expected without gravity suit unless suitless is expected."
+        }
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Gravity",
         {"or": [
-          "canGravityJump",
           "h_canFly",
           "canSpringBallJumpMidAir",
           "HiJump"
@@ -115,62 +108,97 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Precious Room Delayed Walljump",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Gravity Jump",
+      "requires": [
+        "canGravityJump"
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Delayed Wall Jump",
       "requires": [
         "Gravity",
         "canDelayedWalljump"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Suited Shinespark",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
       "requires": [
         "Gravity",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 40
-        }},
         {"shinespark": {"frames": 40, "excessFrames": 8}}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Suitless Shinespark",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Shinespark, Come in Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        }
+      },
       "requires": [
-        "canSuitlessMaridia",
-        {"canComeInCharged": {
-          "fromNode": 2,
-          "framesRemaining": 60
-        }},
+        "Gravity",
         {"shinespark": {"frames": 40, "excessFrames": 8}}
       ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Suitless Shinespark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 60
+        }
+      },
+      "requires": [
+        "canSuitlessMaridia",
+        {"shinespark": {"frames": 40, "excessFrames": 8}}
+      ],
+      "flashSuitChecked": true,
       "note": "It takes a bit more time to set up the spark when suitless."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Precious Room X-Ray Climb",
-      "notable": false,
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
       "requires": [
         "canXRayClimb"
       ],
+      "flashSuitChecked": true,
       "note": "Climb up 2 screens."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
+      "name": "Very Deep Stuck X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "canXRayClimb"
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Enter with G-mode direct, back up to between 1 and 6 pixels from the door transition, and activate X-ray to get very deep stuck in the door.",
+        "Climb up 1 screen, and perform a turnaround buffered spin-jump away from the door to trigger the transition, bypassing any lock on the door."
+      ]
+    },
+    {
+      "link": [2, 1],
       "name": "Suitless Jump Assist",
-      "notable": false,
       "requires": [
         "canSuitlessMaridia",
         "HiJump",
@@ -178,41 +206,33 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Suitless Water Shinecharge",
-      "notable": false,
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
       "requires": [
         "canStutterWaterShineCharge",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 2,
-          "physics": ["normal"],
-          "overrideRunwayRequirements": true,
-          "useFrames": 80
-        }},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
+        "h_canShineChargeMaxRunway",
         {"shinespark": {"frames": 40, "excessFrames": 8}}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Cross Room HiJumpless Double SpringBall Jump with Bombs",
-      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "minTiles": 1,
+          "speedBooster": false
+        }
+      },
       "requires": [
         "canCrossRoomJumpIntoWater",
         "canUnderwaterBombIntoSpringBallJump",
-        "canDoubleSpringBallJumpMidAir",
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
+        "canDoubleSpringBallJumpMidAir"
       ],
       "note": [
         "Only requires a runway of approximately 0.5 tiles in the adjacent room.",
@@ -220,73 +240,147 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Cross Room Jump with HiJump",
-      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": "any",
+          "minTiles": 0.4375
+        }
+      },
       "requires": [
         "HiJump",
         "canCrossRoomJumpIntoWater",
         {"or": [
           "canMomentumConservingTurnaround",
           "canMidairWiggle"
-        ]},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 0.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
+        ]}
       ],
       "note": [
-        "Only requires a runway of approximately 0.5 tiles in the adjacent room.",
+        "Requires a runway of 1 tile in the adjacent room.",
         "A momentum conserving turnaround is easier than a midair wiggle."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Cross Room Jump with Speedbooster",
-      "notable": false,
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 6.4375
+        }
+      },
       "requires": [
-        "SpeedBooster",
+        "canCrossRoomJumpIntoWater",
+        "canTrickyDashJump",
+        {"or": [
+          "canMomentumConservingTurnaround",
+          "canMidairWiggle"
+        ]}
+      ],
+      "note": [
+        "Requires a runway of at least 7 tiles (with no open end) in the adjacent room.",
+        "A momentum conserving turnaround is easier than a midair wiggle."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Cross Room Jump with Speedbooster (Lenient)",
+      "entranceCondition": {
+        "comeInJumping": {
+          "speedBooster": true,
+          "minTiles": 10
+        }
+      },
+      "requires": [
         "canCrossRoomJumpIntoWater",
         {"or": [
           "canMomentumConservingTurnaround",
           "canMidairWiggle"
-        ]},
-        {"adjacentRunway": {
-          "fromNode": 2,
-          "usedTiles": 7.5,
-          "inRoomPath": [2, 1],
-          "physics": ["air"]
-        }}
+        ]}
       ],
       "note": [
-        "Requires a runway of approximately 7.5 tiles in the adjacent room.",
-        "A momentum conserving turnaround is easier than a midair wiggle."
+        "The lenient version requires a runway of at about 10 tiles in the adjacent room.",
+        "A momentum conserving turnaround is easier than climbing the right side of the room."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": [
-        {"comeInWithGMode": {
-          "fromNodes": [2],
+      "entranceCondition": {
+        "comeInWithGMode": {
           "mode": "any",
-          "artificialMorph": true
-        }},
+          "morphed": true
+        }
+      },
+      "requires": [
         "Gravity",
         "h_canArtificialMorphIBJ"
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12], [12, 13]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Suitless Water Shinecharge, Leave with Spark",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canStutterWaterShineCharge",
+        "canShinechargeMovementComplex",
+        "h_canShineChargeMaxRunway",
+        {"or": [
+          {"shinespark": {"frames": 12}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 3}}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Enter the room with a careful amount of momentum where Samus must spend extra time slowing down during the stutter, but must not have much run speed."
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateUnderwater"
       ]

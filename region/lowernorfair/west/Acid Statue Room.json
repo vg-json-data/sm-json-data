@@ -11,36 +11,20 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Acid Statue Room Top Right Door (to Main Hall)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019846",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Statue Room Top Right Door (to Main Hall)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 50}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Acid Statue Room Bottom Right Door (to Golden Torizo)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001983a",
+      "doorOrientation": "right",
       "doorEnvironments": [
         {
           "physics": "air",
@@ -48,23 +32,6 @@
             "Technically it is acid if entering from node 1 and the statue hasn't been cleared, but that doesn't seem worth modeling.",
             "The acid is not there regardless when entering from node 2."
           ]
-        }
-      ],
-      "runways": [
-        {
-          "name": "Base Runway - Acid Statue Room Bottom Right Door (to Golden Torizo)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
         }
       ]
     },
@@ -83,8 +50,8 @@
               "name": "Base",
               "notable": false,
               "requires": [
-                "h_canNavigateHeatRooms",
                 "h_canActivateAcidChozo",
+                {"obstaclesNotCleared": ["A"]},
                 "h_canUsePowerBombs",
                 {"heatFrames": 1000}
               ]
@@ -96,16 +63,24 @@
     },
     {
       "id": 4,
-      "name": "Acid Statue Room Junction (Above Acid Plug Without Acid)",
+      "name": "Junction Above Acid Plug, Without Acid",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": "Because going here while there is acid is pointless unless traveling from 1 to 3, this node will be considered to only be visitable when the acid is gone"
     },
     {
       "id": 5,
-      "name": "Acid Statue Room Junction (Below Acid Plug)",
+      "name": "Bottom Junction Right of Morph Tunnel",
       "nodeType": "junction",
       "nodeSubType": "junction"
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Camera Broken",
+      "obstacleType": "abstract",
+      "note": "Represents being off-camera in the top part of the room."
     }
   ],
   "enemies": [
@@ -126,12 +101,75 @@
       "dropRequires": ["Grapple", "h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 3,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {
+          "id": 3,
+          "devNote": "4 requires that the acid is gone."
+        },
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 2},
+        {"id": 4},
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -139,10 +177,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Without Acid",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -151,7 +187,7 @@
           "canWalljump",
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canIBJ",
+            "canIBJ",
             {"heatFrames": 780}
           ]}
         ]},
@@ -159,25 +195,36 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "framesRemaining": 0,
-          "fromNode": 1
-        }},
         {"heatFrames": 125},
         {"shinespark": {"frames": 36}}
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
+      "name": "SpringFling over the acid",
+      "requires": [
+        "canSpringFling",
+        "canDisableEquipment",
+        "SpeedBooster",
+        "canTrickyJump",
+        "canLateralMidAirMorph",
+        {"heatFrames": 210}
+      ],
+      "note": [
+        "Begin with SpeedBooster unequipped, and run&jump over the acid into an airball.",
+        "Once Samus begins falling, equip SpringBall and SpeedBooster to safely land on the other side near the statue."
+      ]
+    },
+    {
+      "link": [1, 3],
       "name": "Gravityless Acid Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -195,10 +242,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Gravity Acid Dive",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
@@ -219,13 +264,10 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Wall Pocket Acid Dive",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canPartialFloorClip",
+        {"tech": "canPartialFloorClip"},
         "canSuitlessLavaDive",
         {"or": [
           {"and": [
@@ -246,6 +288,7 @@
         ]},
         {"heatFrames": 285}
       ],
+      "flashSuitChecked": true,
       "note": [
         "There is a hole in the left side wall that Samus can fit into by shrinking her hitbox.",
         "Once in the wall, stand up if crouched then turnaround into a buffered spinjump to jump out of the acid."
@@ -253,20 +296,63 @@
       "devNote": "Not notable because it only skips a walljump."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Ceiling Bomb Jump",
-      "notable": false,
       "requires": [
         "h_heatProof",
-        "h_canCeilingBombJump"
+        "canCeilingBombJump"
       ]
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 3],
+      "name": "Grapple Teleport Crystal Flash (from Red Brinstar Firefleas)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 220},
+        "h_canCrystalFlash",
+        {"heatFrames": 20},
+        "canOffScreenMovement"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Grapple teleporting here will spawn Samus inside the wall behind the Acid Chozo statue.",
+        "To escape, perform a Crystal Flash to stand up, then morph and roll out to the right.",
+        "Samus will be visible but off-camera, making the movement tricky.",
+        "While off camera, the Chozo hand will not function (i.e., will not trigger the acid lowering cutscene)."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Grapple Teleport Power Bomb (from Moat)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": [
+        "h_canUsePowerBombs",
+        {"heatFrames": 220},
+        "canOffScreenMovement"
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "After teleporting, press down to retract Grapple.",
+        "Samus will be inside the Power Bomb blocks behind the Acid Chozo statue hand.",
+        "Use a Power Bomb, wait to begin falling, then hold right to roll out under the hand.",
+        "Samus will be visible but off-camera, making the movement tricky.",
+        "Holding right too early after laying the Power Bomb will cause Samus to get stuck inside the Chozo hand;",
+        "in this case, Samus can get out by unmorphing, remorphing, and rolling to the right on top of the hand.",
+        "While off camera, the Chozo hand will not function (i.e., will not trigger the acid lowering cutscene)."
+      ]
+    },
+    {
+      "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -274,10 +360,74 @@
       ]
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
+      "name": "Grapple Teleport Crystal Flash (from Red Brinstar Firefleas)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 220},
+        "h_canCrystalFlash",
+        {"heatFrames": 20},
+        "canOffScreenMovement"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Grapple teleporting here will spawn Samus inside the wall behind the Acid Chozo statue.",
+        "To escape, perform a Crystal Flash to stand up, then morph and roll out to the right.",
+        "Samus will be visible but off-camera, making the movement tricky.",
+        "While off camera, the Chozo hand will not function (i.e., will not trigger the acid lowering cutscene)."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Grapple Teleport Power Bomb (from Moat)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": [
+        "h_canUsePowerBombs",
+        {"heatFrames": 220},
+        "canOffScreenMovement"
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "After teleporting, press down to retract Grapple.",
+        "Samus will be inside the Power Bomb blocks behind the Acid Chozo statue hand.",
+        "Use a Power Bomb, wait to begin falling, then hold right to roll out under the hand.",
+        "Samus will be visible but off-camera, making the movement tricky.",
+        "Holding right too early after laying the Power Bomb will cause Samus to get stuck inside the Chozo hand;",
+        "in this case, Samus can get out by unmorphing, remorphing, and rolling to the right on top of the hand.",
+        "While off camera, the Chozo hand will not function (i.e., will not trigger the acid lowering cutscene)."
+      ]
+    },
+    {
+      "link": [2, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -285,10 +435,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Avoid Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -308,10 +456,8 @@
       "note": "Wait for the first Holtz to attack then either use the Magdollite for IFrames, or avoid the projectiles and continue dodging bats."
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyDamage": {
@@ -324,10 +470,8 @@
       "note": "Wait for the first Holtz before trying to cross."
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Full Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Charge",
@@ -338,25 +482,20 @@
       ]
     },
     {
-      "from": 2,
-      "to": 5,
+      "link": [2, 5],
       "name": "Shinespark",
-      "notable": false,
+      "entranceCondition": {
+        "comeInWithSpark": {}
+      },
       "requires": [
         "h_canNavigateHeatRooms",
-        {"canComeInCharged": {
-          "framesRemaining": 0,
-          "fromNode": 2
-        }},
         {"heatFrames": 125},
         {"shinespark": {"frames": 41, "excessFrames": 6}}
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "SpaceJump",
@@ -364,10 +503,8 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Without Acid",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -375,10 +512,16 @@
       ]
     },
     {
-      "from": 3,
-      "to": 4,
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -386,10 +529,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 250}
@@ -397,10 +538,8 @@
       "devNote": "4 requires that the acid is gone."
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -408,7 +547,7 @@
           "canWalljump",
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canIBJ",
+            "canIBJ",
             {"heatFrames": 780}
           ]}
         ]},
@@ -416,10 +555,16 @@
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 5],
       "name": "Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -428,10 +573,8 @@
       ]
     },
     {
-      "from": 4,
-      "to": 5,
+      "link": [4, 5],
       "name": "PowerBombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -440,10 +583,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "ScrewAttack",
@@ -451,10 +592,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Avoid Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -474,10 +613,8 @@
       "note": "Wait for the Magdollite to attack then either use it for IFrames, or jump over the swooping Holtzes."
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyDamage": {
@@ -497,10 +634,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Full Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "Charge",
@@ -511,10 +646,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -524,7 +657,7 @@
           "canWalljump",
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canIBJ",
+            "canIBJ",
             {"heatFrames": 1020}
           ]}
         ]},
@@ -532,10 +665,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Power Bombs",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "f_UsedAcidChozoStatue",
@@ -545,7 +676,7 @@
           "canWalljump",
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canIBJ",
+            "canIBJ",
             {"heatFrames": 1020}
           ]}
         ]},
@@ -553,10 +684,8 @@
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "CF Grapple Clip",
-      "notable": false,
       "requires": [
         "h_heatProof",
         "h_canBombThings",
@@ -564,8 +693,17 @@
         "HiJump",
         "Grapple"
       ],
+      "flashSuitChecked": true,
       "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down.",
       "devNote": "The extra Power Bomb or bombs is to get through the bomb blocks."
+    },
+    {
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

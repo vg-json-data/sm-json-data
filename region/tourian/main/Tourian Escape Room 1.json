@@ -10,10 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Tourian Escape Room 1 Right Doorway (to Mother Brain)",
+      "name": "Right Doorway",
       "nodeType": "door",
       "nodeSubType": "closedWall",
       "nodeAddress": "0x001aae0",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
       "locks": [
         {
@@ -34,20 +35,35 @@
     },
     {
       "id": 2,
-      "name": "Tourian Escape Room 1 Bottom Door (to Escape Room 2)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001aaec",
+      "doorOrientation": "down",
       "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -57,24 +73,39 @@
       }
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [1, 2],
+      "name": "Stored Moonfall Clip",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        "canMoonfall"
+      ],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 21,
@@ -86,18 +117,26 @@
           "framesRemaining": 170
         }
       },
+      "flashSuitChecked": true,
       "devNote": [
         "It is possible to run in from the right while shooting the first gate, then quickly leave charged through the bottom door,",
         "but it's not really easier than a 21 tile Shinecharge."
       ]
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [2, 2],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         {"shinespark": {"frames": 4, "excessFrames": 4}}

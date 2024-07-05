@@ -10,18 +10,20 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Hellway Left Door (to Red Tower)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001907e",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Hellway Right Door (to Caterpillar Room)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001908a",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     }
   ],
@@ -84,21 +86,33 @@
       "homeNodes": [1]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Zebbo Farm",
-      "notable": false,
       "requires": [
         {"refill": ["Energy", "Missile", "Super"]}
       ]
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -108,43 +122,141 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Zeela",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        {"ammo": { "type": "Super", "count": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "note": "Use a Super to knock off a Zeela, then use it as a frozen runway."
+    },
+    {
+      "link": [1, 1],
+      "name": "Hellway Frozen Zeb Runway",
+      "notable": true,
+      "requires": [
+        "canTrickyJump",
+        "h_canTrickyFrozenEnemyRunway",
+        {"thornHits": 2}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Freeze the left-most Zeb while it is rising and is 1 pixel too low from making a flat runway.",
+        "When it is close to thawing, run into the thorns to the left and hold left to avoid a vertical damage boost, then refreeze the Zeb as it crosses.",
+        "It will now be 1 pixel higher. Freeze the Zeb again once it is in the perfect position to bridge the gap, which has a 2-3 pixel range."
+      ],
+      "devNote": [
+        "It is possible to farm another zeb and return and refreeze this Zeb to leave with full Energy, but that is not assumed here.",
+        "FIXME: This could be done to extend the runway out of the right door as well, but it would only add 1 tile and is a pain."
+      ]
+    },
+    {
+      "link": [1, 1],
       "name": "Leave Shinecharged (Samus Eater)",
-      "notable": false,
       "requires": [
         "canSamusEaterStandUp",
         {"samusEaterFrames": 160},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }}
+        "h_canShineChargeMaxRunway"
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 70
+          "framesRemaining": 80
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zebbo",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"ammo": {"type": "Super", "count": 1}},
+        {"enemyDamage": {
+          "enemy": "Zeela",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": "Shoot a Super towards the door while the Zeela is on the side of its platform to knock it off."
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
         }
       }
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
-      "requires": []
-    },
-    {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -154,23 +266,44 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
+      "name": "Leave With Runway - Frozen Zeela",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        {"ammo": { "type": "Super", "count": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 1
+        }
+      },
+      "note": "Use a Super to knock off a Zeela, then use it as a frozen runway."
+    },
+    {
+      "link": [2, 2],
       "name": "Leave Shinecharged (Samus Eater)",
-      "notable": false,
       "requires": [
         "canSamusEaterStandUp",
         {"samusEaterFrames": 160},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }}
+        "h_canShineChargeMaxRunway"
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 40
+          "framesRemaining": 70
         }
-      }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zebbo",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
     }
   ]
 }

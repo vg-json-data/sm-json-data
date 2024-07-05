@@ -10,10 +10,11 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Ceiling E-Tank Bottom Left Door (to Construction Zone)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018ee6",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
       "viewableNodes": [
         {
@@ -30,15 +31,16 @@
     },
     {
       "id": 2,
-      "name": "Ceiling E-Tank Top Left Door (to Boulder Room)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018ef2",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Energy Tank, Brinstar Ceiling",
+      "name": "Hidden Ceiling Item",
       "nodeType": "item",
       "nodeSubType": "hidden",
       "nodeItem": "ETank",
@@ -46,7 +48,7 @@
     },
     {
       "id": 4,
-      "name": "Missile (blue Brinstar middle)",
+      "name": "Right Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -56,14 +58,14 @@
       "id": 5,
       "name": "G-Mode Morph Junction (Bottom)",
       "nodeType": "junction",
-      "nodeSubType": "junction",
+      "nodeSubType": "g-mode",
       "note": "Represents being in the room with G-Mode, to the right of the two Geemers, with morph or artificial morph."
     },
     {
       "id": 6,
       "name": "G-Mode Morph Junction Direct (Bottom)",
       "nodeType": "junction",
-      "nodeSubType": "junction",
+      "nodeSubType": "g-mode",
       "note": "Represents being in the room with G-Mode, to the right of the two Geemers, with morph or artificial morph, in direct G-Mode."
     }
   ],
@@ -124,12 +126,57 @@
       ]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 2},
+        {"id": 4},
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -139,49 +186,215 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
-      "name": "Leave Charged",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Reo",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        {"enemyDamage": {
+          "enemy": "Reo",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "note": [
+        "Lure the Reo from the right and freeze it in the correct position when it swoops down.",
+        "Note that using a frozen Geemer may be useful and is easier to setup, particularly if shortcharging out the door."
+      ],
+      "devNote": [
+        "The Reo can be set up flush with the runway or 3 pixels higher.",
+        "FIXME: Find and add a description for a normalized setup for this and possibly remove the Reo hit."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Shinecharged",
       "requires": [
         {"canShineCharge": {
-          "usedTiles": 31,
+          "usedTiles": 30,
           "openEnd": 0
         }},
         "canShinechargeMovement"
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 120
+          "framesRemaining": 140
         }
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 1,
-      "name": "Leave Charged - Power Bomb Blocks Broken",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave Shinecharged - Power Bomb Blocks Broken",
       "requires": [
         {"obstaclesCleared": ["C"]},
         {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 1
+          "usedTiles": 41,
+          "openEnd": 0
         }},
         "canShinechargeMovement"
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 120
+          "framesRemaining": 140
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Spinning",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 28,
+            "openEnd": 0
+          }
         }
       }
     },
     {
-      "from": 1,
-      "to": 1,
-      "name": "Geemer, Skree, and Reo Farm",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave Spinning - Power Bomb Blocks Broken",
       "requires": [
-        "f_ZebesAwake",
+        {"obstaclesCleared": ["C"]}
+      ],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 38,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 28,
+            "openEnd": 0
+          },
+          "landingRunway": {
+            "length": 3,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball - Power Bomb Blocks Broken",
+      "requires": [
+        {"obstaclesCleared": ["C"]}
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 38,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 3,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 23,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 3,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce - Power Bomb Blocks Broken",
+      "requires": [
+        {"obstaclesCleared": ["C"]}
+      ],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 31,
+            "openEnd": 0
+          },
+          "landingRunway": {
+            "length": 3,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 20,
+            "openEnd": 0
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping - Power Bomb Blocks Broken",
+      "requires": [
+        {"obstaclesCleared": ["C"]}
+      ],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 28,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"canShineCharge": {
+          "usedTiles": 29,
+          "openEnd": 0
+        }},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Geemer, Skree, and Reo Farm",
+      "requires": [
+        "h_ZebesIsAwake",
         {"resetRoom": {
           "nodes": [1],
           "mustStayPut": false
@@ -190,37 +403,42 @@
       ]
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "G-Mode Setup - Get Hit By Geemer",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake"
+        "h_ZebesIsAwake"
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "G-Mode Regain Mobility",
-      "notable": false,
       "requires": [
         {"enemyDamage": {
           "enemy": "Geemer (blue)",
           "type": "contact",
           "hits": 1
         }},
-        "f_ZebesAwake"
+        "h_ZebesIsAwake"
       ],
-      "gModeRegainMobility": {}
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["C"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "HiJump",
@@ -230,55 +448,44 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Use Frozen Enemy",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         "canUseFrozenEnemies"
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "IBJ",
-      "notable": false,
       "requires": [
-        "h_canBombAboveIBJ"
-      ],
-      "devNote": "Would've been notable due to breaking the shot block while maintaining ibj, but there's a tech for that."
+        "canBombAboveIBJ"
+      ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "IBJ with Power Bomb",
-      "notable": false,
       "requires": [
-        "h_canIBJ",
-        "h_canUsePowerBombs"
+        "canPowerBombMidIBJ"
       ],
       "clearsObstacles": ["C"],
-      "devNote": "Use a Power Bomb while performing an IBJ to break the shot block while part way up."
+      "note": "Use a Power Bomb while performing an IBJ to break the shot block while part way up."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Ceiling E-Tank Jump Into IBJ",
-      "notable": false,
       "requires": [
-        "h_canJumpIntoIBJ",
-        "h_canDoubleBombJump"
+        "canJumpIntoIBJ",
+        "canDoubleBombJump"
       ],
       "note": "An alternate strat to canBombAboveIBJ. Shoot the block, jump into an IBJ, then do a quick double bomb jump to make it in time."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Blue Brinstar E-Tank Ceiling Damage Boost",
       "notable": true,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         "canNeutralDamageBoost",
         {"enemyDamage": {
           "enemy": "Geemer (blue)",
@@ -295,24 +502,21 @@
       "devNote": "Although the Reo is traditionally used for the boost, the Geemer does less damage and should still put this in logic with low energy."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Ceiling E-Tank Speed Jump",
-      "notable": false,
       "requires": [
-        "SpeedBooster"
+        "SpeedBooster",
+        "canCarefulJump"
       ],
       "note": "Does not require a shinespark. You can shoot the block, then just run and jump."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Ceiling E-Tank Unmorph Bomb Boost",
-      "notable": false,
       "requires": [
         "canCrouchJump",
         "canMidAirMorph",
-        "canJumpIntoIBJ",
+        {"tech": "canJumpIntoIBJ"},
         "canUnmorphBombBoost"
       ],
       "note": [
@@ -322,8 +526,7 @@
       "devNote": "It is a JumpIntoIBJ that bounces on a single bomb or Power Bomb."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Taco Tank in Blue Brinstar Energy Tank Room",
       "notable": true,
       "requires": [
@@ -334,19 +537,15 @@
       "note": "Triple frame perfect dashing stationary spinjump into delayed CWJ and precise hitbox manipulation."
     },
     {
-      "from": 1,
-      "to": 4,
+      "link": [1, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "G-Mode Morph",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "any",
@@ -354,11 +553,11 @@
         }
       },
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"or": [
-          "SpringBall",
-          "Bombs",
-          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "h_canArtificialMorphSpringBall",
+          "h_canArtificialMorphBombThings",
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Geemer (blue)",
             "hits": 1,
@@ -366,14 +565,12 @@
           }}
         ]}
       ],
-      "devNote": [
-        "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here, as farming for immobile is likely easier.",
-        "An immobile strat only takes one hit on entry, skipping the Geemer hit, which is modeled by going 1->6->5."
-      ]
+      "flashSuitChecked": true,
+      "note": "It is possible to roll off of the ledge and avoid the Geemers, but it is somewhat tight and the timing is likely earlier than expected.",
+      "devNote": "An immobile strat only takes one hit on entry, skipping the Geemer hit, which is modeled by going 1->6->5."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "G-Mode Morph with Flashing Lights",
       "notable": true,
       "entranceCondition": {
@@ -384,13 +581,10 @@
       },
       "requires": [
         {"or": [
-          {"and": [
-            {"not": "f_ZebesAwake"},
-            "canRiskPermanentLossOfAccess"
-          ]},
-          "SpringBall",
-          "Bombs",
-          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "h_ZebesNotAwake",
+          "h_canArtificialMorphSpringBall",
+          "h_canArtificialMorphBombThings",
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Geemer (blue)",
             "hits": 1,
@@ -399,20 +593,16 @@
         ]}
       ],
       "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+      "flashSuitChecked": true,
       "note": [
         "The eye scanners are particularly annoying while in g-mode. They scan Samus with bright flashing lights which remain for a further distance.",
         "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
       ],
-      "devNote": [
-        "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here, as farming for immobile is likely easier.",
-        "An immobile strat only takes one hit on entry, skipping the Geemer hit, which is modeled by going 1->6->5."
-      ]
+      "devNote": "Although there would be no enemies and the strat would be free, these options are here as a way to avoid the canRiskPermanentLossOfAccess."
     },
     {
-      "from": 1,
-      "to": 6,
+      "link": [1, 6],
       "name": "G-Mode Morph",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "direct",
@@ -420,11 +610,11 @@
         }
       },
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"or": [
-          "SpringBall",
-          "Bombs",
-          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "h_canArtificialMorphSpringBall",
+          "h_canArtificialMorphBombThings",
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Geemer (blue)",
             "hits": 1,
@@ -432,13 +622,12 @@
           }}
         ]}
       ],
-      "devNote": "It is possible to roll off of the ledge and avoid the Geemers, but it's very tight and not expected here."
+      "flashSuitChecked": true,
+      "devNote": "It is possible to roll off of the ledge and avoid the Geemers, but it is somewhat tight and the timing is likely earlier than expected."
     },
     {
-      "from": 1,
-      "to": 6,
+      "link": [1, 6],
       "name": "G-Mode Immobile Morph",
-      "notable": false,
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "direct",
@@ -447,13 +636,13 @@
         }
       },
       "requires": [
-        "f_ZebesAwake"
+        "h_ZebesIsAwake"
       ],
+      "flashSuitChecked": true,
       "devNote": "The immobile case is included as a separate strat, since the Geemer hit to restore mobility provides i-frames eliminating a need to account for a subsequent Geemer hit (or a way to evade it)."
     },
     {
-      "from": 1,
-      "to": 6,
+      "link": [1, 6],
       "name": "G-Mode Morph with Flashing Lights",
       "notable": true,
       "entranceCondition": {
@@ -464,13 +653,10 @@
       },
       "requires": [
         {"or": [
-          {"and": [
-            {"not": "f_ZebesAwake"},
-            "canRiskPermanentLossOfAccess"
-          ]},
-          "SpringBall",
-          "Bombs",
-          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "h_ZebesNotAwake",
+          "h_canArtificialMorphSpringBall",
+          "h_canArtificialMorphBombThings",
+          "canTrickyJump",
           {"enemyDamage": {
             "enemy": "Geemer (blue)",
             "hits": 1,
@@ -479,36 +665,16 @@
         ]}
       ],
       "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
+      "flashSuitChecked": true,
       "note": [
         "The eye scanners are particularly annoying while in G-mode. They scan Samus with bright flashing lights which remain for a further distance.",
         "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in g-mode in this room if Zebes is awake."
-      ]
-    },
-    {
-      "from": 1,
-      "to": 6,
-      "name": "G-Mode Immobile Morph with Flashing Lights",
-      "notable": true,
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": true,
-          "mobility": "immobile"
-        }
-      },
-      "requires": [],
-      "reusableRoomwideNotable": "Blue Brinstar Energy Tank G-Mode Flashing Lights",
-      "note": [
-        "The eye scanners are particularly annoying while in G-mode. They scan Samus with bright flashing lights which remain for a further distance.",
-        "This is notable so a player can disable having to enter these flashing lights. If disabled, Samus will only require being in G-mode in this room if Zebes is awake."
       ],
-      "devNote": "The immobile case is included as a separate strat, since the Geemer hit to restore mobility provides i-frames eliminating a need to account for a subsequent Geemer hit (or a way to evade it)."
+      "devNote": "Although there would be no enemies and the strat would be free, these options are here as a way to avoid the canRiskPermanentLossOfAccess."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -518,12 +684,10 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Geemer - Broken Crumble Blocks",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"or": [
           "h_canDestroyBombWalls",
           {"obstaclesCleared": ["A"]}
@@ -536,50 +700,56 @@
       "exitCondition": {
         "leaveWithGModeSetup": {}
       },
+      "flashSuitChecked": true,
       "note": "Falling down the shaft and breaking the crumble block does not require Morph."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Geemer - Broken Power Bomb Blocks",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"or": [
           "h_canDestroyBombWalls",
           {"obstaclesCleared": ["A"]}
         ]},
         "h_canUsePowerBombs",
         {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
+          "usedTiles": 42,
+          "openEnd": 0
         }},
         {"shinespark": {"frames": 43}}
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
       },
+      "flashSuitChecked": true,
       "note": "Falling down the shaft and breaking the crumble block does not require Morph."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Geemer - Blocks Already Broken",
-      "notable": false,
       "requires": [
-        "f_ZebesAwake",
+        "h_ZebesIsAwake",
         {"obstaclesCleared": ["A", "B"]}
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
       },
+      "flashSuitChecked": true,
       "note": "Falling down the shaft and breaking the crumble block does not require Morph."
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph",
         {"or": [
@@ -590,10 +760,8 @@
       "clearsObstacles": ["A", "B"]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Temporary Blue",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 3,
@@ -605,29 +773,24 @@
         "canTemporaryBlue"
       ],
       "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "Morph"
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Broken Power Bomb Blocks",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -637,19 +800,18 @@
       "clearsObstacles": ["C"]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Artificial Morph Remotely Collect the Item",
-      "notable": false,
       "requires": [
+        "canEnterGMode",
         {"obstaclesCleared": ["D"]}
       ],
+      "flashSuitChecked": true,
       "note": "After touching the item, roll back to the left before exiting G-Mode and remotely collect it.",
       "devNote": "This does not include canRiskPermanentLossOfAccess, because the only reason to do this strat is if the item is there."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Blue Brin E-Tank Return Through Crumble Blocks",
       "notable": true,
       "requires": [
@@ -663,10 +825,8 @@
       "note": "The Crumble Block does not respawn, so it's possible to grab the items and go back up without breaking the Power Bomb blocks."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -677,7 +837,10 @@
           "h_canFly"
         ]},
         {"or": [
-          "h_canUsePowerBombs",
+          {"and": [
+            "h_canUsePowerBombs",
+            "canTrivialMidAirMorph"
+          ]},
           "ScrewAttack"
         ]}
       ],
@@ -686,10 +849,8 @@
       "devNote": "canWallJumpInstantMorph is not needed here, as the precision is very low."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Power Bomb and Bombs",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -708,18 +869,73 @@
       "note": "Placing the bomb against the bomb block at the top of the shaft can be somewhat tricky."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
+      "name": "Geemer Ice Climb",
+      "requires": [
+        {"or": [
+          "h_canUsePowerBombs",
+          {"and": [
+            {"obstaclesCleared": ["B"]},
+            "Morph"
+          ]},
+          {"obstaclesCleared": ["C"]}
+        ]},
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          "ScrewAttack",
+          {"and": [
+            "h_canUseMorphBombs",
+            "canMidAirMorph"
+          ]}
+        ]},
+        "canTrickyUseFrozenEnemies",
+        "canTrickyJump",
+        "canCameraManip"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "note": [
+        "Use both Geemers to climb the tall shaft by repeatedly freezing them.",
+        "Note that one moves locally when on camera and the other moves globally."
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Geemer Ice Climb with PowerBombs",
+      "requires": [
+        {"or": [
+          "h_canUsePowerBombs",
+          {"and": [
+            {"obstaclesCleared": ["B"]},
+            "Morph"
+          ]},
+          {"obstaclesCleared": ["C"]}
+        ]},
+        "h_canUsePowerBombs",
+        "canTrivialMidAirMorph",
+        "canTrickyUseFrozenEnemies",
+        "canTrickyJump",
+        "canBePatient",
+        "canCameraManip"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "note": [
+        "Use both Geemers to climb the tall shaft by repeatedly freezing them.",
+        "Note that one moves locally when on camera and the other moves globally.",
+        "Once Samus is close to the top Bomb Block, freeze one Geemer low and jump as high as possible before placing a power bomb.",
+        "Continue climbing with the Geemer that survives."
+      ]
+    },
+    {
+      "link": [4, 2],
       "name": "Shinespark",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
           {"obstaclesCleared": ["C"]}
         ]},
         {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
+          "usedTiles": 42,
+          "openEnd": 0
         }},
         {"shinespark": {"frames": 43}}
       ],
@@ -727,10 +943,8 @@
       "devNote": "The runway here is 31 tiles before breaking the Power Bomb blocks, but becomes longer after."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Walljump Up Shaft and Shinespark",
-      "notable": false,
       "requires": [
         {"or": [
           "h_canUsePowerBombs",
@@ -739,8 +953,8 @@
         "canShinechargeMovementComplex",
         "canFastWalljumpClimb",
         {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
+          "usedTiles": 42,
+          "openEnd": 0
         }},
         {"shinespark": {"frames": 17}}
       ],
@@ -752,10 +966,47 @@
       "devNote": "The runway here is 31 tiles before breaking the Power Bomb blocks, but becomes longer after."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
+      "name": "Shinespark (Return Through Crumble Blocks)",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        "Morph",
+        {"canShineCharge": {
+          "usedTiles": 31,
+          "openEnd": 0
+        }},
+        "canShinechargeMovementTricky"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [4, 2],
+      "name": "Blue Brinstar Energy Tank Room - Geemer Ice Stuck XRay Climb",
+      "notable": true,
+      "requires": [
+        "canWallIceClip",
+        "canXRayClimb",
+        "Grapple",
+        {"ammo": {"type": "Super", "count": 1}},
+        {"enemyDamage": {
+          "enemy": "Geemer (blue)",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Keep the two Geemers on screen while moving to the right side of the room.",
+        "Freeze the second Geemer as it exits the Morph Tunnel, with the Crumble block.",
+        "Use a Super Missile to knock the first Geemer down and freeze it at the pixel perfect height.",
+        "Become stuck in the wall after using Grapple to kill the frozen Geemer as it walks through Samus, firing to the left.",
+        "This re-enables XRay climbing."
+      ],
+      "devNote": "FIXME: The Reo can be used to avoid spending a Super, but it's chaotic."
+    },
+    {
+      "link": [4, 2],
       "name": "G-Mode Morph Touch the Item to Overload PLMs",
-      "notable": false,
       "requires": [
         {"obstaclesCleared": ["D"]},
         "canRiskPermanentLossOfAccess",
@@ -769,11 +1020,10 @@
       "devNote": "The setup for this strat is where the obstacle is cleared."
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "G-Mode Morph IBJ",
-      "notable": false,
       "requires": [
+        "canEnterGMode",
         "h_canArtificialMorphIBJ",
         {"or": [
           "canConsecutiveWalljump",
@@ -781,57 +1031,59 @@
           "canOffScreenMovement"
         ]}
       ],
+      "flashSuitChecked": true,
       "note": "Overload PLMs by repeatidly bombing the Power Bomb blocks or the side of the crumble block, then enter through the crumble block.",
       "devNote": "The off screen movement is just during an IBJ, and only if wall jumps are disabled. But the IBJ is long and Samus is covered for most of it."
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "G-Mode Morph",
-      "notable": false,
-      "requires": []
+      "requires": [
+        "canEnterGMode"
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "G-Mode Morph with Power Bomb",
-      "notable": false,
       "requires": [
-        {"ammo": {"type": "PowerBomb", "count": 1}}
+        "canEnterGMode",
+        "h_canArtificialMorphPowerBomb"
       ],
       "clearsObstacles": ["B", "C"],
+      "flashSuitChecked": true,
       "note": "The blocks will not break if PLMs are already overloaded. Exiting G-Mode before the Power Bomb explodes will ensure they break."
     },
     {
-      "from": 6,
-      "to": 2,
+      "link": [6, 2],
       "name": "G-Mode Morph Power Bomb the Item",
-      "notable": false,
       "requires": [
+        "canEnterGMode",
         {"itemNotCollectedAtNode": 4},
         "canRiskPermanentLossOfAccess",
-        {"ammo": {"type": "PowerBomb", "count": 1}},
+        "h_canArtificialMorphPowerBomb",
         "h_canArtificialMorphMovement",
         {"or": [
           "canConsecutiveWalljump",
           "SpaceJump"
         ]}
       ],
+      "flashSuitChecked": true,
       "note": [
         "Overload PLMs with a single Power Bomb by hitting the item at the right end of the room.",
         "This can be done with a single precisely placed Power Bomb. There should be 4 empty tiles between Samus and the left of the blocks when the bomb is placed."
       ]
     },
     {
-      "from": 6,
-      "to": 4,
+      "link": [6, 4],
       "name": "G-Mode Morph Remotely Collect the Item",
-      "notable": false,
       "requires": [
+        "canEnterGMode",
         {"itemNotCollectedAtNode": 4},
         "h_canArtificialMorphMovement"
       ],
       "clearsObstacles": ["D"],
+      "flashSuitChecked": true,
       "note": [
         "Touch the item to either roll back to the left before exiting G-Mode and remotely collect it,",
         "or to overload PLMs and go up through the crumble block and bomb block."
@@ -842,11 +1094,12 @@
       ]
     },
     {
-      "from": 6,
-      "to": 5,
+      "link": [6, 5],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [
+        "canEnterGMode"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

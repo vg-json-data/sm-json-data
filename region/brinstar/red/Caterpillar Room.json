@@ -10,95 +10,56 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Caterpillar Room Top Left Door (to Beta Power Bombs)",
+      "name": "Top Left Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x00190a2",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Caterpillar Room Top Left Green Lock (to Beta Power Bombs)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenGreenDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Caterpillar Room Center Left Door (to Hellway)",
+      "name": "Middle Left Door",
       "nodeType": "door",
       "nodeSubType": "yellow",
       "nodeAddress": "0x00190ae",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Caterpillar Room Yellow Lock (to Hellway)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenYellowDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Caterpillar Room Bottom Left Door (to Alpha Power Bombs)",
+      "name": "Bottom Left Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x0019096",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Caterpillar Room Bottom Left Green Lock (to Alpha Power Bombs)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenGreenDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Caterpillar Room Bottom Right Door (to Save)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00190d2",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 5,
-      "name": "Caterpillar Room Top Right Door (to Red Fish Room)",
+      "name": "Top Right Door (Through Morph Tunnel)",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00190c6",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 6,
-      "name": "Red Brinstar Elevator to Crateria",
+      "name": "Elevator",
       "nodeType": "door",
       "nodeSubType": "elevator",
-      "nodeAddress": "0x00190ba"
+      "nodeAddress": "0x00190ba",
+      "doorOrientation": "up"
     }
   ],
   "obstacles": [
@@ -129,12 +90,65 @@
       "homeNodes": [3]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 1},
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -144,16 +158,34 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Caterpillar",
+      "requires": [
+        "canBeVeryPatient",
+        "h_canFrozenEnemyRunway",
+        "Morph"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Use the frozen Zero as a platform or other means to get up to the top half of the room. This takes about 3 minutes.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [1, 1],
       "name": "Leave With Spark (Gate Open)",
-      "notable": false,
       "requires": [
         {"canShineCharge": {
           "usedTiles": 17,
           "openEnd": 0
         }},
-        "canShinechargeMovementComplex",
+        "canShinechargeMovementTricky",
         "Morph",
         {"obstaclesCleared": ["A"]},
         {"shinespark": {"frames": 22}}
@@ -167,17 +199,155 @@
       ]
     },
     {
-      "from": 1,
-      "to": 4,
-      "name": "Base",
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zero",
       "notable": false,
+      "requires": [
+        "canBeVeryPatient",
+        "Morph",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canTrickyUseFrozenEnemies",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "It takes around 3 minutes to get the Zero to this door.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zero (Damage Boost Up)",
+      "notable": false,
+      "requires": [
+        "canBeVeryPatient",
+        "canMidAirMorph",
+        "canNeutralDamageBoost",
+        "canTrickyJump",
+        "h_canCrouchJumpDownGrab",
+        {"enemyDamage": {
+          "enemy": "Zero",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "It takes around 3 minutes to get the Zero to this door.",
+        "Let the Zero climb the right wall and jump on top of it in Morph Ball form to bounce up to the Cacatac platform.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 35
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 160
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 4],
+      "name": "Base",
       "requires": []
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 4],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 4],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 115
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 5],
       "name": "Backtrack",
-      "notable": false,
       "requires": [
         "Morph",
         {"obstaclesCleared": ["A"]}
@@ -185,20 +355,152 @@
       "note": [
         "Only doable if entering the room from 5 and backtracking.",
         "Only worthwhile to go kill the Zeros for PBs and Cacatacs for Supers."
-      ]
+      ],
+      "devNote": "It is possible to roll off of the platform above to avoid a mid-air morph."
     },
     {
-      "from": 1,
-      "to": 6,
+      "link": [1, 5],
+      "name": "G-Mode Morph Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphMovement",
+          {"and": [
+            "h_canArtificialMorphBombThings",
+            "h_additionalBomb"
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 6],
       "name": "Base",
-      "notable": false,
       "requires": []
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [1, 6],
+      "name": "Come in Shinecharging, Leave Shinecharged (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 6],
+      "name": "Come in Shinecharging, Leave Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 6],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 85
+        }
+      },
+      "requires": [
+        "HiJump",        
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 6],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 6],
+      "name": "Carry G-Mode Up Elevator",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Come in Shinecharged, Leave With Spark (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 160
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementTricky",
+        {"shinespark": {"frames": 11}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
       "name": "Leave With Runway (Shot Blocks Broken)",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -208,10 +510,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave With Runway (Shot Blocks Intact)",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["B"]}
       ],
@@ -227,49 +527,447 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
+      "link": [2, 2],
+      "name": "Leave With Runway (Shot Blocks Broken) - Frozen Caterpillar",
+      "requires": [
+        "canBeVeryPatient",
+        "h_canFrozenEnemyRunway",
+        "Morph"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Use the frozen Zero as a platform or other means to get up to the top half of the room.",
+        "This takes about 4 minutes, but fortunately isn't often necessary.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zero",
       "notable": false,
+      "requires": [
+        "canBeVeryPatient",
+        "Morph",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canTrickyUseFrozenEnemies",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "It takes around 4 minutes to get the Zero to this door.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Zero (Damage Boost Up)",
+      "notable": false,
+      "requires": [
+        "canBeVeryPatient",
+        "canMidAirMorph",
+        "canNeutralDamageBoost",
+        "canTrickyJump",
+        "h_canCrouchJumpDownGrab",
+        {"enemyDamage": {
+          "enemy": "Zero",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "It takes around 4 minutes to get the Zero to this door.",
+        "Let the Zero climb the right wall and jump on top of it in Morph Ball form to bounce up to the Cacatac platform.",
+        "The Zero only moves on camera and the camera scrolls when exiting the morph tunnel.",
+        "Let the Zero lead through the morph tunnel or wait for the it to get very close to Samus before touching the scroll block at the exit."
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
       "requires": [],
       "clearsObstacles": ["B"]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "HiJump",
           "canWalljump",
-          "h_canFly"
+          "h_canFly",
+          "canSpringBallJumpMidAir"
         ]}
       ]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Frozen Caterpillar",
-      "notable": false,
       "requires": [
-        "canUseFrozenEnemies"
+        "canTrickyUseFrozenEnemies"
       ],
       "note": "Let the Caterpillar out and freeze it as a platform."
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [2, 4],
+      "name": "Caterpillar Boost",
+      "requires": [
+        "canMidAirMorph",
+        "canNeutralDamageBoost",
+        "canTrickyJump",
+        "canCrouchJump",
+        {"enemyDamage": {
+          "enemy": "Zero",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "note": "Let the Caterpillar climb the right wall and jump on top of it in Morph Ball form to bounce up to the Cacatac platform."
+    },
+    {
+      "link": [2, 4],
+      "name": "Tricky Dash Jump",
+      "requires": [
+        "canTrickyDashJump",
+        {"obstaclesNotCleared": ["B"]}
+      ],
+      "note": [
+        "Carefully kill the Cacatac, then it is possible to get up with just Speed Booster.",
+        "With Samus's back against the door, jump just before hitting the right wall. This is not easier with the door open."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Come in Shinecharging, Leave Shinecharged (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Ledge grab precisely in front of the Cacatac, and jump immediately before it would hit you."
+      ],
+      "devNote": [
+        "One runway tile is considered unusable, in order to be able quickly jump up (without turning around) after gaining a shinecharge."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Come in Shinecharging, Leave Shinecharged (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 45
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Ledge grab precisely in front of the Cacatac, and jump immediately before it would hit you."
+      ],
+      "devNote": [
+        "One runway tile is considered unusable, in order to be able quickly jump up (without turning around) after gaining a shinecharge."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Ledge grab precisely in front of the Cacatac, and jump immediately before it would hit you."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Carry Shinecharge (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 145
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementTricky"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Ledge grab precisely in front of the Cacatac, and jump immediately before it would hit you."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Shinespark, Come in Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 1
+        }
+      },
+      "requires": [
+        {"shinespark": {"frames": 32, "excessFrames": 21}}
+      ],
+      "flashSuitChecked": true,
+      "note": "Diagonal shinespark on entry, or move to the right a bit first to save some Energy.",
+      "devNote": "Shinesparking from the right a bit is not modeled as the Cacatacs can be farmed."
+    },
+    {
+      "link": [2, 4],
+      "name": "Speedy Jump",
+      "entranceCondition": {
+        "comeInRunning": {
+          "speedBooster": true,
+          "minTiles": 12
+        }
+      },
+      "requires": [
+        "canCarefulJump",
+        {"enemyDamage": {
+          "enemy": "Cacatac",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "note": "At this speed, sometimes Samus will still not jump high enough, but she should be able to get up most of the time.",
+      "devNote": "This is designed as a lower difficulty strat, there are still tricky dash jump effects at this speed, but Samus can get up most of the time."
+    },
+    {
+      "link": [2, 4],
+      "name": "Come in Shinecharged, Leave With Spark (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 90
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 4}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "Come in Shinecharged, Leave With Spark (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementTricky",
+        {"enemyDamage": {
+          "enemy": "Cacatac",
+          "type": "spike",
+          "hits": 1
+        }},
+        {"shinespark": {"frames": 6}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Ledge grab precisely in front of the Cacatac, and jump immediately before it would hit you.",
+        "If the shinespark wind-up is activated as early as possible, then a Cacatac spike hit will be taken."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "G-Mode Morph IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphIBJ"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 5],
+      "name": "G-Mode Morph Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          {"and": [
+            "h_canArtificialMorphSpringBallBombJump",
+            "h_additionalBomb"
+          ]},
+          {"and": [
+            "h_canArtificialMorphSpringBall",
+            "HiJump"
+          ]},
+          {"and": [
+            "Morph",
+            {"or": [
+              "HiJump",
+              "canWalljump",
+              "h_canFly",
+              "canSpringBallJumpMidAir",
+              {"and": [
+                "canTrickyDashJump",
+                "h_canCrouchJumpDownGrab"
+              ]}
+            ]}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 6],
+      "name": "G-Mode Up the Elevator",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "canTrickyDashJump",
+            "h_canCrouchJumpDownGrab"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 6],
+      "name": "G-Mode Morph Up the Elevator",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphIBJ"
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
       "requires": [],
       "clearsObstacles": ["B"]
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
       "name": "Zero Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [3],
@@ -280,10 +978,8 @@
       "devNote": "FIXME: Other nodes could be used to reset the room, with additional requirements."
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -293,10 +989,18 @@
       }
     },
     {
-      "from": 4,
-      "to": 1,
-      "name": "Base",
+      "link": [3, 3],
+      "name": "G-Mode Setup - Get Hit By Zero",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Base",
       "requires": [
         {"or": [
           "HiJump",
@@ -306,36 +1010,211 @@
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Frozen Caterpillar",
-      "notable": false,
       "requires": [
-        "canUseFrozenEnemies"
+        "canTrickyUseFrozenEnemies"
       ],
       "note": "Let the Caterpillar out and freeze it as a platform."
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [4, 1],
       "name": "Crouch Jump Down Grab",
-      "notable": false,
       "requires": [
         "h_canCrouchJumpDownGrab"
       ]
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "link": [4, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 60
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 4,
-      "to": 4,
+      "link": [4, 1],
+      "name": "Come in Shinecharging, Leave Shinecharged (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 25
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Carry Shinecharge (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 155
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Come in Shinecharged, Leave With Spark (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 85
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Come in Shinecharged, Leave With Spark (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 125
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 10}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 2],
+      "name": "Base",
+      "requires": []
+    },    
+    {
+      "link": [4, 2],
+      "name": "Come in Shinecharging, Leave Shinecharged (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 75
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 4],
       "name": "Cacatac Farm",
-      "notable": false,
       "requires": [
         {"resetRoom": {
           "nodes": [4],
@@ -346,10 +1225,8 @@
       "devNote": "FIXME: Other nodes could be used to reset the room, with additional requirements."
     },
     {
-      "from": 4,
-      "to": 4,
+      "link": [4, 4],
       "name": "Leave With Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -359,10 +1236,127 @@
       }
     },
     {
-      "from": 5,
-      "to": 1,
-      "name": "Base",
+      "link": [4, 4],
+      "name": "Leave With Runway - Frozen Caterpillar",
+      "requires": [
+        "h_canFrozenEnemyRunway"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "note": "Use the frozen caterpillar as a platform or other means to get up to the top half of the room."
+    },
+    {
+      "link": [4, 4],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 4],
+      "name": "G-Mode Setup - Get Hit By Zero",
       "notable": false,
+      "requires": [
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canTrickyUseFrozenEnemies",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "devNote": "It takes around 50 seconds to get the Zero to this door."
+    },
+    {
+      "link": [4, 4],
+      "name": "G-Mode Setup - Get Hit By Zero (Damage Boost Up to the Door)",
+      "notable": false,
+      "requires": [
+        "canMidAirMorph",
+        "canNeutralDamageBoost",
+        "canTrickyJump",
+        "canCrouchJump",
+        {"enemyDamage": {
+          "enemy": "Zero",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": "Let the Caterpillar climb the right wall and jump on top of it in Morph Ball form to bounce up to the Cacatac platform.",
+      "devNote": "It takes around 50 seconds to get the Zero to this door."
+    },
+    {
+      "link": [4, 5],
+      "name": "G-Mode Morph Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphIBJ",
+          "h_canArtificialMorphSpringBallBombJump",
+          {"and": [
+            "h_canArtificialMorphSpringBall",
+            "HiJump"
+          ]},
+          {"and": [
+            "Morph",
+            {"or": [
+              "HiJump",
+              "canWalljump",
+              "h_canFly",
+              "canSpringBallJumpMidAir",
+              "h_canCrouchJumpDownGrab"
+            ]}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 6],
+      "name": "G-Mode Up the Elevator",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canSpringBallJumpMidAir",
+          "h_canCrouchJumpDownGrab"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Base",
       "requires": [
         "Morph",
         {"or": [
@@ -373,12 +1367,28 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 5,
-      "to": 5,
+      "link": [5, 1],
+      "name": "G-Mode Morph Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphMovement",
+          "h_canArtificialMorphBombThings"
+        ]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 5],
       "name": "Cacatac and Zero Farm",
-      "notable": false,
       "requires": [
         {"ammo": {"type": "Super", "count": 1}},
+        "Morph",
         {"or": [
           "canWalljump",
           "HiJump",
@@ -389,13 +1399,12 @@
           "mustStayPut": false
         }},
         {"refill": ["Energy", "Super", "PowerBomb"]}
-      ]
+      ],
+      "devNote": "It is possible to roll off of the platform above to avoid a mid-air morph."
     },
     {
-      "from": 5,
-      "to": 5,
+      "link": [5, 5],
       "name": "Leave With Runway (Gate Closed)",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -405,10 +1414,8 @@
       }
     },
     {
-      "from": 5,
-      "to": 5,
+      "link": [5, 5],
       "name": "Leave With Runway (Gate Open)",
-      "notable": false,
       "requires": [
         {"or": [
           {"ammo": {"type": "Super", "count": 1}},
@@ -423,11 +1430,129 @@
       }
     },
     {
-      "from": 6,
-      "to": 1,
-      "name": "Base",
+      "link": [5, 5],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 5],
+      "name": "G-Mode Setup - Get Hit By Zero",
       "notable": false,
+      "requires": [
+        "canBePatient",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 1}},
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "Morph",
+        {"or": [
+          "HiJump",
+          "canWalljump",
+          "h_canFly",
+          "canTrickyUseFrozenEnemies",
+          "canSpringBallJumpMidAir"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": "It takes around 2 minutes to get the Zero to this door."
+    },
+    {
+      "link": [5, 5],
+      "name": "G-Mode Setup - Get Hit By Zero (Damage Boost Up)",
+      "notable": false,
+      "requires": [
+        "canBePatient",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 1}},
+          {"obstaclesCleared": ["A"]}
+        ]},
+        "canMidAirMorph",
+        "canNeutralDamageBoost",
+        "canTrickyJump",
+        "h_canCrouchJumpDownGrab",
+        {"enemyDamage": {
+          "enemy": "Zero",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "It takes around 2 minutes to get the Zero to this door.",
+        "Let the Zero climb the right wall and jump on top of it in Morph Ball form to bounce up to the Cacatac platform."
+      ]
+    },
+    {
+      "link": [5, 6],
+      "name": "G-Mode Morph Despawn Gate, Carry G-Mode Up Elevator",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_canArtificialMorphMovement",
+          "h_canArtificialMorphBombThings"
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [6, 1],
+      "name": "Base",
       "requires": []
+    },
+    {
+      "link": [6, 1],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [6, 5],
+      "name": "G-Mode Despawn the Gate",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "Morph"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

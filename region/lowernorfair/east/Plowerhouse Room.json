@@ -11,60 +11,27 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Plowerhouse Left Door (to Farming Room)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001995a",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plowerhouse Left Door (to Farming Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 300}
-              ]
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
       "devNote": "FIXME can leave charged by charging in the acid"
     },
     {
       "id": 2,
-      "name": "Plowerhouse Right Door (to Metal Pirates)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019966",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Plowerhouse Right Door (to Metal Pirates)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 70}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "devNote": "FIXME can leave charged by charging in the acid"
     },
     {
       "id": 3,
-      "name": "Plowerhouse Farm Junction Free of Holtzes",
+      "name": "Farm Junction Free of Holtzes",
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": [
@@ -156,12 +123,70 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {
+          "id": 3,
+          "note": "Strats with weak beams and no canCarefulJump go 1 -> 2 -> 3, in order to take advantage of the safe spot at 2."
+        }
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {
+          "id": 1,
+          "devNote": "This node is strictly to farm. It is never worth going to this node without being able to farm."
+        },
+        {
+          "id": 2,
+          "devNote": "This node is strictly to farm. It is never worth going to this node without being able to farm."
+        },
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway (Short Runway)",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 0
+        }
+      },
+      "note": "This runway does not require taking care of the Holtzes."
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Holtz",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 600},
@@ -178,10 +203,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Avoid the Holtzes",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -198,10 +221,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Strong Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -221,10 +242,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Strong Beam Avoid Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -244,10 +263,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Quick Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -262,10 +279,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Super Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -276,10 +291,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Power Bomb Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -295,10 +308,8 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Power Bomb Avoid Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -314,10 +325,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyDamage": {
@@ -329,10 +338,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Quick Run Through",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -345,20 +352,120 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway - Frozen Holtz",
+      "requires": [
+        "h_canTrickyFrozenEnemyRunway",
+        {"heatFrames": 800},
+        {"or": [
+          {"and": [
+            "Wave",
+            {"heatFrames": 500}
+          ]},
+          {"and": [
+            "Spazer",
+            {"heatFrames": 500}
+          ]},
+          {"and": [
+            "Plasma",
+            {"heatFrames": 200}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "note": "On entry lure both Holtz. Kill one and freeze the other in position.",
+      "devNote": "FIXME: These heatFrames can likely be tightened."
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 3],
       "name": "Power Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"heatFrames": 2400}
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Intermediate Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -369,10 +476,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Strong Beam Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -387,10 +492,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Quick Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"or": [
@@ -405,10 +508,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Ammo Kill",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         {"enemyKill": {
@@ -419,10 +520,8 @@
       ]
     },
     {
-      "from": 2,
-      "to": 3,
+      "link": [2, 3],
       "name": "Trap the Holtzes",
-      "notable": false,
       "requires": [
         "h_canNavigateHeatRooms",
         "canCarefulJump",
@@ -435,10 +534,88 @@
       ]
     },
     {
-      "from": 3,
-      "to": 1,
-      "name": "Farm to Full",
-      "notable": false,
+      "link": [3, 1],
+      "name": "Leave With Runway (Full Runway)",
+      "requires": [
+        {"heatFrames": 100}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 60}]}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Farm then Leave",
+      "requires": [
+        "h_heatResistant",
+        {"heatFrames": 100}
+      ],
+      "note": [
+        "Leaving from the farm node assumes killing all the Holtzes and farming to full before exiting.",
+        "Gaining Energy from the farm requires some sort of heat reduction."
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Farm then Leave With Runway - Frozen Holtz",
+      "requires": [
+        "h_heatResistant",
+        "h_canTrickyFrozenEnemyRunway",
+        {"heatFrames": 300}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "note": [
+        "Assumes killing all the Holtzes except for one that can be frozen to extend the runway.",
+        "Get the Holtz stuck under the platform then farming to full before freezing it to extend the runway.",
+        "Gaining Energy from the farm requires some sort of heat reduction."
+      ],
+      "devNote": "FIXME: Another strat could be added without the farm or heat resistance."
+    },
+    {
+      "link": [3, 1],
+      "name": "Farm then Leave With Runway - Frozen Zebbo",
+      "requires": [
+        "h_heatResistant",
+        "h_canFrozenEnemyRunway",
+        "Morph",
+        {"heatFrames": 500}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "note": [
+        "Assumes killing all the Holtzes then farming to full.",
+        "Morph on the ground near the Zebbo spawner then quickly unmorph and shoot as it starts to move horizontally.",
+        "While on the runway near the door, freeze the Zebbo again while maintaining a half-tile gap between it and the runway to extend it as much as possible.",
+        "Gaining Energy from the farm requires some sort of heat reduction."
+      ],
+      "devNote": "FIXME: Another strat could be added without the farm or heat resistance."
+    },
+    {
+      "link": [3, 2],
+      "name": "Farm then Leave",
       "requires": [
         "h_canNavigateHeatRooms",
         "h_heatResistant",
@@ -446,39 +623,70 @@
       ],
       "note": [
         "Leaving from the farm node assumes killing all the Holtzes and farming to full before exiting.",
-        "Gaining energy from the farm requires some sort of heat reduction."
+        "Gaining Energy from the farm requires some sort of heat reduction."
       ]
     },
     {
-      "from": 3,
-      "to": 2,
-      "name": "Farm to Full",
-      "notable": false,
+      "link": [3, 2],
+      "name": "Farm then Leave With Runway - Frozen Holtz",
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_heatResistant",
-        {"heatFrames": 100}
+        "h_canTrickyFrozenEnemyRunway",
+        {"heatFrames": 300}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 7,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
       ],
       "note": [
-        "Leaving from the farm node assumes killing all the Holtzes and farming to full before exiting.",
-        "Gaining energy from the farm requires some sort of heat reduction."
-      ]
+        "Assumes killing all the Holtzes except for one that can be frozen to extend the runway.",
+        "Get the Holtz stuck under the platform then farming to full before freezing it to extend the runway.",
+        "Gaining Energy from the farm requires some sort of heat reduction."
+      ],
+      "devNote": "FIXME: Another strat could be added without the farm or heat resistance."
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 2],
+      "name": "Farm then Leave With Runway - Frozen Zebbo",
+      "requires": [
+        "h_heatResistant",
+        "h_canFrozenEnemyRunway",
+        "Morph",
+        {"heatFrames": 500}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 6,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "note": [
+        "Assumes killing all the Holtzes then farming to full.",
+        "Morph on the ground near the Zebbo spawner then quickly unmorph and shoot as it starts to move horizontally.",
+        "While on the runway near the door, freeze the Zebbo again while maintaining a half-tile gap between it and the runway to extend it as much as possible.",
+        "Gaining Energy from the farm requires some sort of heat reduction."
+      ],
+      "devNote": "FIXME: Another strat could be added without the farm or heat resistance."
+    },
+    {
+      "link": [3, 3],
       "name": "Zebbo Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"refill": ["Energy", "Missile", "Super"]}
       ]
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
       "name": "Holtz Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"or": [
@@ -494,6 +702,15 @@
         }},
         {"refill": ["PowerBomb"]}
       ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "note": "Crystal Flash to the left of the pipe to avoid the Holtzes."
     }
   ]
 }

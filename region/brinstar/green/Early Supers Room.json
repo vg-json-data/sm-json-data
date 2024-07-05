@@ -10,159 +10,25 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Early Supers Left Door (to Green Shaft)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018d4e",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Early Supers Left Door (to Green Shaft)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Zeb",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Early Supers Right Door (to Brinstar Reserve)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "red",
       "nodeAddress": "0x0018d5a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Early Supers Right Door (to Brinstar Reserve)",
-          "length": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "usableComingIn": false,
-          "openEnd": 1
-        }
-      ],
-      "canLeaveCharged": [
-        {
-          "usedTiles": 33,
-          "framesRemaining": 110,
-          "openEnd": 2,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                {"resetRoom": {
-                  "nodes": [1],
-                  "mustStayPut": true
-                }}
-              ]
-            }
-          ],
-          "initiateRemotely": {
-            "initiateAt": 1,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 2,
-                "strats": ["Speed Through"]
-              }
-            ]
-          }
-        },
-        {
-          "usedTiles": 25,
-          "framesRemaining": 40,
-          "openEnd": 1,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "initiateRemotely": {
-            "initiateAt": 4,
-            "mustOpenDoorFirst": false,
-            "pathToDoor": [
-              {
-                "destinationNode": 2,
-                "strats": ["Base"]
-              }
-            ]
-          }
-        }
-      ],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Waver",
-            "notable": false,
-            "requires": [
-              {"resetRoom": {
-                "nodes": [1],
-                "mustStayPut": true
-              }},
-              {"or": [
-                "SpeedBooster",
-                "canMockball",
-                {"and": [
-                  "canCrouchGateClip",
-                  {"or": [
-                    "canXRayTurnaround",
-                    "canMoonwalk"
-                  ]}
-                ]}
-              ]}
-            ],
-            "note": [
-              "The only way the Wavers will get to the door is if the right crumble blocks are all broken.",
-              "This assumes that Samus comes from the left with Speed, a mockball, or a crouch gate clip.",
-              "After the crumbles are broken, shoot the ceiling block and wait by the door for the Waver to come.",
-              "Note that if Samus takes more than 35 seconds after entering the room, before shooting the ceiling, the Waver will not come down."
-            ],
-            "devNote": "FIXME: It is possible to come in from the right and get under the gate to break the crumbles."
-          }
-        ]}
-      ],
-      "locks": [
-        {
-          "name": "Early Supers Red Lock (to Brinstar Reserve)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenRedDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Missile (green Brinstar below super missile)",
+      "name": "Lower Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Missile",
@@ -170,7 +36,7 @@
     },
     {
       "id": 4,
-      "name": "Super Missile (green Brinstar top)",
+      "name": "Top Left Item",
       "nodeType": "item",
       "nodeSubType": "visible",
       "nodeItem": "Super",
@@ -178,9 +44,10 @@
     },
     {
       "id": 5,
-      "name": "Early Supers Junction (Sidehopper Pit)",
+      "name": "Junction (Sidehopper Pit)",
       "nodeType": "junction",
-      "nodeSubType": "junction"
+      "nodeSubType": "junction",
+      "devNote": "FIXME: There doesn't seem to be any use in ever going to this node. Should it be removed?"
     }
   ],
   "obstacles": [
@@ -188,6 +55,11 @@
       "id": "A",
       "name": "Gates Have Closed",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "Zeb Frozen Right of Pipe",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -227,30 +99,191 @@
       "homeNodes": [5]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
-      "name": "Zeb Farm",
-      "notable": false,
-      "requires": [
-        {"refill": ["Energy", "Missile", "Super"]}
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Speed Through",
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Zeb",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        {"or":[
+          "Morph",
+          "canTwoTileSqueeze",
+          {"enemyDamage": {
+            "enemy": "Zeb",
+            "hits": 1,
+            "type": "contact"
+          }}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "flashSuitChecked": true,
+      "note": "Use a Frozen Zeb to extend the runway. The bug's height when standing next to the pipe is optimal."
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Mockball",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 5,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Spring Ball Bounce",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 5,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 1,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled"
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave Space Jumping",
+      "requires": [],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 5,
+            "openEnd": 1
+          }
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Early Supers Leave With Spark To The Left",
+      "notable": true,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "h_canCrouchJumpDownGrab",
+        {"canShineCharge": {
+          "usedTiles": 17,
+          "openEnd": 0
+        }},
+        "canShinechargeMovementTricky",
+        "canQuickCrumbleEscape",
+        {"shinespark": {"frames": 1}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "flashSuitChecked": true,
+      "note": [
+        "Gain a shinecharge on the long, lower platform in the screen above, then carry it left and down.",
+        "Use crumble quick drops, land on the floor at the bottom, spin jump left into the doorway, and activate the spark.",
+        "The required movement here is very precise, as the 180 shinecharge frames is only barely enough."
+      ],
+      "devNote": [
+        "This starts at node 1 to be able to unlock the door first if needed.",
+        "Getting up to the platform above is possible by running to the right and crouch-jumping up."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Zeb Farm",
+      "requires": [
+        {"refill": ["Energy", "Missile", "Super"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zeb",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Speed Through",
       "requires": [
         {"obstaclesNotCleared": ["A"]},
         "SpeedBooster"
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Early Supers Mockball",
       "notable": true,
       "requires": [
@@ -265,13 +298,12 @@
           "note": "Falls down into node 3 with no possiblity of quick crumble escape."
         }
       ],
+      "flashSuitChecked": true,
       "note": "Mockball to roll over the crumble blocks without falling down, and under the gate before it closes."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Early Supers Crouch Gate Clip Jump",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["A"]},
         "canCrouchGateClip",
@@ -296,8 +328,7 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Early Supers Crouch Gate Clip Damage Boost",
       "notable": true,
       "requires": [
@@ -326,31 +357,377 @@
       ]
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "Base",
+      "link": [1, 2],
+      "name": "Leave Shinecharged (Speed Through)",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 39,
+          "openEnd": 2
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 110
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            {"or": [
+              "canWalljump",
+              "HiJump",
+              "h_canFly",
+              "canSpringBallJumpMidAir",
+              "h_canCrouchJumpDownGrab"
+            ]},
+            {"resetRoom": {
+              "nodes": [1],
+              "mustStayPut": false
+            }}
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave Shinecharged (Speed Through and Slide Off)",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"canShineCharge": {
+          "usedTiles": 39,
+          "openEnd": 2
+        }},
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 140
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            {"or": [
+              "canWalljump",
+              "HiJump",
+              "h_canFly",
+              "canSpringBallJumpMidAir",
+              "h_canCrouchJumpDownGrab"
+            ]},
+            {"resetRoom": {
+              "nodes": [1],
+              "mustStayPut": false
+            }}
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Gain the shinecharge near the edge of the runway so that you slide off quickly, while shooting the door open.",
+      "devNote": "FIXME: Door 2 can probably be opened with a PB from below, bypassing a wall jump or alternative to get back to the left. (Here and many other strats.)"
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave With Runway - Frozen Zeb",
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        "h_canTrickyFrozenEnemyRunway",
+        "canMockball",
+        "canTrickyJump"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["missiles", "super"],
+          "requires": []
+        },
+        {
+          "types": ["powerbomb"],
+          "requires": [
+            {"or": [
+              "canWalljump",
+              "HiJump",
+              "h_canFly",
+              "canSpringBallJumpMidAir",
+              "h_canCrouchJumpDownGrab"
+            ]},
+            {"resetRoom": {
+              "nodes": [1],
+              "mustStayPut": false
+            }}
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Stand to the right of the Zeb farm and freeze the Zeb as it starts moving horizontally.",
+        "get onto the platform above the Zeb and wait for the Zeb to thaw and make it close to the right edge of the screen.",
+        "Use a mockball to get to the right side of the room, ending it as quickly as possible at the end to prevent the Zeb going off screen.",
+        "Freeze the Zeb adjacent to the right runway in order to extend it by a short distance."
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "G-Mode Setup - Get Hit By Waver",
       "notable": false,
+      "requires": [
+        {"obstaclesNotCleared": ["A"]},
+        {"or": [
+          "SpeedBooster",
+          "canMockball",
+          {"and": [
+            "canCrouchGateClip",
+            {"or": [
+              "canXRayTurnaround",
+              "canMoonwalk"
+            ]}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The only way the Wavers will get to the door is if the right crumble blocks are all broken.",
+        "This assumes that Samus comes from the left with Speed, a mockball, or a crouch gate clip.",
+        "After the crumbles are broken, shoot the ceiling block and wait by the door for the Waver to come.",
+        "Note that if Samus takes more than 35 seconds after entering the room, before shooting the ceiling, the Waver will not come down."
+      ],
+      "devNote": [
+        "FIXME: It is possible to come in from the right and get under the gate to break the crumbles."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
       "requires": [],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "note": "This has no requirements, but getting back out does."
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 3],
+      "name": "Prepare Frozen Zeb",
+      "requires": [
+        "canTrickyUseFrozenEnemies"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "note": [
+        "Crouch on top of the right side of the Zeb spawning pipe.",
+        "While holding down, let it hit Samus, then Freeze it immediately."
+      ],
+      "devNote": "This setup takes damage, but you can farm before and after."
+    },
+    {
+      "link": [1, 4],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[12, 12], [12, 13]]
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"obstaclesNotCleared": ["A"]},
         "SpeedBooster"
       ],
       "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
       "devNote": "There are other ways to get here, but there is no reason to go there, so they are omitted."
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 18]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Middle Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 28]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[2, 29]]
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged (Run Above)",
+      "requires": [
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "h_canFly",
+          "canSpringBallJumpMidAir",
+          "h_canCrouchJumpDownGrab"
+        ]},
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "openEnd": 1
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 40
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Use the runway on the screen above to gain a shinecharge near the edge of the runway."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave Shinecharged (Run Above and Slide Off)",
+      "requires": [
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "h_canFly",
+          "canSpringBallJumpMidAir",
+          "h_canCrouchJumpDownGrab"
+        ]},
+        {"canShineCharge": {
+          "usedTiles": 25,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementComplex"
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 70
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": "Use the runway on the screen above to gain a shinecharge near the edge of the runway, sliding off quickly."
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 2,
+          "openEnd": 1
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave With Temporary Blue",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 25,
+            "openEnd": 1
+          }},
+          {"getBlueSpeed": {
+            "usedTiles": 17,
+            "openEnd": 1
+          }}
+        ]},
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
         {"or": [
           "canWalljump",
@@ -362,29 +739,35 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 2,
-      "to": 4,
+      "link": [2, 4],
       "name": "Crouch Jump Down Grab",
-      "notable": false,
       "requires": [
         "h_canCrouchJumpDownGrab"
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [2, 4],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": []
+    },
+    {
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Early Supers Quick Crumble Escape",
-      "notable": false,
       "requires": [
         "canQuickCrumbleEscape"
       ],
@@ -394,42 +777,53 @@
           "note": "Failure leaves you in node 3 with solid crumble blocks above your head."
         }
       ],
+      "flashSuitChecked": true,
       "note": [
         "It is possible to do a quick crumble escape twice, requiring no other items or tech.",
         "It is easier to escape by doing a quick crumble escape, followed by a crumble block jump or using spring ball or space jump."
       ]
     },
     {
-      "from": 3,
-      "to": 5,
-      "name": "Base",
-      "notable": false,
+      "link": [3, 1],
+      "name": "Ice Clip",
       "requires": [
-        "h_canBombThings"
+        {"obstaclesCleared": ["B"]},
+        "h_canXRayMorphIceClip"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Prepare a pipe bug to Ice clip through the crumble blocks, using Morph and X-Ray.",
+        "It can be tested on the solid blocks directly above the pipe spawner.",
+        "Climb onto the frozen bug by rolling under it and jumping while holding down."
       ]
     },
     {
-      "from": 4,
-      "to": 1,
+      "link": [3, 5],
       "name": "Base",
-      "notable": false,
-      "requires": []
-    },
-    {
-      "from": 4,
-      "to": 2,
-      "name": "Base",
-      "notable": false,
-      "requires": []
-    },
-    {
-      "from": 5,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
       "requires": [
         "h_canBombThings"
-      ]
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 1],
+      "name": "Base",
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 2],
+      "name": "Base",
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 3],
+      "name": "Base",
+      "requires": [
+        "h_canBombThings"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

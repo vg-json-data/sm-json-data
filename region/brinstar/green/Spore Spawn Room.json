@@ -10,48 +10,21 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Spore Spawn Room Top Right Door (to Spore Spawn Supers)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0018e4a",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Spore Spawn Room Top Right Door (to Spore Spawn Supers)",
-          "length": 7,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": []
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Spore Spawn Room Bottom Door (to Spore Spawn Kihunters)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x0018e56",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Spore Spawn Room Green Lock (to Spore Spawn Kihunters)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenGreenDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "down",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
@@ -67,14 +40,42 @@
               "name": "Charge",
               "notable": false,
               "requires": [
-                "Charge"
+                "Charge",
+                {"or": [
+                  {"and": [
+                    "Ice",
+                    "Wave"
+                  ]},
+                  {"and": [
+                    "Ice",
+                    "Spazer"
+                  ]},
+                  {"and": [
+                    "Spazer",
+                    "Wave"
+                  ]},
+                  {"and": [
+                    "canBePatient",
+                    {"or": [
+                      "Ice",
+                      "Wave",
+                      "Spazer"
+                    ]}
+                  ]},
+                  "Plasma",
+                  "canBeVeryPatient"
+                ]}
               ]
             },
             {
               "name": "Missiles",
               "notable": false,
               "requires": [
-                {"resourceCapacity": [{"type": "Missile", "count": 1}]}
+                {"resourceCapacity": [{"type": "Missile", "count": 1}]},
+                {"or": [
+                  "canDodgeWhileShooting",
+                  "canBePatient"
+                ]}
               ],
               "devNote": "No ammo count because Missiles are farmable here."
             },
@@ -82,6 +83,11 @@
               "name": "Supers",
               "notable": false,
               "requires": [
+                {"or": [
+                  "canDodgeWhileShooting",
+                  {"resourceCapacity": [{"type": "Missile", "count": 1}]},
+                  {"ammo": {"type": "Super", "count": 2}}
+                ]},
                 {"ammo": {"type": "Super", "count": 4}}
               ],
               "note": "Spore Spawn's pollen does not drop Supers. The fight requires 4 Supers, where many misses could lead to a softlock."
@@ -102,23 +108,91 @@
       "stopSpawn": ["f_DefeatedSporeSpawn"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "f_DefeatedSporeSpawn"
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
       "from": 2,
-      "to": 2,
-      "name": "Shinespark",
-      "notable": false,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 8,
+          "openEnd": 1
+        }
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Sporespawn Moondance Clip",
+      "notable": true,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "requires": [
+        "canFreeFallClip",
+        {"enemyDamage": {
+          "enemy": "Spore Spawn",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "note": [
+        "Prepare an extended Moondance and wait for SporeSpawn to move to a side.",
+        "In quick succession, Moonfall, turn left, and turn right while holding a spin break button to clip down into the fight arena."
+      ],
+      "devNote": [
+        "Even though the fight is active, node 2 can freely enter the fight or leave the room.",
+        "FIXME: A different exact fall speed value changes the movements needed for the clip."
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "requires": [
+        "f_DefeatedSporeSpawn"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Shinespark",
+      "entranceCondition": {
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         {"shinespark": {"frames": 16, "excessFrames": 16}}
@@ -126,12 +200,11 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Shinespark, Spore Spawn Dead",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         "f_DefeatedSporeSpawn",
@@ -140,27 +213,32 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
-      "from": 2,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": []
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [2, 3],
       "name": "Base",
-      "notable": false,
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
       "requires": [
         "f_DefeatedSporeSpawn"
-      ]
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Base",
-      "notable": false,
-      "requires": []
+      "requires": [],
+      "flashSuitChecked": true
     }
   ]
 }

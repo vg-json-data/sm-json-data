@@ -11,62 +11,52 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Crocomire Speedway Top Left Door (to Crocomire Escape)",
+      "name": "Top of the Shaft Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193ae",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Crocomire Speedway Far Left Door (to Crumble Shaft)",
+      "name": "Far Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193a2",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Crocomire Speedway Bottom Door (to Crocomire)",
+      "name": "Bottom Door",
       "nodeType": "door",
       "nodeSubType": "green",
       "nodeAddress": "0x00193d2",
-      "doorEnvironments": [{"physics": "air"}],
-      "locks": [
-        {
-          "name": "Crocomire Speedway Green Lock (to Crocomire)",
-          "lockType": "coloredDoor",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canOpenGreenDoors"
-              ]
-            }
-          ]
-        }
-      ]
+      "doorOrientation": "down",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Crocomire Speedway Bottom Right Door (to Acid Snakes tunnel)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193c6",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 5,
-      "name": "Crocomire Speedway Top Right Door (to Save)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x00193ba",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 6,
-      "name": "Crocomire Speedway Junction (Bottom Right)",
+      "name": "Bottom Right Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -76,7 +66,7 @@
       "id": "A",
       "name": "Right-side Speed Blocks",
       "obstacleType": "inanimate",
-      "note": "The speed blocks on the right side of the speedway. Breaking those is needed for some canLeaveCharged strats."
+      "note": "The speed blocks on the right side of the speedway. Breaking those is needed for some leaveShinecharged strats."
     }
   ],
   "enemies": [
@@ -117,14 +107,76 @@
     {
       "name": "Croc Speedway Reverse Spark",
       "note": "Spark left through the speed blocks through Croc Speedway. Then run to the right and back to get speed to go through the rest."
+    },
+    {
+      "name": "Croc Speedway Speed Block Moondance",
+      "note": [
+        "Use SpeedBooster to construct a structure for Moondancing that has 2 top blocks intact, 2 middle blocks removed, and the bottom left block intact but the bottom right block removed.",
+        "Clear the other unused Speed blocks and enemies.",
+        "Crystal Flash inside the middle hole to standup and then begin Moondancing.",
+        "After Samus sinks through the bottom tile, it is possible to wiggle right and then Turn-Around Aim Cancel to escape to the right."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {
+          "id": 2,
+          "devNote": [
+            "FIXME: It is possible to stored fall speed clip through the door at 3 by using a fast run speed turnaround to slide down the stairs."
+          ]
+        },
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {"id": 4},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 6,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
     }
   ],
   "strats": [
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -135,20 +187,23 @@
       }
     },
     {
-      "from": 1,
-      "to": 5,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 5],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 130}
       ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Leave Shinecharged",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 0,
@@ -156,7 +211,6 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 140}
       ],
       "exitCondition": {
@@ -164,13 +218,16 @@
           "framesRemaining": 70
         }
       },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
       "devNote": "FIXME: Entering with too little run speed causes Samus to 'trip', so the runway cannot reliably be used for short shortcharges."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -182,35 +239,101 @@
       "devNote": "45 tiles is roughly in front of the first red pirate."
     },
     {
-      "from": 2,
-      "to": 6,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "SpeedBooster",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Croc Speedway Speed Block Moondance (Leave with Stored Fall Speed)",
+      "notable": true,
+      "requires": [
+        "h_heatProof",
+        "h_getBlueSpeedMaxRunway",
+        "h_canCrystalFlash",
+        "canTrickyJump",
+        "canTurnaroundAimCancel",
+        "canTemporaryBlue",
+        "canMoondance",
+        "canSpeedball"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "reusableRoomwideNotable": "Croc Speedway Speed Block Moondance",
+      "flashSuitChecked": true,
+      "note": [
+        "Use SpeedBooster to construct a structure for Moondancing that has 1 chest height block and 1 head height block to the right of it and no other Speed blocks.",
+        "Crystal Flash below the lower block, exactly pixel aligned with its right side, to standup and then begin Moondancing.",
+        "After Samus sinks through the bottom tile, it is possible to use Grapple to return to a crouch and wiggle right and then Turn-Around Aim Cancel to escape to the right.",
+        "Without Grapple, count to 174 Moonfalls and delicately Moonfall so as to remain crouched and then wiggle to the right.",
+        "Finally, use SpeedBooster if needed to break the remaining Speed blocks and reach the door."
+      ],
+      "devNote": "FIXME: R-Mode can be used instead of a Crystal Flash but that depends on having more Reserve Energy than Regular Energy."
+    },
+    {
+      "link": [2, 2],
+      "name": "Croc Speedway Speed Block Moondance (Leave with More Stored Fall Speed)",
+      "notable": true,
+      "requires": [
+        "h_heatProof",
+        "h_getBlueSpeedMaxRunway",
+        "h_canCrystalFlash",
+        "canTrickyJump",
+        "canTurnaroundAimCancel",
+        "canTemporaryBlue",
+        "canExtendedMoondance",
+        "canSpeedball"
+      ],
+      "exitCondition": {
+        "leaveWithStoredFallSpeed": {
+          "fallSpeedInTiles": 2
+        }
+      },
+      "reusableRoomwideNotable": "Croc Speedway Speed Block Moondance",
+      "flashSuitChecked": true,
+      "note": [
+        "Use SpeedBooster to construct a structure for Moondancing that has 1 chest height block and 1 head height block to the right of it and no other Speed blocks.",
+        "Crystal Flash below the lower block, exactly pixel aligned with its right side, to standup and then begin Moondancing.",
+        "After Samus sinks through the floor tiles, use Grapple to return to a standing position and count an additional 145 moonfalls.",
+        "Then use Grapple to return to a crouch and wiggle right and Turn-Around Aim Cancel to escape to the right.",
+        "Finally, use SpeedBooster if needed to break the remaining Speed blocks and reach the door."
+      ],
+      "devNote": "FIXME: R-Mode can be used instead of a Crystal Flash but that depends on having more Reserve Energy than Regular Energy."
+    },
+    {
+      "link": [2, 6],
+      "name": "Base",
+      "requires": [
+        "h_getBlueSpeedMaxRunway",
         {"heatFrames": 380}
       ],
       "clearsObstacles": ["A"]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Croc Speedway Reverse Spark (From Croc Door)",
       "notable": true,
       "entranceCondition": {
         "comeInShinecharged": {
-          "framesRequired": 60
-        }
+          "framesRequired": 35
+        },
+        "comesThroughToilet": "any"
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         "canShinechargeMovement",
-        {"shinespark": {"frames": 84, "excessFrames": 10}},
-        {"heatFrames": 760}
+        "canHorizontalShinespark",
+        {"shinespark": {"frames": 86, "excessFrames": 10}},
+        {"heatFrames": 700}
       ],
       "clearsObstacles": ["A"],
       "reusableRoomwideNotable": "Croc Speedway Reverse Spark",
+      "flashSuitChecked": true,
       "note": [
         "Spark left through the speed blocks through Croc Speedway.",
         "Then run to the right and back to get speed to go through the rest.",
@@ -218,12 +341,19 @@
       ]
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
+      "name": "Leave Normally",
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [3, 3],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "any"
       },
       "requires": [
         {"shinespark": {"frames": 6, "excessFrames": 6}},
@@ -232,22 +362,26 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
-      "from": 3,
-      "to": 6,
-      "name": "Base",
-      "notable": false,
+      "link": [3, 3],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [3, 6],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 50}
       ]
     },
     {
-      "from": 3,
-      "to": 6,
+      "link": [3, 6],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {},
+        "comesThroughToilet": "no"
       },
       "requires": [
         {"shinespark": {"frames": 6}},
@@ -256,18 +390,16 @@
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Croc Speedway Reverse Speedball",
       "notable": true,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 1,
           "openEnd": 0
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         "canSpeedball",
         {"heatFrames": 570}
       ],
@@ -276,8 +408,7 @@
       "devNote": "FIXME: You can enter through 3 and speedball through the speedway."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Croc Speedway Reverse Spark Near SpeedBlocks",
       "notable": true,
       "entranceCondition": {
@@ -287,8 +418,8 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         "canShinechargeMovement",
+        "canHorizontalShinespark",
         {"shinespark": {"frames": 84, "excessFrames": 10}},
         {"heatFrames": 760}
       ],
@@ -301,15 +432,15 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Croc Speedway Reverse Spark Through Door",
       "notable": true,
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInWithSpark": {
+          "position": "bottom"
+        }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"shinespark": {"frames": 94, "excessFrames": 10}},
         {"heatFrames": 700}
       ],
@@ -322,10 +453,103 @@
       ]
     },
     {
-      "from": 4,
-      "to": 4,
+      "link": [4, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [4, 2],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [4, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [4, 2],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Grapple Teleport X-Ray Climb (Two Screens)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 2800}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [4, 4],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -335,32 +559,36 @@
       }
     },
     {
-      "from": 4,
-      "to": 6,
-      "name": "Base",
-      "notable": false,
+      "link": [4, 4],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 6],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 50}
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 160}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 70}]}
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 130}
       ],
       "exitCondition": {
@@ -369,27 +597,33 @@
           "openEnd": 1,
           "gentleUpTiles": 4
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 70}]}
+      ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Right Side Climb",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canTrickyJump",
         {"or": [
           "HiJump",
           "canPreciseWalljump"
         ]},
         {"heatFrames": 140}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 70}]}
       ]
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [5, 1],
       "name": "Leave Shinecharged",
-      "notable": false,
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 5,
@@ -397,18 +631,21 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 160}
       ],
       "exitCondition": {
         "leaveShinecharged": {
           "framesRemaining": 30
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Croc Speedway Reverse Spark (From Save Room)",
       "notable": true,
       "entranceCondition": {
@@ -418,8 +655,7 @@
         }
       },
       "requires": [
-        "h_canNavigateHeatRooms",
-        "canShinechargeMovementComplex",
+        "canShinechargeMovementTricky",
         "canTrickyJump",
         "canMidairShinespark",
         {"enemyDamage": {
@@ -439,10 +675,103 @@
       ]
     },
     {
-      "from": 5,
-      "to": 5,
+      "link": [5, 2],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [5, 2],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [5, 2],
+      "name": "Grapple Teleport X-Ray Climb",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 18], [2, 19], [2, 28], [2, 29]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 1600}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Grapple Teleport X-Ray Climb (Two Screens)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[2, 34]]
+        }
+      },
+      "requires": [
+        "canXRayClimb",
+        {"heatFrames": 2800}
+      ],
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "note": [
+        "Exit the previous room with Samus in a standing pose (while grappled).",
+        "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
+        "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [5, 5],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -452,10 +781,8 @@
       }
     },
     {
-      "from": 5,
-      "to": 5,
+      "link": [5, 5],
       "name": "Cacatac Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"resetRoom": {
@@ -466,122 +793,123 @@
       ]
     },
     {
-      "from": 5,
-      "to": 6,
-      "name": "Base",
-      "notable": false,
+      "link": [5, 5],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 6],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 215}
       ]
     },
     {
-      "from": 6,
-      "to": 2,
+      "link": [6, 2],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"obstaclesCleared": ["A"]},
-        "SpeedBooster",
+        "h_getBlueSpeedMaxRunway",
         {"heatFrames": 500}
-      ]
+      ],
+      "devNote": "The blocks will already be broken, the blue speed is to kill the enemies."
     },
     {
-      "from": 6,
-      "to": 3,
+      "link": [6, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 70}]}
       ]
     },
     {
-      "from": 6,
-      "to": 3,
+      "link": [6, 3],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"obstaclesCleared": ["A"]},
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }}
+        "h_canShineChargeMaxRunway"
       ],
       "exitCondition": {
         "leaveShinecharged": {
           "framesRemaining": 100
         }
       },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "flashSuitChecked": true,
       "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
     },
     {
-      "from": 6,
-      "to": 4,
+      "link": [6, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 30}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 70}]}
       ]
     },
     {
-      "from": 6,
-      "to": 4,
+      "link": [6, 4],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"obstaclesCleared": ["A"]},
         "canShinechargeMovement",
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }}
+        "h_canShineChargeMaxRunway"
       ],
       "exitCondition": {
         "leaveShinecharged": {
           "framesRemaining": 60
         }
       },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
+      "flashSuitChecked": true,
       "note": "Enabled by coming in from the left and breaking the speed blocks on the way, or coming in charged and opening the path to the left."
     },
     {
-      "from": 6,
-      "to": 5,
+      "link": [6, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 300}
       ]
     },
     {
-      "from": 6,
-      "to": 5,
+      "link": [6, 5],
       "name": "Quick Platforming Leave Shinecharged",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"obstaclesCleared": ["A"]},
-        "canShinechargeMovementComplex",
-        "canFastWalljumpClimb",
-        {"canShineCharge": {
-          "usedTiles": 33,
-          "openEnd": 2
-        }},
+        "canShinechargeMovementTricky",
+        "h_canShineChargeMaxRunway",
         {"shinespark": {"frames": 12}}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
       },
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ],
       "note": [
         "Move very quickly to bring a shinespark from the speedway up to the Save Room door.",
         "Preclear the Cacatacs, and it may help to not run while platforming if HiJump is not available."
-      ],
-      "devNote": "FIXME: FastWalljumpClimb mainly included for difficulty placement.  Fast movement is needed for this strat but a walljump is not needed."
+      ]
     }
+  ],
+  "devNote": [
+    "FIXME: A moonfall using Multiviolas might be possible to bypass the door shell below."
   ]
 }

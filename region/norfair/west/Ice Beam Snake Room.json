@@ -11,37 +11,40 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Ice Beam Snake Room Top Right Door (to Ice Tutorial)",
+      "name": "Top Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019372",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Ice Beam Snake Room Center Right Door (to Ice)",
+      "name": "Middle Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001937e",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 3,
-      "name": "Ice Beam Snake Room Bottom Right Door (to Acid Room)",
+      "name": "Bottom Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019366",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 4,
-      "name": "Ice Beam Snake Room Junction (Bottom Right Passage)",
+      "name": "Junction Below Morph Tunnel",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
     {
       "id": 5,
-      "name": "Ice Beam Snake Room Junction (Top Right Passage)",
+      "name": "Junction Above Morph Tunnel",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -64,12 +67,58 @@
       "dropRequires": ["h_heatProof"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 5,
+      "to": [
+        {"id": 1},
+        {
+          "id": 2,
+          "devNote": "This is considered one-way even though technically you can get from 2 to 5 without falling to 5 with a tight jump using Spring Ball. This won't be expected for heat run times"
+        },
+        {"id": 4},
+        {"id": 5}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
         {"heatFrames": 5}
       ],
@@ -81,75 +130,118 @@
       }
     },
     {
-      "from": 1,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Sova",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canFrozenEnemyRunway",
+        "canBePatient",
+        {"heatFrames": 4800}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 10,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Wait 80 seconds for the Sova to get into position, then freeze it to bridge the gap and significantly extend the runway.",
+        "The other Sovas can be farmed or used as a backup."
+      ],
+      "devNote": "Because the Sovas are global, strats could be added that start from the other doors to tighten the total frame count, but it will typically require heatProof either way."
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        {"heatFrames": 40},
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        "canBePatient",
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": "It takes about 1.5 minutes for the Sova to get to this door and hit Samus."
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 750}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": []}
       ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Screw Attack",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "ScrewAttack",
         {"heatFrames": 525}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": []}
       ],
       "devNote": "The bottom Fune shoots a fireball which wastes all of the time save of a Leave with Runway strat."
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Pseudo Screw",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canPseudoScrew",
-        {"heatFrames": 560}
-      ]
-    },
-    {
-      "from": 1,
-      "to": 3,
-      "name": "Frozen Funes",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "Wave",
-        "Ice",
-        {"heatFrames": 550}
-      ]
-    },
-    {
-      "from": 1,
-      "to": 3,
-      "name": "Frozen Funes Leave with Runway",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        "Wave",
-        "Ice",
         {"heatFrames": 540}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": []}
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Frozen Funes",
+      "requires": [
+        "Wave",
+        "Ice",
+        {"heatFrames": 530}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": []}
+      ]
+    },
+    {
+      "link": [1, 3],
+      "name": "Frozen Funes Leave with Runway",
+      "requires": [
+        "Wave",
+        "Ice",
+        {"heatFrames": 525}
       ],
       "exitCondition": {
         "leaveWithRunway": {
           "length": 12,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ]
     },
     {
-      "from": 1,
-      "to": 3,
+      "link": [1, 3],
       "name": "Frozen Funes Leave with Runway - Kill Fune",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Wave",
         "Ice",
         {"ammo": {"type": "Super", "count": 1}},
@@ -160,23 +252,38 @@
           "length": 13,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super", "powerbomb"], "requires": []}
+      ]
     },
     {
-      "from": 1,
-      "to": 5,
+      "link": [1, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 100}
       ]
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 75}
+      ],
+      "note": [
+        "To minimize heat damage, immediately after landing use Grapple to open the door while running towards it, then jump over the gap and through the door.",
+        "If the door is grappled too late, it may interfere with the jump."
+      ]
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -186,10 +293,42 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
+      "name": "Leave With Runway - Frozen Sova",
+      "requires": [
+        "h_canFrozenEnemyRunway",
+        {"or": [
+          {"and": [
+            "h_heatProof",
+            "canBeVeryPatient"
+          ]},
+          {"and": [
+            "h_heatProof",
+            "canBePatient",
+            "Morph"
+          ]},
+          {"and": [
+            {"ammo": {"type": "Super", "count": 1}},
+            {"heatFrames": 2600}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Wait 3 minutes for the Sova to get into position, or 100 seconds with Morph by going ahead of them to break the shot blocks as they get there.",
+        "This can be further reduced to 45 seconds with a Super by knocking a Sova off after it exits the morph tunnel.",
+        "The other Sovas can be farmed or used as a backup."
+      ],
+      "devNote": "Because the Sovas are global, strats could be added that start from the other doors to tighten the total frame count, but it will typically require heatProof either way."
+    },
+    {
+      "link": [2, 2],
       "name": "Sova Farm",
-      "notable": false,
       "requires": [
         "h_heatProof",
         {"resetRoom": {
@@ -200,31 +339,73 @@
       ]
     },
     {
-      "from": 2,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"or": [
+          {"ammo": {"type": "Super", "count": 1}},
+          "canBePatient"
+        ]},
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": [
+        "It takes about 2.5 minutes for the Sova to get to this door and hit Samus.",
+        "Alternatively, use a Super just after the Sovas go off screen to speed it up to 40 seconds."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
+      "requires": [
         "Morph",
         {"heatFrames": 200}
       ]
     },
     {
-      "from": 3,
-      "to": 1,
+      "link": [3, 1],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 500}
+        {"heatFrames": 330}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 25}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 40}]}
       ]
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 75}
+      ],
+      "note": [
+        "To minimize heat damage, immediately after landing use Grapple to open the door while running towards it, then jump over the gap and through the door.",
+        "If the door is grappled too late, it may interfere with the jump."
+      ]
+    },
+    {
+      "link": [3, 3],
       "name": "Leave with Runway - Fune Alive",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -234,10 +415,8 @@
       }
     },
     {
-      "from": 3,
-      "to": 3,
+      "link": [3, 3],
       "name": "Leave with Runway - Fune Killed",
-      "notable": false,
       "requires": [
         {"or": [
           {"ammo": {"type": "Super", "count": 1}},
@@ -255,43 +434,94 @@
       }
     },
     {
-      "from": 3,
-      "to": 4,
-      "name": "Base",
-      "notable": false,
+      "link": [3, 3],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
+        {"ammo": {"type": "Super", "count": 1}},
+        {"heatFrames": 20},
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "note": "Kill the Fune before Crystal Flashing."
+    },
+    {
+      "link": [3, 3],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Sova",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true,
+      "note": "It takes about 20 seconds for the Sova to get to this door and hit Samus."
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "requires": [
+        {"or": [
+          "canTrivialMidAirMorph",  
+          {"and": [
+            "h_canUseSpringBall",
+            "HiJump"
+          ]}
+        ]},
         {"heatFrames": 80}
       ]
     },
     {
-      "from": 4,
-      "to": 2,
-      "name": "Tank Damage",
-      "notable": false,
+      "link": [3, 5],
+      "name": "Come in Shinecharged",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 70
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
+        "canMidAirMorph",
+        "canShinechargeMovementComplex",
+        {"heatFrames": 210},
+        {"shinespark": {"frames": 23, "excessFrames": 3}}
+      ],
+      "flashSuitChecked": true,
+      "note": "Reaching the Morph hole can be tricky with SpeedBooster but no HiJump."
+    },
+    {
+      "link": [4, 2],
+      "name": "Tank Damage",
+      "requires": [
         {"or": [
-          "HiJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canTrivialMidAirMorph",
+              "h_canUseSpringBall"
+            ]}
+          ]},
           {"and": [
             "SpaceJump",
+            "canTrivialMidAirMorph",
             {"heatFrames": 40}
           ]},
-          "canWalljump",
+          {"and": [
+            "canWalljump",
+            "canTrivialMidAirMorph"
+          ]},
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canJumpIntoIBJ",
+            "canJumpIntoIBJ",
             {"heatFrames": 240}
           ]},
           {"and": [
-            "h_canJumpIntoIBJ",
-            "h_canDoubleBombJump",
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
             {"heatFrames": 120}
           ]},
           {"and": [
-            "h_canDoubleBombJump",
+            "canDoubleBombJump",
             {"heatFrames": 300}
           ]}
         ]},
@@ -305,36 +535,42 @@
       "devNote": "Base IBJ should kill the Sovas or go around."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Kill Sovas",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
         {"or": [
-          "HiJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canTrivialMidAirMorph",
+              "h_canUseSpringBall"
+            ]}
+          ]},
           {"and": [
             "SpaceJump",
+            "canTrivialMidAirMorph",
             {"heatFrames": 40}
           ]},
-          "canWalljump",
+          {"and": [
+            "canWalljump",
+            "canTrivialMidAirMorph"
+          ]},
           "canSpringBallJumpMidAir",
           {"and": [
-            "h_canIBJ",
+            "canIBJ",
             {"heatFrames": 900}
           ]},
           {"and": [
-            "h_canJumpIntoIBJ",
+            "canJumpIntoIBJ",
             {"heatFrames": 240}
           ]},
           {"and": [
-            "h_canJumpIntoIBJ",
-            "h_canDoubleBombJump",
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
             {"heatFrames": 120}
           ]},
           {"and": [
-            "h_canDoubleBombJump",
+            "canDoubleBombJump",
             {"heatFrames": 300}
           ]}
         ]},
@@ -350,13 +586,10 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Speedrun Ice Beam Entry",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
+        "canMidAirMorph",
         "canTrickyJump",
         {"or": [
           "canPreciseWalljump",
@@ -381,14 +614,11 @@
       ]
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Damage Boost",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "canCrouchJump",
-        "Morph",
+        "canMidAirMorph",
         "canNeutralDamageBoost",
         {"enemyDamage": {
           "enemy": "Sova",
@@ -400,36 +630,30 @@
       "note": "Wait for the Sova to leave the tunnel and jump morph into them to bounce up into the hole."
     },
     {
-      "from": 4,
-      "to": 2,
+      "link": [4, 2],
       "name": "Sova Freeze",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
-        "canUseFrozenEnemies",
+        "canMidAirMorph",
+        "canTrickyUseFrozenEnemies",
         {"heatFrames": 840}
       ],
       "note": "Freeze a Sova once it enters one of the slots on the wall and then use it as a platform."
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 100}
+      ],
+      "unlocksDoors": [
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
       ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 140}
       ],
@@ -438,15 +662,17 @@
           "length": 12,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 30}]}
+      ]
     },
     {
-      "from": 4,
-      "to": 3,
+      "link": [4, 3],
       "name": "Leave with Runway - Dead Fune",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"or": [
           {"and": [
@@ -464,35 +690,60 @@
           "length": 13,
           "openEnd": 0
         }
-      }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": []}
+      ],
+      "devNote": "FIXME: unlocksDoors: powerbomb would not have an ammo cost as one is used as part of the strat."
     },
     {
-      "from": 4,
-      "to": 5,
-      "name": "Base",
-      "notable": false,
+      "link": [4, 4],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 100}
-      ]
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     },
     {
-      "from": 5,
-      "to": 1,
+      "link": [4, 5],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"or": [
+          {"and": [
+            "canWalljump",
+            {"heatFrames": 100}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpringBallJumpMidAir",
+            {"heatFrames": 160}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 180}
+          ]},
+          {"and": [
+            "SpaceJump",
+            "HiJump",
+            {"heatFrames": 120}
+          ]}
+        ]}
+      ],
+      "devNote": "It is faster to go around than to climb with Ice."
+    },
+    {
+      "link": [5, 1],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 150}
       ]
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Tank Damage",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 150},
         {"or": [
@@ -507,23 +758,17 @@
       "note": "The Sovas should be killed if you are heat proof."
     },
     {
-      "from": 5,
-      "to": 2,
+      "link": [5, 2],
       "name": "Power Bombs",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "h_canUsePowerBombs",
         {"heatFrames": 200}
       ]
     },
     {
-      "from": 5,
-      "to": 4,
+      "link": [5, 4],
       "name": "Base",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         {"heatFrames": 50}
       ]
     }

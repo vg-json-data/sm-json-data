@@ -11,53 +11,21 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Spiky Platforms Tunnel Left Door (to Single Chamber)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019636",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Spiky Platforms Tunnel Left Door (to Single Chamber)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Spiky Platforms Tunnel Right Door (to Volcano Room)",
+      "name": "Right Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x0019642",
-      "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Spiky Platforms Tunnel Right Door (to Volcano Room)",
-          "length": 3,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 75}
-              ]
-            }
-          ],
-          "openEnd": 1
-        }
-      ]
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
     }
   ],
   "enemies": [
@@ -78,84 +46,344 @@
       "dropRequires": ["h_heatProof", "Gravity"]
     }
   ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
   "strats": [
     {
-      "from": 1,
-      "to": 2,
-      "name": "Gravity",
-      "notable": false,
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
       "requires": [
-        "h_canNavigateHeatRooms",
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Gravity",
+      "requires": [
         "Gravity",
         {"heatFrames": 360},
+        {"lavaFrames": 130},
+        {"or": [
+          "canCarefulJump",
+          {"heatFrames": 40}
+        ]}
+      ],
+      "note": "If you have Speed Booster, unequip it to be able to run faster in the lava."
+    },
+    {
+      "link": [1, 2],
+      "name": "Tripper Morphing",
+      "requires": [
+        "Morph",
+        {"heatFrames": 1050}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Double Lava Bath",
+      "requires": [
+        "canSuitlessLavaDive",
+        {"heatFrames": 750},
         {"lavaFrames": 120},
         {"or": [
-          "canCarefulJump",
-          {"heatFrames": 40}
+          "canWalljump",
+          {"and": [
+            {"or": [
+              "canCrouchJump",
+              "canDownGrab"
+            ]},
+            {"heatFrames": 110},
+            {"lavaFrames": 20}
+          ]}
         ]}
+      ],
+      "note": [
+        "Spin-jump across both sets of lava, trying to minimize the time spent in lava.",
+        "To get onto the first pillar, either use a wall jump off the pillar, or use the Tripper briefly as a platform by crouch jumping or down grabbing onto it."
       ]
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Tripper Morphing",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Single Lava Bath",
       "requires": [
-        "h_canNavigateHeatRooms",
-        "Morph",
-        {"heatFrames": 1050}
-      ]
-    },
-    {
-      "from": 1,
-      "to": 2,
-      "name": "Lava Bath",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
+        {"or": [
+          "canTrickyJump",
+          "Morph"
+        ]},
         "canSuitlessLavaDive",
-        {"heatFrames": 900},
-        {"lavaFrames": 200}
+        {"heatFrames": 760},
+        {"lavaFrames": 60}
+      ],
+      "note": [
+        "Use the Tripper to cross the first lava pit while avoiding all damage from the spikes and lava.",
+        "If you do not have Morph, this is tricky but can be done by carefully timing a jump against the pillar and releasing the d-pad inputs, to land on the Tripper as early as possible.",
+        "This allows the Tripper to sink low enough that crouching on the Tripper is enough to avoid spike damage.",
+        "From the Tripper, run and jump directly onto the first pillar past the shutter; it can help to moonwalk back left on the Tripper to maximize run speed for the jump.",
+        "From the pillar, run and jump directly into the lava rather than waiting for the second Tripper.",
+        "Perform quick spin jumps to minimize lava damage."
+      ],
+      "devNote": "Wall jumps are not needed for this strat and would not be helpful."
+    },
+    {
+      "link": [1, 2],
+      "name": "Bounceball Double Lava Bath (Longer Runway)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": false
+        }
+      },
+      "requires": [
+        "canBounceBall",
+        "canWalljump",
+        {"heatFrames": 600},
+        {"lavaFrames": 60}
+      ],
+      "note": [
+        "Perform a bounceball to minimize lava damage.",
+        "Move quickly to reach the second Tripper on its first cycle.",
+        "Ride it, morph to avoid spike damage, shoot open the door, and run off of the Tripper (rather than jumping off)."
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Gravity",
-      "notable": false,
+      "link": [1, 2],
+      "name": "Bounceball Double Lava Bath (Short Runway)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 1,
+          "speedBooster": false
+        }
+      },
       "requires": [
-        "h_canNavigateHeatRooms",
+        "canBounceBall",
+        "canWalljump",
+        {"heatFrames": 600},
+        {"lavaFrames": 85}
+      ],
+      "note": [
+        "Perform a bounceball to minimize lava damage.",
+        "Move quickly to reach the second Tripper on its first cycle.",
+        "Ride it, morph to avoid spike damage, shoot open the door, and run off of the Tripper (rather than jumping off)."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Gravity",
+      "requires": [
         "Gravity",
-        {"heatFrames": 390},
-        {"lavaFrames": 100},
+        {"heatFrames": 360},
+        {"lavaFrames": 130},
         {"or": [
           "canCarefulJump",
           {"heatFrames": 40}
         ]}
-      ]
+      ],
+      "note": "If you have Speed Booster, unequip it to be able to run faster in the lava."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Tripper Morphing",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "Morph",
         {"heatFrames": 1050}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Lava Bath",
-      "notable": false,
+      "link": [2, 1],
+      "name": "Double Lava Bath",
       "requires": [
-        "h_canNavigateHeatRooms",
         "canSuitlessLavaDive",
-        {"heatFrames": 900},
-        {"lavaFrames": 200}
+        {"heatFrames": 700},
+        {"lavaFrames": 130},
+        {"or": [
+          "canWalljump",
+          {"and": [
+            {"or": [
+              "canCrouchJump",
+              "canDownGrab"
+            ]},
+            {"heatFrames": 220},
+            {"lavaFrames": 70}
+          ]}
+        ]}
+      ],
+      "note": [
+        "Spin-jump across both sets of lava, trying to minimize the time spent in lava.",
+        "To get onto the first pillar, either use a wall jump off the pillar, or use the Tripper briefly as a platform by crouch jumping or down grabbing onto it."
       ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Reduced Lava Bath",
+      "requires": [
+        "canSuitlessLavaDive",
+        "canTrickyJump",
+        {"heatFrames": 780},
+        {"lavaFrames": 100}
+      ],
+      "note": [
+        "Wait for the Tripper to approach the right platform, then run onto and off its left side.",
+        "Spin jump to the left one time, then jump up onto the right side of the Tripper.",
+        "Run to the left and jump directly onto the first pillar after the shutter.",
+        "Spin jump across the remaining lava, trying to minimize the time spent in lava."
+      ],
+      "devNote": "Wall jumps are not needed for this strat."
+    },
+    {
+      "link": [2, 1],
+      "name": "Single Lava Bath",
+      "requires": [
+        "canSuitlessLavaDive",
+        "Morph",
+        {"heatFrames": 780},
+        {"lavaFrames": 70}
+      ],
+      "note": [
+        "Ride the first Tripper, using Morph to avoid spike damage.",
+        "From the Tripper, run and jump directly onto the first pillar after the shutter.",
+        "Spin jump across the remaining lava, trying to minimize the time spent in lava."
+      ],
+      "devNote": "Wall jumps are not needed for this strat."
+    },
+    {
+      "link": [2, 1],
+      "name": "Bounceball Double Lava Bath (Longer Runway)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": false
+        }
+      },
+      "requires": [
+        "canBounceBall",
+        "canWalljump",
+        {"heatFrames": 600},
+        {"lavaFrames": 60}
+      ],
+      "note": [
+        "Perform a bounceball to minimize lava damage.",
+        "Ride the second Tripper."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Bounceball Double Lava Bath (Shorter Runway)",
+      "entranceCondition": {
+        "comeInRunning": {
+          "minTiles": 3,
+          "speedBooster": false
+        }
+      },
+      "requires": [
+        "canBounceBall",
+        "canWalljump",
+        {"heatFrames": 600},
+        {"lavaFrames": 85}
+      ],
+      "note": [
+        "Perform a bounceball to minimize lava damage.",
+        "Ride the second Tripper."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[7, 2]]
+        }
+      },
+      "requires": [
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 4,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
     }
   ]
 }

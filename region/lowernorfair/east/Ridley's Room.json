@@ -11,32 +11,15 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Ridley Room Left Door (to E-Tank)",
+      "name": "Left Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x00198b2",
+      "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Ridley Room Left Door (to E-Tank)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
-          "name": "Ridley Room Left Grey Lock (to E-Tank)",
+          "name": "Ridley Room Left Gray Lock (to E-Tank)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -52,32 +35,15 @@
     },
     {
       "id": 2,
-      "name": "Ridley Room Right Door (to Farming Room)",
+      "name": "Right Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x00198be",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "runways": [
-        {
-          "name": "Base Runway - Ridley Room Right Door (to Farming Room)",
-          "length": 0,
-          "strats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canNavigateHeatRooms",
-                {"heatFrames": 100}
-              ],
-              "note": "Just using the open end of this 0-tile runway does take some maneuvering time."
-            }
-          ],
-          "openEnd": 1
-        }
-      ],
       "locks": [
         {
-          "name": "Ridley Room Right Grey Lock (to Farming Room)",
+          "name": "Ridley Room Right Gray Lock (to Farming Room)",
           "lockType": "gameFlag",
           "unlockStrats": [
             {
@@ -89,7 +55,8 @@
             }
           ]
         }
-      ]
+      ],
+      "spawnAt": 4
     },
     {
       "id": 3,
@@ -126,6 +93,12 @@
         }
       ],
       "yields": ["f_DefeatedRidley"]
+    },
+    {
+      "id": 4,
+      "name": "Right Door Spawn At Junction",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -138,67 +111,223 @@
       "stopSpawn": ["f_DefeatedRidley"]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 50}
+      "to": [
+        {"id": 1},
+        {"id": 3}
       ]
     },
     {
       "from": 2,
-      "to": 3,
-      "name": "Base",
-      "notable": false,
-      "requires": [
-        "h_canNavigateHeatRooms",
-        {"heatFrames": 100}
+      "to": [
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
       "from": 3,
-      "to": 1,
-      "name": "Base",
-      "notable": false,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"not": "f_DefeatedRidley"},
+        "canRiskPermanentLossOfAccess",
+        {"enemyDamage": {
+          "enemy": "Ridley",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 3],
+      "name": "Base",
+      "requires": [
         {"heatFrames": 50}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
-      "name": "Wall Jump",
-      "notable": false,
+      "link": [2, 2],
+      "name": "Leave With Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
       "requires": [
-        "h_canNavigateHeatRooms",
+        {"not": "f_DefeatedRidley"},
+        "canRiskPermanentLossOfAccess",
+        {"enemyDamage": {
+          "enemy": "Ridley",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "SpaceJump",
+          "canWalljump",
+          {"and": [
+            "canJumpIntoIBJ",
+            "canTrickyJump"
+          ]},
+          {"and": [
+            "canIBJ",
+            "f_DefeatedRidley"
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpringBallJumpMidAir"
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "Carry G-Mode Morph Back Through",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canArtificialMorph"
+      ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": true
+        }
+      },
+      "bypassesDoorShell": true,
+      "flashSuitChecked": true,
+      "devNote": "Artificial morph will allow Samus not to fall; real Morph is not sufficient."
+    },
+    {
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 100}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Wall Jump",
+      "requires": [
         "canWalljump",
         {"heatFrames": 200}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "Space Jump",
-      "notable": false,
       "requires": [
-        "h_canNavigateHeatRooms",
         "SpaceJump",
         {"heatFrames": 250}
       ]
     },
     {
-      "from": 3,
-      "to": 2,
+      "link": [3, 2],
       "name": "IBJ",
-      "notable": false,
       "requires": [
         "h_heatProof",
-        "h_canIBJ"
+        "canIBJ"
+      ]
+    },
+    {
+      "link": [3, 3],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canHeatedCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 2],
+      "name": "Prepared Entry",
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          "SpaceJump",
+          "canWalljump",
+          "canTrickyJump",
+          "canStationarySpinJump"
+        ]},
+        {"heatFrames": 80},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 100}
       ]
     }
   ]

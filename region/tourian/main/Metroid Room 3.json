@@ -10,58 +10,24 @@
   "nodes": [
     {
       "id": 1,
-      "name": "Metroid Room 3 Left Door (to Metroid Room 2)",
+      "name": "Left Door",
       "nodeType": "door",
       "nodeSubType": "blue",
       "nodeAddress": "0x001a9d8",
-      "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Rinka",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      }
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}]
     },
     {
       "id": 2,
-      "name": "Metroid Room 3 Right Door (to Metroid Room 4)",
+      "name": "Right Door",
       "nodeType": "door",
-      "nodeSubType": "grey",
+      "nodeSubType": "gray",
       "nodeAddress": "0x001a9e4",
+      "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "leaveWithGModeSetup": [
-        {"strats": [
-          {
-            "name": "Get Hit By Rinka",
-            "notable": false,
-            "requires": []
-          }
-        ]}
-      ],
-      "gModeImmobile": {
-        "requires": [
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]
-      },
       "locks": [
         {
-          "name": "Metroid Room 3 Grey Lock (to Metroid Room 4)",
+          "name": "Metroid Room 3 Gray Lock (to Metroid Room 4)",
           "lockType": "killEnemies",
           "unlockStrats": [
             {
@@ -101,12 +67,26 @@
       "homeNodes": [1, 2]
     }
   ],
-  "strats": [
+  "links": [
     {
       "from": 1,
-      "to": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -116,10 +96,27 @@
       }
     },
     {
-      "from": 1,
-      "to": 1,
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Rinka",
+      "requires": [
+        "h_canTrickyFrozenEnemyRunway"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 0
+        }
+      },
+      "note": [
+        "One simple setup to position a Rinka is to crouch a couple tiles away from the bottom right spawner.",
+        "This will also prevent the left two Rinka spawners to activate, as they will be off camera.",
+        "It is possible maintain a half-tile gap between the Rinka and the runway in order to extend it as far as possible."
+      ],
+      "devNote": "FIXME: It is possible but challenging to set up a frozen Rinka on the right door."
+    },
+    {
+      "link": [1, 1],
       "name": "Leave Shinecharged",
-      "notable": false,
       "requires": [
         {"or": [
           "canMetroidAvoid",
@@ -134,25 +131,71 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 60
+          "framesRemaining": 105
         }
-      }
+      },
+      "flashSuitChecked": true
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Already Cleared",
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Rinka",
       "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Rinka",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Morph Power Bomb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canMetroidAvoid",
+        "h_canArtificialMorphSpringBall",
+        {"ammo": {"type": "PowerBomb", "count": 4}}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Kill the Metroids while artificially morphed with just Spring Ball to avoid them.",
+        "A Metroid (or a Rinka) must be completely on screen while a Power Bomb explodes in order for it to lure the other Metroids.",
+        "One strategy for this location is to wait for the Rinkas to fire twice, then place a Power Bomb in the hallway to the right and return to lure one.",
+        "Jump over it twice and at the top of the second jump place a second Power Bomb; this one will explode when the other two Metroids arrive.",
+        "Jumping high to the right can also help get them stuck in the top right corner while placing a Power Bomb.",
+        "Note that it is necessary to exit G-Mode before exiting the room in order for the Metroids to remain killed."
+      ],
+      "devNote": "It is occasionally possible with just 3 Power Bombs, which doesn't make sense since the first one doesn't hit all of the Metroids."
+    },
+    {
+      "link": [1, 2],
+      "name": "Already Cleared",
       "requires": [
         "f_KilledMetroidRoom3"
       ],
       "clearsObstacles": ["A"]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Ammo Kill",
-      "notable": false,
       "requires": [
         "Ice",
         {"enemyKill": {
@@ -163,51 +206,57 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Tank and PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBombPeriphery"]
         }},
-        {"metroidFrames": 272}
+        {"or": [
+          "canTrickyJump",
+          {"ammo": {"type": "PowerBomb", "count": 2}}
+        ]},
+        {"metroidFrames": 300}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],
+      "note": [
+        "Place Power Bombs to kill the Metroids.",
+        "By hitting the first Rinka, all of the Metroids (on a similar vertical height to the Power Bomb) will be damaged."
+      ],
+      "devNote": "Using 1 pack of PBs isn't intuitive as a way to kill 3 metroids without grouping them."
     },
     {
-      "from": 1,
-      "to": 2,
-      "name": "Metroid Room 3 PB Dodge Kill (Left to Right)",
-      "notable": true,
+      "link": [1, 2],
+      "name": "3 PB Dodge Kill (Left to Right)",
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        {"or": [
+          {"metroidFrames": 120},
+          "canInsaneJump"
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
         "Group the Metroids by hitting the first Rinka with a Power Bomb.",
+        "Quickly moving to the right as the Power Bomb explodes may help as that area is more open with no Rinkas.",
         "Then Kill all three Metroids with Power Bombs while avoiding damage."
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Ice Evade",
-      "notable": false,
       "requires": [
         "Ice"
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Screw Evade",
-      "notable": false,
       "requires": [
         {"or": [
           "ScrewAttack",
@@ -227,21 +276,21 @@
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Harder Evade",
-      "notable": false,
       "requires": [
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        {"or": [
+          "canTrickyJump",
+          "canMockball"
+        ]}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Blue SpaceJump, Into the Room",
-      "notable": false,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 1,
           "openEnd": 1
         }
@@ -254,19 +303,15 @@
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
-        {"metroidFrames": 176}
+        {"metroidFrames": 670}
       ]
     },
     {
-      "from": 1,
-      "to": 2,
+      "link": [1, 2],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -276,20 +321,16 @@
       "devNote": "FIXME: Add strats that come in charged and spark to save energy."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Already Cleared",
-      "notable": false,
       "requires": [
         "f_KilledMetroidRoom3"
       ],
       "clearsObstacles": ["A"]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Ammo Kill",
-      "notable": false,
       "requires": [
         "Ice",
         {"enemyKill": {
@@ -300,30 +341,42 @@
       "clearsObstacles": ["A"]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Tank and PB Kill",
-      "notable": false,
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBombPeriphery"]
         }},
-        {"metroidFrames": 272}
+        {"or": [
+          "canTrickyJump",
+          {"ammo": {"type": "PowerBomb", "count": 2}}
+        ]},
+        {"metroidFrames": 200}
       ],
-      "clearsObstacles": ["A"]
+      "clearsObstacles": ["A"],"note": [
+        "Place Power Bombs to kill the Metroids.",
+        "By hitting the first Rinka, all of the Metroids (on a similar vertical height to the Power Bomb) will be damaged."
+      ],
+      "devNote": [
+        "Using 1 pack of PBs isn't intuitive as a way to kill 3 metroids without grouping them.",
+        "Killing the first Metroid happens to group the other two nearby, and when jumping close to them they derp around."
+      ]
     },
     {
-      "from": 2,
-      "to": 1,
-      "name": "Metroid Room 3 PB Dodge Kill (Right to Left)",
-      "notable": true,
+      "link": [2, 1],
+      "name": "PB Dodge Kill (Right Side)",
       "requires": [
         {"enemyKill": {
           "enemies": [["Metroid", "Metroid", "Metroid"]],
-          "excludedWeapons": ["Super", "Missile"]
+          "explicitWeapons": ["PowerBomb"]
         }},
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        {"or": [
+          {"ammo": {"type": "PowerBomb", "count": 1}},
+          "canInsaneJump",
+          {"metroidFrames": 100}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
@@ -332,19 +385,15 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Ice Evade",
-      "notable": false,
       "requires": [
         "Ice"
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Screw Evade",
-      "notable": false,
       "requires": [
         {"or": [
           "ScrewAttack",
@@ -364,21 +413,21 @@
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Harder Evade",
-      "notable": false,
       "requires": [
-        "canMetroidAvoid"
+        "canMetroidAvoid",
+        {"or": [
+          "canTrickyJump",
+          "canMockball"
+        ]}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Blue SpaceJump, Into the Room",
-      "notable": false,
       "entranceCondition": {
-        "comeInShinecharging": {
+        "comeInGettingBlueSpeed": {
           "length": 3,
           "openEnd": 1
         }
@@ -390,19 +439,15 @@
       "devNote": "There is 1 unusable tile in this runway."
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Tank the Damage",
-      "notable": false,
       "requires": [
-        {"metroidFrames": 176}
+        {"metroidFrames": 600}
       ]
     },
     {
-      "from": 2,
-      "to": 1,
+      "link": [2, 1],
       "name": "Shinespark",
-      "notable": false,
       "entranceCondition": {
         "comeInWithSpark": {}
       },
@@ -415,10 +460,51 @@
       "devNote": "FIXME: Add strats that come in charged and spark to save energy."
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 1],
+      "name": "Grapple Teleport",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 2],
       "name": "Leave with Runway",
-      "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithRunway": {
@@ -428,10 +514,8 @@
       }
     },
     {
-      "from": 2,
-      "to": 2,
+      "link": [2, 2],
       "name": "Leave Shinesparking",
-      "notable": false,
       "requires": [
         {"or": [
           "canMetroidAvoid",
@@ -442,11 +526,78 @@
           "usedTiles": 29,
           "openEnd": 2
         }},
-        {"shinespark": {"frames": 75}}
+        {"or": [
+          {"shinespark": {"frames": 75}},
+          {"and": [
+            "canShinechargeMovementComplex",
+            {"shinespark": {"frames": 50}}
+          ]}
+        ]}
       ],
       "exitCondition": {
         "leaveWithSpark": {}
       }
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Be at a safe distance from Rinkas before performing the Crystal Flash."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Setup - Get Hit By Rinka",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {
+          "enemy": "Rinka",
+          "type": "contact",
+          "hits": 1
+        }}
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "G-Mode Morph Power Bomb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canMetroidAvoid",
+        "h_canArtificialMorphSpringBall",
+        "h_canArtificialMorphBombHorizontally",
+        {"ammo": {"type": "PowerBomb", "count": 3}}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": [
+        "Kill the Metroids while artificially morphed with just Spring Ball to avoid them.",
+        "A Metroid (or a Rinka) must be completely on screen while a Power Bomb explodes in order for it to lure the other Metroids.",
+        "Start the room with a bomb boost spring ball jump or a precise horizontal bomb boost.",
+        "In general, this seems to be easiest by minimizing Samus's horizontal movement as much as possible and getting the Metroids in sync with each other while circling around her.",
+        "While moving horizontally, their movement is less predictable and harder to sync.",
+        "Note that it is necessary to exit G-Mode before exiting the room in order for the Metroids to remain killed."
+      ]
     }
   ]
 }
