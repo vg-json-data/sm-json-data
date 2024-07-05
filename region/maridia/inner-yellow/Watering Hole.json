@@ -1,0 +1,251 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 181,
+  "name": "Watering Hole",
+  "area": "Maridia",
+  "subarea": "Inner",
+  "subsubarea": "Yellow",
+  "playable": true,
+  "roomAddress": "0x7D13B",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Right Door",
+      "nodeType": "door",
+      "nodeSubType": "blue",
+      "nodeAddress": "0x001a48c",
+      "doorOrientation": "right",
+      "doorEnvironments": [{"physics": "air"}]
+    },
+    {
+      "id": 2,
+      "name": "Left Item",
+      "nodeType": "item",
+      "nodeSubType": "visible",
+      "nodeItem": "Super",
+      "nodeAddress": "0x7C4AF"
+    },
+    {
+      "id": 3,
+      "name": "Right Item",
+      "nodeType": "item",
+      "nodeSubType": "visible",
+      "nodeItem": "Missile",
+      "nodeAddress": "0x7C4B5"
+    },
+    {
+      "id": 4,
+      "name": "Junction Between Items",
+      "nodeType": "junction",
+      "nodeSubType": "junction"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Watering Hole Zebs",
+      "enemyName": "Zeb",
+      "quantity": 2,
+      "homeNodes": [1],
+      "farmCycles": [
+        {
+          "name": "Half-screen back and forth",
+          "cycleFrames": 200,
+          "requires": [],
+          "note": "Running back and forth with proper timing can be a bit faster than camping just one of them"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "groupName": "Watering Hole Choot",
+      "enemyName": "Choot",
+      "quantity": 1,
+      "homeNodes": [1]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 4}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 5,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Leave With Runway - Frozen Zeb",
+      "requires": [
+        "h_canFrozenEnemyRunway"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 13,
+          "openEnd": 0
+        }
+      },
+      "note": "Requires a pixel-perfect freeze in order to run onto and off of the frozen Zeb."
+    },
+    {
+      "link": [1, 1],
+      "name": "Watering Hole Double Frozen Zeb Runway",
+      "notable": true,
+      "requires": [
+        "h_canTrickyFrozenEnemyRunway"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 20,
+          "openEnd": 1
+        }
+      },
+      "note": [
+        "Freeze both Zebs in order to significantly extend the length of the runway.",
+        "Requires a pixel-perfect freeze in order to run onto and off of the frozen Zebs."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Zeb Farm",
+      "requires": [
+        {"refill": ["Energy", "Missile", "Super"]}
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Zeb",
+      "notable": false,
+      "requires": [],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 4],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 4],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [3, 4],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [4, 1],
+      "name": "Base",
+      "requires": [
+        "Gravity",
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "h_canFly",
+          "canSpringBallJumpMidAir"
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Frozen Choot",
+      "requires": [
+        "Gravity",
+        "canTrickyUseFrozenEnemies"
+      ],
+      "devNote": "The only thing tricky about this is realizing to leave the Choot alive before going down."
+    },
+    {
+      "link": [4, 1],
+      "name": "Crouch Jump Down Grab",
+      "requires": [
+        "Gravity",
+        "canTrickyJump",
+        "h_canCrouchJumpDownGrab"
+      ],
+      "note": [
+        "Getting out with only Gravity and no wall jump requires a tight crouch jump and down grab while above the water:",
+        "Position very close to the edge, and press forward immediately after crouch jumping (almost simultaneously)."
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Suitless Springball Jump",
+      "requires": [
+        "canSuitlessMaridia",
+        "h_canMaxHeightSpringBallJump"
+      ],
+      "note": "This is a max height springball jump.",
+      "devNote": "FIXME add a slightly easier variant that damage boosts off of the Choot."
+    },
+    {
+      "link": [4, 1],
+      "name": "Suitless HiJump",
+      "requires": [
+        "canSuitlessMaridia",
+        "HiJump",
+        {"or": [
+          "canWalljump",
+          "h_canCrouchJumpDownGrab"
+        ]}
+      ]
+    },
+    {
+      "link": [4, 1],
+      "name": "Naked Watering Hole Escape",
+      "requires": [
+        "canSuitlessMaridia",
+        "canStationarySpinJump",
+        "canSunkenTileWideWallClimb"
+      ],
+      "note": "A stationary spinjump can fit into the 1 tile wide hole where Samus can slowly infinite walljump to freedom."
+    },
+    {
+      "link": [4, 2],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [4, 3],
+      "name": "Base",
+      "requires": []
+    }
+  ]
+}

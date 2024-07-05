@@ -1,0 +1,477 @@
+{
+  "$schema": "../../../schema/m3-room.schema.json",
+  "id": 219,
+  "name": "Plasma Room",
+  "area": "Maridia",
+  "subarea": "Inner",
+  "subsubarea": "Yellow",
+  "playable": true,
+  "roomAddress": "0x7D2AA",
+  "roomEnvironments": [{"heated": false}],
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Top Left Door",
+      "nodeType": "door",
+      "nodeSubType": "gray",
+      "nodeAddress": "0x001a558",
+      "doorOrientation": "left",
+      "doorEnvironments": [{"physics": "air"}],
+      "locks": [
+        {
+          "name": "Plasma Gray Lock (to Plasma Tutorial)",
+          "lockType": "killEnemies",
+          "unlockStrats": [
+            {
+              "name": "Base",
+              "notable": false,
+              "requires": [
+                {"obstaclesCleared": ["A"]}
+              ],
+              "note": "To avoid redundant requirements, obstacle must be destroyed by going to 2->3->1."
+            }
+          ],
+          "yields": ["f_ZebesAwake"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Item",
+      "nodeType": "item",
+      "nodeSubType": "chozo",
+      "nodeItem": "Plasma",
+      "nodeAddress": "0x7C559"
+    },
+    {
+      "id": 3,
+      "name": "Central Junction with all Standing Pirates Killed",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "note": "Intended to logically separate killing the standing enemies (who have actual requirements) from climbing out of the room."
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Pink Pirates",
+      "obstacleType": "enemies",
+      "note": "Enemies that must be cleared to unlock the room. Take note that the wall pirates do not have special immunities."
+    }
+  ],
+  "enemies": [
+    {
+      "id": "e1",
+      "groupName": "Plasma Room Top Standing Pirate",
+      "enemyName": "Pink Space Pirate (standing)",
+      "quantity": 1,
+      "homeNodes": [1]
+    },
+    {
+      "id": "e2",
+      "groupName": "Plasma Room Bottom Standing Pirates",
+      "enemyName": "Pink Space Pirate (standing)",
+      "quantity": 3,
+      "homeNodes": [2]
+    },
+    {
+      "id": "e3",
+      "groupName": "Plasma Room Wall Pirates",
+      "enemyName": "Pink Space Pirate (wall)",
+      "quantity": 2,
+      "homeNodes": [2]
+    }
+  ],
+  "links": [
+    {
+      "from": 1,
+      "to": [
+        {"id": 1},
+        {"id": 2}
+      ]
+    },
+    {
+      "from": 2,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
+    },
+    {
+      "from": 3,
+      "to": [
+        {"id": 1}
+      ]
+    }
+  ],
+  "strats": [
+    {
+      "link": [1, 1],
+      "name": "Leave with Runway",
+      "requires": [],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 3,
+          "openEnd": 1
+        }
+      }
+    },
+    {
+      "link": [1, 1],
+      "name": "Space Pirate Farm",
+      "requires": [
+        "SpaceJump",
+        "ScrewAttack",
+        {"resetRoom": {
+          "nodes": [1],
+          "mustStayPut": false
+        }},
+        {"refill": ["Energy", "Missile"]}
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Base",
+      "requires": []
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [
+        "SpaceJump"
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Insane Walljump",
+      "requires": [
+        "canInsaneWalljump",
+        "canConsecutiveWalljump"
+      ],
+      "note": "Lead the wallpirate into jumping across the room and dodge the standing pirate."
+    },
+    {
+      "link": [2, 1],
+      "name": "HiJump Walljump",
+      "requires": [
+        "HiJump",
+        "canPreciseWalljump"
+      ],
+      "note": "Lead the wallpirate into jumping across the room and dodge the standing pirate."
+    },
+    {
+      "link": [2, 1],
+      "name": "HiJump Speedjump",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        "canTrickyJump",
+        "canWalljump"
+      ],
+      "note": [
+        "Watch the right-side standing pirate walk towards the wall as far as possible from below.",
+        "The available running space is just enough to jump up and walljump the ledge by the door."
+      ],
+      "devNote": "This is also possible without going below and manipulating the camera, by standing on the slope and carefully jumping up and back."
+    },
+    {
+      "link": [2, 1],
+      "name": "HiJump Speedjump with Damage",
+      "requires": [
+        "HiJump",
+        "SpeedBooster",
+        "canWalljump",
+        "canCarefulJump",
+        {"enemyDamage": {
+          "enemy": "Pink Space Pirate (standing)",
+          "hits": 1,
+          "type": "laser"
+        }}
+      ],
+      "note": "Take a hit from the pirate to gain iframes for running through the pirate to use for a longer runway."
+    },
+    {
+      "link": [2, 1],
+      "name": "Kill one then IBJ",
+      "requires": [
+        "canIBJ",
+        {"or": [
+          {"and": [
+            "canShinechargeMovement",
+            "canUseSpeedEchoes",
+            {"getBlueSpeed": {
+              "usedTiles": 19,
+              "openEnd": 0
+            }},
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
+          ]},
+          {"and": [
+            "canShinechargeMovement",
+            "canUseSpeedEchoes",
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "contact",
+              "hits": 1
+            }},
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 2, "excessFrames": 2}}
+          ]},
+          {"and": [
+            "canPseudoScrew",
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]}
+      ],
+      "note": "Pseudo screw the left pirate, or clear the left side with shinesparks, then IBJ out",
+      "devNote": "If you can kill them without being hurt, you can take path 2->3->1."
+    },
+    {
+      "link": [2, 1],
+      "name": "Jump into IBJ",
+      "requires": [
+        "canJumpIntoIBJ"
+      ],
+      "failures": [
+        {
+          "name": "Fail Bomb Jump",
+          "cost": [
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "hits": 1,
+              "type": "laser"
+            }}
+          ]
+        }
+      ],
+      "note": "Let the wall pirate jump to the otherside of the room.  Shooting the standing pirate (with anything) will prevent it from attacking."
+    },
+    {
+      "link": [2, 1],
+      "name": "Kill Pirates With Shinesparks And Escape",
+      "requires": [
+        {"or": [
+          "Morph",
+          "canCarefulJump",
+          "canCameraManip"
+        ]},
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {
+          "usedTiles": 21,
+          "openEnd": 0
+        }},
+        {"shinespark": {"frames": 30, "excessFrames": 7}},
+        "canUseSpeedEchoes",
+        {"or": [
+          "canCameraManip",
+          {"and": [
+            {"getBlueSpeed": {
+              "usedTiles": 19,
+              "openEnd": 0
+            }},
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 2, "excessFrames": 2}}
+          ]},
+          {"and": [
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 3, "excessFrames": 3}},
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "laser",
+              "hits": 1
+            }}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "failures": [
+        {
+          "name": "Miss Shortcharge",
+          "cost": [
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "laser",
+              "hits": 1
+            }}
+          ]
+        }
+      ],
+      "note": [
+        "Using the bottom of the room, shortcharge to use the echoes created by shinesparking to kill all of the Standing Pirates.",
+        "Either lead the pirate to the left wall or take a hit to gain iframes to use the full runway to charge a spark",
+        "To lead a pirate, have it shoot in the direction you want it to go. Then jump overhead and crouch on the other side.",
+        "Or, jump and aim down while on the sloped tiles just above to lower the camera and wait for the pirate to move to the correct spot.",
+        "Turn around and diagonal spark the ceiling to kill the lowest pirate, and later the middle pirates.",
+        "Building a spark towards the left allows for enough run speed to jump to the middle level.",
+        "Then vertical shinespark out which kills the top pirate."
+      ],
+      "devNote": "Killing the top pirate naturally puts you at 1"
+    },
+    {
+      "link": [2, 1],
+      "name": "Frozen Wall Pirate Plasma Escape",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "canPreciseWalljump"
+      ],
+      "note": [
+        "Shoot at a wall pirate from below to freeze it.  Plasma is not required for wall pirates.",
+        "Firing at a Standing Pirate with anything will prevent it from shooting for a short time."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Walljump Springball Jump",
+      "requires": [
+        "canSpringwall"
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "HiJump Springball Jump",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir"
+      ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Simple Weapons",
+      "requires": [
+        {"or": [
+          "Plasma",
+          "ScrewAttack"
+        ]}
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 3],
+      "name": "Plasma Room Pseudo Screw",
+      "requires": [
+        "canPseudoScrew",
+        {"enemyDamage": {
+          "enemy": "Pink Space Pirate (standing)",
+          "type": "contact",
+          "hits": 4
+        }}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "The 4 standing pirates take 2 Pseudo Screws to kill each, so Samus must take 4 hits. No damage is taken when the enemy dies."
+    },
+    {
+      "link": [3, 1],
+      "name": "Base",
+      "requires": [
+        "h_canFly"
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Speedjump",
+      "requires": [
+        "SpeedBooster",
+        "HiJump",
+        "canWalljump"
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Shinespark",
+      "requires": [
+        "canShinechargeMovement",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 21, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canShinechargeMovementComplex",
+            "canCarefulJump",
+            {"canShineCharge": {
+              "usedTiles": 21,
+              "openEnd": 0
+            }},
+            {"shinespark": {"frames": 30, "excessFrames": 7}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Frozen Wall Pirate Plasma Escape",
+      "requires": [
+        "canTrickyUseFrozenEnemies",
+        "canPreciseWalljump",
+        "canCameraManip"
+      ],
+      "note": [
+        "It's possible to climb up with just ice by freezing the wall space pirates (who can be frozen and killed without Plasma).",
+        "Clearing the gray door lock would require killing the frozen pirate after using it to climb.",
+        "To do this most easily, freeze the Pirate as high as possible on the left wall.",
+        "Bait the pirate to jump across the room early so that it stays high on the wall, or bring it on camera by jumping below the platform if the wall pirate gets too low.",
+        "After reaching the top, it can help to reset the camera by moving to the right on the center platform and then back left."
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Hijump Walljump",
+      "requires": [
+        "canPreciseWalljump",
+        "HiJump"
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "Hjless Walljump",
+      "requires": [
+        "canInsaneWalljump",
+        "canConsecutiveWalljump"
+      ],
+      "note": "This is the same size of ledge as writg."
+    },
+    {
+      "link": [3, 1],
+      "name": "Walljump Springball Jump",
+      "requires": [
+        "canSpringwall"
+      ]
+    },
+    {
+      "link": [3, 1],
+      "name": "HiJump Springball Jump",
+      "requires": [
+        "HiJump",
+        "canSpringBallJumpMidAir"
+      ]
+    }
+  ]
+}

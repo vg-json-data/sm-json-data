@@ -152,6 +152,14 @@ for region in os.listdir(regionPath):
                                         .replace(" and ", " And ") \
                                         .replace(" ", "")
 
+                                    roomTrans = {
+                                        "GreenBrinstarMainShaft": "GreenBrinstarMainShaft-EtecoonRoom",
+                                        "KraidRoom": "KraidsRoom",
+                                        "XRayScopeRoom": "X-RayScopeRoom"
+                                    }
+                                    if sanitizedRoomName in roomTrans.keys():
+                                        sanitizedRoomName = roomTrans[sanitizedRoomName]
+
                                     subarea = room["subarea"].lower()
 
                                     if "subsubarea" in room:
@@ -172,7 +180,7 @@ for region in os.listdir(regionPath):
                                     if os.path.isfile(roomDiagram):
                                         room["roomDiagram"] = roomDiagram
                                     else:
-                                        print(f"ERROR: {region}:{subarea}:{room['id']}:{room['name']} roomDiagram not found!")
+                                        print(f"ERROR: {region}:{subarea}:{room['id']}:{room['name']} ['{roomDiagram}'] roomDiagram not found!")
 
                                     # add trimmed room to our notes
                                     if subarea.lower() not in data["roomsByRegion"][region]:

@@ -46,6 +46,7 @@ def process_keyvalue(k, v, metadata):
     # keys to ignore for documented reasons
     manualKeys = [
         "clearsObstacles",
+        "resetsObstacles",
         "initiateRemotely",
         "obstaclesCleared",
         "obstaclesNotCleared"
@@ -62,8 +63,6 @@ def process_keyvalue(k, v, metadata):
         # "groupName",        # !!could check for unique
         # "nodeAddress",      # !!could check for unique
         # "roomAddress",      # !!could check for unique
-        "mobility",         # validated by schema
-        "mode",             # validated by schema
         "jumpwayType",      # validated by schema
         "lockType",         # validated by schema
         "nodeType",         # validated by schema
@@ -72,15 +71,29 @@ def process_keyvalue(k, v, metadata):
         "physics",          # validated by schema
         "utility",          # validated by schema
         "resourceCapacity", # validated by schema
+        "resourceAvailable",# validated by schema
         "refill",           # validated by schema
+        "partialRefill",    # validated by schema
+        "autoReserveTrigger",    # validated by schema
         "comeInWithSpark",  # validated by schema
         "comeInWithDoorStuckSetup", # validated by schema
         "comeInRunning",  # validated by schema
-        "comeInJumping",    # validated by schema
+        "comeInJumping",    # validated by schema,
+        "comeInWithGMode",    # validated by schema,
         "leaveWithGModeSetup", # validated by schema
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
+        "framesRemaining",  # validated by schema
+        "comesThroughToilet",  # validated by schema
+        "direction",  # validated by schema
+        "blue",  # validated by schema
+        "movementType",  # validated by schema
+        "doorOrientation",  # validated by schema
+        "minExtraRunSpeed", # validated by schema
+        "maxExtraRunSpeed", # validated by schema
+        "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
+        "type",  # validated by schema in 'resourceAvailable', 'resourceCapacity'
     ]
 
     # check if it's a key we want to check
@@ -104,6 +117,9 @@ def process_keyvalue(k, v, metadata):
         if v not in uniques[kCheck]:
             uniques[kCheck].append(v)
             isSkip = True
+        elif kCheck == "nodeAddress" and int(v, 16) in [0x189ca, 0x189d6]:
+            # nodeAddress is normally unique but there are two exceptions in West Ocean for the bridge doors.
+            isSkip = True
         else:
             msg = f"🔴ERROR: {k}:{v} not unique!"
             messages["reds"].append(msg)
@@ -116,10 +132,12 @@ def process_keyvalue(k, v, metadata):
         isInt = isinstance(v, int)
         isList = isinstance(v, list)
         isEmptyList = isList and len(v) == 0
-        isNumeric = not isFloat and not isInt and not isList and v.isnumeric()
+        isEmptyDict = v == {}
+        isNumeric = not isFloat and not isInt and not isList and not isEmptyDict and v.isnumeric()
         if not isFloat and \
             not isInt and \
             not isEmptyList and \
+            not isEmptyDict and \
             not isNumeric and \
             not isSkip:
             # helpers for value type
@@ -199,6 +217,41 @@ def search_for_path(fromNodes, sourceNode, targetNode, stratRef):
 
     return [foundPath, msg]
 
+
+def find_door_unlocked_nodes_rec(req):
+    if isinstance(req, dict):
+        if "doorUnlockedAtNode" in req:
+            return set([req["doorUnlockedAtNode"]])
+        if "and" in req:
+            return find_door_unlocked_nodes_rec(req["and"])
+        if "or" in req:
+            return find_door_unlocked_nodes_rec(req["or"])
+    if isinstance(req, list):
+        return set(y for x in req for y in find_door_unlocked_nodes_rec(x))
+    return set()
+
+
+def find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks):
+    nodes = find_door_unlocked_nodes_rec(strat["requires"])
+    from_node = strat["link"][0]
+    to_node = strat["link"][1]
+    if "exitCondition" in strat and strat.get("bypassesDoorShell") != True and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
+        nodes.add(to_node)
+    if "entranceCondition" not in strat and from_node in nodes:
+        nodes.remove(from_node)
+    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") != True and "gModeRegainMobility" not in strat:
+        nodes.add(to_node)
+    return nodes
+
+def check_node_covered_in_unlocks_doors(strat, node_id):
+    unlocks_doors = strat.get("unlocksDoors", [])
+    to_node = strat["link"][1]
+    types = [t for x in unlocks_doors if x.get("nodeId", to_node) == node_id for t in x["types"]]
+    if "ammo" in types:
+        return []
+    missing_types = {"missiles", "super", "powerbomb"}.difference(types)
+    return missing_types
+
 # give list of keys to check
 # give label for output message
 # give list of valid values
@@ -245,7 +298,6 @@ def process_strats(src, paramData):
     fromNode = paramData["fromNode"]
     fromNodeRef = paramData["fromNodeRef"]
     roomData = paramData["roomData"]
-    # roomIDX = paramData["roomIDX"]
     toNode = paramData["toNode"]
     bail = paramData["bail"]
 
@@ -330,30 +382,42 @@ for jsonPath in [
             for [k, v] in flattened_dict.items():
                 process_keyvalue(k, v, {})
 
-cheatSheetJSON = {}
-with open(
-    os.path.join(
-        ".",
-        "tests",
-        "asserts",
-        "canLeaveCharged.json"
-    ),
-    encoding="utf-8"
-) as cheatSheetFile:
-    cheatSheetJSON = json.load(cheatSheetFile)
+# process connections to identify door positions:
+vertical_door_nodes = set()
+door_position_dict = {}
+connections = {
+    "inter": {},
+    "intra": {},
+    "subarea": {}
+}
+connectionPath = os.path.join(".","connection")
+for root, dirs, files in os.walk(os.path.join(".", "connection")):
+    for filename in files:
+        if not filename.endswith(".json"):
+            continue
+        with open(os.path.join(root, filename), "r", encoding="utf-8") as connectionFile:
+            connections_json = json.load(connectionFile)
+            for connection in connections_json["connections"]:
+                for i, node in enumerate(connection["nodes"]):
+                    door_position_dict[(node["roomid"], node["nodeid"])] = node["position"]
+                if connection["connectionType"] in ["VerticalDoor", "VerticalSandpit"]:
+                    for i, node in enumerate(connection["nodes"]):
+                        vertical_door_nodes.add((node["roomid"], node["nodeid"]))
 
 print("")
-print("Check Rooms")
+print("Check Regions")
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
         if ".json" in filename and "roomDiagrams" not in filename:
             roomPath = os.path.join(r, filename)
-            with open(roomPath, encoding="utf-8") as roomFile:
-                roomJSON = json.load(roomFile)
+            with open(roomPath, encoding="utf-8") as regionFile:
+                roomJSON = json.load(regionFile)
                 flattened_dict = [
                     flatten(d, '.') for d in [roomJSON]
                 ][0]
                 # print(flattened_dict)
+                # check rooms
+
                 room = roomJSON
                 roomName = room["name"]
                 area = room["area"]
@@ -435,65 +499,73 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Document Nodes
                     # Validate Nodes
                     node_lookup = {}
+                    nodes_without_implicit_unlocks = set()
                     for node in room["nodes"]:
-                        if "id" in node:
-                            node_lookup[node['id']] = node
-                            nodeRef = f"{roomRef}:{node['id']}"
-                            if node["id"] in roomData["nodes"]["froms"]:
-                                msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            else:
-                                roomData["nodes"]["froms"].append(node["id"])
-                            if node["name"] in roomData["nodes"]["names"]:
-                                msg = f"🔴ERROR: Node Name not unique! {nodeRef}:{node['name']}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            else:
-                                roomData["nodes"]["names"].append(node["name"])
-                            roomData["nodes"]["ids"].append(node["id"])
+                        node_lookup[node['id']] = node
+                        nodeRef = f"{roomRef}:{node['id']}"
+                        if node["id"] in roomData["nodes"]["froms"]:
+                            msg = f"🔴ERROR: Node ID not unique! {nodeRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        else:
+                            roomData["nodes"]["froms"].append(node["id"])
+                        if node["name"] in roomData["nodes"]["names"]:
+                            msg = f"🔴ERROR: Node Name not unique! {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        else:
+                            roomData["nodes"]["names"].append(node["name"])
+                        roomData["nodes"]["ids"].append(node["id"])
                         if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
-                            roomData["nodes"]["spawnAts"].append(node["spawnAt"])
+                            roomData["nodes"]["tos"].append(node["spawnAt"])
+
+                        if node.get("useImplicitDoorUnlocks") is False:
+                            nodes_without_implicit_unlocks.add(node['id'])
+
+                        node_orientation = node.get("doorOrientation")
+                        door_position = door_position_dict.get((room["id"], node["id"]))
+                        if (node_orientation, door_position) not in [
+                            ("left", "right"),
+                            ("right", "left"),
+                            ("up", "bottom"),
+                            ("down", "top"),
+                            (None, None),
+                        ]:
+                            msg = f"🔴ERROR: Door orientation '{node_orientation}' inconsistent with connection position '{door_position}': {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
 
                     # Document Links
+                    link_set = set()
+                    for link_from in room["links"]:
+                        from_node_id = link_from["from"]
+                        if from_node_id not in roomData["nodes"]["ids"]:
+                            msg = f"🔴ERROR: In links, from node {from_node_id} doesn't exist."
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        for link in link_from["to"]:
+                            to_node_id = link["id"]
+                            if to_node_id not in roomData["nodes"]["ids"]:
+                                msg = f"🔴ERROR: In links, to node {to_node_id} doesn't exist."
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            link_set.add((from_node_id, to_node_id))
+
                     # Document Link Strats
                     for strat in room["strats"]:
-                        if "from" not in strat:
-                            msg = f"🔴ERROR: Strat is missing From Node:{fromNodeRef}:{strat['name']}"
+                        if "link" not in strat:
+                            msg = f"🔴ERROR: Strat is missing `link` property: {roomRef}:{strat['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
                             continue
-                        fromNode = strat["from"]
-                        fromNodeRef = f"{roomRef}:FromNode[{fromNode}]"
-                        if fromNode not in roomData["nodes"]["ids"]:
-                            msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
+                        link = strat["link"]
+                        linkRef = str(link)
+                        if tuple(strat["link"]) not in link_set:
+                            msg = f"🔴ERROR: Link {linkRef} doesn't exist: {roomRef}:{strat['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-
-                        if "to" not in strat:
-                            msg = f"🔴ERROR: Strat is missing To Node:{fromNodeRef}:{strat['name']}"
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
-                            continue
-                        toNode = strat["to"]
+                        toNode = link[1]
                         roomData["nodes"]["tos"].append(toNode)
-                        toNodeRef = f"{roomRef}:FromNode[{fromNode}]:ToNode[{toNode}]"
-                        if toNode not in roomData["nodes"]["ids"]:
-                            msg = f"🔴ERROR: To Node doesn't exist:{toNodeRef}"
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
-                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
-                        if "entranceCondition" in strat:
-                            if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
-                                msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                        if "exitCondition" in strat:
-                            if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
-                                msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-
 
                     # Validate "enemies"
                     if "enemies" in room:
@@ -530,6 +602,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     obstacleErrors = search_for_valid_keyvalue(
                         [
                             "clearsObstacles.",
+                            "resetsObstacles.",
                             "obstaclesCleared.",
                             "obstaclesNotCleared.",
                         ],
@@ -608,27 +681,21 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
-
-                    # Validate canLeaveCharged
-                    # Validate leaveWithGMode
-                    gModeObjects = []
-                    for node in room["nodes"]:
-                        if "id" in node:
-                            nodeRef = f"{roomRef}:{node['id']}"
-
-                        # Collect GMode objects
-                        if "leaveWithGMode" in node:
-                            for leaveG in node["leaveWithGMode"]:
-                                gModeObjects.append(leaveG)
-
                     # Validate strats
+                    previous_link = (0, 0)
                     for strat in room["strats"]:
-                        if "from" not in strat or "to" not in strat:
-                            # Errors are already generated above if either of these fields is missing.
+                        if "link" not in strat or tuple(strat["link"]) not in link_set:
+                            # Errors are already generated above in this case.
                             continue
-                        fromNode = strat["from"]
+                        link = strat["link"]
+                        if tuple(link) < previous_link:
+                            msg = f"🔴ERROR: Strat with link {list(link)} should come before previous link {list(previous_link)}:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        previous_link = tuple(link)
+                        fromNode = link[0]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
-                        toNode = strat["to"]
+                        toNode = link[1]
                         paramData = {
                             "key": "linkStrats",
                             "fromNode": fromNode,
@@ -638,36 +705,88 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "bail": bail
                         }
                         paramData = process_strats([strat], paramData)
-                        showNodes = paramData["showNodes"]
-                        bail = paramData["bail"]
+                        fromNode = link[0]
+                        toNode = link[1]
+                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
+                        if "entranceCondition" in strat:
+                            if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
+                                msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if (room["id"], fromNode) in vertical_door_nodes and "comesThroughToilet" not in strat["entranceCondition"]:
+                                msg = f"🔴ERROR: Strat with vertical entranceCondition is missing 'comesThroughToilet':{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if (room["id"], fromNode) not in vertical_door_nodes and "comesThroughToilet" in strat["entranceCondition"]:
+                                msg = f"🔴ERROR: Strat has 'comesThroughToilet' but is not a vertical connection:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if "comeInWithTemporaryBlue" in strat["entranceCondition"]:
+                                if (room["id"], fromNode) in vertical_door_nodes and "direction" not in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has vertical comeInWithTemporaryBlue entranceCondition without 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                if (room["id"], fromNode) not in vertical_door_nodes and "direction" in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has non-vertical comeInWithTemporaryBlue entranceCondition with 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                        if "exitCondition" in strat:
+                            if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
+                                msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if "leaveShinecharged" in strat["exitCondition"]:
+                                if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
+                                    if "entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]:
+                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition:{stratRef}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+                            if "leaveWithTemporaryBlue" in strat["exitCondition"]:
+                                if (room["id"], toNode) in vertical_door_nodes and "direction" not in strat["exitCondition"]["leaveWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has vertical leaveWithTemporaryBlue exitCondition without 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                                if (room["id"], toNode) not in vertical_door_nodes and "direction" in strat["exitCondition"]["leaveWithTemporaryBlue"]:
+                                    msg = f"🔴ERROR: Strat has non-vertical leaveWithTemporaryBlue exitCondition with 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
 
-                    # Validate GMode objects
-                    for gModeObj in gModeObjects:
-                        if "strats" in gModeObj:
-                            parentNodeRef = ""
-                            if "fromNode" in gModeObj:
-                                parentNodeRef = f"{gModeObj['fromNode']}:"
-                            toNodeRef = f"{roomRef}:{parentNodeRef}"
-                            if "id" in gModeObj:
-                                toNodeRef += f"{gModeObj['id']}:"
-                            for strat in gModeObj["strats"]:
-                                stratRef = f"{toNodeRef}{strat['name']}"
-                                if "requires" in strat:
-                                    for req in strat["requires"]:
-                                        if "comeInWithGMode" in req:
-                                            if "fromNodes" in req["comeInWithGMode"]:
-                                                for fromNode in req["comeInWithGMode"]["fromNodes"]:
-                                                    fromNodeRef = f"Node[{stratRef}:{fromNode}]"
-                                                    if fromNode not in roomData["nodes"]["froms"]:
-                                                        msg = f"🔴ERROR: From Node doesn't exist:{fromNodeRef}"
-                                                        messages["reds"].append(msg)
-                                                        messages["counts"]["reds"] += 1
-                                                    else:
-                                                        msg = ""
-                                                        msg += f"🟢{area}/{subarea}/{roomName}.nodes.x.canLeaveCharged.x.initiateRemotely.pathToDoor.x.strats.x.{strat['name']}"
-                                                        messages["greens"].append(msg)
-                                                        messages["counts"]["greens"] += 1
+                        node_subtype = node_lookup[toNode]["nodeSubType"]
+                        door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks)
+                        for node in door_unlocked_nodes:
+                            missing_types = check_node_covered_in_unlocks_doors(strat, node)
+                            if len(missing_types) == 3:
+                                msg = f"🔴ERROR: Door unlocked requirement for node {node} is not covered in `unlocksDoors`:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            else:
+                                for t in missing_types:
+                                    msg = f"🔴ERROR: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                        if strat.get("bypassesDoorShell") == True:
+                            if node_lookup[toNode]["nodeType"] != "door":
+                                msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
+                        if "collectsItems" in strat:
+                            for item_node_id in strat["collectsItems"]:
+                                if item_node_id not in node_lookup or node_lookup[item_node_id]["nodeType"] != "item":
+                                    msg = f"🔴ERROR: collectsItems references node {item_node_id} which is not an item node:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
+                        if "setsFlags" in strat:
+                            for flag in strat["setsFlags"]:
+                                if flag not in keywords["flags"]:
+                                    msg = f"🔴ERROR: setsFlags references flag '{flag}' which does not exist:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+
                     # Validate Nodes
+                    showNodes = paramData["showNodes"]
+                    bail = paramData["bail"]
                     for node in room["nodes"]:
                         orphaned = False
                         # If there's no link, call it orphaned
@@ -796,49 +915,46 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
 # print(uniques)
 
-if bail:
-    firstErr = True
-    firstWarn = True
-    foundErr = False
-    foundWarn = False
-    lastRegion = ""
-    region = ""
-    for msg in messages["reds"]:
-        if isinstance(msg, dict):
-            if "region" in msg:
-                region = msg["region"]
-            if "msg" in msg:
-                if "note" in msg:
-                    msg["msg"] += " !! " + msg["note"]
-                msg = msg["msg"]
-        if "ERROR" in msg or "requires" in msg:
-            foundErr = True
-            if firstErr:
-                print("🔴ERROR🔴")
-                firstErr = False
-            if region != lastRegion:
-                print(region)
-                lastRegion = region
-            print(msg)
-    for msg in messages["yellows"]:
-        if isinstance(msg, dict):
-            if "region" in msg:
-                region = msg["region"]
-            if "msg" in msg:
-                if "note" in msg:
-                    msg["msg"] += " !! " + msg["note"]
-                msg = msg["msg"]
-        if "WARNING" in msg or "requires" in msg:
-            foundWarn = True
-            if firstWarn:
-                print("🟡WARNING🟡")
-                firstWarn = False
-            if region != lastRegion:
-                print(region)
-                lastRegion = region
-            print(msg)
-    if foundWarn:
-        subprocess.run("echo \"::warning title=Warning::Check Log for Details...\"", shell=True)
-    if foundErr:
-        print("🔴Something fucked up! Bailing!")
-        sys.exit(1)
+firstErr = True
+firstWarn = True
+foundErr = False
+foundWarn = False
+lastRegion = ""
+region = ""
+for msg in messages["reds"]:
+    if isinstance(msg, dict):
+        if "region" in msg:
+            region = msg["region"]
+        if "msg" in msg:
+            if "note" in msg:
+                msg["msg"] += " !! " + msg["note"]
+            msg = msg["msg"]
+    if "ERROR" in msg or "requires" in msg:
+        foundErr = True
+        if firstErr:
+            print("🔴 {} ERRORs 🔴".format(len(messages["reds"])))
+            firstErr = False
+        if region != lastRegion:
+            print(region)
+            lastRegion = region
+        print(msg)
+for msg in messages["yellows"]:
+    if isinstance(msg, dict):
+        if "region" in msg:
+            region = msg["region"]
+        if "msg" in msg:
+            if "note" in msg:
+                msg["msg"] += " !! " + msg["note"]
+            msg = msg["msg"]
+    if "WARNING" in msg or "requires" in msg:
+        foundWarn = True
+        if firstWarn:
+            print("🟡 {} WARNINGs 🟡".format(len(messages["yellows"])))
+            firstWarn = False
+        if region != lastRegion:
+            print(region)
+            lastRegion = region
+        print(msg)
+if foundErr:
+    print("🔴Something fucked up! Bailing!")
+    sys.exit(1)
