@@ -122,7 +122,7 @@ A `leaveNormally` object indicates that Samus can leave the room through this do
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room. A `leaveWithRunway` condition implies that the area around the door must be clear of any enemies that would interfere with using the runway.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInGettingBlueSpeed`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, `comeInWithTemporaryBlue`, `comeInBlueSpinning`, and `comeInWithMockball`. Details are given under the corresponding entrance conditions below.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInGettingBlueSpeed`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, `comeInWithTemporaryBlue`, `comeInSpinning`, `comeInBlueSpinning`, and `comeInWithMockball`. Details are given under the corresponding entrance conditions below.
 
 `leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details):
 
@@ -557,6 +557,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithMockball_: This indicates that Samus must roll into the room with a mockball with a certain amount of momentum.
 - _comeInWithSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room.
 - _comeInWithBlueSpringBallBounce_: This indicates that Samus get a spring ball bounce in the doorway of the previous room while having blue speed.
+- _comeInSpinning_: This indicates that Samus come in with a spin jump through the doorway with speed in a certain range.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
@@ -977,6 +978,38 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
   - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement).
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. An extra `{"heatFrames": 200}` is assumed for gaining temporary blue and leaving the room.
   - If the previous door environment is water, then `Gravity` is required.
+
+### Come In Spinning
+
+A `comeInSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, with speed in a certain range, applicable to horizontal transitions. It has the following properties:
+
+- _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too high of a speed.
+
+A `comeInSpinning` entrance condition must match with a `leaveSpinning` or `leaveWithRunway` exit condition on the other side of the door.
+
+- A match with `leaveSpinning` has the following requirements:
+  - The `blue` property must be "no" or "any".
+  - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, and the effective runway length of the `remoteRunway` in the exit condition (see the [full run speed table](#full-run-speed-table)). Note that `unusableTiles` is ignored in this case.
+- A match with `leaveWithRunway` has the following requirements:
+  - There must exist a possible value of extra run speed satisfying any applicable constraints: `minExtraRunSpeed` or `maxExtraRunSpeed` in the entrance condition, and the effective runway length (with `unusableTiles` subtracted) in the exit condition (see the [full run speed table](#full-run-speed-table)).
+  - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInRunning`, except here there is no second runway to combine with. The `unusableTiles` are ignored (i.e. not subtracted) for the purposes of determining heat frames, since heat damage is still taken during the jump.
+  - If the previous door environment is water, then `Gravity` is required.
+
+```json
+{
+  "name": "Come In Spinning",
+  "notable": false,
+  "entranceCondtion": {
+    "comeInBlueSpinning": {
+      "unusableTiles": 2,
+      "minExtraRunSpeed": "$2.0"
+    }
+  },
+  "requires": []
+}
+```
 
 ### Come In Blue Spinning
 
