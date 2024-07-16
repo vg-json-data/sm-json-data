@@ -41,6 +41,13 @@
       "nodeAddress": "0x78876"
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Bomb Block",
+      "obstacleType": "inanimate"
+    }
+  ],
   "enemies": [],
   "links": [
     {
@@ -53,7 +60,8 @@
     {
       "from": 2,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
@@ -149,7 +157,10 @@
       "link": [2, 1],
       "name": "Base",
       "requires": [
-        "h_canDestroyBombWalls",
+        {"or": [
+          "h_canBombThings",
+          {"obstaclesCleared": ["A"]}
+        ]},
         {"or": [
           "h_canBombThings",
           "h_canUseSpringBall"
@@ -161,7 +172,7 @@
       "link": [2, 1],
       "name": "Jump Morph",
       "requires": [
-        "h_canDestroyBombWalls",
+        {"obstaclesCleared": ["A"]},
         "h_canThreeTileJumpMorph"
       ]
     },
@@ -169,11 +180,37 @@
       "link": [2, 1],
       "name": "Running Jump Morph",
       "requires": [
-        "h_canDestroyBombWalls",
+        {"obstaclesCleared": ["A"]},
         "canLateralMidAirMorph",
         "canTrickyJump"
       ],
       "note": "A running lateral mid-air morph can squeeze into the hole with good enough timing."
+    },
+    {
+      "link": [2, 2],
+      "name": "Power Bomb the Block",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Screw Attack the Block",
+      "requires": [
+        "ScrewAttack"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Use Flash Suit to Break the Block",
+      "requires": [
+        {"useFlashSuit": {}},
+        {"shinespark": {"frames": 1, "excessFrames": 1}}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
     }
   ]
 }
