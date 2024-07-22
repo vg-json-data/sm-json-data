@@ -182,6 +182,18 @@ __Example:__
 {"energyAtMost": 1}
 ```
 
+#### autoReserveTrigger object
+
+An `autoReserveTrigger` object represents a logical requirement for "auto" reserves to be triggered, which results in Samus' energy becoming equal to the amount of energy in reserves (capped to energy capacity), and reserve energy becoming zero. If the `autoReserveTrigger` takes place in a heated room, there is an implicit `heatFrames` requirement with the number of frames being equal to the amount of health recovered by the Reserve refill.  An `autoReserveTrigger` object has two optional properties:
+
+* _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
+* _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
+
+__Example:__
+```json
+{"autoReserveTrigger": {}}
+```
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
 
@@ -192,7 +204,24 @@ __Example:__
 
 __Additional considerations__
 
-Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be stricly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be strictly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+
+#### heatFramesWithEnergyDrops object
+
+A `heatFramesWithEnergyDrops` object represents the need for Samus to spend time in a heated room, but with the possibility of offsetting some of the heat damage using energy drops from enemies. Any heat damage is logically applied before the energy gain, so Samus must be able to survive the heat before picking up the drops. Any energy gain is logically capped to not exceed the heat damage, so this logical requirement cannot result in a net energy gain. A `heatFramesWithEnergyDrops` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
+
+The actual amount of energy gained typically depends on RNG and also on which ammo types are completely full. The drop probabilities for each enemy type is given in the [enemies](enemies/main.json) file. Because of the randomness involved, the logical amount of energy gain is open to various interpretations. For example, the mean, the median, or a lower confidence limit could be used.
+
+__Example:__
+```json
+{"heatFramesWithEnergyDrops": {
+  "frames": 200,
+  "drops": [
+    {"enemy": "Magdollite", "count": 3},
+    {"enemy": "Multiviola", "count": 2}
+  ]
+}}
+```
 
 #### gravitylessHeatFrames object
 A `gravitylessHeatFrames` object represents Samus in a heated environment with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `heatFrames` without the reduction effects given by Gravity Suit.
@@ -201,6 +230,15 @@ __Example:__
 ```json
 {"gravitylessHeatFrames": 70}
 ```
+
+#### shineChargeFrames object
+
+A `shineChargeFrames` object represents the need for Samus to have the given amount of shinecharge frames remaining; after this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
+
+For this requirement to be satisfied, one of the following must be true:
+- It must be preceded by a `canShineCharge` requirement in the same strat.
+- The strat must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
+- The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
 
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
@@ -266,6 +304,14 @@ __Example:__
 {"thornHits": 1}
 ```
 
+#### electricityHits object
+A `electricityHits` object represents the need for Samus to intentionally take a number of hits from electricity, found in Wrecked Ship. This is meant to be converted to a flat health value based on item loadout. The vanilla damage per thorn hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.
+
+__Example:__
+```json
+{"electricityHits": 1}
+```
+
 #### resourceCapacity object
 A `resourceCapacity` object represents the need for Samus to be capable of holding at least a set amount of a specific resource. It can have the following properties:
 * _type:_ The type of resource. Can have the following values:
@@ -279,10 +325,50 @@ A `resourceCapacity` object represents the need for Samus to be capable of holdi
 __Example:__
 ```json
 {"resourceCapacity": [
-    { "type": "Missile", "count": 10},
-    { "type": "Super", "count":10},
-    { "type": "PowerBomb", "count": 11},
-    { "type": "RegularEnergy", "count":899}
+    {"type": "Missile", "count": 10},
+    {"type": "Super", "count": 10},
+    {"type": "PowerBomb", "count": 11},
+    {"type": "RegularEnergy", "count": 899}
+]}
+```
+
+#### resourceAvailable object
+A `resourceAvailable` object represents the need for Samus to be holding at least a set amount of a specific resource. It has the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus must have.
+
+This requirement does not consume the resource.
+
+__Example:__
+```json
+{"resourceAvailable": [
+    {"type": "Energy", "count": 99}
+]}
+```
+
+#### resourceMissingAtMost object
+A `resourceMissingAtMost` object represents the need for Samus to be missing at most a certain amount of a specific resource, relative to being full capacity. It has the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus must have.
+
+For example, a count of zero would indicate that Samus must be full on that resource type.
+
+__Example:__
+```json
+{"resourceMissingAtMost": [
+    {"type": "Energy", "count": 0}
 ]}
 ```
 
@@ -302,99 +388,33 @@ __Example:__
 {"refill": ["Energy", "Missile"]}
 ```
 
+#### partialRefill object
+
+A `partialRefill` object represents a process that refills a certain resource type up to a certain level, while having no effect if already at or above that level. It has two properties:
+
+* _type_: The resource type being partially refilled, one of the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (combination of RegularEnergy + ReserveEnergy)
+* _limit_: The level of resource amount that the refill stops at.
+
+When applied to `Energy` type, the refill applies first to regular energy; if the refill `limit` exceeds the regular energy capacity, then regular energy will be fully refilled and the remaining amount (after subtracting regular energy capacity) will be applied as a partial refill to reserve energy.
+
+__Example:__
+```json
+{"partialRefill": {"type": "Energy", "limit": 1500}}
+```
+
 ### Momentum-Based Objects
 This section contains logical elements centered around available running room, as well as the charging (and subsequent execution) of shinesparks.
-
-#### adjacentRunway object
-
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition` should be used instead.
-
-An `adjacentRunway`object represents the need for Samus to be able to run (or possibly jump) into the room from an adjacent room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _usedTiles:_ Indicates how many tiles should be avaible for Samus to gather momentum before going into the door
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _physics:_ An optional array that indicates the acceptable physics that can be in effect at the adjacent door. If missing, all physics are acceptable. In addition to the concrete door physics
-"air", "water", "lava", and "acid", the special value "normal" requires the neighboring door
-to have either "air" physics or "water" physics with Gravity.
-* _useFrames:_ An optional property that indicates the number of frames Samus should expect to spend at the adjacent door, being subjected to the door (acid/lava) and room (heat) environments there if applicable.
-* _overrideRunwayRequirements:_ An optional boolean (if missing, assume false). If true, indicates the the requirements on the runway itself don't need to be fulfilled.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways.
-
-__Example:__
-```json
-{"adjacentRunway": {
-  "fromNode": 3,
-  "usedTiles": 1
-}}
-```
-
-__Additional considerations__
-
-Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
-
-#### adjacentJumpway object
-An `adjacentJumpway` object represents the need for Samus to be able to jump into the room from a door frame or platform in an adjacent room. Currently supported jumpway types involve jumping up through a vertical doorway. The object has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _jumpwayType:_ Possible values are "doorFrameBelow" and "platformBelow". The logical requirement can only be satisfied by jumpways having a matching type.
-* _minHeight:_ Minimum value of "height" on a jumpway to be able to satisfy this requirement. For a door frame jumpway, this expresses that the door frame extends at least a certain distance below the door transition (in tiles, not including the transition tiles). Likewise, for a platform  jumpway, it expresses that the platform must be positioned at least a certain distance below the door transition (in tiles, not including the transition tiles or platform tiles).
-* _maxHeight:_ Maximum value of "height" on a jumpway to be able to satisfy this requirement. For a platform jumpway, this expresses that the platform must be positioned at most a certain distance below the door transition.
-* _maxLeftPosition:_ Maximum value of "leftPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the left (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
-* _minRightPosition:_ Minimum value of "rightPosition" on a jumpway to be able to satisfy this requirement. This applies only to platform jumpways and expresses that the platform extends at least a certain distance to the right (in tiles, relative to the center of the door, with negative values indicating a position to the left of the door center).
-
-Please refer to the section about jumpways in [the Region documentation](region/region-readme.md) for a more detailed explanation of jumpways. 
-
-__Example:__
-```json
-{"adjacentJumpway": {
-  "jumpwayType": "platformBelow",
-  "fromNode": 2,
-  "minHeight": 9,
-  "maxHeight": 9,
-  "maxLeftPosition": -38.5,
-  "minRightPosition": -7
-}}
-```
-
-__Additional considerations__
-
-Please note that fulfilling this logical element requires interaction with the door in the adjacent room to be possible (so no active locks on it, and fulfilling its interaction requirements). Fulfilling this logical element also causes the room to be reset, which means all obstacles respawn.
-
-#### canComeInCharged object
-
-_Note_: This logical requirement is deprecated. The [strat property](../strats.md) `entranceCondition/comeInCharged` should be used instead.
-
-A `canComeInCharged` object represents the need to charge a shinespark in an adjacent room, or to initiate a shinespark in an adjacent room and into the current room. It has the following properties:
-* _fromNode:_ Indicates from what door this logical requirement expects Samus to enter the room
-* _inRoomPath:_ An array that indicates the path of node IDs that the player should travel, up to and including the node where the `adjacentRunway` logical element is, in order to be able to used the adjacent runway. If this is missing, the player is expected to enter the room at the current node and not move from there.
-* _framesRemaining:_ Indicates the minimum number of frames Samus needs to have left, upon entering the room, before the shinespark charge expires. A value of 0 indicates that shinesparking through the door works. A value of 180 indicate that Samus must be able to obtain blue speed in the current room.
-* _unusableTiles:_ The number of tiles that are part of the runway but cannot be used for this shinespark.  Meaning the combined runway must be this many tiles longer to fulfill the requirement.  The `unusableTiles` must count from the end of the runway in the current room that is not touching the door.  The number of unusableTiles may be larger than the current room's runway.
-
-__Example:__
-```json
-{"canComeInCharged": {
-  "fromNode": 4,
-  "framesRemaining": 180
-}}
-```
-
-__Additional considerations__
-
-* A `canComeInCharged` object implicitly requires the Speed Booster.
-* A `canComeInCharged` object is implicitly fulfilled if the runways on the two sides of the door combine into a large enough runway to charge a spark. Combining with the adjacent room's runway is _not_ necessary if the current room's runway by itself is large enough.
-The number of framesRemaining in that case is:
-  * 180 if there is a usable runway in the destination room
-  * Roughly 175 if there is no usable runway in the destination room
-* Please note that unless the adjacent room is not used at all, fulfilling this logical element also causes the room to be reset. This means all obstacles respawn.
-
-Please refer to the section about runways in [the Region documentation](region/region-readme.md) for a more detailed explanation of runways and how to combine them.
-
-Energy requirements for shinesparking (if applicable) are specified separately using a `shinespark` object.
 
 #### canShineCharge object
 A `canShineCharge` object represents the need for Samus to be able to charge a shinespark within the current room. It has the following special properties:
 * _usedTiles:_ The number of tiles that are available to charge the shinespark. Smaller amounts of tiles require increasingly more difficult short charging techniques.
-* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 33 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction.
+* The following properties further define the tiles in `usedTiles`, by indicating how many of them have some particularities. Sloped tiles impact the required number of tiles to charge a shinespark. Those properties will be missing if there are no such tiles. In places with more than 45 tiles where it's not relevant, that information will also be ommitted. All up/down tile counts assume Samus is running in the most convenient direction.
   * _gentleUpTiles:_ Indicates how many tiles gently slope upwards (like in Speed Booster Hall).
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
@@ -416,73 +436,40 @@ __Additional considerations__
 
 * A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
 
-#### comeInWithRMode object
+#### getBlueSpeed object
 
-_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithRMode`](strats.md#come-in-with-r-mode) should be used instead.
+A `getBlueSpeed` object represents the need for Samus to be able to gain blue speed using a specified runway. It is very similar to `canShineCharge`, including the same set of properties, except that `getBlueSpeed` does not involve crouching to enter a shinecharge state for performing a shinespark. Instead, `getBlueSpeed` involves using the blue speed directly, such as to destroy enemies, bomb blocks, or Speed blocks.
 
-A `comeInWithRMode` object represents the need to obtain R-mode when entering the room. It has the following properties:
-* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
+Note that a `getBlueSpeed` requirement is compatible with preserving a flash suit, while `canShinecharge` is not.
 
 __Example:__
 ```json
-{"comeInWithRMode": {
-  "fromNodes": [1],
-}}
+{"getBlueSpeed": {
+  "usedTiles": 25,
+  "steepUpTiles": 3,
+  "steepDownTiles": 3,
+  "openEnd": 1
+}},
 ```
 
-__Additional considerations__
 
-* A `comeInWithRMode` object implicitly requires X-Ray Scope and a Reserve Tank.
-* A `comeInWithRMode` object implicitly requires the `canEnterRMode` tech.
-* A `comeInWithRMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup`.
-  * The `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
-    * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup` object.
-* A `comeInWithRMode` object implicitly requires a reserve trigger.
-  * Therefore Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Samus' reserve energy will become zero.
+#### speedBall object
 
-Please refer to the sections on `leaveWithGModeSetup` in [the Region documentation](region/region-readme.md) for a more detailed explanation of this object.
+A `speedBall` object represents the need for Samus to be able to gain blue speed and jump into a speedball using a specified runway. It includes a `canSpeedball` tech requirement. Whether a speedball can performed within a given runway length depends on the player's ability to shortcharge as well as to perform a short-hop mockball. The [blue run speed table](strats.md#blue-run-speed-table) describes several tiers of shortcharging skill, their associated runway lengths over which blue speed can be attained, and the resulting run speed. For determining whether a speedball is logically possible, the lowest run speed should be used within the range of what is possible for that skill level; this corresponds to using the "Ideal speed" from the table. The total runway length required can then be computed as follows:
 
-#### comeInWithGMode object
+$$\text{minimum speedball runway} = \text{minimal blue speed runway} + \text{short-hop mockball frames} * \text{mid-air speed}$$
 
-_Note_: This logical requirement is deprecated. The strat-level entrance condition [`comeInWithGMode`](strats.md#come-in-with-g-mode) should be used instead.
+Here the "mid-air speed" is obtained by adding the extra run speed (from the "Ideal speed" at the end of getting blue speed) to a base speed of $1.5, which is the average of the spin-jump base speed of $1.6 and the aim-down base speed of $1.4, assuming that roughly half of the jump will be spent in each of those two states. The "short-hop mockball frames" is the amount of frames between the start of the jump and when the morph-sized hitbox is achieved; it is a parameter that can be varied based on assumed player skill: a value of 6 is at or near TAS-level, while 40 would be a lenient value where Samus can jump several tiles into the air.
 
-A `comeInWithGMode` object represents the need to either have or obtain G-mode when entering the room. It has the following properties:
-* _fromNodes:_ Indicates from what doors this logical requirement expects Samus to enter the room.
-* _mode:_ Takes one of three possible values, "direct", "indirect", or "any", indicating whether this logical requirement expects Samus to enter in direct G-mode, indirect G-mode, or either. Direct G-mode is the state obtained when G-mode is first entered (i.e., the next room after the G-mode setup is performed), while indirect G-mode is the state after passing a door transition with G-mode (usually back into the room where the G-mode setup was performed).
-* _artificialMorph:_ A boolean indicating whether the logical requirement expects Samus to either obtain or already have an artificially morphed state when coming into the room, or to have collected the Morph item.
-* _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
-required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough that knockback frames do not expire until after reserves finish filling.
 __Example:__
 ```json
-{"comeInWithGMode": {
-  "fromNodes": [1],
-  "mode": "any",
-  "artificialMorph": false
-}}
+{"speedBall": {
+  "length": 25,
+  "steepUpTiles": 3,
+  "steepDownTiles": 3,
+  "openEnd": 1
+}},
 ```
-
-__Additional considerations__
-
-* A `comeInWithGMode` object implicitly requires X-Ray Scope and a Reserve Tank.
-* A `comeInWithGMode` object implicitly requires the `canEnterGMode` tech.
-  * If `artificialMorph` is `true` then it also requires either the `canArtificialMorph` tech or the Morph item.
-* A `comeInWithGMode` requires that one of the indicating nodes in `fromNodes` has a matching `leaveWithGModeSetup` or `leaveWithGMode` object in the corresponding door node of the neighboring room:
-  * A `leaveWithGModeSetup` object must satisfy the following requirements in order to match:
-    * The `mode` in the `comeInWithGMode` object must be "direct" or "any".
-    * Samus must have non-zero reserve energy.
-    * Any additional requirements in the `requires` property of the `leaveWithGModeSetup`.
-  * A `leaveWithGMode` object must satisfy the following requirements in order to match:
-    * The `mode` in the `comeInWithGMode` object must be "indirect" or "any".
-    * If `artificialMorph` is `true`, then either the `leavesWithArtificialMorph` property of the `leaveWithGMode` object must be `true` or there is an additional requirement that the Morph item be collected.
-    * Any additional requirements in the `requires` property of the `leaveWithGMode` object.
-* In the case of direct G-mode, `comeInWithGMode` object implicitly requires an energy drain caused by the reserve trigger and the need to damage down (and possibly drain most of reserves) in the preceding setup:
-  * If the tech `canEnterGModeImmobile` is enabled and the `gModeImmobile` on the corresponding door is satisfied, then Samus' regular energy will become whatever reserve energy she had before the transition, truncated to her maximum amount of regular energy (based on the number of ETanks collected).
-  * Otherwise, Samus' regular energy will become 4, or whatever reserve energy she had before the transition if it was less than 4.
-  * Samus' reserve energy will always become zero.
-
-Please refer to the sections on `leaveWithGModeSetup`, `leaveWithGMode`, and `gModeImmobile` in [the Region documentation](region/region-readme.md) for a more detailed explanation of these objects.
 
 #### itemNotCollectedAtNode object
 An `itemNotCollectedAtNode` object represents the need to have not yet collected the item at a given node in the same room. For example, such
@@ -504,10 +491,11 @@ This section contains logical elements that are affected by Lock type Objects at
 
 #### doorUnlockedAtNode object
 
-A `doorUnlockedAtNode` object represents the need to interact with a Door, usually without travelling through it.  Doors can be unusable if
-a Lock object is present on that Node.  The `doorUnlockedAtNode` object can be fulfilled when either 1) There are no locks on a Door or
-2) All locks on the Door have been unlocked.  Bypassing the Lock does not fulfill this Object requirement.  An example would be opening a Door
-to use the door frame as runway for a jump.
+A `doorUnlockedAtNode` object represents the need for a door to be unlocked, i.e. to be free of a lock such a red, green, yellow, or gray door shell. An example would be if the space in the door frame is needed as runway for a jump or shinecharge. 
+
+In order to support randomizers that may modify door colors, a `doorUnlockedAtNode` requirement should be used when appropriate even if the vanilla door color is blue. If a strat has an `exitCondition`, then there is an implicit `doorUnlockedAtNode` requirement on the destination door node, unless the strat has [`bypassesDoorShell`](strats.md#bypasses-door-shell) set to `true`.
+
+If the door node in a `doorUnlockedAtNode` also appears in the strat's [`unlocksDoors`](strats.md#unlocks-doors) property, then the `doorUnlockedAtNode` may also be fulfilled by unlocking the door as part of executing the strat (as an alternative to having been previously unlocked), and any `requires` for that locked door in the `unlocksDoors` then become part of the requirements for the strat.
 
 __Example:__
 ```json
@@ -539,9 +527,6 @@ __Example:__
 {"obstaclesNotCleared": ["A"]}
 ```
 
-__Additional considerations__
-Entering a room does not count as executing a strat, so this logical element cannot be fulfilled instantly upon entering a room.
-
 #### resetRoom object
 A `resetRoom` object represents the need for the room to be in an initial state in order to perform a strat. A `resetRoom` object can have the following properties:
 * _nodes:_ An array containing the in-room ID of nodes at which entering the room can work.
@@ -561,4 +546,56 @@ __Example:__
 {"resetRoom":{
   "nodes": [1, 2]
 }}
+```
+
+### Glitched suits
+
+#### gainFlashSuit object
+
+A `gainFlashSuit` object represents that Samus gains a flash suit as part of executing this strat. A flash suit is a special shinecharge state which can be stored indefinitely and used one time to perform a shinespark, potentially in a distant room from where the flash suit was gained. 
+
+A `gainFlashSuit` object has no properties.
+
+With certain exceptions explained below, a flash suit can generally be carried around by any sequence of strats until it is used. A flash suit use is indicated by a `useFlashSuit` logical requirement. 
+
+The need to perform actions that cannot preserve a flash suit are indicated by a `noFlashSuit` logical requirement; typically this is expressed indirectly through tech or helpers, such as `canCrouchJump`, `canXRayStandup`, `canCrystalFlash`, or `h_canMidAirShootUp`. A `canShineCharge` logical requirement also cannot preserve a flash suit.
+
+The process of verifying which strats allow preserving a flash suit is not yet complete. Strats which have been checked are indicated by a property `"flashSuitChecked": true`. Any strat without this property should be assumed to be logically unusable for carrying a flash suit. Note that a strat with `"flashSuitChecked": true` may or may not be able to preserve a flash suit, depending on its logical requirements.
+
+__Example:__
+```json
+{"gainFlashSuit": {}}
+```
+
+#### useFlashSuit object
+
+A `useFlashSuit` indicates a need to have a flash suit state, which will then be lost as part of executing this strat. A strat with `useFlashSuit` should also have a `shinespark` logical requirement to specify the energy loss from shinesparking. 
+
+A `useFlashSuit` object has no properties.
+
+__Example:__
+```json
+{"useFlashSuit": {}}
+```
+
+#### noFlashSuit
+
+A `noFlashSuit` indicates a need to perform actions that are incompatible with preserving a flash suit; it therefore requires that Samus not be in a flash suit state.
+
+A `noFlashSuit` object has no properties.
+
+__Example:__
+```json
+{"noFlashSuit": {}}
+```
+
+### Other requirements
+
+#### tech object
+
+A `tech` object indicates the need to be able to perform a `tech`, but without its `otherRequires`. This can be used to override item, ammo, or other requirements that are normally associated with the tech. The removal of `otherRequires` requirements applies recursively to any tech in the `techRequires` of the referenced tech.
+
+__Example:__
+```json
+{"tech": "canIBJ"}
 ```

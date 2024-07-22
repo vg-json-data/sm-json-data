@@ -7,22 +7,16 @@ from pathlib import Path
 
 import format_json
 
-for dirpath in ["../region/", "../resources/app/manifests/"]:
-    for filext in [".json", ".off"]:
-        fileList = Path(dirpath).glob(f"**/*{filext}")
-        for path in sorted(Path(dirpath).glob(f"**/*{filext}")):
-            json_data = []
-            json_data = json.load(path.open("r"))
-            if "$schema" in json_data and json_data.get("$schema") not in [
-                "../../schema/m3-region.schema.json"
-            ]:
-                continue
+for path in sorted(Path("../region/").glob("**/*.json")):
+    room_json = json.load(path.open("r"))
+    if room_json.get("$schema") != "../../../schema/m3-room.schema.json":
+        continue
 
-            print("Processing", path)
-            new_json_data = format_json.format(json_data, indent=2)
+    print("Processing", path)
+    new_room_json = format_json.format(room_json, indent=2)
 
-            # Validate that the new JSON is equivalent to the old (i.e. the differences affect formatting only):
-            assert json.loads(new_json_data) == json_data
+    # Validate that the new JSON is equivalent to the old (i.e. the differences affect formatting only):
+    assert json.loads(new_room_json) == room_json
 
-            # Write the auto-formatted output:
-            path.write_text(new_json_data)
+    # Write the auto-formatted output:
+    path.write_text(new_room_json)
