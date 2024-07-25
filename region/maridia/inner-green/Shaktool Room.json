@@ -26,14 +26,6 @@
       "nodeAddress": "0x001a8d0",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
-    },
-    {
-      "id": 3,
-      "name": "Shaktool Dug Event",
-      "nodeType": "event",
-      "nodeSubType": "flag",
-      "yields": ["f_ShaktoolDoneDigging"],
-      "devNote": "No unlock requirements for this event, since just reaching it is enough but the requirements for reaching it depend on where you're coming from"
     }
   ],
   "enemies": [
@@ -57,19 +49,11 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 3}
+        {"id": 2}
       ]
     },
     {
       "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3}
-      ]
-    },
-    {
-      "from": 3,
       "to": [
         {"id": 1},
         {"id": 2}
@@ -168,17 +152,18 @@
       "note": "This takes 1 min 40 sec if Shaktool is done digging."
     },
     {
-      "link": [1, 3],
+      "link": [1, 2],
       "name": "Base",
       "requires": [
         {"or": [
           "f_ShaktoolDoneDigging",
           "h_canUsePowerBombs"
         ]}
-      ]
+      ],
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
-      "link": [1, 3],
+      "link": [1, 2],
       "name": "G-Mode Morph Power Bomb",
       "entranceCondition": {
         "comeInWithGMode": {
@@ -189,7 +174,56 @@
       "requires": [
         "h_canArtificialMorphPowerBomb"
       ],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
       "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Base",
+      "requires": [
+        "f_ShaktoolDoneDigging"
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Shaktool Room Reverse",
+      "notable": true,
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
+    },
+    {
+      "link": [2, 1],
+      "name": "G-Mode Morph Reverse Shaktool",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          {"and": [
+            "Gravity",
+            "h_canArtificialMorphIBJ"
+          ]},
+          "h_canArtificialMorphSpringBall"
+        ]},
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "flashSuitChecked": true,
+      "note": [
+        "The Snails will dig through the sand without showing any visual difference. Each block they pass through gets closer to overloading PLMs.",
+        "In order to PB the left wall before PLMs are overloaded, it is necessary to only allow one snail to dig, either by bombing one or by facing one to prevent movement until it is off screen.",
+        "If using mobile g-mode, it is easiest to get past the bottom one and prevent it from digging. If using immobile g-mode, it is easiest to have whichever one hits Samus go off screen.",
+        "In the morph tunnel, it is important to place the PB as far right as possible, while still hitting the PB blocks, otherwise the Snails will have overloaded the PLMs and the blocks won't break.",
+        "The green stone changes one tile earlier than the PB wall, and can be a good visual cue to place the PB.",
+        "After using the PB, exit the sand, leave G-Mode, and wait for Shaktool. Note that the Snails will not dig while off screen or while Samus is facing them, even while she is morphed."
+      ]
     },
     {
       "link": [2, 1],
@@ -199,7 +233,8 @@
           "blockPositions": [[5, 3], [7, 2]]
         }
       },
-      "requires": []
+      "requires": [],
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 1],
@@ -210,7 +245,8 @@
         }
       },
       "requires": [],
-      "bypassesDoorShell": true
+      "bypassesDoorShell": true,
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 1],
@@ -226,7 +262,8 @@
         "leaveWithGrappleTeleport": {
           "blockPositions": [[3, 12]]
         }
-      }
+      },
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 1],
@@ -242,7 +279,8 @@
         "leaveWithGrappleTeleport": {
           "blockPositions": [[3, 13]]
         }
-      }
+      },
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 2],
@@ -363,70 +401,19 @@
       "note": "Wait for Shaktool. If Shaktool's camera is fixed it is possible without Shaktool, by using a Snail (Yard): a Super or any SBA can trigger a Yard to attack."
     },
     {
-      "link": [2, 3],
-      "name": "Base",
-      "requires": [
-        "f_ShaktoolDoneDigging"
-      ]
-    },
-    {
-      "link": [2, 3],
+      "link": [2, 2],
       "name": "Vanilla",
       "requires": [
         "h_ShaktoolVanillaFlag"
       ],
-      "note": "Entering from the right door gives a weird alignment glitch, but it's possible to exit back through the door and that triggers the event flag, which opens up the room on the next re-entry"
-    },
-    {
-      "link": [2, 3],
-      "name": "Shaktool Room Reverse",
-      "notable": true,
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
-    },
-    {
-      "link": [2, 3],
-      "name": "G-Mode Morph Reverse Shaktool",
-      "notable": true,
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "any",
-          "morphed": true
-        }
+      "exitCondition": {
+        "leaveNormally": {}
       },
-      "requires": [
-        {"or": [
-          {"and": [
-            "Gravity",
-            "h_canArtificialMorphIBJ"
-          ]},
-          "h_canArtificialMorphSpringBall"
-        ]},
-        "h_canArtificialMorphPowerBomb"
-      ],
-      "flashSuitChecked": true,
+      "setsFlags": ["f_ShaktoolDoneDigging"],
       "note": [
-        "The Snails will dig through the sand without showing any visual difference. Each block they pass through gets closer to overloading PLMs.",
-        "In order to PB the left wall before PLMs are overloaded, it is necessary to only allow one snail to dig, either by bombing one or by facing one to prevent movement until it is off screen.",
-        "If using mobile g-mode, it is easiest to get past the bottom one and prevent it from digging. If using immobile g-mode, it is easiest to have whichever one hits Samus go off screen.",
-        "In the morph tunnel, it is important to place the PB as far right as possible, while still hitting the PB blocks, otherwise the Snails will have overloaded the PLMs and the blocks won't break.",
-        "The green stone changes one tile earlier than the PB wall, and can be a good visual cue to place the PB.",
-        "After using the PB, exit the sand, leave G-Mode, and wait for Shaktool. Note that the Snails will not dig while off screen or while Samus is facing them, even while she is morphed."
+        "In the vanilla game, if the flag is not already set, entering from the right door immediately sets the flag, though the room must be reset for it to take effect.",
+        "Resetting the room also fixes the camera, which gets broken in this state."
       ]
-    },
-    {
-      "link": [3, 1],
-      "name": "Base",
-      "requires": [
-        "f_ShaktoolDoneDigging"
-      ]
-    },
-    {
-      "link": [3, 2],
-      "name": "Base",
-      "requires": []
     }
   ]
 }
