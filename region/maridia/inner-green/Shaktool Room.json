@@ -28,6 +28,19 @@
       "doorEnvironments": [{"physics": "air"}]
     }
   ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Power Bomb Blocks",
+      "obstacleType": "inanimate"
+    },
+    {
+      "id": "B",
+      "name": "Sand Blocks",
+      "obstacleType": "inanimate",
+      "note": "Cleared by having the sand blocks be fully destroyed by Shaktool or snails"
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -63,6 +76,17 @@
   "strats": [
     {
       "link": [1, 1],
+      "name": "Come In With Shaktool Done Digging",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "f_ShaktoolDoneDigging"
+      ],
+      "clearsObstacles": ["A", "B"]
+    },
+    {
+      "link": [1, 1],
       "name": "Leave with Runway",
       "requires": [],
       "exitCondition": {
@@ -76,7 +100,7 @@
       "link": [1, 1],
       "name": "Leave Shinecharged",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["A", "B"]},
         "canShinechargeMovement",
         "canWaterShineCharge",
         {"canShineCharge": {
@@ -96,7 +120,7 @@
       "link": [1, 1],
       "name": "Leave Shinecharged, Gravity",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["A", "B"]},
         "canShinechargeMovement",
         "Gravity",
         {"canShineCharge": {
@@ -156,10 +180,11 @@
       "name": "Base",
       "requires": [
         {"or": [
-          "f_ShaktoolDoneDigging",
+          {"obstaclesCleared": ["A", "B"]},
           "h_canUsePowerBombs"
         ]}
       ],
+      "clearsObstacles": ["A", "B"],
       "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
@@ -174,6 +199,7 @@
       "requires": [
         "h_canArtificialMorphPowerBomb"
       ],
+      "clearsObstacles": ["A", "B"],
       "setsFlags": ["f_ShaktoolDoneDigging"],
       "flashSuitChecked": true
     },
@@ -181,7 +207,7 @@
       "link": [2, 1],
       "name": "Base",
       "requires": [
-        "f_ShaktoolDoneDigging"
+        {"obstaclesCleared": ["A", "B"]}
       ]
     },
     {
@@ -191,6 +217,7 @@
       "requires": [
         "h_canUsePowerBombs"
       ],
+      "clearsObstacles": ["A", "B"],
       "setsFlags": ["f_ShaktoolDoneDigging"],
       "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
     },
@@ -214,6 +241,7 @@
         ]},
         "h_canArtificialMorphPowerBomb"
       ],
+      "clearsObstacles": ["A", "B"],
       "setsFlags": ["f_ShaktoolDoneDigging"],
       "flashSuitChecked": true,
       "note": [
@@ -227,36 +255,88 @@
     },
     {
       "link": [2, 1],
-      "name": "Grapple Teleport",
+      "name": "Grapple Teleport (Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[5, 3], [7, 2]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "devNote": [
+        "In the vanilla game, grapple teleporting here does not set the flag 'f_ShaktoolDoneDigging', as Samus does not spend a frame on the right side of the room."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport (Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[5, 3], [7, 2]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
       "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 1],
-      "name": "Grapple Teleport Door Lock Skip",
+      "name": "Grapple Teleport Door Lock Skip (Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[3, 12], [3, 13]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "bypassesDoorShell": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip (Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12], [3, 13]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
       "bypassesDoorShell": true,
       "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
       "link": [2, 1],
-      "name": "Carry Grapple Teleport (Top Position)",
+      "name": "Carry Grapple Teleport (Top Position, Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[3, 12]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position, Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
       "bypassesDoorShell": true,
       "exitCondition": {
         "leaveWithGrappleTeleport": {
@@ -267,13 +347,33 @@
     },
     {
       "link": [2, 1],
-      "name": "Carry Grapple Teleport (Bottom Position)",
+      "name": "Carry Grapple Teleport (Bottom Position, Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[3, 13]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      }
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position, Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
       "bypassesDoorShell": true,
       "exitCondition": {
         "leaveWithGrappleTeleport": {
@@ -281,6 +381,56 @@
         }
       },
       "setsFlags": ["f_ShaktoolDoneDigging"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Come In With Shaktool Done Digging",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "f_ShaktoolDoneDigging"
+      ],
+      "clearsObstacles": ["A", "B"]
+    },
+    {
+      "link": [2, 2],
+      "name": "Shaktool Room Bounce the Snails Around the Room",
+      "notable": true,
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        {"or": [
+          "canTrickyDodgeEnemies",
+          {"and": [
+            "Morph",
+            {"enemyDamage": {
+              "enemy": "Yard",
+              "type": "contact",
+              "hits": 1
+            }},
+            {"or": [
+              "Gravity",
+              {"enemyDamage": {
+                "enemy": "Yard",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Bounce the snails around the room in order to destroy the sand blocks, opening up the runway.",
+        "A snail can be made to bounce in 3 ways: shooting it off a wall or ceiling, kicking it on the ground, or touching it while it is already bouncing.",
+        "To kick a snail, it is necessary to gain some run speed by dashing for at least one frame while in air physics.",
+        "A snail can be kicked from any direction when in its initial (not angered) state.",
+        "After being angered, a snail can only safely be kicked from a certain side: from behind if on the ground, or head-on if are on the ceiling (and not at all while on a wall).",
+        "If Morph is unavailable, be careful not to let the snails go off-camera.",
+        "If a snail is on the ground and still on camera, it can be forced to move toward Samus again by shooting it;",
+        "let it wrap around the right side of the room onto the ceiling, where it can be shot to cause it to fall and continue destroying sand blocks."
+      ]
     },
     {
       "link": [2, 2],
@@ -297,7 +447,7 @@
       "link": [2, 2],
       "name": "Leave Shinecharged",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["B"]},
         "canShinechargeMovement",
         "canWaterShineCharge",
         {"canShineCharge": {
@@ -317,7 +467,7 @@
       "link": [2, 2],
       "name": "Leave Shinecharged, Gravity",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["B"]},
         "canShinechargeMovement",
         "Gravity",
         {"canShineCharge": {
@@ -346,7 +496,7 @@
       "name": "G-Mode Setup - Get Hit By Shaktool",
       "notable": false,
       "requires": [
-        "f_ShaktoolDoneDigging"
+        {"obstaclesCleared": ["A", "B"]}
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
