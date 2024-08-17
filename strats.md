@@ -983,6 +983,7 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 
 A `comeInSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, with speed in a certain range, applicable to horizontal transitions. It has the following properties:
 
+- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
 - _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
 - _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too high of a speed.
@@ -1047,6 +1048,7 @@ A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `
 
 A `comeInWithMockball` entrance condition indicates that Samus must roll into the room in a mockball with a certain amount of momentum, applicable to horizontal transitions. It has the following properties:
 
+- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and enter a mockball.
 - _remoteAndLandingMinTiles_: When entering a mockball, it takes some time to accelerate up to full speed, which means that even when using a remote runway (i.e. one not connected to the door) to gain speed for the jump, the amount of landing space in front of the door still matters. Depending on the strat, different combinations of remote runway and landing lengths may work (e.g. with shorter landing lengths possibly requiring longer remote runways to compensate). This property is a list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable to gain speed at the start of the mockball. 
 
@@ -1080,6 +1082,7 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 
 A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, applicable to horizontal transitions. It has the following properties:
 
+- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
 - _movementType_: This takes one of three possible values, "controlled", "uncontrolled", and "any", indicating the type of bounce that is required.
