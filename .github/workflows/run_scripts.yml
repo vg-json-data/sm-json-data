@@ -1,0 +1,24 @@
+name: "Run scripts"
+on: workflow_dispatch
+jobs:
+  run_standard_scripts:
+    name: "Run standard scripts and open PR"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Run scripts
+        working-directory: scripts
+        run: python populate_strat_ids.py
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Run scripts to autoformat data and populate strat IDs
+          title: Run scripts to autoformat data and populate strat IDs
+          body: This PR is auto-generated.
+          base: master
+          labels: Run Scripts
+          branch: auto-run-scripts
+          delete-branch: true
