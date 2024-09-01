@@ -1,22 +1,66 @@
+# workflow name
 name: "Run scripts"
+
+# fire on
+# Only runs when invoked from another workflow or manually from menu
 on: workflow_dispatch
+
+#########
+# actions
+#########
+# actions/checkout@v4.1.7
+# actions/setup-python@v5.2.0
+# peter-evans/create-pull-request@v6.1.0
+
+# Add permissions to included token for this workflow run
+permissions:
+  contents:       write  # can manip files
+  pull-requests:  write  # can manip PRs
+
 jobs:
+  # Run scripts
   run_standard_scripts:
     name: "Run standard scripts and open PR"
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os-name }}
+
+    strategy:
+      matrix:
+        os-name: [
+          ubuntu-latest
+        ]
+        python-version: [
+          "3.10"
+        ]
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      # checkout commit
+      - name: ✔️Checkout commit
+        uses: actions/checkout@v4.1.7
+      # install python
+      - name: 💿Install Python
+        uses: actions/setup-python@v5.2.0
         with:
-          python-version: '3.10'
-      - name: Run scripts
+          python-version: ${{ matrix.python-version }}
+      # python version
+      - name: 🐍Python Version
+        shell: bash
+        run: |
+          python --version
+      # Analyze used GitHub Actions
+      - name: Analyze used GitHub Actions
+        shell: bash
+        run: |
+          python ./resources/ci/common/list_actions.py
+      # Run Strat ID validator
+      # Run Autoformatter
+      - name: Run Strat ID Validator & Autoformatter
         working-directory: scripts
         run: python populate_strat_ids.py
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v6.1.0
         with:
-          commit-message: Run scripts to autoformat data and populate strat IDs
-          title: Run scripts to autoformat data and populate strat IDs
+          commit-message: Run Strat ID Validator & Autoformatter
+          title: Run Scripts
           body: This PR is auto-generated.
           base: master
           labels: Run Scripts
