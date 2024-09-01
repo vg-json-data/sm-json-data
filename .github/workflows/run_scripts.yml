@@ -1,21 +1,26 @@
 # workflow name
-name: "Sanity Checks"
+name: "Run scripts"
 
 # fire on
-on: [push, pull_request]
+# Only runs when invoked from another workflow or manually from menu
+on: workflow_dispatch
 
 #########
 # actions
 #########
 # actions/checkout@v4.1.7
 # actions/setup-python@v5.2.0
-# actions/upload-artifact@v4.4.0
-# vg-json-data/sm-json-data/test
+# peter-evans/create-pull-request@v6.1.0
+
+# Add permissions to included token for this workflow run
+permissions:
+  contents:       write  # can manip files
+  pull-requests:  write  # can manip PRs
 
 jobs:
-  # Test
-  test:
-    name: 🧮
+  # Run scripts
+  run_standard_scripts:
+    name: "Run standard scripts and open PR"
     runs-on: ${{ matrix.os-name }}
 
     strategy:
@@ -51,13 +56,18 @@ jobs:
         shell: bash
         run: |
           python ./resources/ci/common/list_actions.py
-      # test
-      - name: ⏱️Call Test
-        uses: ./.github/actions/test
-      # upload keywords file
-      - name: Upload Keywords file
-        uses: actions/upload-artifact@v4.4.0
+      # Run Strat ID validator
+      # Run Autoformatter
+      - name: Run Strat ID Validator & Autoformatter
+        working-directory: scripts
+        run: python populate_strat_ids.py
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6.1.0
         with:
-          name: keywords
-          path: ./resources/app/manifests/keywords.json
-        if: ${{ success() || failure() }}
+          commit-message: Run Strat ID Validator & Autoformatter
+          title: Run Scripts
+          body: This PR is auto-generated.
+          base: master
+          labels: Run Scripts
+          branch: auto-run-scripts
+          delete-branch: true

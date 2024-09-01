@@ -683,6 +683,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
 
                     # Validate strats
                     previous_link = (0, 0)
+                    strat_id_set = set()
                     for strat in room["strats"]:
                         if "link" not in strat or tuple(strat["link"]) not in link_set:
                             # Errors are already generated above in this case.
@@ -707,7 +708,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         paramData = process_strats([strat], paramData)
                         fromNode = link[0]
                         toNode = link[1]
-                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:'{strat['name']}'"
+                        strat_id = strat.get("id")
+                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:{strat_id}:'{strat['name']}'"
+                        if strat_id is not None:
+                            if "id" in strat and strat_id in strat_id_set:
+                                msg = f"🔴ERROR: Strat ID {strat_id} is not unique:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            strat_id_set.add(strat_id)
                         if "entranceCondition" in strat:
                             if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
                                 msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"

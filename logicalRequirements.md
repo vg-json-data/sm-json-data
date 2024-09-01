@@ -25,7 +25,7 @@ __Example:__
 ```
 
 Requirements are applied in the order in which they are listed; this can matter in cases where "refill",
-"ammoDrain", or "energyAtMost" requirements are involved with other resource usage requirements.
+"ammoDrain", or "resourceAtMost" requirements are involved with other resource usage requirements.
 
 #### or object
 An `or` object is fulfilled if at least one of the logical elements it contains is fulfilled
@@ -173,13 +173,23 @@ __Example:__
 }}
 ```
 
-#### energyAtMost object
+#### resourceAtMost object
 
-There are situations where progress causes Samus' energy to be set to a specific value, regardless of how much she had coming in. An `energyAtMost` object communicates a logical requirement that Samus' energy is reduced to a maximum of the accompanying value. Fulfilling this object does not require draining reserve tanks.
+There are situations where progress causes Samus' energy or ammo to be reduced to a specific value, regardless of how much she had before. A `resourceAtMost` object communicates a logical requirement that Samus' resource is reduced to a maximum of the accompanying value. It has the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus will be reduced down to.
 
 __Example:__
 ```json
-{"energyAtMost": 1}
+{"resourceAtMost": [
+  {"type": "RegularEnergy", "count": 1}
+]}
 ```
 
 #### autoReserveTrigger object

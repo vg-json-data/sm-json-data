@@ -26,14 +26,19 @@
       "nodeAddress": "0x001a8d0",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}]
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Power Bomb Blocks",
+      "obstacleType": "inanimate"
     },
     {
-      "id": 3,
-      "name": "Shaktool Dug Event",
-      "nodeType": "event",
-      "nodeSubType": "flag",
-      "yields": ["f_ShaktoolDoneDigging"],
-      "devNote": "No unlock requirements for this event, since just reaching it is enough but the requirements for reaching it depend on where you're coming from"
+      "id": "B",
+      "name": "Sand Blocks",
+      "obstacleType": "inanimate",
+      "note": "Cleared by having the sand blocks be fully destroyed by Shaktool or snails"
     }
   ],
   "enemies": [
@@ -57,19 +62,11 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 3}
+        {"id": 2}
       ]
     },
     {
       "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3}
-      ]
-    },
-    {
-      "from": 3,
       "to": [
         {"id": 1},
         {"id": 2}
@@ -78,6 +75,20 @@
   ],
   "strats": [
     {
+      "id": 1,
+      "link": [1, 1],
+      "name": "Come In With Shaktool Done Digging",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "f_ShaktoolDoneDigging"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "devNote": "Entering the room with the flag 'f_ShaktoolDoneDigging' set means that the sand blocks and Power Bomb blocks will not spawn."
+    },
+    {
+      "id": 2,
       "link": [1, 1],
       "name": "Leave with Runway",
       "requires": [],
@@ -89,10 +100,11 @@
       }
     },
     {
+      "id": 3,
       "link": [1, 1],
       "name": "Leave Shinecharged",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["A", "B"]},
         "canShinechargeMovement",
         "canWaterShineCharge",
         {"canShineCharge": {
@@ -109,10 +121,11 @@
       "devNote": "This runway could be longer with precise timing or a stutter, but it seems unnecessary at this difficulty."
     },
     {
+      "id": 4,
       "link": [1, 1],
       "name": "Leave Shinecharged, Gravity",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["A", "B"]},
         "canShinechargeMovement",
         "Gravity",
         {"canShineCharge": {
@@ -129,6 +142,7 @@
       "devNote": "FIXME: By falling off the runway with precise movement, 135 frames are possible."
     },
     {
+      "id": 5,
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
@@ -137,16 +151,19 @@
       "flashSuitChecked": true
     },
     {
+      "id": 6,
       "link": [1, 1],
-      "name": "G-Mode Setup - Get Hit By Shaktool",
+      "name": "G-Mode Setup - Get Hit By Shaktool or Yard",
       "notable": false,
       "requires": [],
       "exitCondition": {
         "leaveWithGModeSetup": {}
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "note": "If Shaktool is done digging, it is faster to use one of the snails from the right side of the room."
     },
     {
+      "id": 7,
       "link": [1, 1],
       "name": "G-Mode Regain Mobility",
       "requires": [
@@ -168,17 +185,21 @@
       "note": "This takes 1 min 40 sec if Shaktool is done digging."
     },
     {
-      "link": [1, 3],
+      "id": 8,
+      "link": [1, 2],
       "name": "Base",
       "requires": [
         {"or": [
-          "f_ShaktoolDoneDigging",
+          {"obstaclesCleared": ["A", "B"]},
           "h_canUsePowerBombs"
         ]}
-      ]
+      ],
+      "clearsObstacles": ["A", "B"],
+      "setsFlags": ["f_ShaktoolDoneDigging"]
     },
     {
-      "link": [1, 3],
+      "id": 9,
+      "link": [1, 2],
       "name": "G-Mode Morph Power Bomb",
       "entranceCondition": {
         "comeInWithGMode": {
@@ -189,11 +210,67 @@
       "requires": [
         "h_canArtificialMorphPowerBomb"
       ],
+      "clearsObstacles": ["A", "B"],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
       "flashSuitChecked": true
     },
     {
+      "id": 10,
       "link": [2, 1],
-      "name": "Grapple Teleport",
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["A", "B"]}
+      ]
+    },
+    {
+      "id": 11,
+      "link": [2, 1],
+      "name": "Shaktool Room Reverse",
+      "notable": true,
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
+    },
+    {
+      "id": 12,
+      "link": [2, 1],
+      "name": "G-Mode Morph Reverse Shaktool",
+      "notable": true,
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          {"and": [
+            "Gravity",
+            "h_canArtificialMorphIBJ"
+          ]},
+          "h_canArtificialMorphSpringBall"
+        ]},
+        "h_canArtificialMorphPowerBomb"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "flashSuitChecked": true,
+      "note": [
+        "The Snails will dig through the sand without showing any visual difference. Each block they pass through gets closer to overloading PLMs.",
+        "In order to PB the left wall before PLMs are overloaded, it is necessary to only allow one snail to dig, either by bombing one or by facing one to prevent movement until it is off screen.",
+        "If using mobile g-mode, it is easiest to get past the bottom one and prevent it from digging. If using immobile g-mode, it is easiest to have whichever one hits Samus go off screen.",
+        "In the morph tunnel, it is important to place the PB as far right as possible, while still hitting the PB blocks, otherwise the Snails will have overloaded the PLMs and the blocks won't break.",
+        "The green stone changes one tile earlier than the PB wall, and can be a good visual cue to place the PB.",
+        "After using the PB, exit the sand, leave G-Mode, and wait for Shaktool. Note that the Snails will not dig while off screen or while Samus is facing them, even while she is morphed."
+      ]
+    },
+    {
+      "id": 13,
+      "link": [2, 1],
+      "name": "Grapple Teleport (Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [
@@ -202,11 +279,37 @@
           ]
         }
       },
-      "requires": []
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "devNote": [
+        "With the vanilla game behavior, grapple teleporting here does not set the flag 'f_ShaktoolDoneDigging', as Samus does not spend a frame on the right side of the room."
+      ]
     },
     {
+      "id": 14,
       "link": [2, 1],
-      "name": "Grapple Teleport Door Lock Skip",
+      "name": "Grapple Teleport (Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [
+            [5, 3],
+            [7, 2]
+          ]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "devNote": [
+        "Grapple teleporting crosses the room, so it will set the flag 'f_ShaktoolDoneDigging', assuming that the game is modified to treat the room symmetrically with how the flag gets set."
+      ]
+    },
+    {
+      "id": 15,
+      "link": [2, 1],
+      "name": "Grapple Teleport Door Lock Skip (Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [
@@ -215,42 +318,194 @@
           ]
         }
       },
-      "requires": [],
-      "bypassesDoorShell": true
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
+      "bypassesDoorShell": true,
+      "devNote": [
+        "With the vanilla game behavior, grapple teleporting here does not set the flag 'f_ShaktoolDoneDigging', as Samus does not spend a frame on the right side of the room."
+      ]
     },
     {
+      "id": 16,
       "link": [2, 1],
-      "name": "Carry Grapple Teleport (Top Position)",
+      "name": "Grapple Teleport Door Lock Skip (Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [
+            [3, 12],
+            [3, 13]
+          ]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
+      "bypassesDoorShell": true,
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "devNote": [
+        "Grapple teleporting crosses the room, so it will set the flag 'f_ShaktoolDoneDigging', assuming that the game is modified to treat the room symmetrically with how the flag gets set."
+      ]
+    },
+    {
+      "id": 17,
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Top Position, Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[3, 12]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
       "bypassesDoorShell": true,
       "exitCondition": {
         "leaveWithGrappleTeleport": {
           "blockPositions": [[3, 12]]
         }
-      }
+      },
+      "devNote": [
+        "With the vanilla game behavior, grapple teleporting here does not set the flag 'f_ShaktoolDoneDigging', as Samus does not spend a frame on the right side of the room."
+      ]
     },
     {
+      "id": 18,
       "link": [2, 1],
-      "name": "Carry Grapple Teleport (Bottom Position)",
+      "name": "Carry Grapple Teleport (Top Position, Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 12]]
+        }
+      },
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "devNote": [
+        "Grapple teleporting crosses the room, so it will set the flag 'f_ShaktoolDoneDigging', assuming that the game is modified to treat the room symmetrically with how the flag gets set."
+      ]
+    },
+    {
+      "id": 19,
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position, Vanilla)",
       "entranceCondition": {
         "comeInWithGrappleTeleport": {
           "blockPositions": [[3, 13]]
         }
       },
-      "requires": [],
+      "requires": [
+        "h_ShaktoolVanillaFlag"
+      ],
       "bypassesDoorShell": true,
       "exitCondition": {
         "leaveWithGrappleTeleport": {
           "blockPositions": [[3, 13]]
         }
-      }
+      },
+      "devNote": [
+        "With the vanilla game behavior, grapple teleporting here does not set the flag 'f_ShaktoolDoneDigging', as Samus does not spend a frame on the right side of the room."
+      ]
     },
     {
+      "id": 20,
+      "link": [2, 1],
+      "name": "Carry Grapple Teleport (Bottom Position, Symmetric)",
+      "entranceCondition": {
+        "comeInWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "requires": [
+        "h_ShaktoolSymmetricFlag"
+      ],
+      "bypassesDoorShell": true,
+      "exitCondition": {
+        "leaveWithGrappleTeleport": {
+          "blockPositions": [[3, 13]]
+        }
+      },
+      "setsFlags": ["f_ShaktoolDoneDigging"],
+      "devNote": [
+        "Grapple teleporting crosses the room, so it will set the flag 'f_ShaktoolDoneDigging', assuming that the game is modified to treat the room symmetrically with how the flag gets set."
+      ]
+    },
+    {
+      "id": 21,
+      "link": [2, 2],
+      "name": "Come In With Shaktool Done Digging",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "f_ShaktoolDoneDigging"
+      ],
+      "clearsObstacles": ["A", "B"],
+      "devNote": "Entering the room with the flag 'f_ShaktoolDoneDigging' set means that the sand blocks and Power Bomb blocks will not spawn."
+    },
+    {
+      "id": 22,
+      "link": [2, 2],
+      "name": "Shaktool Room Bounce the Snails Around the Room",
+      "notable": true,
+      "requires": [
+        "h_ShaktoolCameraFix",
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        "Gravity"
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Bounce the snails around the room in order to destroy the sand blocks, opening up the runway.",
+        "A snail can be made to bounce in 3 ways: shooting it off a wall or ceiling, kicking it on the ground, or touching it while it is already bouncing.",
+        "Kicking a snail involves running or jumping into it with a non-zero amount of run speed.",
+        "A snail can be kicked from any direction when in its initial (not angered) state or when it is stunned for a moment after being shot.",
+        "While a snail is angered and is moving quickly, it can only safely be kicked from a certain side: from behind if on the ground, or head-on if on the ceiling (and not at all while on a wall).",
+        "If Morph is unavailable, be careful not to let the snails go off-camera, and avoid getting stuck in two-tile-high spaces.",
+        "If a snail is on the ground and still on camera, it can be forced to move toward Samus again by shooting it;",
+        "let it wrap around the right side of the room onto the ceiling, where it can be shot to cause it to fall and continue destroying sand blocks."
+      ]
+    },
+    {
+      "id": 23,
+      "link": [2, 2],
+      "name": "Shaktool Room Suitless Bounce the Snails Around the Room",
+      "notable": true,
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        {"or": [
+          "canBePatient",
+          "canInsaneJump",
+          {"enemyDamage": {
+            "enemy": "Yard",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Bounce the snails around the room in order to destroy the sand blocks, opening up the runway.",
+        "Without Gravity, this requires greater caution as the water will slow Samus down and increase the risk of taking damage from a snail.",
+        "A snail can be made to bounce in 3 ways: shooting it off a wall or ceiling, kicking it on the ground, or touching it while it is already bouncing.",
+        "Kicking a snail involves running or jumping into it with a non-zero amount of run speed, gained by dashing for at least one frame while in air physics.",
+        "A snail can be kicked from any direction when in its initial (not angered) state or when it is stunned for a moment after being shot.",
+        "While a snail is angered and is moving quickly, it can only safely be kicked from a certain side: from behind if on the ground, or head-on if on the ceiling (and not at all while on a wall).",
+        "If Morph is unavailable, be careful not to let the snails go off-camera, and avoid getting stuck in two-tile-high spaces.",
+        "If a snail is on the ground and still on camera, it can be forced to move toward Samus again by shooting it;",
+        "let it wrap around the right side of the room onto the ceiling, where it can be shot to cause it to fall and continue destroying sand blocks."
+      ]
+    },
+    {
+      "id": 24,
       "link": [2, 2],
       "name": "Leave with Runway",
       "requires": [],
@@ -262,10 +517,11 @@
       }
     },
     {
+      "id": 25,
       "link": [2, 2],
       "name": "Leave Shinecharged",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["B"]},
         "canShinechargeMovement",
         "canWaterShineCharge",
         {"canShineCharge": {
@@ -282,10 +538,11 @@
       "devNote": "This runway could be longer with precise timing or a stutter, but it seems unnecessary at this difficulty."
     },
     {
+      "id": 26,
       "link": [2, 2],
       "name": "Leave Shinecharged, Gravity",
       "requires": [
-        "f_ShaktoolDoneDigging",
+        {"obstaclesCleared": ["B"]},
         "canShinechargeMovement",
         "Gravity",
         {"canShineCharge": {
@@ -302,6 +559,7 @@
       "devNote": "FIXME: By falling off the runway with precise movement, 135 frames are possible."
     },
     {
+      "id": 27,
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
@@ -310,11 +568,12 @@
       "flashSuitChecked": true
     },
     {
+      "id": 28,
       "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Shaktool",
       "notable": false,
       "requires": [
-        "f_ShaktoolDoneDigging"
+        {"obstaclesCleared": ["A", "B"]}
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
@@ -322,6 +581,7 @@
       "flashSuitChecked": true
     },
     {
+      "id": 29,
       "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Yard (Snail)",
       "notable": false,
@@ -335,6 +595,7 @@
       "note": "Shoot a Snail to make it chase Samus."
     },
     {
+      "id": 30,
       "link": [2, 2],
       "name": "G-Mode Regain Mobility",
       "requires": [
@@ -369,70 +630,21 @@
       "note": "Wait for Shaktool. If Shaktool's camera is fixed it is possible without Shaktool, by using a Snail (Yard): a Super or any SBA can trigger a Yard to attack."
     },
     {
-      "link": [2, 3],
-      "name": "Base",
-      "requires": [
-        "f_ShaktoolDoneDigging"
-      ]
-    },
-    {
-      "link": [2, 3],
+      "id": 31,
+      "link": [2, 2],
       "name": "Vanilla",
       "requires": [
         "h_ShaktoolVanillaFlag"
       ],
-      "note": "Entering from the right door gives a weird alignment glitch, but it's possible to exit back through the door and that triggers the event flag, which opens up the room on the next re-entry"
-    },
-    {
-      "link": [2, 3],
-      "name": "Shaktool Room Reverse",
-      "notable": true,
-      "requires": [
-        "h_canUsePowerBombs"
-      ],
-      "note": "Let the Snails (Yards) dig through the sand and follow them. They will not dig while off screen or while Samus is facing them, even while morphed."
-    },
-    {
-      "link": [2, 3],
-      "name": "G-Mode Morph Reverse Shaktool",
-      "notable": true,
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "any",
-          "morphed": true
-        }
+      "exitCondition": {
+        "leaveNormally": {}
       },
-      "requires": [
-        {"or": [
-          {"and": [
-            "Gravity",
-            "h_canArtificialMorphIBJ"
-          ]},
-          "h_canArtificialMorphSpringBall"
-        ]},
-        "h_canArtificialMorphPowerBomb"
-      ],
-      "flashSuitChecked": true,
+      "setsFlags": ["f_ShaktoolDoneDigging"],
       "note": [
-        "The Snails will dig through the sand without showing any visual difference. Each block they pass through gets closer to overloading PLMs.",
-        "In order to PB the left wall before PLMs are overloaded, it is necessary to only allow one snail to dig, either by bombing one or by facing one to prevent movement until it is off screen.",
-        "If using mobile g-mode, it is easiest to get past the bottom one and prevent it from digging. If using immobile g-mode, it is easiest to have whichever one hits Samus go off screen.",
-        "In the morph tunnel, it is important to place the PB as far right as possible, while still hitting the PB blocks, otherwise the Snails will have overloaded the PLMs and the blocks won't break.",
-        "The green stone changes one tile earlier than the PB wall, and can be a good visual cue to place the PB.",
-        "After using the PB, exit the sand, leave G-Mode, and wait for Shaktool. Note that the Snails will not dig while off screen or while Samus is facing them, even while she is morphed."
+        "In the vanilla game, if the flag is not already set, entering from the right door immediately sets the flag, though the room must be reset for it to take effect.",
+        "Resetting the room also fixes the camera, which gets broken in this state."
       ]
-    },
-    {
-      "link": [3, 1],
-      "name": "Base",
-      "requires": [
-        "f_ShaktoolDoneDigging"
-      ]
-    },
-    {
-      "link": [3, 2],
-      "name": "Base",
-      "requires": []
     }
-  ]
+  ],
+  "nextStratId": 32
 }
