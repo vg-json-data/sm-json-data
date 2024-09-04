@@ -948,9 +948,12 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
 
 ### Come In Speedballing
 
-A `comeInSpeedballing` entrance condition indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball. It has the following property:
+A `comeInSpeedballing` entrance condition indicates that Samus must enter the room either in a speedball from the previous room, or in a process of running, jumping, or falling into a speedball. It has the following properties:
 
 - _runway_: A [runway geometry](#runway-geometry) object describing the tiles available in the current room to complete the speedball. The end of this runway represents the point by which the speedball must be complete (i.e. when Samus must be morphed and on the ground with blue speed). A runway length of 0 would represent that the speedball must be completed before the transition.
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed while in speedball. This can be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed while in speedball. This can be specified if something would prevent the strat from working at too high of a speed.
+
 
 It is assumed that the runway in the current room is level or sloping up; adjustments would be needed to handle a case where it sloped down.
 
