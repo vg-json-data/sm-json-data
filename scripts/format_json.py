@@ -3,7 +3,7 @@
 import json
 
 # Keys whose values should always be expanded to separate lines
-non_one_line_keys = {"requires", "and", "or", "to"}
+non_one_line_keys = {"requires", "techRequires", "otherRequires", "and", "or", "to"}
 
 
 def is_one_liner_dict(obj, nesting_allowed=True):
