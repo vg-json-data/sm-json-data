@@ -18,6 +18,9 @@ for path in sorted(Path("../region/").glob("**/*.json")):
     orig_next_id = next_id
 
     # Build a map of existing notableId values in reusable notable strats:
+    # This shouldn't matter because the tests won't allow IDs to be specified in reusable
+    # notable strats without also being specified in the top-level reusable object.
+    # We do it to be safe and avoid mismatched IDs, in case something changes in how this works.
     reusable_id_dict = {}    
     for strat in room_json["strats"]:
         if "reusableRoomwideNotable" in strat and "notableId" in strat:

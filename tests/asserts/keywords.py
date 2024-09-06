@@ -634,9 +634,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
+
+                    used_reusable_name_set = set()
+                    for strat in room["strats"]:
+                        if "reusableRoomwideNotable" in strat:
+                            used_reusable_name_set.add(strat["reusableRoomwideNotable"])
+
                     reusable_notable_id_dict = {}  # Mapping reusable name to notableId
                     reusable_notable_id_set = set()  # Set of notableId
                     for reusable in room.get("reusableRoomwideNotable", []):
+                        if reusable["name"] not in used_reusable_name_set:
+                            reusable_name = reusable["name"]
+                            msg = f"🟡WARNING: Unused Reusable Strat Name:{roomRef}:{reusable_name}"
+                            messages["yellows"].append(msg)
+                            messages["counts"]["yellows"] += 1
                         if "notableId" in reusable:
                             reusable_name = reusable["name"]
                             reusable_notable_id = reusable["notableId"]
