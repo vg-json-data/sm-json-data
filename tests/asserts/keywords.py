@@ -474,9 +474,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         },
                         "enemies": {
                             "ids": []
-                        },
-                        "reusableStrats": {
-                            "names": []
                         }
                     }
 
@@ -490,11 +487,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["counts"]["reds"] += 1
                             else:
                                 roomData["obstacles"]["ids"].append(obstacle["id"])
-
-                    # Document Reusable Roomwide Strats
-                    if "reusableRoomwideNotable" in room:
-                        for strat in room["reusableRoomwideNotable"]:
-                            roomData["reusableStrats"]["names"].append(strat["name"])
 
                     # Document Nodes
                     # Validate Nodes
@@ -616,47 +608,30 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
-                    # Validate Reusable Roomwide Strats
-                    # check these keys
-                    # check against reusable strat names
-                    # pass the whole room object
-                    reusableErrors = search_for_valid_keyvalue(
-                        [
-                            "reusableRoomwideNotable"
-                        ],
-                        "room",
-                        roomData["reusableStrats"]["names"],
-                        room
-                    )
-                    if reusableErrors:
-                        for reusableError in reusableErrors:
-                            msg = f"🔴ERROR: Invalid Reusable Strat Name:{roomRef}:{reusableError}"
+                    strat_id_set = set(s["id"] for s in room["strats"] if "id" in s)
+                    notable_id_set = set()
+                    for notable in room.get("notables", []):
+                        notable_id = notable["id"]
+                        if notable["id"] in notable_id_set:
+                            msg = f"🔴ERROR: Non-unique notable ID {notable_id} in notable:{roomRef}:{notable_name}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-
-
-                    used_reusable_name_set = set()
-                    for strat in room["strats"]:
-                        if "reusableRoomwideNotable" in strat:
-                            used_reusable_name_set.add(strat["reusableRoomwideNotable"])
-
-                    reusable_notable_id_dict = {}  # Mapping reusable name to notableId
-                    reusable_notable_id_set = set()  # Set of notableId
-                    for reusable in room.get("reusableRoomwideNotable", []):
-                        if reusable["name"] not in used_reusable_name_set:
-                            reusable_name = reusable["name"]
-                            msg = f"🟡WARNING: Unused Reusable Strat Name:{roomRef}:{reusable_name}"
+                        if notable["id"] >= room["nextNotableId"]:
+                            next_notable_id = room["nextNotableId"]
+                            msg = f"🔴ERROR: Notable ID {notable_id} is not less than nextNotableId ({next_notable_id}):{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1                            
+                        notable_id_set.add(notable["id"])
+                        notable_name = notable["name"]
+                        if len(notable["stratIds"]) == 0:
+                            msg = f"🟡WARNING: Empty notable:{roomRef}:{notable_name}"
                             messages["yellows"].append(msg)
                             messages["counts"]["yellows"] += 1
-                        if "notableId" in reusable:
-                            reusable_name = reusable["name"]
-                            reusable_notable_id = reusable["notableId"]
-                            reusable_notable_id_dict[reusable_name] = reusable_notable_id
-                            if reusable["notableId"] in reusable_notable_id_set:
-                                msg = f"🔴ERROR: Reusable notableId is not unique:{roomRef}:{reusable_name}:{reusable_notable_id}"
+                        for strat_id in notable["stratIds"]:
+                            if strat_id not in strat_id_set:
+                                msg = f"🔴ERROR: Invalid strat ID {strat_id} in notable:{roomRef}:{notable_name}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-                            reusable_notable_id_set.add(reusable_notable_id)
 
                     # Validate Requires Nodes
                     # check these keys
@@ -708,7 +683,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Validate strats
                     previous_link = (0, 0)
                     strat_id_set = set()
-                    notable_id_set = reusable_notable_id_set.copy()
                     for strat in room["strats"]:
                         if "link" not in strat or tuple(strat["link"]) not in link_set:
                             # Errors are already generated above in this case.
@@ -740,22 +714,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not unique:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-                            strat_id_set.add(strat_id)
-                        notable_id = strat.get("notableId")
-                        if notable_id is not None:
-                            if "reusableRoomwideNotable" in strat:
-                                reusable_name = strat["reusableRoomwideNotable"]
-                                if notable_id != reusable_notable_id_dict.get(reusable_name):
-                                    msg = f"🔴ERROR: Notable ID {notable_id} does not match value in reusable:{stratRef}"
-                                    messages["reds"].append(msg)
-                                    messages["counts"]["reds"] += 1
-                            else:
-                                if notable_id in notable_id_set:
-                                    msg = f"🔴ERROR: Notable ID {notable_id} is not unique:{stratRef}"
-                                    messages["reds"].append(msg)
-                                    messages["counts"]["reds"] += 1
-                                else:
-                                    notable_id_set.add(notable_id)
+                            if strat_id >= room["nextStratId"]:
+                                next_strat_id = room["nextStratId"]
+                                msg = f"🔴ERROR: Strat ID {strat_id} is not less than nextStratId ({next_strat_id}):{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
                         if "entranceCondition" in strat:
                             if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
                                 msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"

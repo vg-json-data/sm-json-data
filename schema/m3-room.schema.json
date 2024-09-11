@@ -65,39 +65,12 @@
         "requires"
       ],
       "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "notable": {"const": true}
-            },
-            "required": ["notable"]
-          },
-          "then": {
-            "required": ["note"]
-          },
-          "else": {
-            "not": {
-              "anyOf": [
-                {"required": ["reusableRoomwideNotable"]},
-                {"required": ["notableId"]}
-              ]
-            }
-          }
-        }
-      ],
       "properties": {
         "id": {
           "$id": "#/definitions/strat/properties/id",
           "type": "integer",
           "title": "Strat ID",
           "description": "Identifier for this strat, unique within the room."
-        },
-        "notableId": {
-          "$id": "#/definitions/strat/properties/notableId",
-          "type": "integer",
-          "title": "Notable ID",
-          "description": "Identifier for this notable, shared between reusable notable strats, but otherwise unique within the room."
         },
         "link": {
           "$id": "#/definitions/strat/properties/link",
@@ -2404,41 +2377,54 @@
         }
       }
     },
-    "reusableRoomwideNotable": {
-      "$id": "#/properties/reusableRoomwideNotable",
+    "notables": {
+      "$id": "#/properties/notables",
       "type": "array",
-      "title": "Array of Reusable Notable Strats",
+      "title": "Array of Notable Strats",
       "items": {
-        "$id": "#/properties/reusableRoomwideNotable/items",
+        "$id": "#/properties/notables/items",
         "type": "object",
-        "title": "Reusable Roomwide Notable Strat",
+        "title": "Notable Strat",
         "required": [
+          "id",
           "name",
+          "stratIds",
           "note"
         ],
         "additionalProperties": false,
         "properties": {
-          "notableId": {
-            "$id": "#/definitions/reusableRoomwideNotable/items/properties/notableId",
+          "id": {
+            "$id": "#/definitions/notables/items/properties/id",
             "type": "integer",
             "title": "Notable ID",
             "description": "Identifier for this reusable notable, unique among notable IDs within the room."
           },
           "name": {
-            "$id": "#/properties/reusableRoomwideNotable/items/properties/name",
+            "$id": "#/properties/notables/items/properties/name",
             "type": "string",
-            "title": "Shared Reusable Roomwide Strat Name",
+            "title": "Notable Strat Name",
             "default": "",
             "examples": [
               "Bubble Mountain Damage Boost"
             ],
             "pattern": "^(.*)$"
           },
+          "stratIds": {
+            "$id": "#/properties/notables/items/properties/stratIds",
+            "type": "array",
+            "minItems": 0,
+            "description": "Strat IDs of strats associated with this notable.",
+            "items": {
+              "type": "integer",
+              "title": "Strat ID",
+              "description": "ID of a strat associated with this notable"  
+            }
+          },  
           "note": {
-            "$id": "#/properties/reusableRoomwideNotable/items/properties/note",
+            "$id": "#/properties/notables/items/properties/note",
             "type": ["string", "array"],
             "title": "Strat Description",
-            "description": "A common description for all strats that use this reusable strat",
+            "description": "A common description for all strats that use this notable",
             "default": "",
             "pattern": "^(.*)$"
           },
