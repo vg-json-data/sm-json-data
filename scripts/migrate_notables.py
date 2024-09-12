@@ -21,7 +21,6 @@ for path in sorted(Path("../region/").glob("**/*.json")):
         notable = {
             "id": next_id,
             "name": reusable["name"],
-            "stratIds": [],
             "note": reusable["note"],
         }
         next_id += 1
@@ -33,23 +32,22 @@ for path in sorted(Path("../region/").glob("**/*.json")):
     for strat in room_json["strats"]:
         if strat.get("notable") is not True:
             continue
+
         if "reusableRoomwideNotable" in strat:
-            reusable_name = strat["reusableRoomwideNotable"]
-            for notable in notable_list:
-                if reusable_name == notable["name"]:
-                    notable["stratIds"].append(strat["id"])
-                    break
-            else:
-                raise f"Reusable notable not found: {reusable_name}"
+            notable_name = strat["reusableRoomwideNotable"]
         else:
+            notable_name = strat["name"]
             notable = {
                 "id": next_id,
                 "name": strat["name"],
-                "stratIds": [strat["id"]],
                 "note": strat["note"],
             }
             next_id += 1
             notable_list.append(notable)
+
+        notable_require = {"notable": notable_name}
+        strat["requires"] = [notable_require] + strat["requires"]
+
             
     # Clean up obsolete properties:
     room_json.pop("reusableRoomwideNotable", None)

@@ -63,6 +63,7 @@ def process_keyvalue(k, v, metadata):
         # "groupName",        # !!could check for unique
         # "nodeAddress",      # !!could check for unique
         # "roomAddress",      # !!could check for unique
+        "notable",          # checked explicitly below
         "jumpwayType",      # validated by schema
         "lockType",         # validated by schema
         "nodeType",         # validated by schema
@@ -608,30 +609,27 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
 
-                    strat_id_set = set(s["id"] for s in room["strats"] if "id" in s)
                     notable_id_set = set()
+                    notable_name_set = set()
                     for notable in room.get("notables", []):
                         notable_id = notable["id"]
-                        if notable["id"] in notable_id_set:
+                        if notable_id in notable_id_set:
                             msg = f"🔴ERROR: Non-unique notable ID {notable_id} in notable:{roomRef}:{notable_name}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
-                        if notable["id"] >= room["nextNotableId"]:
+                        if notable_id >= room["nextNotableId"]:
                             next_notable_id = room["nextNotableId"]
                             msg = f"🔴ERROR: Notable ID {notable_id} is not less than nextNotableId ({next_notable_id}):{stratRef}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1                            
                         notable_id_set.add(notable["id"])
+
                         notable_name = notable["name"]
-                        if len(notable["stratIds"]) == 0:
-                            msg = f"🟡WARNING: Empty notable:{roomRef}:{notable_name}"
-                            messages["yellows"].append(msg)
-                            messages["counts"]["yellows"] += 1
-                        for strat_id in notable["stratIds"]:
-                            if strat_id not in strat_id_set:
-                                msg = f"🔴ERROR: Invalid strat ID {strat_id} in notable:{roomRef}:{notable_name}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
+                        if notable_name in notable_name_set:
+                            msg = f"🔴ERROR: Non-unique notable name {notable_name} in notable:{roomRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        notable_name_set.add(notable_name)
 
                     # Validate Requires Nodes
                     # check these keys
@@ -683,6 +681,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Validate strats
                     previous_link = (0, 0)
                     strat_id_set = set()
+                    used_notable_name_set = set()
                     for strat in room["strats"]:
                         if "link" not in strat or tuple(strat["link"]) not in link_set:
                             # Errors are already generated above in this case.
@@ -794,6 +793,29 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: setsFlags references flag '{flag}' which does not exist:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+
+                        def check_for_notables(req):
+                            if isinstance(req, dict):
+                                if "notable" in req:
+                                    notable_name = req["notable"]
+                                    if notable_name not in notable_name_set:
+                                        msg = f"🔴ERROR: Invalid notable name {notable_name} in notable:{stratRef}"
+                                        messages["reds"].append(msg)
+                                        messages["counts"]["reds"] += 1
+                                    used_notable_name_set.add(req["notable"])
+                                elif "or" in req:
+                                    for r in req["or"]:
+                                        check_for_notables(r)
+                                elif "and" in req:
+                                    for r in req["and"]:
+                                        check_for_notables(r)
+                        for req in strat["requires"]:
+                            check_for_notables(req)
+
+                    for notable_name in notable_name_set.difference(used_notable_name_set):
+                        msg = f"🟡WARNING: Unused notable:{roomRef}:{notable_name}"
+                        messages["yellows"].append(msg)
+                        messages["counts"]["yellows"] += 1
 
                     # Validate Nodes
                     showNodes = paramData["showNodes"]
