@@ -609,3 +609,12 @@ __Example:__
 ```json
 {"tech": "canIBJ"}
 ```
+
+#### notable object
+
+A `notable` object indicates the need to be able to perform a notable, which is like a tech but specific to the room. The name of the notable must match the `name` of an object in the room `notables` list.
+
+__Example:__
+```json
+{"notable": "Taco Tank"}
+```
