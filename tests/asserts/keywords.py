@@ -619,7 +619,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["counts"]["reds"] += 1
                         if notable_id >= room["nextNotableId"]:
                             next_notable_id = room["nextNotableId"]
-                            msg = f"🔴ERROR: Notable ID {notable_id} is not less than nextNotableId ({next_notable_id}):{stratRef}"
+                            msg = f"🔴ERROR: Notable ID {notable_id} is not less than nextNotableId ({next_notable_id}):{roomRef}:{notable_name}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1                            
                         notable_id_set.add(notable["id"])

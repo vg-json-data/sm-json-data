@@ -59,56 +59,16 @@
     {
       "id": 3,
       "name": "Bomb Torizo",
-      "nodeType": "event",
-      "nodeSubType": "boss",
-      "locks": [
-        {
-          "name": "Bomb Torizo Fight",
-          "lockType": "bossFight",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "h_canActivateBombTorizo",
-                {"or": [
-                  "canDodgeWhileShooting",
-                  {"ammo": {"type": "Super", "count": 2}},
-                  {"enemyDamage": {
-                    "enemy": "Bomb Torizo",
-                    "type": "contact",
-                    "hits": 3
-                  }}
-                ]}
-              ]
-            }
-          ]
-        }
-      ],
-      "yields": ["f_DefeatedBombTorizo"]
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "devNote": "FIXME: This node can be eliminated."
     },
     {
       "id": 4,
       "name": "Save the Animals",
-      "nodeType": "event",
-      "nodeSubType": "flag",
-      "locks": [
-        {
-          "name": "Animal Wall Lock",
-          "lockType": "cutscene",
-          "unlockStrats": [
-            {
-              "name": "Base",
-              "notable": false,
-              "requires": [
-                "f_ZebesSetAblaze"
-              ],
-              "devNote": "Technically this also requires opening the wall."
-            }
-          ]
-        }
-      ],
-      "yields": ["f_AnimalsSaved"]
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "devNote": "FIXME: This node can be eliminated."
     }
   ],
   "enemies": [
@@ -146,13 +106,15 @@
       "from": 3,
       "to": [
         {"id": 1},
-        {"id": 2}
+        {"id": 2},
+        {"id": 3}
       ]
     },
     {
       "from": 4,
       "to": [
-        {"id": 1}
+        {"id": 1},
+        {"id": 4}
       ]
     }
   ],
@@ -366,10 +328,37 @@
       "requires": []
     },
     {
+      "link": [3, 3],
+      "name": "Fight Bomb Torizo",
+      "requires": [
+        "h_canActivateBombTorizo",
+        {"or": [
+          "canDodgeWhileShooting",
+          {"ammo": {"type": "Super", "count": 2}},
+          {"enemyDamage": {
+            "enemy": "Bomb Torizo",
+            "type": "contact",
+            "hits": 3
+          }}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedBombTorizo"]
+    },
+    {
       "id": 17,
       "link": [4, 1],
       "name": "Base",
       "requires": []
+    },
+    {
+      "link": [4, 4],
+      "name": "Save the Animals",
+      "notable": false,
+      "requires": [
+        "f_ZebesSetAblaze"
+      ],
+      "setsFlags": ["f_AnimalsSaved"],
+      "devNote": "Technically this also requires opening the wall."
     }
   ],
   "nextStratId": 18,
