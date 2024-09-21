@@ -56,13 +56,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": 3,
-      "name": "Draygon",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "FIXME: This node can be eliminated."
     }
   ],
   "enemies": [
@@ -71,7 +64,7 @@
       "groupName": "Draygon",
       "enemyName": "Draygon",
       "quantity": 1,
-      "homeNodes": [3],
+      "homeNodes": [1],
       "stopSpawn": ["f_DefeatedDraygon"]
     }
   ],
@@ -80,27 +73,14 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {
-          "id": 2,
-          "devNote": "All other strats should go 1 -> 3 -> 2."
-        },
-        {"id": 3}
+        {"id": 2}
       ]
     },
     {
       "from": 2,
       "to": [
         {"id": 1},
-        {"id": 2},
-        {"id": 3}
-      ]
-    },
-    {
-      "from": 3,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3}
+        {"id": 2}
       ]
     }
   ],
@@ -212,6 +192,115 @@
       "devNote": "This may be possible without destroying the turret, but it might be unreliable or need other requirements."
     },
     {
+      "id": 45,
+      "link": [1, 1],
+      "name": "Draygon Grapple Kill",
+      "requires": [
+        {"notable": "Draygon Grapple Kill"},
+        "h_canNavigateUnderwater",
+        "canUseGrapple",
+        {"draygonElectricityFrames": 240},
+        {"enemyDamage": {
+          "enemy": "Draygon",
+          "type": "contact",
+          "hits": 5
+        }}
+      ],
+      "setsFlags": ["f_DefeatedDraygon"],
+      "note": [
+        "Kill Draygon by grappling to the top left turret.",
+        "Number of Draygon hits varies; 5 hits are assumed, which is close to a worst-case scenario."
+      ]
+    },
+    {
+      "id": 46,
+      "link": [1, 1],
+      "name": "Draygon Grapple Quick Kill",
+      "requires": [
+        {"notable": "Draygon Grapple Quick Kill"},
+        "h_canNavigateUnderwater",
+        "canPreciseGrapple",
+        "h_canBreakOneDraygonTurret",
+        {"draygonElectricityFrames": 240}
+      ],
+      "setsFlags": ["f_DefeatedDraygon"],
+      "note": [
+        "Kill Draygon by grappling to a bottom turret as you get grabbed.",
+        "Avoids taking all the hits from Draygon."
+      ]
+    },
+    {
+      "id": 47,
+      "link": [1, 1],
+      "name": "Draygon Shinespark Kill",
+      "requires": [
+        {"notable": "Draygon Shinespark Kill"},
+        "Gravity",
+        "canMidairShinespark",
+        "canShinechargeMovementComplex",
+        {"or": [
+          "canShinechargeMovementTricky",
+          "h_canBreakThreeDraygonTurrets"
+        ]},
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 0
+        }},
+        {"enemyDamage": {
+          "enemy": "Draygon",
+          "type": "contact",
+          "hits": 2
+        }},
+        {"or": [
+          "HiJump",
+          {"enemyDamage": {
+            "enemy": "Draygon",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"shinespark": {"frames": 150}}
+      ],
+      "setsFlags": ["f_DefeatedDraygon"],
+      "note": [
+        "Shinecharge in-room, then horizontally spark through Draygon multiple times.",
+        "It takes 3 Shinesparks if that is the only source of damage onto Draygon.",
+        "Be careful of taking damage at the end of a Shinespark when near walls and on the killing Shinespark."
+      ],
+      "devNote": "150 frames is an approximate sum of all required shinesparks."
+    },
+    {
+      "id": 48,
+      "link": [1, 1],
+      "name": "Gravity Draygon",
+      "requires": [
+        "Gravity",
+        {"enemyKill": {
+          "enemies": [["Draygon"]],
+          "farmableAmmo": ["Missile", "Super"]
+        }}
+      ],
+      "setsFlags": ["f_DefeatedDraygon"]
+    },
+    {
+      "id": 49,
+      "link": [1, 1],
+      "name": "Suitless Draygon",
+      "requires": [
+        {"notable": "Suitless Draygon"},
+        "canSuitlessMaridia",
+        "Morph",
+        "h_canBreakThreeDraygonTurrets",
+        {"enemyKill": {
+          "enemies": [["Draygon"]],
+          "farmableAmmo": ["Missile", "Super"]
+        }}
+      ],
+      "setsFlags": ["f_DefeatedDraygon"],
+      "note": "Fight Draygon without gravity, but with morph.",
+      "devNote": "This will require coming into the fight with ammo to kill the turrets. Although that ammo could instead be farmed in the fight."
+    },
+    {
       "id": 7,
       "link": [1, 1],
       "name": "Crystal Flash",
@@ -221,6 +310,31 @@
           "h_canBreakOneDraygonTurret"
         ]},
         "h_canCrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "id": 34,
+      "link": [1, 1],
+      "name": "Leave Shinecharged",
+      "requires": [
+        "Gravity",
+        "canShinechargeMovement",
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 0
+        }}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": 80
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
       ],
       "flashSuitChecked": true
     },
@@ -368,6 +482,148 @@
         "Continue holding Grapple through the door transition to initiate a teleport in the next room.",
         "Samus should be able to stand in the next room (e.g. in case this is needed for an X-Ray climb).",
         "Samus can reach the transition at either horizontal position 20 or 21, depending on the specific timing and positioning of the swing."
+      ]
+    },
+    {
+      "id": 35,
+      "link": [1, 2],
+      "name": "Base",
+      "requires": [
+        "Gravity",
+        "h_canFly"
+      ]
+    },
+    {
+      "id": 36,
+      "link": [1, 2],
+      "name": "Gravity Jump",
+      "requires": [
+        "Gravity",
+        "canGravityJump"
+      ]
+    },
+    {
+      "id": 37,
+      "link": [1, 2],
+      "name": "Spring Ball Jump",
+      "requires": [
+        "Gravity",
+        "HiJump",
+        "canSpringBallJumpMidAir"
+      ]
+    },
+    {
+      "id": 38,
+      "link": [1, 2],
+      "name": "Speedjump",
+      "requires": [
+        "Gravity",
+        "HiJump",
+        "SpeedBooster",
+        {"or": [
+          "canWalljump",
+          "canTrickyDashJump"
+        ]}
+      ]
+    },
+    {
+      "id": 39,
+      "link": [1, 2],
+      "name": "Draygon HiJumpless Speedjump",
+      "requires": [
+        "Gravity",
+        "canTrickyDashJump",
+        "canPreciseWalljump"
+      ],
+      "note": [
+        "There is a very precise speed where the HiJumpless speedjump is doable.",
+        "Starting against the left wall, jump just to the left of the rightmost pipe sticking out of the ground."
+      ]
+    },
+    {
+      "id": 40,
+      "link": [1, 2],
+      "name": "Draygon Springwall",
+      "requires": [
+        "Gravity",
+        "canSpringwall",
+        {"resetRoom": {
+          "nodes": [1]
+        }}
+      ],
+      "devNote": "The turret cannot be broken."
+    },
+    {
+      "id": 41,
+      "link": [1, 2],
+      "name": "In-Room Shinespark",
+      "requires": [
+        "Gravity",
+        {"canShineCharge": {
+          "usedTiles": 22,
+          "openEnd": 1
+        }},
+        {"or": [
+          {"shinespark": {"frames": 26, "excessFrames": 5}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 20, "excessFrames": 4}}
+          ]}
+        ]}
+      ]
+    },
+    {
+      "id": 42,
+      "link": [1, 2],
+      "name": "Draygon Turret Grapple Jump",
+      "requires": [
+        {"notable": "Draygon Turret Grapple Jump"},
+        "canSuitlessMaridia",
+        "canGrappleJump",
+        {"draygonElectricityFrames": 60},
+        "h_canBreakOneDraygonTurret"
+      ],
+      "note": "Performing a grapple jump off of a Draygon turret. Usually done by bouncing off the wall for momentum."
+    },
+    {
+      "id": 43,
+      "link": [1, 2],
+      "name": "Draygon Shinespark out the Right with a Gravity Jump",
+      "requires": [
+        {"notable": "Draygon Shinespark out the Right with a Gravity Jump"},
+        "canGravityJump",
+        "canShinechargeMovementComplex",
+        "canMidairShinespark",
+        {"canShineCharge": {
+          "usedTiles": 20,
+          "openEnd": 1
+        }},
+        {"shinespark": {"frames": 14}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "note": "Charge a shinespark in the bottom of Draygon's room, then Gravity jump up in order to shinespark out of the right door."
+    },
+    {
+      "id": 44,
+      "link": [1, 2],
+      "name": "Use Flash Suit",
+      "requires": [
+        {"useFlashSuit": {}},
+        {"or": [
+          {"shinespark": {"frames": 22, "excessFrames": 5}},
+          {"and": [
+            "HiJump",
+            {"shinespark": {"frames": 19, "excessFrames": 5}}
+          ]}
+        ]}
       ]
     },
     {
@@ -539,8 +795,8 @@
       "note": "There is enough time to IBJ to the top door before Draygon appears."
     },
     {
-      "id": 23,
-      "link": [1, 3],
+      "id": 32,
+      "link": [2, 1],
       "name": "Base",
       "requires": []
     },
@@ -674,294 +930,6 @@
         "h_canCrystalFlash"
       ],
       "flashSuitChecked": true
-    },
-    {
-      "id": 32,
-      "link": [2, 3],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "id": 33,
-      "link": [3, 1],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "id": 34,
-      "link": [3, 1],
-      "name": "Leave Shinecharged",
-      "requires": [
-        "Gravity",
-        "canShinechargeMovement",
-        {"canShineCharge": {
-          "usedTiles": 22,
-          "openEnd": 0
-        }}
-      ],
-      "exitCondition": {
-        "leaveShinecharged": {
-          "framesRemaining": 80
-        }
-      },
-      "unlocksDoors": [
-        {
-          "types": ["ammo"],
-          "requires": []
-        }
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 35,
-      "link": [3, 2],
-      "name": "Base",
-      "requires": [
-        "Gravity",
-        "h_canFly"
-      ]
-    },
-    {
-      "id": 36,
-      "link": [3, 2],
-      "name": "Gravity Jump",
-      "requires": [
-        "Gravity",
-        "canGravityJump"
-      ]
-    },
-    {
-      "id": 37,
-      "link": [3, 2],
-      "name": "Spring Ball Jump",
-      "requires": [
-        "Gravity",
-        "HiJump",
-        "canSpringBallJumpMidAir"
-      ]
-    },
-    {
-      "id": 38,
-      "link": [3, 2],
-      "name": "Speedjump",
-      "requires": [
-        "Gravity",
-        "HiJump",
-        "SpeedBooster",
-        {"or": [
-          "canWalljump",
-          "canTrickyDashJump"
-        ]}
-      ]
-    },
-    {
-      "id": 39,
-      "link": [3, 2],
-      "name": "Draygon HiJumpless Speedjump",
-      "requires": [
-        "Gravity",
-        "canTrickyDashJump",
-        "canPreciseWalljump"
-      ],
-      "note": [
-        "There is a very precise speed where the HiJumpless speedjump is doable.",
-        "Starting against the left wall, jump just to the left of the rightmost pipe sticking out of the ground."
-      ]
-    },
-    {
-      "id": 40,
-      "link": [3, 2],
-      "name": "Draygon Springwall",
-      "requires": [
-        "Gravity",
-        "canSpringwall",
-        {"resetRoom": {
-          "nodes": [1]
-        }}
-      ],
-      "devNote": "The turret cannot be broken."
-    },
-    {
-      "id": 41,
-      "link": [3, 2],
-      "name": "In-Room Shinespark",
-      "requires": [
-        "Gravity",
-        {"canShineCharge": {
-          "usedTiles": 22,
-          "openEnd": 1
-        }},
-        {"or": [
-          {"shinespark": {"frames": 26, "excessFrames": 5}},
-          {"and": [
-            "canMidairShinespark",
-            {"shinespark": {"frames": 20, "excessFrames": 4}}
-          ]}
-        ]}
-      ]
-    },
-    {
-      "id": 42,
-      "link": [3, 2],
-      "name": "Draygon Turret Grapple Jump",
-      "requires": [
-        {"notable": "Draygon Turret Grapple Jump"},
-        "canSuitlessMaridia",
-        "canGrappleJump",
-        {"draygonElectricityFrames": 60},
-        "h_canBreakOneDraygonTurret"
-      ],
-      "note": "Performing a grapple jump off of a Draygon turret. Usually done by bouncing off the wall for momentum."
-    },
-    {
-      "id": 43,
-      "link": [3, 2],
-      "name": "Draygon Shinespark out the Right with a Gravity Jump",
-      "requires": [
-        {"notable": "Draygon Shinespark out the Right with a Gravity Jump"},
-        "canGravityJump",
-        "canShinechargeMovementComplex",
-        "canMidairShinespark",
-        {"canShineCharge": {
-          "usedTiles": 20,
-          "openEnd": 1
-        }},
-        {"shinespark": {"frames": 14}}
-      ],
-      "exitCondition": {
-        "leaveWithSpark": {}
-      },
-      "unlocksDoors": [
-        {
-          "types": ["ammo"],
-          "requires": []
-        }
-      ],
-      "note": "Charge a shinespark in the bottom of Draygon's room, then Gravity jump up in order to shinespark out of the right door."
-    },
-    {
-      "id": 44,
-      "link": [3, 2],
-      "name": "Use Flash Suit",
-      "requires": [
-        {"useFlashSuit": {}},
-        {"or": [
-          {"shinespark": {"frames": 22, "excessFrames": 5}},
-          {"and": [
-            "HiJump",
-            {"shinespark": {"frames": 19, "excessFrames": 5}}
-          ]}
-        ]}
-      ]
-    },
-    {
-      "id": 45,
-      "link": [3, 3],
-      "name": "Draygon Grapple Kill",
-      "requires": [
-        {"notable": "Draygon Grapple Kill"},
-        "h_canNavigateUnderwater",
-        "canUseGrapple",
-        {"draygonElectricityFrames": 240},
-        {"enemyDamage": {
-          "enemy": "Draygon",
-          "type": "contact",
-          "hits": 5
-        }}
-      ],
-      "setsFlags": ["f_DefeatedDraygon"],
-      "note": [
-        "Kill Draygon by grappling to the top left turret.",
-        "Number of Draygon hits varies; 5 hits are assumed, which is close to a worst-case scenario."
-      ]
-    },
-    {
-      "id": 46,
-      "link": [3, 3],
-      "name": "Draygon Grapple Quick Kill",
-      "requires": [
-        {"notable": "Draygon Grapple Quick Kill"},
-        "h_canNavigateUnderwater",
-        "canPreciseGrapple",
-        "h_canBreakOneDraygonTurret",
-        {"draygonElectricityFrames": 240}
-      ],
-      "setsFlags": ["f_DefeatedDraygon"],
-      "note": [
-        "Kill Draygon by grappling to a bottom turret as you get grabbed.",
-        "Avoids taking all the hits from Draygon."
-      ]
-    },
-    {
-      "id": 47,
-      "link": [3, 3],
-      "name": "Draygon Shinespark Kill",
-      "requires": [
-        {"notable": "Draygon Shinespark Kill"},
-        "Gravity",
-        "canMidairShinespark",
-        "canShinechargeMovementComplex",
-        {"or": [
-          "canShinechargeMovementTricky",
-          "h_canBreakThreeDraygonTurrets"
-        ]},
-        {"canShineCharge": {
-          "usedTiles": 22,
-          "openEnd": 0
-        }},
-        {"enemyDamage": {
-          "enemy": "Draygon",
-          "type": "contact",
-          "hits": 2
-        }},
-        {"or": [
-          "HiJump",
-          {"enemyDamage": {
-            "enemy": "Draygon",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]},
-        {"shinespark": {"frames": 150}}
-      ],
-      "setsFlags": ["f_DefeatedDraygon"],
-      "note": [
-        "Shinecharge in-room, then horizontally spark through Draygon multiple times.",
-        "It takes 3 Shinesparks if that is the only source of damage onto Draygon.",
-        "Be careful of taking damage at the end of a Shinespark when near walls and on the killing Shinespark."
-      ],
-      "devNote": "150 frames is an approximate sum of all required shinesparks."
-    },
-    {
-      "id": 48,
-      "link": [3, 3],
-      "name": "Gravity Draygon",
-      "requires": [
-        "Gravity",
-        {"enemyKill": {
-          "enemies": [["Draygon"]],
-          "farmableAmmo": ["Missile", "Super"]
-        }}
-      ],
-      "setsFlags": ["f_DefeatedDraygon"]
-    },
-    {
-      "id": 49,
-      "link": [3, 3],
-      "name": "Suitless Draygon",
-      "requires": [
-        {"notable": "Suitless Draygon"},
-        "canSuitlessMaridia",
-        "Morph",
-        "h_canBreakThreeDraygonTurrets",
-        {"enemyKill": {
-          "enemies": [["Draygon"]],
-          "farmableAmmo": ["Missile", "Super"]
-        }}
-      ],
-      "setsFlags": ["f_DefeatedDraygon"],
-      "note": "Fight Draygon without gravity, but with morph.",
-      "devNote": "This will require coming into the fight with ammo to kill the turrets. Although that ammo could instead be farmed in the fight."
     }
   ],
   "nextStratId": 50,
