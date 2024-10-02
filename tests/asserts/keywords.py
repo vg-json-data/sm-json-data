@@ -713,6 +713,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not unique:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            strat_id_set.add(strat_id)
                             if strat_id >= room["nextStratId"]:
                                 next_strat_id = room["nextStratId"]
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not less than nextStratId ({next_strat_id}):{stratRef}"
