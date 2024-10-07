@@ -63,51 +63,35 @@
           "note": "It has normal physics before the tube is broken, but that can be lost forever."
         }
       ],
+      "useImplicitDoorUnlocks": false,
       "spawnAt": 6
     },
     {
       "id": 5,
-      "name": "Inside Maridia Tube",
+      "name": "Inside Maridia Tube Junction",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "FIXME: This node can be eliminated."
+      "nodeSubType": "junction"
     },
     {
       "id": 6,
-      "name": "Above Maridia Tube",
+      "name": "Top Spawn At Junction",
       "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "FIXME: This node can be eliminated."
-    },
-    {
-      "id": 7,
-      "name": "Below Maridia Tube",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "FIXME: This node can be eliminated."
+      "nodeSubType": "junction"
     }
   ],
   "enemies": [],
-  "obstacles": [
-    {
-      "id": "A",
-      "obstacleType": "abstract",
-      "name": "Breaking the Tube",
-      "devNote": "FIXME: This obstacle can be eliminated."
-    }
-  ],
   "links": [
     {
       "from": 1,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
         {
           "id": 4,
           "note": "This link is only for the cross room jump. Other strats should go 1 -> 5 -> 6 -> 4."
         },
-        {"id": 5},
-        {"id": 7}
+        {"id": 5}
       ]
     },
     {
@@ -120,22 +104,22 @@
           "id": 4,
           "note": "This link is only for the cross room jump. Other strats should go 2 -> 7 -> 5 -> 6 -> 4."
         },
-        {"id": 6},
-        {"id": 7}
+        {"id": 5},
+        {"id": 6}
       ]
     },
     {
       "from": 3,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
         {
           "id": 4,
           "note": "This link is only for the cross room jump. Other strats should go 3 -> 5 -> 6 -> 4."
         },
         {"id": 5},
-        {"id": 6},
-        {"id": 7}
+        {"id": 6}
       ]
     },
     {
@@ -144,6 +128,7 @@
         {"id": 1},
         {"id": 3},
         {"id": 4},
+        {"id": 5},
         {"id": 6}
       ]
     },
@@ -151,11 +136,11 @@
       "from": 5,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
         {"id": 4},
         {"id": 5},
-        {"id": 6},
-        {"id": 7}
+        {"id": 6}
       ]
     },
     {
@@ -164,14 +149,6 @@
         {"id": 4},
         {"id": 5},
         {"id": 6}
-      ]
-    },
-    {
-      "from": 7,
-      "to": [
-        {"id": 2},
-        {"id": 5},
-        {"id": 7}
       ]
     }
   ],
@@ -250,6 +227,19 @@
       },
       "bypassesDoorShell": true,
       "flashSuitChecked": true
+    },
+    {
+      "id": 16,
+      "link": [1, 2],
+      "name": "Stored Moonfall Clip",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        "canMoonfall"
+      ]
     },
     {
       "id": 6,
@@ -434,6 +424,18 @@
         "canCrossRoomJumpIntoWater",
         "canTrickyJump"
       ],
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
       "note": [
         "Only requires a runway of 1 tile in the adjacent room.",
         "This strat is slightly easier on the right side at low run speeds, but the same otherwise."
@@ -452,6 +454,18 @@
       "requires": [
         "f_MaridiaTubeBroken",
         "canCrossRoomJumpIntoWater"
+      ],
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
       ],
       "note": [
         "Only requires a runway of 7 tiles in the adjacent room, but an extra tile makes for an easier jump."
@@ -474,25 +488,11 @@
         }
       },
       "requires": [
-        {"not": "f_MaridiaTubeBroken"},
         "h_canArtificialMorphPowerBomb"
       ],
-      "clearsObstacles": ["A"],
+      "setsFlags": ["f_MaridiaTubeBroken"],
       "flashSuitChecked": true,
       "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
-    },
-    {
-      "id": 16,
-      "link": [1, 7],
-      "name": "Stored Moonfall Clip",
-      "entranceCondition": {
-        "comeInWithStoredFallSpeed": {
-          "fallSpeedInTiles": 1
-        }
-      },
-      "requires": [
-        "canMoonfall"
-      ]
     },
     {
       "id": 17,
@@ -680,6 +680,33 @@
         }
       },
       "devNote": "FIXME: Needs a way to represent that this runway has an 'air' environment."
+    },
+    {
+      "id": 90,
+      "link": [2, 2],
+      "name": "Break the Tube",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"]
+    },
+    {
+      "id": 37,
+      "link": [2, 2],
+      "name": "G-Mode Morph Power Bomb",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphPowerBomb",
+        "h_canArtificialMorphMovement"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"],
+      "flashSuitChecked": true,
+      "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
     },
     {
       "id": 27,
@@ -881,6 +908,14 @@
       ]
     },
     {
+      "id": 87,
+      "link": [2, 5],
+      "name": "Base",
+      "requires": [
+        "f_MaridiaTubeBroken"
+      ]
+    },
+    {
       "id": 34,
       "link": [2, 6],
       "name": "Grapple Teleport",
@@ -911,31 +946,6 @@
         "After teleporting, retract Grapple by pressing up.",
         "Then if necessary, wiggle right out of the wall by turning around a few times."
       ]
-    },
-    {
-      "id": 36,
-      "link": [2, 7],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "id": 37,
-      "link": [2, 7],
-      "name": "G-Mode Morph Power Bomb",
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "any",
-          "morphed": true
-        }
-      },
-      "requires": [
-        {"not": "f_MaridiaTubeBroken"},
-        "h_canArtificialMorphPowerBomb",
-        "h_canArtificialMorphMovement"
-      ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true,
-      "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
     },
     {
       "id": 38,
@@ -1217,6 +1227,19 @@
       ]
     },
     {
+      "id": 61,
+      "link": [3, 2],
+      "name": "Stored Moonfall Clip",
+      "entranceCondition": {
+        "comeInWithStoredFallSpeed": {
+          "fallSpeedInTiles": 1
+        }
+      },
+      "requires": [
+        "canMoonfall"
+      ]
+    },
+    {
       "id": 50,
       "link": [3, 3],
       "name": "Leave with Runway",
@@ -1297,6 +1320,18 @@
         "canCrossRoomJumpIntoWater",
         "canTrickyJump"
       ],
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
       "note": [
         "Only requires a runway of one tile in the adjacent room.",
         "This strat is slightly easier on the right side at low run speeds, but the same otherwise."
@@ -1312,6 +1347,18 @@
           "minTiles": 7.4375
         }
       },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
       "requires": [
         "f_MaridiaTubeBroken",
         "canCrossRoomJumpIntoWater"
@@ -1382,10 +1429,9 @@
         }
       },
       "requires": [
-        {"not": "f_MaridiaTubeBroken"},
         "h_canArtificialMorphPowerBomb"
       ],
-      "clearsObstacles": ["A"],
+      "setsFlags": ["f_MaridiaTubeBroken"],
       "flashSuitChecked": true,
       "note": "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later."
     },
@@ -1419,19 +1465,6 @@
       "note": [
         "After teleporting, retract Grapple by pressing up.",
         "Then if necessary, wiggle right out of the wall by turning around a few times."
-      ]
-    },
-    {
-      "id": 61,
-      "link": [3, 7],
-      "name": "Stored Moonfall Clip",
-      "entranceCondition": {
-        "comeInWithStoredFallSpeed": {
-          "fallSpeedInTiles": 1
-        }
-      },
-      "requires": [
-        "canMoonfall"
       ]
     },
     {
@@ -1592,14 +1625,48 @@
       "flashSuitChecked": true
     },
     {
-      "id": 68,
-      "link": [4, 6],
-      "name": "Base",
-      "requires": []
+      "link": [4, 4],
+      "name": "G-Mode Morph Power Bomb Gravity Jump",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"notable": "Breaking the Maridia Tube Gravity Jump"},
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess",
+        "h_canArtificialMorphPowerBomb",
+        "canSuitlessMaridia",
+        "canTrickyJump"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"],
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The tube will break once Samus moves after exiting G-Mode or when the Power Bomb finishes detonating, whichever is later.",
+        "Be sure not to overload PLMs with the camera scroll blocks which are next to the tube.",
+        "It is possible to exit G-Mode before the Power Bomb goes off to be safe.",
+        "Jump as the first action to gravity jump to the top of the room.",
+        "Note that the door will be closed, so open it during the ascent. This can only be attempted once."
+      ]
     },
     {
       "id": 69,
-      "link": [4, 6],
+      "link": [4, 5],
       "name": "G-Mode Morph Power Bomb",
       "entranceCondition": {
         "comeInWithGMode": {
@@ -1609,22 +1676,35 @@
         "comesThroughToilet": "any"
       },
       "requires": [
-        {"not": "f_MaridiaTubeBroken"},
         "h_canArtificialMorphPowerBomb"
       ],
-      "clearsObstacles": ["A"],
+      "setsFlags": ["f_MaridiaTubeBroken"],
       "flashSuitChecked": true,
       "note": [
-        "The tube will break when exiting G-Mode or when the Power Bomb finishes detonating, whichever is later.",
+        "The tube will break once Samus moves after exiting G-Mode or when the Power Bomb finishes detonating, whichever is later.",
         "Be sure not to overload PLMs with the camera scroll blocks which are next to the tube.",
         "It is possible to exit G-Mode before the Power Bomb goes off to be safe."
       ]
+    },
+    {
+      "id": 68,
+      "link": [4, 6],
+      "name": "Base",
+      "requires": []
     },
     {
       "id": 70,
       "link": [5, 1],
       "name": "Base",
       "requires": []
+    },
+    {
+      "id": 77,
+      "link": [5, 2],
+      "name": "Base",
+      "requires": [
+        "f_MaridiaTubeBroken"
+      ]
     },
     {
       "id": 71,
@@ -1638,34 +1718,36 @@
       "name": "Breaking the Maridia Tube Gravity Jump",
       "requires": [
         {"notable": "Breaking the Maridia Tube Gravity Jump"},
-        "f_MaridiaTubeBroken",
-        {"obstaclesCleared": ["A"]},
+        {"not": "f_MaridiaTubeBroken"},
         "canRiskPermanentLossOfAccess",
+        "h_canUsePowerBombs",
         "canSuitlessMaridia",
         "canTrickyJump"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"],
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
       ],
       "note": [
         "Jump as the first action after breaking the tube to gravity jump to the top of the room.",
         "Open the door and go through it during the ascent. This can only be attempted once."
-      ],
-      "devNote": "This strat requires the tube to be broken, while the obstacle being set requires the tube to not yet be broken."
+      ]
     },
     {
       "id": 73,
       "link": [5, 5],
       "name": "Break the Tube with a Power Bomb",
       "requires": [
-        {"not": "f_MaridiaTubeBroken"},
         "h_canUsePowerBombs"
-      ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "id": 88,
-      "link": [5, 5],
-      "name": "Break the Tube",
-      "requires": [
-        {"obstaclesCleared": ["A"]}
       ],
       "setsFlags": ["f_MaridiaTubeBroken"]
     },
@@ -1699,19 +1781,17 @@
       ]
     },
     {
-      "id": 77,
-      "link": [5, 7],
-      "name": "Base",
-      "requires": [
-        "f_MaridiaTubeBroken"
-      ]
-    },
-    {
       "id": 78,
       "link": [6, 4],
       "name": "Base",
       "requires": [
         "Gravity"
+      ],
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
       ]
     },
     {
@@ -1720,6 +1800,12 @@
       "name": "Suitless Base",
       "requires": [
         "HiJump"
+      ],
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
       ],
       "note": "Doesn't require canSuitlessMaridia because there is no risk, nor anything tricky whatsoever."
     },
@@ -1730,6 +1816,12 @@
       "requires": [
         "canSuitlessMaridia",
         "canSpringBallJumpMidAir"
+      ],
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
       ]
     },
     {
@@ -1740,7 +1832,37 @@
         {"not": "f_MaridiaTubeBroken"},
         "canRiskPermanentLossOfAccess"
       ],
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
       "note": "Until the tube is broken there is no water in this room."
+    },
+    {
+      "link": [6, 4],
+      "name": "Breaking the Maridia Tube Gravity Jump (From Above)",
+      "requires": [
+        {"notable": "Breaking the Maridia Tube Gravity Jump"},
+        {"not": "f_MaridiaTubeBroken"},
+        "canRiskPermanentLossOfAccess",
+        "h_canUsePowerBombs",
+        "canSuitlessMaridia",
+        "canTrickyJump"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"],
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": []
+        }
+      ],
+      "note": [
+        "Jump as the first action after breaking the tube to gravity jump back up and out of the door.",
+        "This can only be attempted once."
+      ],
+      "devNote": "Any type of door can be unlocked, because it can be done before breaking the Tube."
     },
     {
       "id": 82,
@@ -1749,6 +1871,15 @@
       "requires": [
         "f_MaridiaTubeBroken"
       ]
+    },
+    {
+      "id": 85,
+      "link": [6, 5],
+      "name": "Break the Tube with a Power Bomb",
+      "requires": [
+        "h_canUsePowerBombs"
+      ],
+      "setsFlags": ["f_MaridiaTubeBroken"]
     },
     {
       "id": 83,
@@ -1774,51 +1905,17 @@
       ]
     },
     {
-      "id": 85,
       "link": [6, 6],
-      "name": "Break the Tube with a Power Bomb",
-      "requires": [
-        {"not": "f_MaridiaTubeBroken"},
-        "h_canUsePowerBombs"
+      "name": "Unlock the Top Door",
+      "requires": [],
+      "unlocksDoors": [
+        {
+          "nodeId": 4,
+          "types": ["ammo"],
+          "requires": []
+        }
       ],
-      "clearsObstacles": ["A"]
-    },
-    {
-      "id": 89,
-      "link": [6, 6],
-      "name": "Break the Tube",
-      "requires": [
-        {"obstaclesCleared": ["A"]}
-      ],
-      "setsFlags": ["f_MaridiaTubeBroken"]
-    },
-    {
-      "id": 86,
-      "link": [7, 2],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "id": 87,
-      "link": [7, 5],
-      "name": "Base",
-      "requires": [
-        "f_MaridiaTubeBroken"
-      ],
-      "resetsObstacles": ["A"],
-      "devNote": "The obstacle is reset, as 7 is too low to jump to 4."
-    },
-    {
-      "id": 90,
-      "link": [7, 7],
-      "name": "Break the Tube",
-      "requires": [
-        {"or": [
-          "h_canUsePowerBombs",
-          {"obstaclesCleared": ["A"]}
-        ]}
-      ],
-      "setsFlags": ["f_MaridiaTubeBroken"]
+      "devNote": "If 4 is locked, strats that go to 4 can't exit at 4, but they can drop to 6 and unlock the door."
     }
   ],
   "nextStratId": 91,
