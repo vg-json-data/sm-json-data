@@ -74,13 +74,6 @@
       "name": "Between Third and Fourth Zebetite",
       "nodeType": "junction",
       "nodeSubType": "junction"
-    },
-    {
-      "id": 8,
-      "name": "Before First Zebetite",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "devNote": "FIXME: This node could be eliminated."
     }
   ],
   "enemies": [
@@ -89,7 +82,7 @@
       "groupName": "Mother Brain Right Door Rinkas",
       "enemyName": "Rinka",
       "quantity": 2,
-      "homeNodes": [2, 8],
+      "homeNodes": [2],
       "note": "Only 3 Rinka Spawners function at a time, so one of these 2 soon stops working."
     },
     {
@@ -97,7 +90,7 @@
       "groupName": "Zebetite 1 Rinkas",
       "enemyName": "Rinka",
       "quantity": 2,
-      "homeNodes": [5, 8]
+      "homeNodes": [2, 5]
     },
     {
       "id": "e3",
@@ -173,9 +166,9 @@
         {"id": 2},
         {
           "id": 3,
-          "note": "Direct link to Mother Brain 1 for the Speed Zebetite skip."
+          "note": "Direct link to Mother Brain 1 for the Zebetite skips."
         },
-        {"id": 8}
+        {"id": 5}
       ]
     },
     {
@@ -189,8 +182,7 @@
             "Each hit on MB also damages glass, counting for one of the 18 hits for that."
           ]
         },
-        {"id": 7},
-        {"id": 8}
+        {"id": 7}
       ]
     },
     {
@@ -206,9 +198,9 @@
     {
       "from": 5,
       "to": [
+        {"id": 2},
         {"id": 5},
-        {"id": 6},
-        {"id": 8}
+        {"id": 6}
       ]
     },
     {
@@ -225,18 +217,6 @@
         {"id": 3},
         {"id": 6},
         {"id": 7}
-      ]
-    },
-    {
-      "from": 8,
-      "to": [
-        {"id": 2},
-        {
-          "id": 3,
-          "note": "Direct link to Mother Brain 1 for the Ice Zebetite skip."
-        },
-        {"id": 5},
-        {"id": 8}
       ]
     }
   ],
@@ -368,6 +348,23 @@
       "note": "Carefully dodge the Rinkas, or take a hit, while carefully avoiding falling off, then use the I-Frames to use the runway."
     },
     {
+      "id": 38,
+      "link": [2, 2],
+      "name": "Destroy First Zebetite",
+      "requires": [
+        "h_canOpenZebetites",
+        {"or": [
+          "canDodgeWhileShooting",
+          {"enemyDamage": {
+            "enemy": "Rinka",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ],
+      "setsFlags": ["f_KilledZebetites1"]
+    },
+    {
       "id": 9,
       "link": [2, 2],
       "name": "G-Mode Setup - Get Hit By Rinka or Turret Shot",
@@ -390,6 +387,44 @@
       ],
       "gModeRegainMobility": {},
       "flashSuitChecked": true
+    },
+    {
+      "id": 30,
+      "link": [2, 3],
+      "name": "Mother Brain Ice Zebetite Skip",
+      "requires": [
+        {"notable": "Mother Brain Ice Zebetite Skip"},
+        "canTrickyUseFrozenEnemies",
+        "Morph",
+        {"or": [
+          "canTrickyJump",
+          {"and": [
+            "canDownBack",
+            {"enemyDamage": {
+              "enemy": "Rinka",
+              "type": "contact",
+              "hits": 1
+            }}
+          ]}
+        ]},
+        {"enemyDamage": {
+          "enemy": "Mother Brain 1",
+          "type": "turret",
+          "hits": 1
+        }}
+      ],
+      "note": [
+        "Glitch through the Mother Brain Zebetites by using a frozen Rinka and i-frames.",
+        "Freeze the Rinka at its spawn location, then spinjump or Down-Back onto it after acquiring i-frames to clip inside of the Zebetite, then jump through.",
+        "Note that Zebetites cause i-frames but deal no damage.",
+        "Ice+Wave can freeze the Rinka from above.  Ice+Plasma must freeze the Rinka from below while crouched."
+      ],
+      "devNote": [
+        "This technically requires f_KilledZebetites1 to not be set, but there is no loss of access, because there is no reason to kill any Zebs without being able to kill them all.",
+        "It is possible to Ice Zeb skip through the second Zeb with a morph/unmorph/remorph on a frozen Rinka.",
+        "This is known as a Remorph Zebetite Skip or a Spring Ball Zebetite Skip.",
+        "FIXME: It is possible to Ice Zeb Skip out, but it is much harder and would only be useful if getting here with canRiskPermanentLossOfAccess."
+      ]
     },
     {
       "id": 11,
@@ -466,10 +501,20 @@
       "devNote": "This technically requires f_KilledZebetites1 to not be set, but there is no loss of access, because there is no reason to kill any Zebs without being able to kill them all."
     },
     {
-      "id": 13,
-      "link": [2, 8],
+      "id": 31,
+      "link": [2, 5],
       "name": "Base",
-      "requires": []
+      "requires": [
+        "f_KilledZebetites1",
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Rinka",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ]
     },
     {
       "id": 33,
@@ -798,6 +843,22 @@
       ]
     },
     {
+      "id": 24,
+      "link": [5, 2],
+      "name": "Base",
+      "requires": [
+        "f_KilledZebetites1",
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Rinka",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]}
+      ]
+    },
+    {
       "id": 35,
       "link": [5, 5],
       "name": "Destroy Second Zebetite",
@@ -853,22 +914,6 @@
           "type": "turret",
           "hits": 1
         }}
-      ]
-    },
-    {
-      "id": 24,
-      "link": [5, 8],
-      "name": "Base",
-      "requires": [
-        "f_KilledZebetites1",
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]}
       ]
     },
     {
@@ -1007,83 +1052,6 @@
         }}
       ],
       "setsFlags": ["f_KilledZebetites4"]
-    },
-    {
-      "id": 29,
-      "link": [8, 2],
-      "name": "Base",
-      "requires": []
-    },
-    {
-      "id": 30,
-      "link": [8, 3],
-      "name": "Mother Brain Ice Zebetite Skip",
-      "requires": [
-        {"notable": "Mother Brain Ice Zebetite Skip"},
-        "canTrickyUseFrozenEnemies",
-        "Morph",
-        {"or": [
-          "canTrickyJump",
-          {"and": [
-            "canDownBack",
-            {"enemyDamage": {
-              "enemy": "Rinka",
-              "type": "contact",
-              "hits": 1
-            }}
-          ]}
-        ]},
-        {"enemyDamage": {
-          "enemy": "Mother Brain 1",
-          "type": "turret",
-          "hits": 1
-        }}
-      ],
-      "note": [
-        "Glitch through the Mother Brain Zebetites by using a frozen Rinka and i-frames.",
-        "Freeze the Rinka at its spawn location, then spinjump or Down-Back onto it after acquiring i-frames to clip inside of the Zebetite, then jump through.",
-        "Note that Zebetites cause i-frames but deal no damage.",
-        "Ice+Wave can freeze the Rinka from above.  Ice+Plasma must freeze the Rinka from below while crouched."
-      ],
-      "devNote": [
-        "This technically requires f_KilledZebetites1 to not be set, but there is no loss of access, because there is no reason to kill any Zebs without being able to kill them all.",
-        "It is possible to Ice Zeb skip through the second Zeb with a morph/unmorph/remorph on a frozen Rinka.",
-        "This is known as a Remorph Zebetite Skip or a Spring Ball Zebetite Skip.",
-        "FIXME: It is possible to Ice Zeb Skip out, but it is much harder and would only be useful if getting here with canRiskPermanentLossOfAccess."
-      ]
-    },
-    {
-      "id": 31,
-      "link": [8, 5],
-      "name": "Base",
-      "requires": [
-        "f_KilledZebetites1",
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]}
-      ]
-    },
-    {
-      "id": 38,
-      "link": [8, 8],
-      "name": "Destroy First Zebetite",
-      "requires": [
-        "h_canOpenZebetites",
-        {"or": [
-          "canDodgeWhileShooting",
-          {"enemyDamage": {
-            "enemy": "Rinka",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]}
-      ],
-      "setsFlags": ["f_KilledZebetites1"]
     }
   ],
   "nextStratId": 39,
