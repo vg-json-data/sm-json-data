@@ -621,7 +621,7 @@ __Example:__
 
 #### disableEquipment object
 
-A `disableEquipment` objects indicates the need for a specific item to be disabled, e.g. either by not having that item collected or by disabling it from the equipment screen.
+A `disableEquipment` objects indicates the need for a specific item to be disabled, e.g. either by not having that item collected or by disabling it from the equipment screen. This requirement (with any item) implicitly includes a `canDisableEquipment` tech requirement.
 
 __Example:__
 ```json
