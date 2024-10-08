@@ -618,3 +618,12 @@ __Example:__
 ```json
 {"notable": "Taco Tank"}
 ```
+
+#### disableEquipment object
+
+A `disableEquipment` objects indicates the need for a specific item to be disabled, e.g. either by not having that item collected or by disabling it from the equipment screen.
+
+__Example:__
+```json
+{"disableEquipment": "HiJump"}
+```
