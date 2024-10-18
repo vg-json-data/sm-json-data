@@ -152,6 +152,39 @@
       "flashSuitChecked": true
     },
     {
+      "link": [1, 1],
+      "name": "Collect Both Items with Pause Abuse",
+      "requires": [
+        {"or": [
+          "canBounceBall",
+          "canHorizontalDamageBoost",
+          "Wave",
+          "Plasma",
+          "Spazer"
+        ]},
+        {"enemyKill": {
+          "enemies": [
+            ["Sova", "Sova", "Sova"]
+          ],
+          "explicitWeapons": ["PowerBomb"]
+        }},
+        "canInsaneJump",
+        "canPauseAbuse",
+        "canFarmWhileShooting",
+        {"resourceMissingAtMost": [
+          {"type": "Missile", "count": 0},
+          {"type": "Super", "count": 0}]},
+        {"heatFrames": 392}
+      ],
+      "collectsItems": [2, 3],
+      "note": [
+        "Very quickly cross the room, collecting both items without falling into the lava.",
+        "Collect Sova drops on the way back to make use of pause abuse to save more energy.",
+        "A Power Bomb in the middle of the room sets up the Sova drops and adds lag which makes the block item easier to collect with a Flatley jump."
+      ],
+      "devNote": "Not notable because it is safer to collect the items in separate trips."
+    },
+    {
       "id": 4,
       "link": [1, 1],
       "name": "G-Mode Regain Mobility",
@@ -207,13 +240,30 @@
     {
       "id": 8,
       "link": [1, 2],
-      "name": "Shinespark",
+      "name": "Shinespark (Come in Shinecharged)",
       "entranceCondition": {
-        "comeInWithSpark": {}
+        "comeInShinecharged": {
+          "framesRequired": 13
+        }
       },
       "requires": [
         "canMidairShinespark",
         {"shinespark": {"frames": 38, "excessFrames": 1}},
+        {"heatFrames": 160}
+      ]
+    },
+    {
+      "link": [1, 2],
+      "name": "Shinespark (Come in Shinecharging)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 3,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canMidairShinespark",
+        {"shinespark": {"frames": 37, "excessFrames": 1}},
         {"heatFrames": 160}
       ]
     },
@@ -258,7 +308,10 @@
         {"heatFrames": 270}
       ],
       "clearsObstacles": ["A"],
-      "note": "Place a second Power Bomb while jumping up from the lower item block to clear the remaining enemies for the return trip."
+      "note": [
+        "Place a Power Bomb while waiting for the middle Dragon to shoot a fireball, to clear the Sovas for later.",
+        "Place a second Power Bomb while jumping up from the lower item block to clear the remaining enemies for the return trip."
+      ]
     },
     {
       "link": [1, 2],
@@ -266,7 +319,7 @@
       "requires": [
         {"notable": "Power Bomb with Damage Boost"},
         "canFlatleyJump",
-        "canInsaneJump",
+        "canTrickyDodgeEnemies",
         "canMidAirMorph",
         "canHorizontalDamageBoost",
         {"enemyDamage": {
@@ -281,11 +334,15 @@
           ],
           "explicitWeapons": ["PowerBomb"]
         }},
-        {"heatFrames": 270}
+        {"heatFrames": 260}
       ],
       "clearsObstacles": ["A"],
       "collectsItems": [3],
-      "note": "Place a second Power Bomb while jumping up from the lower item block to clear the remaining enemies for the return trip."
+      "note": [
+        "Place a Power Bomb while waiting for the middle Dragon to shoot a fireball, to clear the Sovas for later.",
+        "While the item block is breaking, turn around to perform a Flatley jump to collect the item and jump to the ledge item in one motion.",
+        "Place a second Power Bomb while jumping up from the lower item block to clear the remaining enemies for the return trip."
+      ]
     },
     {
       "id": 10,
@@ -339,18 +396,32 @@
       "name": "Base",
       "requires": [
         {"or": [
-          "canTrickyJump",
           {"and": [
-            "ScrewAttack",
-            "canCarefulJump",
-            {"heatFrames": 60}
+            "canTrickyDodgeEnemies",
+            {"heatFrames": 35}
           ]},
+          "canInsaneJump",
           {"and": [
             {"obstaclesCleared": ["A"]},
             {"heatFrames": 60}
           ]}
         ]},
-        {"heatFrames": 230}
+        {"heatFrames": 195}
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Kill Sovas while Platforming",
+      "requires": [
+        "canDodgeWhileShooting",
+        "canTrickyJump",
+        {"or": [
+          "Spazer",
+          "Wave",
+          "Plasma",
+          "ScrewAttack"
+        ]},
+        {"heatFrames": 210}
       ]
     },
     {
@@ -432,9 +503,12 @@
           ],
           "explicitWeapons": ["PowerBomb"]
         }},
-        {"heatFrames": 210}
+        {"heatFrames": 180}
       ],
-      "note": "A second Power Bomb will be needed to clear the remaining enemies for the return trip.",
+      "note": [
+        "Place a Power Bomb while waiting for the middle Dragon to shoot a fireball, to clear the Sovas for later.",
+        "A second Power Bomb will be needed to clear the remaining Dragons for the return trip."
+      ],
       "devNote": "Would be better if we could model 1 PB consumed + dragons half-dead."
     },
     {
@@ -444,6 +518,32 @@
       "requires": [
         "SpaceJump",
         {"heatFrames": 210}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Return while Farming",
+      "requires": [
+        "canFarmWhileShooting",
+        "canTrickyJump",
+        {"or": [
+          "Wave",
+          "Plasma",
+          "Spazer"
+        ]},
+        {"resourceMissingAtMost": [
+          {"type": "Missile", "count": 0},
+          {"type": "Super", "count": 0}]},
+        {"heatFramesWithEnergyDrops": {
+          "frames": 130,
+          "drops": [
+            {"enemy": "Sova", "count": 3}
+          ]
+        }},
+        {"heatFrames": 80}
+      ],
+      "note": [
+        "Return while collecting Sova drops."
       ]
     },
     {
@@ -580,6 +680,7 @@
       "name": "Buffered Item Pickup",
       "requires": [
         "canInsaneJump",
+        "canFlatleyJump",
         {"heatFrames": 30}
       ],
       "note": [
@@ -617,10 +718,6 @@
           "canTrickyJump",
           "SpaceJump",
           {"and": [
-            "ScrewAttack",
-            "canCarefulJump"
-          ]},
-          {"and": [
             {"obstaclesCleared": ["A"]},
             {"or": [
               "canCarefulJump",
@@ -656,6 +753,31 @@
         {"heatFrames": 480}
       ],
       "note": "Return with careful jumps, avoiding Dragons."
+    },
+    {
+      "link": [4, 1],
+      "name": "Return while Farming",
+      "requires": [
+        "canFarmWhileShooting",
+        {"or": [
+          "Wave",
+          "Plasma",
+          "Spazer"
+        ]},
+        {"resourceMissingAtMost": [
+          {"type": "Missile", "count": 0},
+          {"type": "Super", "count": 0}]},
+        {"heatFramesWithEnergyDrops": {
+          "frames": 120,
+          "drops": [
+            {"enemy": "Sova", "count": 2}
+          ]
+        }},
+        {"heatFrames": 40}
+      ],
+      "note": [
+        "Return while collecting Sova drops."
+      ]
     },
     {
       "id": 30,
