@@ -362,6 +362,23 @@ __Example:__
 ]}
 ```
 
+#### resourceConsumed object
+A `resourceConsumed` object represents the need for Samus to spend a set amount of a specific resource. It has the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * RegularEnergy
+  * ReserveEnergy
+  * Energy (total of RegularEnergy + ReserveEnergy)
+* _count:_ The amount of the resource that Samus must have.
+
+This requirement does not consume the resource.
+
+__Example:__
+```json
+{"resourceConsumed": [
+    {"type": "ReserveEnergy", "count": 1}
+]}
+```
+
 #### resourceMissingAtMost object
 A `resourceMissingAtMost` object represents the need for Samus to be missing at most a certain amount of a specific resource, relative to being full capacity. It has the following properties:
 * _type:_ The type of resource. Can have the following values:
