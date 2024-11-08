@@ -370,7 +370,7 @@ A `resourceConsumed` object represents the need for Samus to spend a set amount 
   * Energy (total of RegularEnergy + ReserveEnergy)
 * _count:_ The amount of the resource that Samus must have.
 
-This requirement does not consume the resource.
+This requirement consumes the resource.
 
 __Example:__
 ```json
