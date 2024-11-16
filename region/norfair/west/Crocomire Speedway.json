@@ -128,6 +128,7 @@
       "to": [
         {"id": 2},
         {"id": 3},
+        {"id": 4},
         {"id": 6}
       ]
     },
@@ -135,7 +136,9 @@
       "from": 4,
       "to": [
         {"id": 2},
+        {"id": 3},
         {"id": 4},
+        {"id": 5},
         {"id": 6}
       ]
     },
@@ -144,6 +147,7 @@
       "to": [
         {"id": 1},
         {"id": 2},
+        {"id": 4},
         {"id": 5},
         {"id": 6}
       ]
@@ -192,7 +196,7 @@
     {
       "id": 4,
       "link": [1, 5],
-      "name": "Leave Shinecharged",
+      "name": "Come In Shinecharging, Leave Shinecharged",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 0,
@@ -200,11 +204,11 @@
         }
       },
       "requires": [
-        {"heatFrames": 140}
+        {"heatFrames": 120}
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 70
+          "framesRemaining": 85
         }
       },
       "unlocksDoors": [
@@ -221,6 +225,99 @@
       ],
       "flashSuitChecked": true,
       "devNote": "FIXME: Entering with too little run speed causes Samus to 'trip', so the runway cannot reliably be used for short shortcharges."
+    },
+    {
+      "link": [1, 5],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 125
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 125}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 5],
+      "name": "Come In Shinecharged, Leave With Spark (Top Position)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 105
+        }
+      },
+      "requires": [
+        {"heatFrames": 130},
+        {"shinespark": {"frames": 2, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "top"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 5],
+      "name": "Come In Shinecharged, Leave With Spark (Bottom Position)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 110
+        }
+      },
+      "requires": [
+        {"heatFrames": 130},
+        {"shinespark": {"frames": 2, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 5,
@@ -318,7 +415,7 @@
     {
       "id": 10,
       "link": [3, 2],
-      "name": "Reverse Spark (From Croc Door)",
+      "name": "Reverse Spark",
       "entranceCondition": {
         "comeInShinecharged": {
           "framesRequired": 35
@@ -329,14 +426,64 @@
         {"notable": "Reverse Spark"},
         "canShinechargeMovement",
         "canHorizontalShinespark",
-        {"shinespark": {"frames": 86, "excessFrames": 10}},
-        {"heatFrames": 700}
+        {"or": [
+          {"shinespark": {"frames": 87, "excessFrames": 10}},
+          {"and": [
+            "h_heatProof",
+            "canControlShinesparkEnd",
+            {"shinespark": {"frames": 87, "excessFrames": 44}}
+          ]}
+        ]},
+        {"heatFrames": 675},
+        {"or": [
+          "canSpeedball",
+          {"heatFrames": 15}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
       "note": [
         "Spark left through the speed blocks, then run to the right and back to get speed to go through the rest.",
-        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+        "If performing the spark with low energy, there is a risk of ending the spark above the spikes or in front of the Pirate;",
+        "to be safe, assuming Samus has heat protection and begins sparking about 3 tiles from the Speed blocks, start with between 72 and 87 energy or at least 105 energy;",
+        "with a buffered crumble jump to the right, up to 93 energy can work."
+      ]
+    },
+    {
+      "link": [3, 2],
+      "name": "Reverse Spark With Pause Abuse",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 35
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"notable": "Reverse Spark With Pause Abuse"},
+        "canShinechargeMovementTricky",
+        "canTrickyJump",
+        "canControlShinesparkEnd",
+        "canPauseAbuse",
+        {"resourceAvailable": [{"type": "RegularEnergy", "count": 93}]},
+        {"resourceConsumed": [{"type": "ReserveEnergy", "count": 61}]},
+        {"or": [
+          "canPreciseReserveRefill",
+          {"resourceConsumed": [{"type": "ReserveEnergy", "count": 15}]}          
+        ]},
+        {"resourceAtMost": [{"type": "RegularEnergy", "count": 1}]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Enter the room with between 93 and 102 energy and quickly mid-air spark to the left through the Speed blocks.",
+        "After the shinespark ends, run left and press pause before reaching zero energy, tanking the Pirate hit while at zero energy.",
+        "Refill some energy (at least 11), and continue running to the left, using i-frames to pass through the next Pirate.",
+        "Continue to pause abuse several more times.",
+        "Arm pumping may be used but is not required and has little benefit;",
+        "in any case, arm pumping should not be used until beginning to run through the Speed blocks, otherwise Samus will not obtain blue speed in time and will bonk into them."
+      ],
+      "devNote": [
+        "We don't include a `h_ShinesparksCostEnergy` requirement here, because even if shinesparks don't cost energy, it is still possible to use heat damage to make the shinespark stop in the correct place.",
+        "FIXME: the regular energy required could be reduced in that case."
       ]
     },
     {
@@ -370,6 +517,67 @@
         "h_canHeatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 70
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 70}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Come In Shinecharged, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 40
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 70},
+        {"shinespark": {"frames": 8, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ]
     },
     {
       "id": 14,
@@ -421,22 +629,34 @@
       "link": [4, 2],
       "name": "Reverse Spark Near SpeedBlocks",
       "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 1,
-          "openEnd": 1
+        "comeInShinecharged": {
+          "framesRequired": 85
         }
       },
       "requires": [
         {"notable": "Reverse Spark"},
         "canShinechargeMovement",
         "canHorizontalShinespark",
-        {"shinespark": {"frames": 84, "excessFrames": 10}},
-        {"heatFrames": 760}
+        {"or": [
+          {"shinespark": {"frames": 84, "excessFrames": 10}},
+          {"and": [
+            "h_heatProof",
+            "canControlShinesparkEnd",
+            {"shinespark": {"frames": 84, "excessFrames": 45}}
+          ]}
+        ]},
+        {"heatFrames": 715},
+        {"or": [
+          "canSpeedball",
+          {"heatFrames": 15}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
         "Spark left through the speed blocks, then run to the right and back to get speed to go through the rest.",
-        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+        "If performing the spark with low energy, there is a risk of ending the spark above the spikes or in front of the Pirate;",
+        "to be safe, assuming Samus has heat protection, begin the shinespark at the Speed blocks with between 68 and 84 energy, or at least 101 energy;",
+        "with a buffered crumble jump to the right, up to 89 energy can work."
       ]
     },
     {
@@ -450,13 +670,58 @@
       },
       "requires": [
         {"notable": "Reverse Spark"},
-        {"shinespark": {"frames": 94, "excessFrames": 10}},
-        {"heatFrames": 700}
+        {"or": [
+          {"shinespark": {"frames": 94, "excessFrames": 10}},
+          {"and": [
+            "h_heatProof",
+            "canControlShinesparkEnd",
+            {"shinespark": {"frames": 94, "excessFrames": 42}}
+          ]}
+        ]},
+        {"heatFrames": 650}
       ],
       "clearsObstacles": ["A"],
       "note": [
         "Spark left through the speed blocks, then run to the right and back to get speed to go through the rest.",
-        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+        "If performing the spark with low energy, there is a risk of ending the spark above the spikes or in front of the Pirate;",
+        "to be safe, assuming Samus has heat protection, begin the shinespark at the door (in either this or the other room) with between 81 and 96 energy, or at least 113 energy;",
+        "with a buffered crumble jump to the right, up to 102 energy can work."
+      ]
+    },
+    {
+      "link": [4, 2],
+      "name": "Reverse Spark With Pause Abuse",
+      "entranceCondition": {
+        "comeInWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "requires": [
+        {"notable": "Reverse Spark With Pause Abuse"},
+        "canShinechargeMovementTricky",
+        "canTrickyJump",
+        "canControlShinesparkEnd",
+        "canPauseAbuse",
+        {"resourceAvailable": [{"type": "RegularEnergy", "count": 94}]},
+        {"resourceConsumed": [{"type": "ReserveEnergy", "count": 61}]},
+        {"or": [
+          "canPreciseReserveRefill",
+          {"resourceConsumed": [{"type": "ReserveEnergy", "count": 15}]}          
+        ]},
+        {"resourceAtMost": [{"type": "RegularEnergy", "count": 1}]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Start a shinespark on the other side of the door with between 94 and 103 energy.",
+        "After the shinespark ends, run left and press pause before reaching zero energy, tanking the Pirate hit while at zero energy.",
+        "Refill some energy (at least 11), and continue running to the left, using i-frames to pass through the next Pirate.",
+        "Continue to pause abuse several more times.",
+        "Arm pumping may be used but is not required and has little benefit;",
+        "in any case, arm pumping should not be used until beginning to run through the Speed blocks, otherwise Samus will not obtain blue speed in time and will bonk into them."
+      ],
+      "devNote": [
+        "We don't include a `h_ShinesparksCostEnergy` requirement here, because even if shinesparks don't cost energy, it is still possible to use heat damage to make the shinespark stop in the correct place.",
+        "FIXME: the regular energy required could be reduced in that case."
       ]
     },
     {
@@ -572,6 +837,36 @@
       ]
     },
     {
+      "link": [4, 3],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 55
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 55}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ]
+    },
+    {
       "id": 25,
       "link": [4, 4],
       "name": "Leave with Runway",
@@ -591,6 +886,55 @@
         "h_canHeatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [4, 5],
+      "name": "Come In Shinecharging, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        "canInsaneJump",
+        "canBePatient",
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Cacatac",
+            "type": "contact",
+            "hits": 1
+          }},
+          "Plasma",
+          {"and": [
+            "Wave",
+            "Spazer"
+          ]}
+        ]},
+        {"shineChargeFrames": 177},
+        {"shinespark": {"frames": 10, "excessFrames": 0}},
+        {"heatFrames": 220}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true,
+      "devNote": [
+        "The canBePatient requirement represents the possible need to retry in case bad RNG causes a Cac spike hit to mess up the strat."
+      ]
     },
     {
       "id": 27,
@@ -693,7 +1037,7 @@
     {
       "id": 31,
       "link": [5, 1],
-      "name": "Leave Shinecharged",
+      "name": "Come In Shinecharging, Leave Shinecharged",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 5,
@@ -701,11 +1045,205 @@
         }
       },
       "requires": [
+        "canShinechargeMovementComplex",
         {"heatFrames": 160}
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 30
+          "framesRemaining": 40
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Carry Shinecharge (HiJump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 120
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"heatFrames": 120}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Carry Shinecharge (Wall Jump)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 130
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"heatFrames": 130}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Carry Shinecharge (Ledge Grabs)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 145
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 145}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {
+          "framesRemaining": "auto"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Come In Shinecharged, Leave With Spark (HiJump, Bottom Position)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 70
+        }
+      },
+      "requires": [
+        "HiJump",
+        "canShinechargeMovementComplex",
+        {"heatFrames": 120},
+        {"shinespark": {"frames": 18, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Come In Shinecharged, Leave With Spark (Wall Jump, Bottom Position)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 90
+        }
+      },
+      "requires": [
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"heatFrames": 135},
+        {"shinespark": {"frames": 16, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["super"],
+          "requires": []
+        },
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            "never"
+          ]
+        }
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 1],
+      "name": "Come In Shinecharged, Leave With Spark (Ledge Grabs, Bottom Position)",
+      "entranceCondition": {
+        "comeInShinecharged": {
+          "framesRequired": 100
+        }
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"heatFrames": 145},
+        {"shinespark": {"frames": 16, "excessFrames": 0}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
         }
       },
       "unlocksDoors": [
@@ -725,7 +1263,7 @@
     {
       "id": 32,
       "link": [5, 2],
-      "name": "Reverse Spark (From Save Room)",
+      "name": "Reverse Spark",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 5,
@@ -736,20 +1274,98 @@
         {"notable": "Reverse Spark"},
         "canShinechargeMovementTricky",
         "canTrickyJump",
-        "canMidairShinespark",
-        {"enemyDamage": {
-          "enemy": "Cacatac",
-          "type": "spike",
-          "hits": 1
-        }},
-        {"shinespark": {"frames": 92, "excessFrames": 10}},
-        {"heatFrames": 900}
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Cacatac",
+            "type": "spike",
+            "hits": 1
+          }},
+          "canBePatient"
+        ]},
+        {"or": [
+          {"shinespark": {"frames": 88, "excessFrames": 11}},
+          {"and": [
+            "h_heatProof",
+            "canControlShinesparkEnd",
+            {"shinespark": {"frames": 88, "excessFrames": 44}}
+          ]}  
+        ]},
+        {"heatFrames": 825},
+        {"or": [
+          "canSpeedball",
+          {"heatFrames": 15}
+        ]}
       ],
       "clearsObstacles": ["A"],
       "note": [
-        "The timer is tight, so run through the Cacatacs and mid-air spark left through the speed blocks.",
+        "Either jump over a Cacatac or tank a spike hit.",
+        "Perform a mid-air spark through the speed blocks.",
         "Then run to the right and back to get speed to go through the rest.",
-        "The shinespark expects to kill the crumble bridge pirate, to be safe."
+        "If performing the spark with low energy, there is a risk of ending the spark above the spikes or in front of the Pirate;",
+        "to be safe, assuming Samus has heat protection, begin the shinespark with between 73 and 88 energy, or at least 106 energy;",
+        "with a buffered crumble jump to the right, up to 94 energy can work."
+      ],
+      "devNote": [
+        "The canBePatient represents retrying until RNG works out to be able to jump over one of the Cacatacs without taking a hit.",
+        "There is a possibility of getting a lucky drop from one of the two Pirates;",
+        "but since it is low probability, we don't model it.",
+        "The speedball exit is technically not a valid way to leave normally (e.g. in case the next room is heated and Samus needs to jump);",
+        "but if necessary, it is possible to unmorph near the transition."
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Reverse Spark With Pause Abuse",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        {"notable": "Reverse Spark With Pause Abuse"},
+        "canShinechargeMovementTricky",
+        "canTrickyJump",
+        "canControlShinesparkEnd",
+        "canPauseAbuse",
+        {"resourceAvailable": [{"type": "RegularEnergy", "count": 99}]},
+        {"resourceConsumed": [{"type": "ReserveEnergy", "count": 80}]},
+        {"or": [
+          {"resourceConsumed": [{"type": "ReserveEnergy", "count": 20}]},
+          {"and": [
+            {"resourceMissingAtMost": [{"type": "Super", "count": 0}]},
+            {"or": [
+              {"ammo": {"type": "Missile", "count": 1}},
+              "Grapple",
+              "Plasma",
+              {"and": [
+                "Wave",
+                "Spazer"
+              ]}
+            ]}
+          ]}
+        ]},
+        {"or": [
+          "canPreciseReserveRefill",
+          {"resourceConsumed": [{"type": "ReserveEnergy", "count": 15}]}          
+        ]},
+        {"resourceAtMost": [{"type": "RegularEnergy", "count": 1}]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Either jump over a Cacatac, tank a spike hit, or farm it if possible.",
+        "While preparing to spark left through the speed blocks, press pause so that the pause hits during the shinespark wind-up",
+        "Using reserves, try to refill to exactly 84 energy, the minimum amount needed to reliably break through the Speed blocks (assuming no heat protection).",
+        "Hold jump and left while unpausing, to buffer activating the horizontal shinespark.",
+        "After the shinespark ends, run left and press pause before reaching zero energy, tanking the Pirate hit while at zero energy.",
+        "Refill to between about 11 and 13 energy, and continue running to the left, using i-frames to pass through the next Pirate.",
+        "Continue to pause abuse 4 more times, trying to refill to between 11 and 13 energy each time except for the last.",
+        "Arm pumping may be used but is not required and has little benefit;",
+        "in any case, arm pumping should not be used until beginning to run through the Speed blocks, otherwise Samus will not obtain blue speed in time and will bonk into them."
+      ],
+      "devNote": [
+        "We don't include a `h_ShinesparksCostEnergy` requirement here, because even if shinesparks don't cost energy, it is still possible to use heat damage to make the shinespark stop in the correct place.",
+        "FIXME: the regular energy required could be reduced in that case."
       ]
     },
     {
@@ -862,6 +1478,33 @@
         "Exit the previous room with Samus in a standing pose (while grappled).",
         "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
         "Then X-ray climb to get up to the door transition, without needing to open the door."
+      ]
+    },
+    {
+      "link": [5, 4],
+      "name": "Come In Shinecharging, Leave With Spark",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 5,
+          "openEnd": 1
+        }
+      },
+      "requires": [
+        "canShinechargeMovementTricky",
+        "canTrickyJump",
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Cacatac",
+            "type": "spike",
+            "hits": 1
+          }},
+          "canBePatient"  
+        ]},
+        {"shinespark": {"frames": 10, "excessFrames": 0}},
+        {"heatFrames": 210}
+      ],
+      "devNote": [
+        "The canBePatient represents retrying until RNG works out to be able to jump over one of the Cacatacs without taking a hit."
       ]
     },
     {
@@ -1074,7 +1717,16 @@
       "id": 3,
       "name": "Reverse Speedball",
       "note": "Break the speed blocks by jumping over the gap with blue speed and continuing through the room with a speedball."
+    },
+    {
+      "id": 4,
+      "name": "Reverse Spark With Pause Abuse",
+      "note": [
+        "Spark left through the speed blocks with low energy, so that the spark stops before the first Pirate.",
+        "Then use a sequence of pause abuses with reserves to cross the room.",
+        "This can be done with a single Reserve Tank (no Energy Tanks), from any of the three doors on the right side of the room."
+      ]
     }
   ],
-  "nextNotableId": 4
+  "nextNotableId": 5
 }
