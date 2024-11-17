@@ -72,6 +72,11 @@
       "name": "G-Mode Morph Direct",
       "obstacleType": "abstract",
       "note": "Samus enters the room in direct G-Mode with artificial morph, in order to be able to remote acquire the item."
+    },
+    {
+      "id": "E",
+      "name": "Left door open",
+      "obstacleType": "inanimate"
     }
   ],
   "enemies": [
@@ -159,6 +164,14 @@
         "h_canCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Open Door",
+      "requires": [
+        {"doorUnlockedAtNode": 1}
+      ],
+      "clearsObstacles": ["E"]
     },
     {
       "id": 3,
@@ -436,7 +449,6 @@
       "requires": [
         "canWalljump",
         "canShinechargeMovementComplex",
-        "canMidairShinespark",
         {"obstaclesCleared": ["B"]},
         {"or": [
           {"canShineCharge": {
@@ -449,33 +461,50 @@
             {"obstaclesCleared": ["A"]}
           ]}
         ]},
-        {"shinespark": {"frames": 90}}
+        {"shinespark": {"frames": 85}}
       ],
       "note": "Fire off the shinespark at the apex of two consecutive walljumps."
     },
     {
       "id": 19,
       "link": [2, 1],
-      "name": "Big Jump Shinespark",
+      "name": "Big Jump Horizontal Shinespark",
       "requires": [
         {"notable": "Big Jump Shinespark"},
         "canShinechargeMovementComplex",
-        "canMidairShinespark",
         {"obstaclesCleared": ["B"]},
-        {"or": [
-          {"canShineCharge": {
-            "usedTiles": 32,
-            "gentleUpTiles": 6,
-            "openEnd": 1
-          }},
-          {"and": [
-            "h_canShineChargeMaxRunway",
-            {"obstaclesCleared": ["A"]}
-          ]}
-        ]},
-        {"shinespark": {"frames": 52}}
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "gentleDownTiles": 6,
+          "openEnd": 1
+        }},
+        {"shinespark": {"frames": 52}},
+        "canDownGrab"
       ],
-      "note": "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex."
+      "note": [
+        "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex.",
+        "If needed, down-grab onto the ledge."
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Big Jump Diagonal Shinespark",
+      "requires": [
+        {"notable": "Big Jump Shinespark"},
+        "canShinechargeMovementTricky",
+        {"obstaclesCleared": ["B"]},
+        {"canShineCharge": {
+          "usedTiles": 23,
+          "gentleDownTiles": 6,
+          "openEnd": 1
+        }},
+        {"shinespark": {"frames": 26}}
+      ],
+      "note": [
+        "Charge a spark to the right a specific distance of about 6 tiles past the broken Speed blocks.",
+        "Then turn around, run and jump, and activate a diagonal spark as late as possible.",
+        "By shortening the jump, it is possible to kill a Ripper and collect its drop while falling."
+      ]
     },
     {
       "id": 20,
@@ -503,13 +532,107 @@
           "canCarefulJump",
           "HiJump"
         ]},
-        {"obstaclesCleared": ["B"]},
-        {"or": [
-          "h_canUsePowerBombs",
-          {"obstaclesCleared": ["A"]}
-        ]}
+        {"obstaclesCleared": ["A", "B"]}
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Wall Jumps)",
+      "requires": [
+        {"obstaclesCleared": ["B", "E"]},
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "gentleUpTiles": 6,
+          "openEnd": 1
+        }},
+        "canWalljump",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 85}}
       ],
-      "clearsObstacles": ["A"]
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": [],
+          "useImplicitRequires": false
+        }
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Short Speedy Jump)",
+      "requires": [
+        {"obstaclesCleared": ["B", "E"]},
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "gentleDownTiles": 6,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 57}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": [],
+          "useImplicitRequires": false
+        }
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Short Speedy HiJump)",
+      "requires": [
+        "HiJump",
+        {"obstaclesCleared": ["B", "E"]},
+        {"canShineCharge": {
+          "usedTiles": 32,
+          "gentleDownTiles": 6,
+          "openEnd": 1
+        }},
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 56}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": [],
+          "useImplicitRequires": false
+        }
+      ]
+    },
+    {
+      "link": [2, 1],
+      "name": "Leave With Spark (Long Speedy Jump)",
+      "requires": [
+        {"obstaclesCleared": ["A", "B", "E"]},
+        "h_canShineChargeMaxRunway",
+        "canShinechargeMovementComplex",
+        {"shinespark": {"frames": 53}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["ammo"],
+          "requires": [],
+          "useImplicitRequires": false
+        }
+      ],
+      "note": [
+        "Store a shinecharge and start running below the left side of the vertical door, to set up the jump in a way that shinesparking at the apex of the jump approximately aligns with the top of the far door."
+      ]
     },
     {
       "id": 22,
@@ -581,7 +704,7 @@
           "limit": 16
         }}
       ],
-      "resetsObstacles": ["A", "B"],
+      "resetsObstacles": ["A", "B", "C", "D", "E"],
       "note": "Shoot the Mellas when they first begin to come on screen, and they will not move."
     },
     {
@@ -594,7 +717,7 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 130
+          "framesRemaining": 135
         }
       },
       "flashSuitChecked": true,
@@ -619,7 +742,7 @@
       ],
       "exitCondition": {
         "leaveShinecharged": {
-          "framesRemaining": 100
+          "framesRemaining": 115
         }
       },
       "flashSuitChecked": true,
@@ -1445,7 +1568,7 @@
     {
       "id": 5,
       "name": "Big Jump Shinespark",
-      "note": "Charge a spark to the right, then come back, run and jump, and do a horizontal spark at the apex."
+      "note": "Charge a spark to the right, then come back, run and jump, and perform a shinespark (horizontally or diagonally) to reach the ledge."
     },
     {
       "id": 6,
