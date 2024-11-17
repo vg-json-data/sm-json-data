@@ -748,8 +748,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["counts"]["reds"] += 1
                             if "leaveShinecharged" in strat["exitCondition"]:
                                 if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
-                                    if "entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]:
-                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition:{stratRef}"
+                                    if ("entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]) and strat.get("startsWithShineCharge") is not True:
+                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition or startsWithShineCharge:{stratRef}"
                                         messages["reds"].append(msg)
                                         messages["counts"]["reds"] += 1
                             if "leaveWithTemporaryBlue" in strat["exitCondition"]:
