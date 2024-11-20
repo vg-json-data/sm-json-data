@@ -629,7 +629,7 @@ __Example:__
 
 #### notable object
 
-A `notable` object indicates the need to be able to perform a notable, which is like a tech but specific to the room. The name of the notable must match the `name` of an object in the room `notables` list.
+A `notable` object indicates the need to be able to perform a [notable strat](region/region-readme.md#notable-strats). A notable strat is a strat which requires more than simply having all of its item and tech requirements. This may be one with higher difficulty than what the tech would typically imply, or one which requires specific knowledge relating to the strat. Notable objects can be used like a tech requirement that is specific to the room. The name of the notable must match the `name` of an object in the room `notables` list.
 
 __Example:__
 ```json
