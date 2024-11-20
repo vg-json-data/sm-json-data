@@ -557,14 +557,10 @@ __Example:__
 #### resetRoom object
 A `resetRoom` object represents the need for the room to be in an initial state in order to perform a strat. A `resetRoom` object can have the following properties:
 * _nodes:_ An array containing the in-room ID of nodes at which entering the room can work.
-* _nodesToAvoid:_ An array containing the in-room ID of nodes that Samus must not visit after resetting the room. If any of those nodes have to be visited, the `resetRoom` object cannot be fulfilled, regardless of where Samus entered the room.
-* _mustStayPut:_ This property is mutually exclusive with `nodesToAvoid` and is only meaningful for `resetRoom` objects whose only `nodes` is the one they are at. If it is present and `true`, it is equivalent to having a `nodesToAvoid` property containing all other nodes in the room.
 
 In order to fulfill a `resetRoom` object, Samus must be able to do all of the following:
 * Enter the room at one of the listed `nodes`
 * Reach the node where the logic contains the `resetRoom` object
-  * If `mustStayPut` is true, Samus should be entering the room at the correct node and staying there
-* Do this while visiting none of the listed `nodesToAvoid`. However, it's ok if a node to avoid ends up being visited directly afterwards, as a result of fulfilling the `resetRoom` object.
 * If Samus is already in the room and has done one of the actions to avoid, she must be able to exit at one of the listed `nodes` and re-enter, following all other rules.
   * Please note that if fulfilling a `resetRoom` object involves exiting and re-entering, it will indeed reset the room and cause all obstacles to respawn.
 
