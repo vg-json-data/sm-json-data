@@ -1496,85 +1496,56 @@
     "name",
     "area",
     "subarea",
-    "playable",
     "nodes",
     "links",
     "strats"
   ],
   "allOf": [
     {
-      "if": {
-        "properties": {
-          "playable": {"const": true}
-        }
-      },
-      "then": {
-        "required": ["roomEnvironments"],
-        "properties": {
-          "nodes": {
-            "items": {
-              "allOf": [
-                {
-                  "if": {
+      "required": ["roomEnvironments"],
+      "properties": {
+        "nodes": {
+          "items": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "nodeType": {"const": "door"}
+                  },
+                  "not": {
                     "properties": {
-                      "nodeType": {"const": "door"}
+                      "nodeSubType": {"const": "elevator"}
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["doorEnvironments"]
+                }
+              },
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "not": {
+                        "properties": {
+                          "nodeType": {"const": "door"}
+                        }
+                      }
                     },
-                    "not": {
+                    {
                       "properties": {
                         "nodeSubType": {"const": "elevator"}
                       }
                     }
-                  },
-                  "then": {
+                  ]
+                },
+                "then": {
+                  "not":{
                     "required": ["doorEnvironments"]
                   }
-                },
-                {
-                  "if": {
-                    "anyOf": [
-                      {
-                        "not": {
-                          "properties": {
-                            "nodeType": {"const": "door"}
-                          }
-                        }
-                      },
-                      {
-                        "properties": {
-                          "nodeSubType": {"const": "elevator"}
-                        }
-                      }
-                    ]
-                  },
-                  "then": {
-                    "not":{
-                      "required": ["doorEnvironments"]
-                    }
-                  }
                 }
-              ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "playable": {"const": false}
-        }
-      },
-      "then": {
-        "not": {
-          "required": ["roomEnvironments"]
-        },
-        "properties": {
-          "nodes": {
-            "items": {
-              "not": {
-                "required": ["doorEnvironments"]
               }
-            }
+            ]
           }
         }
       }
@@ -1631,13 +1602,6 @@
         "Pink"
       ],
       "pattern": "^(.*)$"
-    },
-    "playable": {
-      "$id": "#/properties/playable",
-      "type": "boolean",
-      "title": "Playable",
-      "description": "Indicates whether any gameplay happens in this room. When this is false, inputs do nothing and momentum is carried over from the previous room to the next one.",
-      "default": true
     },
     "note": {
       "$ref" : "m3-note.schema.json#/definitions/note",
