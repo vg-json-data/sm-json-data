@@ -60,9 +60,6 @@ The `utility` property is an array of utility functions available to Samus at a 
 * _reserve:_ Note that this excludes regular energy. If a node can refill reserves as well as energy, it will have both `energy` and `reserve`
 * _map_
 
-#### interactionRequires
-[Logical requirements](../logicalRequirements.md) that must be fulfilled each time Samus interacts with the node.
-
 #### locks
 The `locks` property is an array that contains different ways a node can be locked, and the corresponding way it can be unlocked. Each object in the `locks` property has some properties of its own:
 * _lockType:_ An enum indicating the type of lock. It gives a basic idea of what kind of thing has to be done to open this lock. Possible lock types are:
@@ -73,7 +70,6 @@ The `locks` property is an array that contains different ways a node can be lock
   * _gameFlag:_ Indicates a lock that is opened when a game flag has been activated. Most locks that are unlocked by killing a boss are this type, rather than `bossFight`.
   * _killEnemies:_ A lock that is unlocked by killing enemies in a room. This excludes doors in boss rooms, which are `gameFlag` locks.
   * _permanent:_ A lock that can never be unlocked.
-  * _triggeredEvent:_ A type for miscellaneous events triggered by an action performed nearby by Samus.
 * _lock:_ The `lock` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the node to be locked. If this is missing, the node is considered initially locked at game start.
 * _name:_ A name that identifies the lock. This name must be unique across all locks in the model.
 * _unlockStrats:_ The `unlockStrats` property is an array of [strats](../strats.md), each of which may be executed in order to unlock this specific lock. Unlocking a node makes it possible to interact with the node until the end of the game.
