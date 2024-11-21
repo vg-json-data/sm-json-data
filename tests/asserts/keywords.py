@@ -641,7 +641,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "fromNodes.",
                             "inRoomPath.",
                             "resetRoom.nodes.",
-                            "nodesToAvoid.",
                             "itemNotCollectedAtNode"
                         ],
                         "room",
