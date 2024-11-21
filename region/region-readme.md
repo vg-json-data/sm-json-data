@@ -126,7 +126,9 @@ A room has an array of links. Links define how Samus can navigate within a room.
 * _id:_ The in-room ID of the node to which the link leads
 * _strats:_ An array of [strats](../strats.md), each of which represents a way Samus can go to that destination.
 
-### <a name="reusable"></a>Reusable Roomwide Notable Strats
-A room may have an array of reusable notable strats. Some notable strats within a room may be very similar to each other, often when traversing symmetric links in opposite directions. These strats may be connected, such that they can share a reusable strat name and description. Each `reusableRoomwideNotable` will have the following properties:
-* _name:_ A common name used to describe the similar notable strats.
-* _note:_ A common description used to describe the similar notable strats.
+### Notable Strats
+Some strats are flagged as "notable". this means a few things:
+  * Just having the required items and the ability to perform the required techs may not be enough to execute a notable strat. It might require:
+    * A higher difficulty than what the tech would typically imply
+    * Knowledge of the strat or specific to the strat (such as an obscure strat or unique setup)
+  * An algorithm using this project to drive its logic should consider allowing to toggle off (or on) any given notable strat.

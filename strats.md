@@ -7,8 +7,6 @@ Strats are usually presented within an array of strats, where all individual str
 
 A `strat` can have the following properties:
   * _name_: The name of the strat.
-  * _notable_: Indicates whether the strat is notable.
-  * _reusableRoomwideNotable_: The name of the reusable roomwide notable strat. This must share an identical name with an entry in the `reusableRoomwideNotable` array and the other strats that are connected to this one. This is only applicable for strats where `notable` is `true`.
   * _entranceCondition_: Indicates that this strat requires entering through the door transition in a special way, combining with a strat in the previous room.
   * _requires_: The [logical requirements](logicalRequirements.md) that must be fulfilled to execute that strat.
   * _exitCondition_: Indicates that this strat leaves through the door transition in a special way that combines with a strat in the next room. 
@@ -29,19 +27,9 @@ Here's a simple example of a strat:
 ```json
 {
   "name": "Base",
-  "notable": false,
   "requires": ["Morph"]
 }
 ```
-
-## Notable Strats
-
-Some strats are flagged as "notable". this means a few things:
-  * The strat's name must be unique among all existing strats in the project.
-  * Just having the required items and the ability to perform the required techs may not be enough to execute a notable strat. It might require:
-    * A higher difficulty than what the tech would typically imply
-    * Knowledge of the strat or specific to the strat (such as an obscure strat or unique setup)
-  * An algorithm using this project to drive its logic should consider allowing to toggle off (or on) any given notable strat.
 
 ## Logical Requirements
 
@@ -52,10 +40,6 @@ A strat has [logical requirements](logicalRequirements.md) which must be fulfill
 Execution of a strat may have an effect of clearing one or more [obstacles](region/region-readme.md#obstacles) in the room. This is indicated by a `clearsObstacles` property on the strat. It can represent, for example, that certain enemies or special blocks are destroyed by executing this strat. This allows later performing strats in the room that have an [`obstaclesCleared`](logicalRequirements.md#obstaclescleared) logical requirement on this obstacle, while disallowing strats that have an [`obstaclesNotCleared`] requirement.
 
 Similarly, the `resetsObstacles` property is used to indicate that a strat results in an obstacle returning to its original, uncleared state.
-
-## Reusable Roomwide Notable Strats
-
-Some notable strats may be very similar to each other. If similar notable strats exist in different rooms, a tech might be made for them. Otherwise, if similar notable strats exist in the same room, a [reusable notable strat](region/region-readme.md#reusable) can exist to connect them with a common name and description. A typical example is for symmetric links with strats of notable difficulty, with one notable strat for each of two directions the room can be traversed in, and the two strats being connected by sharing the same reusable notable.
 
 ## Cross-room strats
 
@@ -140,7 +124,6 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 ```json
 {
   "name": "Leave With Runway",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveWithRunway": {
@@ -174,7 +157,6 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
 ```json
 {
   "name": "Leave Shinecharged",
-  "notable": false,
   "requires": [
     {"canShinecharge": {
       "usedTiles": 20,
@@ -202,7 +184,6 @@ The `leaveWithTemporaryBlue` object has the following property:
 ```json
 {
   "name": "Leave With Temporary Blue",
-  "notable": false,
   "requires": [
     {"canShinecharge": {
       "usedTiles": 20,
@@ -230,7 +211,6 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 ```json
 {
   "name": "Leave With Spark",
-  "notable": false,
   "requires": [
     {"canShinecharge": {
       "usedTiles": 20,
@@ -263,7 +243,6 @@ If a `leaveSpinning` condition is used for blue speed in the next room, then it 
 ```json
 {
   "name": "Leave Spinning",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveSpinning": {
@@ -294,7 +273,6 @@ A `leaveWithMockball` condition implicitly includes the `canMockball` tech requi
 ```json
 {
   "name": "Leave With Mockball",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveWithMockball": {
@@ -334,7 +312,6 @@ Note that using a mockball in front of the door to perform a spring ball bounce 
 ```json
 {
   "name": "Leave With Spring Ball Bounce",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveWithSpringBallBounce": {
@@ -369,7 +346,6 @@ A `leaveSpaceJumping` condition implicitly includes the `SpaceJump` item require
 ```json
 {
   "name": "Leave Space Jumping",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveSpaceJumping": {
@@ -395,7 +371,6 @@ A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithSto
 ```json
 {
   "name": "Moondance to Store Fall Speed",
-  "notable": false,
   "requires": [
     "h_canUseBombs",
     "canMoondance"
@@ -424,7 +399,6 @@ A `leaveWithGModeSetup` comes with implicit requirements, which are described in
 ```json
 {
   "name": "Leave With G-Mode Setup",
-  "notable": false,
   "requires": [],
   "exitCondition": {
     "leaveWithGModeSetup": {}
@@ -444,7 +418,6 @@ For most doors in the game, it is possible to enter the room with a G-mode setup
 ```json
 {
   "name": "G-Mode Go Back Through Door",
-  "notable": false,
   "entranceCondition": {
     "comeInWithGMode": {
       "mode": "direct",
@@ -585,7 +558,6 @@ When matching with a `leaveWithRunway` condition in a heated room on a strat hav
 ```json
 {
   "name": "Come In Normally",
-  "notable": false,
   "entranceCondition": {
     "comeInNormally": {}
   },
@@ -633,7 +605,6 @@ The way to calculate minimally required heat frames depends on the type of `leav
 ```json
 {
   "name": "Come In Running",
-  "notable": false,
   "entranceCondition": {
     "comeInRunning": {
       "speedBooster": "any",
@@ -657,7 +628,6 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 ```json
 {
   "name": "Cross Room Jump",
-  "notable": false,
   "entranceCondition": {
     "comeInJumping": {
       "speedBooster": "any",
@@ -681,7 +651,6 @@ A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` 
 ```json
 {
   "name": "Come In Space Jumping",
-  "notable": false,
   "entranceCondtion": {
     "comeInSpaceJumping": {
       "speedBooster": "any",
@@ -741,7 +710,6 @@ The way to calculate minimally required heat frames depends on the type of `leav
 ```json
 {
   "name": "Come In Shinecharging",
-  "notable": false,
   "entranceCondition": {
     "comeInShinecharging": {
       "length": 5,
@@ -772,7 +740,6 @@ Note that a `comeInGettingBlueSpeed` entrance condition is compatible with prese
 ```json
 {
   "name": "Come In Getting Blue Speed",
-  "notable": false,
   "entranceCondition": {
     "comeInGettingBlueSpeed": {
       "length": 5,
@@ -812,7 +779,6 @@ A `comeInShinecharged` object does not provide any way to specify Samus' positio
 ```json
 {
   "name": "Come In Shinecharged",
-  "notable": false,
   "entranceCondition": {
     "comeInShinecharged": {
       "framesRequired": 65
@@ -863,7 +829,6 @@ In all three cases, there is an implicit requirement of `canHorizontalShinespark
 ```json
 {
   "name": "Come In With Spark",
-  "notable": false,
   "entranceCondition": {
     "comeInWithSpark": {}
   },
@@ -889,7 +854,6 @@ A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` con
 ```json
 {
   "name": "Come In Stutter Shinecharging",
-  "notable": false,
   "entranceCondition": {
     "comeInStutterShinecharging": {
       "minTiles": 2
@@ -913,7 +877,6 @@ A `comeInWithBombBoost` condition must match with a `leaveWithRunway` condition 
 ```json
 {
   "name": "Come In With Bomb Boost",
-  "notable": false,
   "entranceCondition": {
     "comeInWithBombBoost": {}
   },
@@ -936,7 +899,6 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
 ```json
 {
   "name": "X-Ray Climb",
-  "notable": false,
   "entranceCondition": {
     "comeInWithDoorStuckSetup": {}
   },
@@ -1004,7 +966,6 @@ A `comeInSpinning` entrance condition must match with a `leaveSpinning` or `leav
 ```json
 {
   "name": "Come In Spinning",
-  "notable": false,
   "entranceCondtion": {
     "comeInBlueSpinning": {
       "unusableTiles": 2,
@@ -1037,7 +998,6 @@ A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `
 ```json
 {
   "name": "Come In Blue Spinning",
-  "notable": false,
   "entranceCondtion": {
     "comeInBlueSpinning": {
       "unusableTiles": 2
@@ -1070,7 +1030,6 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 ```json
 {
   "name": "Come In With Mockball",
-  "notable": false,
   "entranceCondtion": {
     "comeInWithMockball": {
       "adjacentMinTiles": 11,
@@ -1117,7 +1076,6 @@ There are additional requirements depending on the exit condition:
 ```json
 {
   "name": "Come In With Spring Ball Bounce",
-  "notable": false,
   "entranceCondition": {
     "comeInWithSpringBallBounce": {
       "remoteAndLandingMinTiles": [[4, 1]],
@@ -1168,7 +1126,6 @@ There are additional requirements depending on the exit condition:
 ```json
 {
   "name": "Come In With Blue Spring Ball Bounce",
-  "notable": false,
   "entranceCondition": {
     "comeInWithBlueSpringBallBounce": {
       "remoteAndLandingMinTiles": [[15, 1]],
@@ -1194,7 +1151,6 @@ A `comeInWithStoredFallSpeed` entrance condition must match with a `leaveWithSto
 ```json
 {
   "name": "Stored Fall Speed Clip",
-  "notable": false,
   "entranceCondtion": {
     "comeInWithStoredFallSpeed": {
       "fallSpeedInTiles": 1
@@ -1217,8 +1173,7 @@ A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` e
 
 ```json
 {
-  "name": "Red Tower R-Mode Frozen Beetom X-Ray Climb",
-  "notable": true,
+  "name": "R-Mode Frozen Beetom X-Ray Climb",
   "entranceCondition": {
     "comeInWithRMode": {}
   },
@@ -1425,7 +1380,6 @@ A `gModeRegainMobility` object has no properties.
 ```json
 {
   "name": "G-Mode Regain Mobility",
-  "notable": false,
   "requires": [
     "h_ZebesIsAwake",
     {"enemyDamage": {
@@ -1449,7 +1403,6 @@ A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `ca
 ```json
 {
   "name": "Bypass Door Shell",
-  "notable": false,
   "requires": [
     "canWallIceClip"
   ],
