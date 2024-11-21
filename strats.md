@@ -139,7 +139,7 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge).
 
 `leaveShinecharged` has a single property:
-- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room. A special value "auto" may be used when the strat has a `comeInShinecharged` entrance condition: in this case, the frames remaining when leaving the room depends on how many frames are remaining when entering the room, with the `framesRequired` property of the `comeInShinecharged` indicating the amount of frames by which the shinecharge timer decreases between entering and exiting the room.
+- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room. A special value "auto" may be used when the strat has a `comeInShinecharged` entrance condition: in this case, the frames remaining when leaving the room depends on how many frames are remaining when entering the room, with the `framesRequired` property of the `comeInShinecharged` indicating the amount of frames by which the shinecharge timer decreases between entering and exiting the room. Similarly, the "auto" value may be used when the strat has a property `startsWithShineCharge: true`, in which case the shinecharge frames used in the strat would be expressed by a `shineChargeFrames` logical requirement.
 
 A strat with a `leaveShinecharged` condition should either include a `canShinecharge` requirement in its `requires` or have a `comeInShinecharged` entrance condition.
 
