@@ -7,8 +7,10 @@ import json
 import re
 from pathlib import Path
 import jsonschema.validators
+import referencing
+from referencing import Registry, Resource
 from jsonschema.validators import Draft7Validator
-from jsonschema import validate, RefResolver
+from jsonschema import validate
 from jsonschema import exceptions as JSONSchemaExceptions
 
 schemas = {}
@@ -20,6 +22,7 @@ print("LOAD SCHEMAS")
 schemaDir = os.path.join(".", "schema")
 schemaAbsPath = os.path.abspath(schemaDir)
 schemaURI = Path(schemaAbsPath).as_uri() + "/"
+resource_list = []
 for schemaFileName in os.listdir(schemaDir):
     with open(
         os.path.join(
@@ -39,7 +42,10 @@ for schemaFileName in os.listdir(schemaDir):
             if gameKey not in schemas:
                 schemas[gameKey] = {}
             try:
-                schemas[gameKey][schemaKey] = json.load(schemaFile)
+                schema = json.load(schemaFile)
+                schemas[gameKey][schemaKey] = schema
+                resource = Resource.from_contents(schema)
+                resource_list.append((schemaFileName, resource))
             except json.JSONDecodeError as e:
                 jsonFile.seek(0)
                 errorLine = ""
@@ -62,6 +68,7 @@ for schemaFileName in os.listdir(schemaDir):
                 ])
                 bail = True
 
+registry = Registry().with_resources(resource_list).crawl()
 print("VALIDATE")
 
 # connections
@@ -113,10 +120,7 @@ for region in os.listdir(os.path.join(".", "connection")):
                             result = validate(
                                 instance=connectionJSON,
                                 schema=schemas["m3"]["connection"],
-                                resolver=RefResolver(
-                                    base_uri=schemaURI,
-                                    referrer=schemas["m3"]["connection"]
-                                )
+                                registry=registry,
                             )
                         except JSONSchemaExceptions.ValidationError as e:
                             errors.append([
@@ -175,10 +179,7 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
                         result = validate(
                             instance=enemiesJSON,
                             schema=schema,
-                            resolver=RefResolver(
-                                base_uri=schemaURI,
-                                referrer=schema
-                            )
+                            registry=registry,
                         )
                     except JSONSchemaExceptions.ValidationError as e:
                         errors.append([
@@ -197,10 +198,7 @@ print()
 print(" REGIONS")
 room_validator = Draft7Validator(
     schema=schemas["m3"]["room"],
-    resolver=RefResolver(
-        base_uri=schemaURI,
-        referrer=schemas["m3"]["room"]
-    )
+    registry=registry,
 )
 for region in os.listdir(os.path.join(".", "region")):
     if os.path.isdir(os.path.join(".", "region", region)):
@@ -304,10 +302,7 @@ for r,d,f in os.walk(os.path.join(".", "weapons")):
                         result = validate(
                             instance=weaponsJSON,
                             schema=schemas["m3"]["weapons"],
-                            resolver=RefResolver(
-                                base_uri=schemaURI,
-                                referrer=schemas["m3"]["weapons"]
-                            )
+                            registry=registry,
                         )
                     except JSONSchemaExceptions.ValidationError as e:
                         errors.append([
@@ -363,10 +358,7 @@ for rootType in [
                 result = validate(
                     instance=fileJSON,
                     schema=schemas["m3"][rootType],
-                    resolver=RefResolver(
-                        base_uri=schemaURI,
-                        referrer=schemas["m3"][rootType]
-                    )
+                    registry=registry,
                 )
             except JSONSchemaExceptions.ValidationError as e:
                 errors.append([
