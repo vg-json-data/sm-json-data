@@ -253,6 +253,28 @@ def check_node_covered_in_unlocks_doors(strat, node_id):
     missing_types = {"missiles", "super", "powerbomb"}.difference(types)
     return missing_types
 
+def check_shinespark_req(req):
+    if isinstance(req, dict):
+        if "shinespark" in req:
+            return True
+        if "and" in req:
+            return any(check_shinespark_req(v) for v in req["and"])
+        if "or" in req:
+            return all(check_shinespark_req(v) for v in req["or"])
+
+def check_heat_req(req):
+    if isinstance(req, str):
+        if req in ["h_heatProof", "h_canHeatedCrystalFlash", "h_canHeatedLavaCrystalFlash", "h_LowerNorfairElevatorDownwardFrames",
+                   "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_canHeatedGreenGateGlitch"]:
+            return True
+    if isinstance(req, dict):
+        if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
+            return True
+        if "and" in req:
+            return any(check_heat_req(v) for v in req["and"])
+        if "or" in req:
+            return all(check_heat_req(v) for v in req["or"])
+
 # give list of keys to check
 # give label for output message
 # give list of valid values
@@ -477,6 +499,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "ids": []
                         }
                     }
+
+                    # Volcano Room will not be tested for heat requirements since it is sometimes not heated.
+                    heated = all(e["heated"] for e in room["roomEnvironments"])
 
                     # Document Obstacles
                     if "obstacles" in room:
@@ -718,6 +743,23 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not less than nextStratId ({next_strat_id}):{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                        if heated and not check_heat_req({"and": strat["requires"]}):
+                            if fromNode == toNode and "leaveWithRunway" in strat.get("exitCondition", []):
+                                # Ok since there is implicit heat frames in leavesWithRunway, and it is normal
+                                # if no explicit ones to be present for a strat going from the door to itself.
+                                pass
+                            elif "comeInWithGMode" in strat.get("entranceCondition", []) or "gModeRegainMobility" in strat:
+                                # There is no heat damage in G-mode, so it is normal for these strats to not have heat frames.
+                                pass
+                            elif "comeInWithGrappleTeleport" in strat.get("entranceCondition", []) and \
+                                  strat.get("bypassesDoorShell") is True:
+                                # Strats that use a grapple teleport to bypass a door lock can be done without heat damage, 
+                                # since the door transition is touched immediately.
+                                pass
+                            else:
+                                msg = f"🔴ERROR: Strat in heated room lacking a heat requirement:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1                            
                         if "entranceCondition" in strat:
                             if node_lookup[fromNode]["nodeType"] not in ["door", "entrance"]:
                                 msg = f"🔴ERROR: Strat has entranceCondition but From Node is not door or entrance:{stratRef}"
@@ -758,6 +800,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     messages["counts"]["reds"] += 1
                                 if (room["id"], toNode) not in vertical_door_nodes and "direction" in strat["exitCondition"]["leaveWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has non-vertical leaveWithTemporaryBlue exitCondition with 'direction':{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                            if "leaveWithSpark" in strat["exitCondition"]:
+                                if not check_shinespark_req({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has leaveWithSpark exitCondition but is lacking a shinespark requirement:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
 
