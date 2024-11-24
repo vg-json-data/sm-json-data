@@ -348,6 +348,19 @@ def process_strats(src, paramData):
     }
     return paramData
 
+
+def has_reset_room(req):
+    if isinstance(req, dict):
+        if "resetRoom" in req:
+            return True
+        elif "or" in req:
+            return any(has_reset_room(x) for x in req["or"])
+        elif "and" in req:
+            return any(has_reset_room(x) for x in req["and"])
+        else:
+            return False
+
+
 keywords = []
 
 # load keywords
@@ -806,6 +819,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat has non-vertical leaveWithTemporaryBlue exitCondition with 'direction':{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                            if "resetsObstacles" in strat:
+                                msg = f"🔴ERROR: Strat has exitCondition and also resetsObstacles:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                            if "clearsObstacles" in strat:
+                                msg = f"🔴ERROR: Strat has exitCondition and also clearsObstacles:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
                             if "leaveWithSpark" in strat["exitCondition"]:
                                 if not check_shinespark_req({"and": strat["requires"]}):
                                     msg = f"🔴ERROR: Strat has leaveWithSpark exitCondition but is lacking a shinespark requirement:{stratRef}"
@@ -844,7 +865,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: setsFlags references flag '{flag}' which does not exist:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-
+                                    
+                        if has_reset_room({"and": strat["requires"]}) and "exitCondition" not in strat:
+                            for obs in room.get("obstacles", []):
+                                obs_id = obs["id"]
+                                if obs_id not in strat.get("resetsObstacles", []) and obs_id not in strat.get("clearsObstacles", []):
+                                    msg = f"🔴ERROR: strat has resetRoom but does not reset or clear obstacle {obs_id}:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                        
                         def check_for_notables(req):
                             if isinstance(req, dict):
                                 if "notable" in req:
