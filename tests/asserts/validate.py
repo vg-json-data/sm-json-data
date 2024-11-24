@@ -6,8 +6,6 @@ import os
 import json
 import re
 from pathlib import Path
-import jsonschema.validators
-import referencing
 from referencing import Registry, Resource
 from jsonschema.validators import Draft7Validator
 from jsonschema import validate
