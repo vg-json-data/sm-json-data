@@ -748,8 +748,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 # Ok since there is implicit heat frames in leavesWithRunway, and it is normal
                                 # if no explicit ones to be present for a strat going from the door to itself.
                                 pass
-                            elif "comeInWithGMode" in strat.get("entranceCondition", []) or "gModeRegainMobility" in strat:
-                                # There is no heat damage in G-mode, so it is normal for these strats to not have heat frames.
+                            elif "comeInWithGMode" in strat.get("entranceCondition", []) and "leaveWithGMode" in strat.get("exitCondition", []):
+                                # Strats that come in with G-mode and leave with G-mode will be spending the entire time in G-mode,
+                                # so it is normal for these strats to not have heat frames.
+                                pass
+                            elif "gModeRegainMobility" in strat:
+                                # Regain mobility strats also take place entirely in G-mode.
                                 pass
                             elif "comeInWithGrappleTeleport" in strat.get("entranceCondition", []) and \
                                   strat.get("bypassesDoorShell") is True:
