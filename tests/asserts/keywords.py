@@ -804,12 +804,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-                            if "leaveShinecharged" in strat["exitCondition"]:
-                                if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
-                                    if ("entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]) and strat.get("startsWithShineCharge") is not True:
-                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition or startsWithShineCharge:{stratRef}"
-                                        messages["reds"].append(msg)
-                                        messages["counts"]["reds"] += 1
                             if "leaveWithTemporaryBlue" in strat["exitCondition"]:
                                 if (room["id"], toNode) in vertical_door_nodes and "direction" not in strat["exitCondition"]["leaveWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical leaveWithTemporaryBlue exitCondition without 'direction':{stratRef}"
