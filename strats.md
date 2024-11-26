@@ -1506,7 +1506,7 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
 
 ## Starts With Shinecharge
 
-The `startsWithShineCharge` property indicates that a strat must start while in a shinecharge state, from a shinecharge obtained in an earlier strat. The amount of frames required is determined by `shineChargeFrames` requirements in this strat.
+The `startsWithShineCharge` property indicates that a strat must start while in a shinecharge state, from a shinecharge obtained in an earlier strat. The amount of frames required is determined by `shineChargeFrames` requirements in this strat. A strat with `"startsWithShineCharge": true` is only logically valid if it immediately follows a strat with `"endsWithShineCharge": true`.
 
 This property should not be combined with a `comeInShinecharged` entrance condition.
 
