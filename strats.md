@@ -1642,7 +1642,7 @@ As with other `comeInWithGMode` strats having `"morphed": true`, it is assumed h
 
 This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeMorphBackThrough": false`.
 
-If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back a door, described in the previous section, which have no such exception.
+If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back through a door, described in the previous section, which have no such exception.
 
 ## Run Speed
 
