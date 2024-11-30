@@ -1582,7 +1582,7 @@ This implicit strat is to cover cases where leaving with a mockball may be desir
 
 This implicit strat can be disabled by setting the node property `"useImplicitComeInWithMockball": false`.
 
-If the node has a `spawnAt` property, then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitComeInWithMockball": true`.
+If the node has a `spawnAt` property, then this implicit strat is disabled, and should never be marked with `"useImplicitComeInWithMockball": true`.
 
 ### Implicit Carry G-Mode Back Through
 
