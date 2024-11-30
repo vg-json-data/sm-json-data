@@ -33,3 +33,21 @@ By default, a permanent gray door on one side shouldn't make a connection two-wa
 Both nodes in a connection have a position. This can be one of `left`, `right`, `top`, or `bottom`. Please note that this is the position of the node as compared to the other node in the connection, _not_ their position within their respective room.
 
 For example: Suppose that door 1 is the top-right door in Parlor, and door 2 is the bottom-left door in Landing Site. Those doors form a connection. Door 1 is on the right side of its room, but it is on the left side of the connection because it is on the left of door 2. So in this example, door 1 is on the left side of the connection and door 2 is on the right side.
+
+## Logical requirements for connections
+
+A connection describes how two rooms connect, but it is important to note that the existence of a connection does *not* imply that it is logically free for Samus to traverse that connection from one door/exit node to the other door/entrance node. The logical ability to traverse connections is described by entrance conditions and exit conditions on the strats in each room. This is necessary for several reasons:
+
+  - Some strats require entering or exiting the room in a certain way, e.g. with certain amount of speed, in a certain pose, or in a certain position.
+  - Some doors require taking unavoidable damage on entry, or have certain item or tech requirements to avoid such damage.
+  - Some doors put Samus in a position where returning back through the door is not possible without certain items and/or tech. This can be true even for "Bidirectional" connections.
+  
+A connection can only logically be traversed by a pair of strats, one with an exit condition, and one in the opposite room with a matching entrance condition. This is true even for "normal" ways of entering and exiting rooms, which are handled by the `leaveNormally` and `comeInNormally` exit and entrance conditions. 
+
+One practical way to interpret this is as follows:
+
+  - For each door, there is an implicit "exit" node for each possible exit condition through that door. A strat with an `exitCondition` should be treated as ending at the corresponding implicit exit node, rather than ending at the regular door node within the room.
+  - Likewise, for each door, there is an implicit "entrance" node for each possible entrance condition through that door. A strat with an `entranceCondition` should be treated as starting at the corresponding implicit entrance node, rather than starting at the regular door node within the room.
+  - For each matching pair of `exitCondition` and `entranceCondition` on opposite ends of a connection, an implicit strat should be considered to exist, connecting the exit node in one room to the entrance node in the other, including any implicit requirements associated with the given exit and entrance conditions.
+
+Exit conditions and entrance conditions are [described in detail here](../strats.md#cross-room-strats). See also [implicit exit and entrance strats](../strats.md#implicit-entrance-and-exit-strats).
