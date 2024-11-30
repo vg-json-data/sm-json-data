@@ -361,6 +361,18 @@ def has_reset_room(req):
             return False
 
 
+def covers_shinecharge_frames(req):
+    if isinstance(req, dict):
+        if "shineChargeFrames" in req:
+            return True
+        elif "or" in req:
+            return all(covers_shinecharge_frames(x) for x in req["or"])
+        elif "and" in req:
+            return any(covers_shinecharge_frames(x) for x in req["and"])
+        else:
+            return False
+
+
 keywords = []
 
 # load keywords
@@ -790,6 +802,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has 'comesThroughToilet' but is not a vertical connection:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            if "comeInShinecharged" in strat["entranceCondition"]:
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has comeInShinecharged entranceCondition without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                             if "comeInWithTemporaryBlue" in strat["entranceCondition"]:
                                 if (room["id"], fromNode) in vertical_door_nodes and "direction" not in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical comeInWithTemporaryBlue entranceCondition without 'direction':{stratRef}"
@@ -805,11 +822,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
                             if "leaveShinecharged" in strat["exitCondition"]:
-                                if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
-                                    if ("entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]) and strat.get("startsWithShineCharge") is not True:
-                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition or startsWithShineCharge:{stratRef}"
-                                        messages["reds"].append(msg)
-                                        messages["counts"]["reds"] += 1
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has leavesShinecharged exitCondition without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                             if "leaveWithTemporaryBlue" in strat["exitCondition"]:
                                 if (room["id"], toNode) in vertical_door_nodes and "direction" not in strat["exitCondition"]["leaveWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical leaveWithTemporaryBlue exitCondition without 'direction':{stratRef}"
