@@ -243,12 +243,16 @@ __Example:__
 
 #### shineChargeFrames object
 
-A `shineChargeFrames` object represents the need for Samus to have the given amount of shinecharge frames remaining; after this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
+A `shineChargeFrames` object represents the need for Samus to have at least the given amount of shinecharge frames remaining. After this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
 
-For this requirement to be satisfied, one of the following must be true:
-- It must be preceded by a `canShineCharge` requirement in the same strat.
-- The strat must have `startsWithShineCharge` set to true, and connect with an immediately preceding strat with `endsWithShineCharge` set to true.
-- The strat must have a `comeInShinecharged` or `comeInShinechargedJumping` entrance condition.
+The underlying idea is that shinecharge frames can be modeled as a resource, similar to energy or ammo. The level of this resource can be considered to be part of Samus' state at any given point in time. However, unlike energy or ammo, this resource is not treated as persisting across arbitrary sequences of strats. Samus' shinecharge frames are considered to be set to 180 at the point of a `canShinecharge` requirement; but in order to persist across strats, the strat must either be marked with `"endsWithShineCharge": true` or have a `leavesShinecharged` exit condition, and the following strat must be marked with `"startsWithShineCharge": true` or have a `comeInShinecharged` entrance condition. These restrictions are necessary because strats in general do not model the amount of frames consumed, so it would be invalid to assume that Samus' shinecharge frames can remain unchanged across strats that are not designed to model shinecharge frames.
+
+As an example, if a strat requires entering the room with at least 5 shinecharge frames remaining, it should have a requirement of `{"shineChargeFrames": 5}`. This is in spite of the fact that the amount of shinecharge frames would decrease only by 4 (from 5 to 1) between the time of entering the room and activating the spark. Conversely, if measuring the amount that the shinecharge timer decreases when executing a strat that ends in a shinespark, a value of 1 should be added to this amount to determine the minimum possible amount of logical `shineChargeFrames` that should be required.
+
+__Example:__
+```json
+{"shineChargeFrames": 100}
+```
 
 #### hibashiHits object
 A `hibashiHits` object represents the need for Samus to intentionally take a number of hits from the Norfair flame bursts (also called hibashi). This is meant to be converted to a flat health value based on item loadout. The vanilla damage per hibashi hit is 30 with Power Suit, 15 with Varia, and 7 with Gravity Suit.

@@ -262,6 +262,18 @@ def check_shinespark_req(req):
         if "or" in req:
             return all(check_shinespark_req(v) for v in req["or"])
 
+def check_shinecharge_req(req):
+    if isinstance(req, str):
+        if req in ["h_canShineChargeMaxRunway", "canStutterWaterShineCharge"]:
+            return True
+    if isinstance(req, dict):
+        if "canShineCharge" in req:
+            return True
+        if "and" in req:
+            return any(check_shinecharge_req(v) for v in req["and"])
+        if "or" in req:
+            return all(check_shinecharge_req(v) for v in req["or"])
+
 def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_canHeatedCrystalFlash", "h_canHeatedLavaCrystalFlash", "h_LowerNorfairElevatorDownwardFrames",
@@ -357,6 +369,18 @@ def has_reset_room(req):
             return any(has_reset_room(x) for x in req["or"])
         elif "and" in req:
             return any(has_reset_room(x) for x in req["and"])
+        else:
+            return False
+
+
+def covers_shinecharge_frames(req):
+    if isinstance(req, dict):
+        if "shineChargeFrames" in req:
+            return True
+        elif "or" in req:
+            return all(covers_shinecharge_frames(x) for x in req["or"])
+        elif "and" in req:
+            return any(covers_shinecharge_frames(x) for x in req["and"])
         else:
             return False
 
@@ -790,6 +814,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has 'comesThroughToilet' but is not a vertical connection:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            if "comeInShinecharged" in strat["entranceCondition"]:
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has comeInShinecharged entranceCondition without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                             if "comeInWithTemporaryBlue" in strat["entranceCondition"]:
                                 if (room["id"], fromNode) in vertical_door_nodes and "direction" not in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical comeInWithTemporaryBlue entranceCondition without 'direction':{stratRef}"
@@ -805,11 +834,10 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
                             if "leaveShinecharged" in strat["exitCondition"]:
-                                if strat["exitCondition"]["leaveShinecharged"]["framesRemaining"] == "auto":
-                                    if ("entranceCondition" not in strat or "comeInShinecharged" not in strat["entranceCondition"]) and strat.get("startsWithShineCharge") is not True:
-                                        msg = f"🔴ERROR: Strat has leaveShinecharged exitCondition with framesRemaining 'auto' but no comeInShinecharged entranceCondition or startsWithShineCharge:{stratRef}"
-                                        messages["reds"].append(msg)
-                                        messages["counts"]["reds"] += 1
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has leavesShinecharged exitCondition without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                             if "leaveWithTemporaryBlue" in strat["exitCondition"]:
                                 if (room["id"], toNode) in vertical_door_nodes and "direction" not in strat["exitCondition"]["leaveWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical leaveWithTemporaryBlue exitCondition without 'direction':{stratRef}"
@@ -832,6 +860,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat has leaveWithSpark exitCondition but is lacking a shinespark requirement:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                        if ("exitCondition" in strat and "leaveShinecharged" in strat["exitCondition"]) or strat.get("endsWithShineCharge") is True:
+                            has_shinecharge_req = check_shinecharge_req({"and": strat["requires"]})
+                            starts_shinecharged = strat.get("startsWithShineCharge") is True
+                            comes_in_shinecharged = "entranceCondition" in strat and "comeInShinecharged" in strat["entranceCondition"]
+                            comes_in_shinecharging = "entranceCondition" in strat and "comeInShinecharging" in strat["entranceCondition"]
+                            if not (has_shinecharge_req or starts_shinecharged or comes_in_shinecharged or comes_in_shinecharging):
+                                msg = f"🔴ERROR: Strat ends or leaves shinecharged but obtains no shinecharge:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
 
                         node_subtype = node_lookup[toNode]["nodeSubType"]
                         door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks)
