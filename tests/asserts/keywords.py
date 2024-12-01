@@ -286,7 +286,7 @@ def check_heat_req(req):
             return any(check_heat_req(v) for v in req["and"])
         if "or" in req:
             return all(check_heat_req(v) for v in req["or"])
-        
+
 # give list of keys to check
 # give label for output message
 # give list of valid values
