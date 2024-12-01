@@ -1,7 +1,7 @@
 # Single-time-use script to migrate shinecharge frame requirements from "comeInShinecharged"/"leaveShinecharged"
 # entrance/exit conditions, into strat "requires" in the form of "shineChargeFrames" logical requirements.
 #
-# To use, run "python migrations/shinecharge_frames.py" from a working directory of "sm-json-data/scripts".
+# To use, run "python -m migrations.shinecharge_frames" from a working directory of "sm-json-data/scripts".
 import json
 from pathlib import Path
 
