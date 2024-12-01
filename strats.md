@@ -136,12 +136,11 @@ When a `leaveWithRunway` conditions occurs on a door in a water environment, it 
 
 ### Leave Shinecharged
 
-A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge).
+A `leaveShinecharged` object represents that Samus can leave through this door with a shinecharge (shinespark charge). It has no properties.
 
-`leaveShinecharged` has a single property:
-- _framesRemaining_: The number of frames remaining in the shinecharge when leaving the room. A special value "auto" may be used when the strat has a `comeInShinecharged` entrance condition: in this case, the frames remaining when leaving the room depends on how many frames are remaining when entering the room, with the `framesRequired` property of the `comeInShinecharged` indicating the amount of frames by which the shinecharge timer decreases between entering and exiting the room. Similarly, the "auto" value may be used when the strat has a property `startsWithShineCharge: true`, in which case the shinecharge frames used in the strat would be expressed by a `shineChargeFrames` logical requirement.
+A strat with a `leaveShinecharged` should include a logical requirement for obtaining the shinecharge, e.g. `canShineCharge`; alternatively, it may contain a `comeInShinecharged` or `comeInShinecharging` entrance condition or `startsWithShineCharge: true` property if the shinecharge is obtained as part of an earlier strat. It should also include a `shineChargeFrames` logical requirement to account for shinecharge frames that elapse before reaching the door transition. 
 
-A strat with a `leaveShinecharged` condition should either include a `canShinecharge` requirement in its `requires` or have a `comeInShinecharged` entrance condition or `"startsWithShinecharge": true` property. A `leaveShinecharged` condition implicitly requires `canShinechargeMovement` tech.
+A `leaveShinecharged` condition implicitly requires `canShinechargeMovement` tech.
 
 *Note*: Using a runway connected to a door to leave the room with a shinecharge is already covered by `leaveWithRunway`, so `leaveShinecharged` only needs to be used in cases where the shinecharge is obtained in another part of the room and then carried through the door.
 
@@ -752,11 +751,9 @@ Note that a `comeInGettingBlueSpeed` entrance condition is compatible with prese
 
 ### Come In Shinecharged
 
-A `comeInShinecharged` entrance condition represents the need for Samus to run or jump into the room with a shinecharge with a certain amount of time remaining before it would expire. It has the following property:
+A `comeInShinecharged` entrance condition represents the need for Samus to run or jump into the room with a shinecharge with a certain amount of time remaining before it would expire. It has no properties.
 
-- _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
-
-A strat with a `comeInShinecharged` condition should include a `shinespark` requirement in its `requires`.
+A strat with a `comeInShinecharged` condition should include a `shinespark` requirement in its `requires`; alternatively it may include a `leaveShinecharged` exit condition or `"endsWithShineCharge": true` property, if the shinecharge is still active at the end of the strat. It should also include a `shineChargeFrames` logical requirement to account for shinecharge frames that are required in order to be able to position for the spark (or to reach the ending location of the strat, if the shinecharge is still active).
 
 A `comeInShinecharged` must match with either a `leaveShinecharged` condition or a `leaveWithRunway` condition on the other side of the door. 
 
@@ -1506,7 +1503,7 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
 
 ## Starts With Shinecharge
 
-The `startsWithShineCharge` property indicates that a strat must start while in a shinecharge state, from a shinecharge obtained in an earlier strat. The amount of frames required is determined by `shineChargeFrames` requirements in this strat.
+The `startsWithShineCharge` property indicates that a strat must start while in a shinecharge state, from a shinecharge obtained in an earlier strat. The amount of frames required is determined by `shineChargeFrames` requirements in this strat. A strat with `"startsWithShineCharge": true` is only logically valid if it immediately follows a strat with `"endsWithShineCharge": true`.
 
 This property should not be combined with a `comeInShinecharged` entrance condition.
 
