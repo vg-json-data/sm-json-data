@@ -45,6 +45,8 @@ Similarly, the `resetsObstacles` property is used to indicate that a strat resul
 
 Some strats involve leaving the room in a special way that allows a corresponding strat in the next room to be executed. Common examples include leaving the room with a shinespark or shinecharge, or running out of the room in order to complete a shinecharge in the next room. Strats that exit a room in such a way are identified by a strat property `exitCondition`, containing a property describing the type of exit condition, such as `leaveWithRunway`, `leaveShinecharged`, or `leaveWithSpark`. Likewise, strats that require entering the room in a special way are identified by a strat property `entranceCondition`, containing a property describing the type of entrance condition required, such as `comeInRunning`, `comeInShinecharged`, or `comeInWithSpark`.
 
+Even strats that leave/enter the room in a "normal" way require a `leaveNormally` exit condition or `comeInNormally` entrance condition in order to specify that they cross the room. This is made easier by the fact that in most cases [implicit strats](#implicit-entrance-and-exit-strats) exist for leaving or entering the room through a door node
+
 ## Runway geometry
 
 Many cross-room strats involve the use of runways. The geometry of a runway is summarized by an object having the following properties:
@@ -66,7 +68,7 @@ There is some variance in how much downward slopes slow Samus' movement, dependi
 
 ## Exit conditions
 
-In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. An `exitCondition` object must contain exactly one property, which indicates the type of exit condition provided by the strat:
+In all strats with an `exitCondition`, the `to` node of the strat must be a door node or exit node. An `exitCondition` object must contain exactly one of the following properties, which indicates the type of exit condition provided by the strat:
 
 - _leaveNormally_: This indicates that can Samus leave through this door in a "normal" way, by walking, falling, or jumping.
 - _leaveWithRunway_: This indicates that a runway of a certain length is connected to the door, with which Samus can gain speed and run or jump through the door, among other possible actions. 
@@ -412,27 +414,7 @@ A `leaveWithGMode` exit condition represents that Samus can leave through this d
 A `leaveWithGMode` object has the following property:
 - _morphed_: If true, then this strat results in leaving the room in a morphed state, either by maintaining artificial morph or by having the Morph item.
 
-For most doors in the game, it is possible to enter the room with a G-mode setup and then immediately exit back through the same door. This is because in direct G-mode the door does not close behind Samus. To avoid the need to write out tedious boilerplate, these strats are understood to be included implicitly. The implicit strats are included for every door node excluding vertical doors with `"position": "bottom"` as well as any with a `spawnAt` property. There are two implicit strats, with `leaveWithGMode` exit conditions, one of the form
-
-```json
-{
-  "name": "G-Mode Go Back Through Door",
-  "entranceCondition": {
-    "comeInWithGMode": {
-      "mode": "direct",
-      "morphed": false
-    }
-  },
-  "requires": [],
-  "exitCondition": {
-    "leaveWithGMode": {
-      "morphed": false
-    }
-  }
-}
-```
-
-and another where the `false` values for `morphed` are replaced with `true`. Here we are referring to nodes with `"nodeType": "door"`, which excludes sand entrances (which instead have `"nodeType": "entrance"`). These implicit strats have the same door node for both their `from` and `to` nodes.
+For most doors in the game, it is possible to enter the room with a G-mode setup and then immediately exit back through the same door. This is because in direct G-mode the door does not close behind Samus. To avoid the need to write out tedious boilerplate, these strats are understood to be included implicitly, as described [here](#implicit-carry-g-mode-back-through).
 
 Aside from the implicit strats, there are a limited amount of `leaveWithGMode` strats possible. Normally entering a room with G-mode (or a G-mode setup) and then leaving with G-mode through a different door is not possible, since door shells cannot be opened while in G-mode. However, some door transitions do not have door shells (e.g. in Crateria Tube, Glass Tunnel, Crab Hole, Big Pink; also elevators and sand transitions), and some door shells are possible to bypass using glitches, so `leaveWithGMode` can be used in these situations.
 
@@ -1512,6 +1494,152 @@ This property should not be combined with a `comeInShinecharged` entrance condit
 The `endsWithShineCharge` property indicates that a strat ends while in a shinecharge state, allowing a shinespark to be used in a subsequent strat. The amount of frames remaining is determined by `shineChargeFrames` requirements coming after the most recent `canShineCharge` requirement.
 
 This property should not be combined with a `leaveShinecharged` exit condition.
+
+## Implicit Entrance and Exit Strats
+
+By default, door nodes come with implicit strats for entering and exiting the room through the door. These implicit strats can individually be disabled by setting certain node properties, as described below in detail for each kind of implicit strat. Disabling an implicit strat can make sense if enemies or other hazards are near the door, making the door not free to use.
+
+In this section, a door node refers to a node with `"nodeType": "door"`. Likewise, an entrance node refers to a node with `"nodeType": "entrance"`, and an exit node refers to a node with `"nodeType": "exit"`. 
+
+### Implicit Leave Normally
+
+By default every door node and exit node has an implicit strat from the node to itself, for exiting the room in a standard way. This implicit strat has a `leaveNormally` exit condition and is of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Leave Normally",
+  "requires": [],
+  "exitCondition": {
+    "leaveNormally": {}
+  }
+}
+```
+
+This implicit strat can be disabled by setting the node property `"useImplicitLeaveNormally": false`.
+
+### Implicit Come In Normally
+
+With certain exceptions described below, by default every door node and entrance node has an implicit strat from the node to itself, for entering the room in a standard way. This implicit strat has a `comeInNormally` entrance condition and is of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Come In Normally",
+  "entranceCondition": {
+    "comeInNormally": {}
+  },
+  "requires": []
+}
+```
+
+This implicit strat can be disabled by setting the node property `"useImplicitComeInNormally": false`.
+
+If the node has a `spawnAt` property, then this implicit strat ends at the `spawnAt` node, rather than ending at the door node.
+
+### Implicit Come In With Mockball
+
+With certain exceptions described below, by default every horizontal door node has an implicit strat from the node to itself, for entering the room through the door while in a mockball (or speedball). This implicit strat has a `comeInWithMockball` entrance condition. In unheated rooms, it has the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Come In With Mockball",
+  "entranceCondition": {
+    "comeInWithMockball": {
+      "adjacentMinTiles": 0,
+      "remoteAndLandingMinTiles": [[0, 0]],
+      "speedBooster": "any"
+    }
+  },
+  "requires": []
+}
+```
+
+In heated rooms it instead has this form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Come In With Mockball",
+  "entranceCondition": {
+    "comeInWithMockball": {
+      "adjacentMinTiles": 0,
+      "remoteAndLandingMinTiles": [[0, 0]],
+      "speedBooster": "any"
+    }
+  },
+  "requires": [
+    {"heatFrames": 10}
+  ]
+}
+```
+
+This implicit strat is to cover cases where leaving with a mockball may be desirable or unavoidable in the previous room, but where the mockball may be unhelpful in the current room. The 10 heat frames are to cover the time potentially needed to stop and unmorph after entering the room.
+
+This implicit strat can be disabled by setting the node property `"useImplicitComeInWithMockball": false`.
+
+If the node has a `spawnAt` property, then this implicit strat is disabled, and should never be marked with `"useImplicitComeInWithMockball": true`.
+
+### Implicit Carry G-Mode Back Through
+
+With certain exceptions described below, by default every door node has an implicit strat from the node to itself, for entering the room in direct G-mode through the door and then walking back out through the open doorway while still in G-mode. This implicit strat has a `comeInWithGMode` entrance condition and a `leaveWithGMode` exit condition and is of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Carry G-Mode Back Through",
+  "entranceCondition": {
+    "comeInWithGMode": {
+      "mode": "direct",
+      "morphed": false
+    }
+  },
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGMode": {
+      "morphed": false
+    }
+  }
+}
+```
+
+Note that if there are strats from this door node to itself with `"gModeRegainMobility": true`, then using those strats to regain mobility are considered to be an option as part of this implicit strat, the same as with other strats having a `comeInWithGMode` entrance condition.
+
+This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeBackThrough": false`.
+
+If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeBackThrough": true`.
+
+### Implicit Carry G-Mode Morph Back Through
+
+With certain exceptions described below, by default every door node has an implicit strat from the node to itself, for entering the room in direct G-mode and then going back out through the open doorway while still morphed in G-mode.
+
+This implicit strat has a `comeInWithGMode` entrance condition and a `leaveWithGMode` exit condition and is of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Carry G-Mode Morph Back Through",
+  "entranceCondition": {
+    "comeInWithGMode": {
+      "mode": "direct",
+      "morphed": true
+    }
+  },
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGMode": {
+      "morphed": true
+    }
+  }
+}
+```
+
+As with other `comeInWithGMode` strats having `"morphed": true`, it is assumed here that Samus morphs by either using the Morph item or by obtaining artificial morph. Also note that if there are strats from this door node to itself with `"gModeRegainMobility": true`, then using those strats to regain mobility are considered to be an option as part of this implicit strat, again the same as with other strats having a `comeInWithGMode` entrance condition.
+
+This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeMorphBackThrough": false`.
+
+If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back through a door, described in the previous section, which have no such exception.
 
 ## Run Speed
 
