@@ -24,11 +24,12 @@
       "nodeAddress": "0x0018fe2",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "spawnAt": 3
+      "useImplicitComeInNormally": false,
+      "devNote": "Defined as being on the door ledge, above the water."
     },
     {
       "id": 3,
-      "name": "Right Door Spawn At Junction (In the Water)",
+      "name": "Right Door, In the Water",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -327,6 +328,18 @@
       ]
     },
     {
+      "link": [2, 1],
+      "name": "Space Jump Jumping Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "SpaceJump"
+      ],
+      "devNote": "Requires a jumping entry, but any runway length and environment is fine."
+    },
+    {
       "id": 16,
       "link": [2, 1],
       "name": "Jump Through the Door",
@@ -479,15 +492,26 @@
         }
       },
       "requires": [
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "canDownGrab",
+          "canArtificialMorph"
+        ]},
         "canPreciseWalljump",
         "canTrickyJump",
         {"or": [
           {"spikeHits": 1},
-          "h_canBackIntoCorner"
+          "canMorphTurnaround",
+          "canMoonwalk",
+          {"and": [
+            "canArtificialMorph",
+            {"tech": "canMorphTurnaround"}
+          ]}
         ]}
       ],
       "flashSuitChecked": true,
-      "note": "In direct g-mode, the door will not close, and the in-room doorsill gives enough running room to make it up to the invisible ledge."
+      "note": "In direct G-mode, the door will not close, and the in-room doorsill gives enough running room to make it up to the invisible ledge."
     },
     {
       "id": 26,
@@ -565,25 +589,6 @@
       }
     },
     {
-      "id": 31,
-      "link": [2, 2],
-      "name": "Prepared Entry",
-      "entranceCondition": {
-        "comeInNormally": {}
-      },
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          "canCarefulJump",
-          "canStationarySpinJump"
-        ]}
-      ],
-      "unlocksDoors": [
-        {"types": ["super"], "requires": ["canInsaneJump"]},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ]
-    },
-    {
       "id": 32,
       "link": [2, 2],
       "name": "Crystal Flash",
@@ -593,53 +598,12 @@
       "flashSuitChecked": true
     },
     {
-      "id": 33,
-      "link": [2, 2],
-      "name": "Carry G-Mode Back Through",
+      "link": [2, 3],
+      "name": "Fall Into Water",
       "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": false
-        }
+        "comeInNormally": {}
       },
-      "requires": [
-        {"or": [
-          "canWalljump",
-          "HiJump",
-          "Gravity",
-          "canTrickySpringBallJump",
-          "h_canCrouchJumpDownGrab"
-        ]}
-      ],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": false
-        }
-      },
-      "bypassesDoorShell": true,
-      "flashSuitChecked": true
-    },
-    {
-      "id": 34,
-      "link": [2, 2],
-      "name": "Carry G-Mode Morph Back Through",
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": true
-        }
-      },
-      "requires": [
-        "canArtificialMorph"
-      ],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": true
-        }
-      },
-      "bypassesDoorShell": true,
-      "flashSuitChecked": true,
-      "devNote": "Artificial morph will allow Samus not to fall; real Morph is not sufficient."
+      "requires": []
     },
     {
       "id": 35,
@@ -657,7 +621,6 @@
         "SpaceJump",
         {"or": [
           "canWalljump",
-          "canPrepareForNextRoom",
           {"and": [
             "canSpaceJumpWaterEscape",
             "HiJump"
