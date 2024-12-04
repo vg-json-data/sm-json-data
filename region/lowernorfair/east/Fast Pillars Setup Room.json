@@ -43,17 +43,12 @@
       "nodeAddress": "0x00198ee",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "spawnAt": 6
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false
     },
     {
       "id": 5,
       "name": "Bottom Junction",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
-    },
-    {
-      "id": 6,
-      "name": "Top Right Door Spawn At Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -131,13 +126,6 @@
         {"id": 2},
         {"id": 3},
         {"id": 5}
-      ]
-    },
-    {
-      "from": 6,
-      "to": [
-        {"id": 1},
-        {"id": 4}
       ]
     }
   ],
@@ -1425,6 +1413,47 @@
       "flashSuitChecked": true
     },
     {
+      "id": 63,
+      "link": [4, 1],
+      "name": "Base",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Yellow Space Pirate (wall)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"or": [
+          "canTrickyJump",
+          {"heatFrames": 20}
+        ]},
+        {"heatFrames": 115}
+      ],
+      "flashSuitChecked": true,
+      "note": ["Falling to the right of the floating platform is faster."]
+    },
+    {
+      "link": [4, 1],
+      "name": "Fall Into Room With Mockball",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"heatFrames": 135}
+      ],
+      "flashSuitChecked": true,
+      "note": ["Falling to the right of the floating platform is faster."]
+    },
+    {
       "id": 85,
       "link": [4, 1],
       "name": "Come in Shinecharging, Leave Shinecharged",
@@ -1605,45 +1634,74 @@
       "flashSuitChecked": true
     },
     {
-      "id": 52,
+      "id": 64,
       "link": [4, 4],
-      "name": "Carry G-Mode Back Through",
+      "name": "Base",
       "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": false
-        }
+        "comeInNormally": {}
       },
-      "requires": [],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": false
-        }
-      },
-      "bypassesDoorShell": true,
-      "flashSuitChecked": true
+      "requires": [
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {
+            "enemy": "Yellow Space Pirate (wall)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"heatFrames": 275}
+      ],
+      "flashSuitChecked": true,
+      "note": "Fall onto the platform, then wait for the pirate to jump back to the right before returning through the door."
     },
     {
-      "id": 53,
+      "id": 65,
       "link": [4, 4],
-      "name": "Carry G-Mode Morph Back Through",
+      "name": "Land in Door Frame",
       "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": true
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canInsaneJump",
+        {"heatFrames": 80},
+        {"doorUnlockedAtNode": 4}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Door Stuck, Open Door",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"heatFrames": 80},
+        {"doorUnlockedAtNode": 4}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Fall Into Room With Mockball",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
         }
       },
       "requires": [
-        "canArtificialMorph"
+        {"heatFrames": 275}
       ],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": true
-        }
-      },
-      "bypassesDoorShell": true,
       "flashSuitChecked": true,
-      "devNote": "Artificial morph will allow Samus not to fall; real Morph is not sufficient."
+      "note": "Fall onto the platform, then wait for the pirate to jump back to the right before returning through the door."
     },
     {
       "id": 54,
@@ -1872,63 +1930,6 @@
       "devNote": [
         "Destroying obstacle A from above would kill the Violas prematurely.",
         "FIXME: It is possible to get past their drops from above to still be able to use them; find out if there is a consistent setup for this."
-      ]
-    },
-    {
-      "id": 63,
-      "link": [6, 1],
-      "name": "Base",
-      "requires": [
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {
-            "enemy": "Yellow Space Pirate (wall)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]},
-        {"or": [
-          "canTrickyJump",
-          {"heatFrames": 20}
-        ]},
-        {"heatFrames": 115}
-      ],
-      "flashSuitChecked": true,
-      "note": ["Falling to the right of the floating platform is faster."]
-    },
-    {
-      "id": 64,
-      "link": [6, 4],
-      "name": "Base",
-      "requires": [
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {
-            "enemy": "Yellow Space Pirate (wall)",
-            "type": "contact",
-            "hits": 1
-          }}
-        ]},
-        {"heatFrames": 275}
-      ],
-      "flashSuitChecked": true,
-      "note": "Fall onto the platform, then Wait for the pirate to jump back to the right before returning through the door."
-    },
-    {
-      "id": 65,
-      "link": [6, 4],
-      "name": "Prepared Entry",
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          "canTrickyJump",
-          "canStationarySpinJump"
-        ]},
-        {"heatFrames": 80}
-      ],
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
       ]
     }
   ],

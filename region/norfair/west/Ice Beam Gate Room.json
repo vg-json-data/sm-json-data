@@ -16,8 +16,8 @@
       "nodeAddress": "0x0019312",
       "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
-      "spawnAt": 6,
-      "note": "Samus is considered to spawn at 6 because of the crumble blocks"
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false
     },
     {
       "id": 2,
@@ -49,12 +49,6 @@
     {
       "id": 5,
       "name": "Junction Below Top Crumble Blocks",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
-    },
-    {
-      "id": 6,
-      "name": "Top Left Door Spawn At Junction (Above Crumble Blocks)",
       "nodeType": "junction",
       "nodeSubType": "junction"
     },
@@ -115,7 +109,7 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 6}
+        {"id": 5}
       ]
     },
     {
@@ -151,13 +145,6 @@
       ]
     },
     {
-      "from": 6,
-      "to": [
-        {"id": 1},
-        {"id": 5}
-      ]
-    },
-    {
       "from": 7,
       "to": [
         {"id": 2},
@@ -180,6 +167,87 @@
       }
     },
     {
+      "id": 28,
+      "link": [1, 1],
+      "name": "Land in Door Frame",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canCarefulJump",
+        {"doorUnlockedAtNode": 1}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": ["canInsaneJump"]},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Jump through the door and shoot it open as you enter, landing on the door frame to avoid falling."
+    },
+    {
+      "link": [1, 1],
+      "name": "Door Stuck, Open Door",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"doorUnlockedAtNode": 1}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Prepared Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          "canCrumbleJump",
+          "h_canUseSpringBall"
+        ]},
+        {"doorUnlockedAtNode": 1}
+      ],
+      "unlocksDoors": [
+        {"types": ["super", "powerbomb"], "requires": []},
+        {
+          "types": ["missiles"],
+          "requires": [
+            {"or": [
+              "canTrickyJump",
+              "h_canUseSpringBall"
+            ]}
+          ]
+        }
+      ],
+      "note": "Use SpringBall or a crumble jump while opening the door."
+    },
+    {
+      "id": 53,
+      "link": [1, 1],
+      "name": "Prepared Entry, Spinning",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          "SpaceJump",
+          "canWalljump"
+        ]},
+        {"doorUnlockedAtNode": 1}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "note": "Jump into the room and Space Jump or wall jump while opening the door."
+    },
+    {
       "id": 2,
       "link": [1, 1],
       "name": "Crystal Flash",
@@ -188,49 +256,58 @@
       ],
       "flashSuitChecked": true
     },
+    
     {
-      "id": 3,
       "link": [1, 1],
-      "name": "Carry G-Mode Back Through",
+      "name": "Enter With Mockball Without Falling",
       "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": false
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
         }
       },
-      "requires": [],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": false
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          "canCrumbleJump",
+          "h_canUseSpringBall"
+        ]},
+        {"doorUnlockedAtNode": 1}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {
+          "types": ["missiles", "powerbomb"],
+          "requires": [
+            {"or": [
+              "canTrickyJump",
+              "h_canUseSpringBall"
+            ]}
+          ]
         }
-      },
-      "bypassesDoorShell": true,
-      "flashSuitChecked": true
-    },
-    {
-      "id": 4,
-      "link": [1, 1],
-      "name": "Carry G-Mode Morph Back Through",
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "direct",
-          "morphed": true
-        }
-      },
-      "requires": [],
-      "exitCondition": {
-        "leaveWithGMode": {
-          "morphed": true
-        }
-      },
-      "bypassesDoorShell": true,
-      "flashSuitChecked": true,
-      "devNote": "The ability to obtain artificial morph and real morph are both sufficient."
+      ],
+      "note": "Use SpringBall or a crumble jump while opening the door."
     },
     {
       "id": 5,
-      "link": [1, 6],
+      "link": [1, 5],
       "name": "Base",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": []
+    },
+    {
+      "link": [1, 5],
+      "name": "Fall Into Room With Mockball",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
       "requires": []
     },
     {
@@ -1020,34 +1097,6 @@
         "h_canUsePowerBombs"
       ],
       "clearsObstacles": ["A", "B", "C"]
-    },
-    {
-      "id": 53,
-      "link": [6, 1],
-      "name": "Prepared Entry",
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          "SpaceJump",
-          "canWalljump",
-          "canCarefulJump",
-          "canStationarySpinJump",
-          "canCrumbleJump",
-          "h_canUseSpringBall"
-        ]}
-      ],
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles"], "requires": ["never"]},
-        {"types": ["powerbomb"], "requires": ["h_canUseSpringBall"]}
-      ],
-      "note": "Use SpringBall to bounce on the crumble blocks, then unmorph and shoot the door open."
-    },
-    {
-      "id": 54,
-      "link": [6, 5],
-      "name": "Base",
-      "requires": []
     },
     {
       "id": 55,
