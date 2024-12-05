@@ -385,6 +385,105 @@ def covers_shinecharge_frames(req):
             return False
 
 
+def process_req_speed_state(req, states, err_fn):
+    if isinstance(req, str):
+        if req in ["h_canShineChargeMaxRunway", "canWaterShineCharge", "canStutterWaterShineCharge", "h_shinechargeSlideTemporaryBlue"]:
+            states = {"shinecharging"}
+        elif req in ["h_getBlueSpeedMaxRunway", "canSpeedKeep", "h_waterGetBlueSpeed", "h_stutterWaterGetBlueSpeed"]:
+            # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
+            # enough to satisfy the test as a way that blue may be obtained.
+            states = {"blue"}
+        elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball"]:
+            if not states.issubset(["shinecharging", "blue"]):
+                err_fn(f"blue requirement while not in blue state: {req}")
+            states = {"blue"}
+    elif isinstance(req, dict):
+        if "canShineCharge" in req:
+            states = {"shinecharging"}
+        elif "shineChargeFrames" in req:
+            if not states.issubset(["shinecharging", "shinecharged"]):
+                err_fn(f"shineChargeFrames requirement while not in shinecharged state: {req}")
+        elif "useFlashSuit" in req:
+            states = {"preshinespark"}
+        elif "shinespark" in req:
+            if not states.issubset(["shinecharging", "shinecharged", "shinespark", "preshinespark"]):
+                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
+            states = {"shinespark"}
+        elif "getBlueSpeed" in req or "speedball" in req:
+            states = {"blue"}
+        elif "and" in req:
+            for r in req["and"]:
+                states = process_req_speed_state(r, states, err_fn)
+        elif "or" in req:
+            # Apply the check independently to each branch of the "or", taking the union of the ending sets of states
+            new_states = set()
+            for r in req["or"]:
+                branch_states = process_req_speed_state(r, states, err_fn)
+                new_states.update(branch_states)
+            states = new_states
+    else:
+        raise RuntimeError(f"Unexpected requirement type {type(req)}: {req}")
+    return states
+
+
+def check_speed_states(strat, err_fn):
+    # Check that transitions between Speedbooster-related states are valid, to help prevent
+    # requirements (or entrance/exit conditions) from being accidentally omitted or included by mistake.
+    #
+    # states:
+    #   "normal": normal movement state
+    #   "shinecharging": just gained a shinecharge, still valid to convert to "blue" (via canTemporaryBlue)
+    #   "shinecharged": gained a shinecharge earlier, no longer valid to convert to "blue"
+    #   "shinespark": performed a shinespark, valid to continue with additional "shinespark" requirements
+    #   "preshinespark": expecting a subsequent shinespark requirement (e.g. after comeInWithSpark or useFlashSuit)
+    #   "blue": gained blue in some way, e.g. getBlueSpeed, speedball, comeInBlueSpinning, etc.
+    #
+    # States are represented as a set of strings, representing possible states, since different branches of
+    # "or" can lead to different states.
+    
+    states = {"normal"}
+    if "entranceCondition" in strat:
+        keys = set(strat["entranceCondition"].keys())
+        if keys.intersection(["comeInShinecharging", "comeInStutterShinecharging"]):
+            states = {"shinecharging"}
+        elif keys.intersection(["comeInShinecharged", "comeInShinechargedJumping"]):
+            states = {"shinecharged"}
+        elif "comeInWithSpark" in keys:
+            states = {"preshinespark"}
+        elif keys.intersection(["comeInWithTemporaryBlue", "comeInGettingBlueSpeed", "comeInSpeedballing", "comeInWithBlueSpringBallBounce", "comeInBlueSpinning"]):
+            states = {"blue"}
+        if strat.get("startsWithShineCharge") is True:
+            err_fn("startsWithShineCharge should not be combined with an entranceCondition")
+    elif strat.get("startsWithShineCharge") is True:
+        states = {"shinecharged"}
+    
+    for req in strat["requires"]:
+        states = process_req_speed_state(req, states, err_fn)
+
+    # TODO: handle door unlock requires
+
+    if "exitCondition" in strat:
+        keys = set(strat["exitCondition"].keys())
+        if "leaveShinecharged" in keys:
+            if not states.issubset({"shinecharging", "shinecharged"}):
+                err_fn("leaveShinecharged missing requirements to gain shinecharge")
+        if "leaveWithTemporaryBlue" in keys:
+            if not states.issubset({"shinecharging", "blue"}):
+                err_fn("leaveWithTemporaryBlue missing requirements to gain blue")
+        if "leaveWithSpark" in keys:
+            if states != {"shinespark"}:
+                err_fn("leaveWithSpark missing shinespark requirement")
+        if strat.get("endsWithShineCharge") is True:
+            err_fn("endsWithShineCharge should not be combined with an exitCondition")
+    elif strat.get("endsWithShineCharge") is True:
+        if not states.issubset({"shinecharging", "shinecharged"}):
+            err_fn("endsWithShineCharge missing requirements to gain shinecharge")
+    else:
+        if "preshinespark" in states:
+            err_fn("strat ends while expecting a shinespark requirement")
+        if "shinecharged" in states or "shinecharging" in states:
+            err_fn("strat ends without using shinecharge")
+
 keywords = []
 
 # load keywords
@@ -828,6 +927,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat has non-vertical comeInWithTemporaryBlue entranceCondition with 'direction':{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                        if strat.get("startsWithShineCharge") is True:
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has startsWithShineCharge without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                         if "exitCondition" in strat:
                             if node_lookup[toNode]["nodeType"] not in ["door", "exit"]:
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
@@ -855,20 +959,17 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition and also clearsObstacles:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
-                            if "leaveWithSpark" in strat["exitCondition"]:
-                                if not check_shinespark_req({"and": strat["requires"]}):
-                                    msg = f"🔴ERROR: Strat has leaveWithSpark exitCondition but is lacking a shinespark requirement:{stratRef}"
-                                    messages["reds"].append(msg)
-                                    messages["counts"]["reds"] += 1
-                        if ("exitCondition" in strat and "leaveShinecharged" in strat["exitCondition"]) or strat.get("endsWithShineCharge") is True:
-                            has_shinecharge_req = check_shinecharge_req({"and": strat["requires"]})
-                            starts_shinecharged = strat.get("startsWithShineCharge") is True
-                            comes_in_shinecharged = "entranceCondition" in strat and "comeInShinecharged" in strat["entranceCondition"]
-                            comes_in_shinecharging = "entranceCondition" in strat and "comeInShinecharging" in strat["entranceCondition"]
-                            if not (has_shinecharge_req or starts_shinecharged or comes_in_shinecharged or comes_in_shinecharging):
-                                msg = f"🔴ERROR: Strat ends or leaves shinecharged but obtains no shinecharge:{stratRef}"
+                        if strat.get("endsWithShineCharge") is True:
+                            if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                msg = f"🔴ERROR: Strat has endsWithShineCharge without `shineChargeFrames` covering all cases:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+
+                        def speed_err_fn(msg):
+                            messages["reds"].append(f"🔴ERROR: Invalid speed state transition:{stratRef}:{msg}")
+                            messages["counts"]["reds"] += 1
+
+                        check_speed_states(strat, speed_err_fn)
 
                         node_subtype = node_lookup[toNode]["nodeSubType"]
                         door_unlocked_nodes = find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks)
