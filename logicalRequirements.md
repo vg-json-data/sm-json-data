@@ -204,6 +204,14 @@ __Example:__
 {"autoReserveTrigger": {}}
 ```
 
+#### cycleFrames object
+A `cycleFrames` object represents the need for Samus to spend time (measured as an amount of in-game frames) in a room as part of a farming cycle. Including a `cycleFrames` requirement is mandatory in farming strats with a [`farmCycleDrops`](strats.md#farm-cycle-drops) property. The `cycleFrames` can be used to determine how many cycles of a farm a player can reasonably be expected to perform, based on an assumed amount of "patience".
+
+__Example:__
+```json
+{"cycleFrames": 100}
+```
+
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
 
@@ -243,7 +251,7 @@ __Example:__
 
 #### shineChargeFrames object
 
-A `shineChargeFrames` object represents the need for Samus to have at least the given amount of shinecharge frames remaining. After this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames.
+A `shineChargeFrames` object represents the need for Samus to have at least the given amount of shinecharge frames remaining. After this requirement, the new amount of shinecharge frames remaining is updated by subtracting away the given amount of frames. Including a `shineChargeFrames` requirement is mandatory for strats that begin with an already obtained shinecharge (e.g. with `comeInShinecharged`) or which end with an active shinecharge (e.g. with `leaveShinecharged`). For strats that both gain a shinecharge and consume it within the same strat, including `shineChargeFrames` requirements is optional.
 
 The underlying idea is that shinecharge frames can be modeled as a resource, similar to energy or ammo. The level of this resource can be considered to be part of Samus' state at any given point in time. However, unlike energy or ammo, this resource is not treated as persisting across arbitrary sequences of strats. Samus' shinecharge frames are considered to be set to 180 at the point of a `canShinecharge` requirement; but in order to persist across strats, the strat must either be marked with `"endsWithShineCharge": true` or have a `leavesShinecharged` exit condition, and the following strat must be marked with `"startsWithShineCharge": true` or have a `comeInShinecharged` entrance condition. These restrictions are necessary because strats in general do not model the amount of frames consumed, so it would be invalid to assume that Samus' shinecharge frames can remain unchanged across strats that are not designed to model shinecharge frames.
 

@@ -94,6 +94,14 @@ The `viewableNodes` property is an array of objects, each of which describing ho
 #### yields
 The `yields` property is an array of game flags that are activated when interacting with a node. Just like interacting with any other node type, this requires having no active lock on the node and fulfilling any interaction requirements.
 
+#### farmCycleDrops
+A `farmCycleDrops` is an array of objects describing a set of enemies that can be farmed as part of executing this strat. Each object has the following properties:
+
+* _enemy_: The name of an enemy from which drops can be collected.
+* _count_: The amount of drops which can be collected from the given enemy, during one cycle.
+
+A strat with this property should begin and end at the same node, representing one cycle of a farm. The strat should include `cycleFrames` requirements to specify the amount of time required to execute the farm cycle. If the farm involves resetting the room in order to respawn the enemies after collecting their drops, then this should be indicated by including a `resetRoom` requirement, in which case any requirements needed for reaching the door and returning to the starting/ending node should be included. Only in-room time should be included; i.e. time spent in the door transition or in the other room on the other side of the door should not be included. Only frames that are part of the farming cycle need to be included in `cycleFrames`; i.e., in a case where the starting/ending node may not precisely coincide with the farm location, frames would not need to be included for reaching the farm from the starting node on the first cycle, nor for returning to the ending node after the last cycle.
+
 #### twinDoorAddresses
 A door node is considered to have a twin when the game has two sections that are visually identical, but are separate in the game's memory. The player will not know during gameplay that the two twin doors aren't actually the same. Both twins lead to the same destination door, but that destination door only ever leads to one of the twins, with the other only being reachable from within its room. An example (and the only known one currently) is East Pants Room, which has a another version of itself within Pants Room.
 
