@@ -39,6 +39,10 @@
       "nodeAddress": "0x00198be",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false,
+      "useImplicitCarryGModeBackThrough": false,
+      "useImplicitCarryGModeMorphBackThrough": false,
       "locks": [
         {
           "name": "Ridley Room Right Gray Lock (to Farming Room)",
@@ -52,8 +56,7 @@
             }
           ]
         }
-      ],
-      "spawnAt": 4
+      ]
     },
     {
       "id": 3,
@@ -61,12 +64,6 @@
       "nodeType": "junction",
       "nodeSubType": "junction",
       "devNote": "FIXME: This node can be eliminated."
-    },
-    {
-      "id": 4,
-      "name": "Right Door Spawn At Junction",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
     }
   ],
   "enemies": [
@@ -98,13 +95,6 @@
       "from": 3,
       "to": [
         {"id": 1},
-        {"id": 2},
-        {"id": 3}
-      ]
-    },
-    {
-      "from": 4,
-      "to": [
         {"id": 2},
         {"id": 3}
       ]
@@ -156,6 +146,59 @@
       }
     },
     {
+      "link": [2, 2],
+      "name": "Land in Door Frame",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canInsaneJump",
+        {"heatFrames": 55},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Door Stuck, Open Door",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"heatFrames": 55},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ]
+    },
+    {
+      "id": 14,
+      "link": [2, 2],
+      "name": "Prepared Return Without Falling",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          "SpaceJump",
+          "canWalljump"
+        ]},
+        {"heatFrames": 80},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": ["canTrickyJump"]},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
       "id": 5,
       "link": [2, 2],
       "name": "G-Mode Regain Mobility",
@@ -192,6 +235,15 @@
           {"and": [
             "HiJump",
             "canSpringBallJumpMidAir"
+          ]},
+          {"and": [
+            "HiJump",
+            "SpeedBooster",
+            "canTrickyJump",
+            {"or": [
+              "canInsaneJump",
+              "f_DefeatedRidley"
+            ]}
           ]}
         ]}
       ],
@@ -228,10 +280,28 @@
     {
       "id": 8,
       "link": [2, 3],
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "name": "Base",
       "requires": [
         {"heatFrames": 100}
       ]
+    },
+    {
+      "link": [2, 3],
+      "name": "Fall Into Room With Mockball",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"heatFrames": 100}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 9,
@@ -330,34 +400,6 @@
         "h_canHeatedCrystalFlash"
       ],
       "flashSuitChecked": true
-    },
-    {
-      "id": 14,
-      "link": [4, 2],
-      "name": "Prepared Entry",
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          "SpaceJump",
-          "canWalljump",
-          "canTrickyJump",
-          "canStationarySpinJump"
-        ]},
-        {"heatFrames": 80},
-        {"doorUnlockedAtNode": 2}
-      ],
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ]
-    },
-    {
-      "id": 15,
-      "link": [4, 3],
-      "name": "Base",
-      "requires": [
-        {"heatFrames": 100}
-      ]
     }
   ],
   "nextStratId": 20,

@@ -25,7 +25,10 @@
       "nodeAddress": "0x0019a7a",
       "doorOrientation": "right",
       "doorEnvironments": [{"physics": "air"}],
-      "spawnAt": 6
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false,
+      "useImplicitCarryGModeBackThrough": false,
+      "useImplicitCarryGModeMorphBackThrough": false
     },
     {
       "id": 3,
@@ -47,12 +50,6 @@
     {
       "id": 5,
       "name": "Junction Above Bottom Blocks",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
-    },
-    {
-      "id": 6,
-      "name": "Middle Right Door Spawn At Junction",
       "nodeType": "junction",
       "nodeSubType": "junction"
     }
@@ -126,12 +123,6 @@
         {"id": 2},
         {"id": 3},
         {"id": 4},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 6,
-      "to": [
         {"id": 5}
       ]
     }
@@ -666,6 +657,38 @@
       }
     },
     {
+      "link": [2, 2],
+      "name": "Land in Door Frame",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "canCarefulJump",
+        {"heatFrames": 55},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": ["canInsaneJump"]},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Door Stuck, Open Door",
+      "entranceCondition": {
+        "comeInWithDoorStuckSetup": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"heatFrames": 55},
+        {"doorUnlockedAtNode": 2}
+      ],
+      "unlocksDoors": [
+        {"types": ["ammo"], "requires": []}
+      ]
+    },
+    {
       "id": 14,
       "link": [2, 2],
       "name": "Crystal Flash",
@@ -1123,10 +1146,35 @@
     {
       "id": 33,
       "link": [2, 5],
+      "name": "Fall Back Down",
+      "requires": [
+        {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [2, 5],
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "name": "Base",
       "requires": [
         {"heatFrames": 50}
       ]
+    },
+    {
+      "link": [2, 5],
+      "name": "Fall Into Room With Mockball",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"heatFrames": 50}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 34,
@@ -2144,14 +2192,6 @@
       ],
       "clearsObstacles": ["B"],
       "flashSuitChecked": true
-    },
-    {
-      "id": 75,
-      "link": [6, 5],
-      "name": "Fall into Room",
-      "requires": [
-        {"heatFrames": 50}
-      ]
     }
   ],
   "nextStratId": 111,
