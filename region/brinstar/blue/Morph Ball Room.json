@@ -15,6 +15,7 @@
       "nodeAddress": "0x0018e9e",
       "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
+      "useImplicitComeInNormally": false,
       "locks": [
         {
           "name": "Morph Ball Room Gray Lock (to Green Hill Zone)",
@@ -31,8 +32,7 @@
           ],
           "devNote": "Technically this yields f_ZebesAwake, although it requires the same flag to spawn the enemies, so it's not possible here."
         }
-      ],
-      "spawnAt": 6
+      ]
     },
     {
       "id": 2,
@@ -90,12 +90,6 @@
           "note": "Item doesn't appear before Zebes is awakened."
         }
       ]
-    },
-    {
-      "id": 6,
-      "name": "Left Door Spawn At Junction",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
     }
   ],
   "obstacles": [
@@ -126,7 +120,7 @@
       "groupName": "Morph Ball Room Sidehoppers",
       "enemyName": "Sidehopper",
       "quantity": 3,
-      "homeNodes": [1, 6],
+      "homeNodes": [1],
       "spawn": ["f_ZebesAwake"]
     }
   ],
@@ -170,13 +164,6 @@
         {"id": 4},
         {"id": 5}
       ]
-    },
-    {
-      "from": 6,
-      "to": [
-        {"id": 1},
-        {"id": 5}
-      ]
     }
   ],
   "strats": [
@@ -193,6 +180,30 @@
           "openEnd": 1
         }
       }
+    },
+    {
+      "id": 57,
+      "link": [1, 1],
+      "name": "Sidehopper Hit on Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}}
+      ]
+    },
+    {
+      "id": 58,
+      "link": [1, 1],
+      "name": "Free Passage",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "h_ZebesNotAwake"
+      ],
+      "clearsObstacles": ["C"],
+      "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
     },
     {
       "id": 2,
@@ -297,29 +308,6 @@
       }
     },
     {
-      "id": 8,
-      "link": [1, 1],
-      "name": "G-Mode Setup - Get Hit By Sidehopper",
-      "requires": [
-        "h_ZebesIsAwake"
-      ],
-      "exitCondition": {
-        "leaveWithGModeSetup": {}
-      },
-      "flashSuitChecked": true
-    },
-    {
-      "id": 9,
-      "link": [1, 1],
-      "name": "G-Mode Regain Mobility",
-      "requires": [
-        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
-        "h_ZebesIsAwake"
-      ],
-      "gModeRegainMobility": {},
-      "flashSuitChecked": true
-    },
-    {
       "id": 10,
       "link": [1, 1],
       "name": "Crystal Flash",
@@ -379,7 +367,11 @@
         {"or": [
           {"and": [
             "Plasma",
-            "Charge"
+            {"or": [
+              "Charge",
+              "Ice",
+              "Wave"
+            ]}
           ]},
           "ScrewAttack",
           {"and": [
@@ -438,6 +430,137 @@
       ],
       "note": "Enter the room and immediately shoot a Missile and a Super to kill the first hopper.",
       "devNote": "This can then be paired with quickly leaving the room normally or with a G-Mode setup, if the door is unlocked."
+    },
+    {
+      "id": 63,
+      "link": [1, 1],
+      "name": "Pause Abuse Sidehopper Hit",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "h_pauseAbuseMinimalReserveRefill"
+      ]
+    },
+    {
+      "id": 64,
+      "link": [1, 1],
+      "name": "Pause Abuse Quick Sidehopper Kill",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "h_pauseAbuseMinimalReserveRefill",
+        {"or": [
+          "Plasma",
+          {"enemyKill": {
+            "enemies": [["Sidehopper", "Sidehopper", "Sidehopper"]],
+            "explicitWeapons": ["Missile", "Super"]
+          }}
+        ]}
+      ],
+      "clearsObstacles": ["C"]
+    },
+    {
+      "id": 65,
+      "link": [1, 1],
+      "name": "Pause Abuse Pseudo Screw Sidehopper Kill",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPseudoScrew",
+        "h_pauseAbuseMinimalReserveRefill",
+        "h_pauseAbuseMinimalReserveRefill",
+        "h_pauseAbuseMinimalReserveRefill",
+        {"or": [
+          "h_pauseAbuseMinimalReserveRefill",
+          "Morph"
+        ]},
+        {"or": [
+          "h_pauseAbuseMinimalReserveRefill",
+          "canTrickyDodgeEnemies"
+        ]}
+      ],
+      "clearsObstacles": ["C"],
+      "note": [
+        "Pseudo Screw the first ground hopper and focus fire on it until it dies while taking 2-3 hits.",
+        "Kill the ceiling hopper while on the ground, crouched near the stair for some safety, or with Morph without risk.",
+        "The third hopper can be killed with another Pseudo Screw with pause abuse, a Morph dodge, or a dodge by jumping over it while it lunges towards Samus."
+      ]
+    },
+    {
+      "link": [1, 1],
+      "name": "Mockball Entry, Tank Hit",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"or": [
+          {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+          "h_pauseAbuseMinimalReserveRefill"
+        ]}
+      ],
+      "note": "Tank a hit or use a pause abuse with a reserve refill."
+    },
+    {
+      "link": [1, 1],
+      "name": "Mockball Entry, Quick Kill",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          {"and": [
+            "Plasma",
+            {"or": [
+              "Ice",
+              "Wave"
+            ]}
+          ]},
+          "ScrewAttack",
+          {"and": [
+            "h_canUsePowerBombs",
+            {"enemyKill": {
+              "enemies": [["Sidehopper"]],
+              "explicitWeapons": ["Missile", "Super", "PowerBomb"]
+            }}
+          ]}
+        ]}
+      ],
+      "note": "Unmorph and quickly kill the hoppers on entry."
+    },
+    {
+      "id": 8,
+      "link": [1, 1],
+      "name": "G-Mode Setup - Get Hit By Sidehopper",
+      "requires": [
+        "h_ZebesIsAwake"
+      ],
+      "exitCondition": {
+        "leaveWithGModeSetup": {}
+      },
+      "flashSuitChecked": true
+    },
+    {
+      "id": 9,
+      "link": [1, 1],
+      "name": "G-Mode Regain Mobility",
+      "requires": [
+        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+        "h_ZebesIsAwake"
+      ],
+      "gModeRegainMobility": {},
+      "flashSuitChecked": true
     },
     {
       "id": 17,
@@ -643,6 +766,22 @@
       "clearsObstacles": ["A"]
     },
     {
+      "id": 59,
+      "link": [1, 5],
+      "name": "Run Through",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 2}},
+        {"or": [
+          "canCarefulJump",
+          {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}}
+        ]},
+        "h_canBombThings"
+      ]
+    },
+    {
       "id": 26,
       "link": [1, 5],
       "name": "Speedball (Left to Right)",
@@ -674,6 +813,46 @@
         "This is a direct link because clearing the hoppers is unnecessary.",
         "One tile is subtracted from the runway length since Samus must be blue before contacting the first Hopper.",
         "There is 1 unusable tile in this runway."
+      ]
+    },
+    {
+      "link": [1, 5],
+      "name": "Morph Entry, Precise Dodge",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canTrickyDodgeEnemies",
+        "canCameraManip",
+        "h_canBombThings"
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Roll into the room, fall off the step and roll into the corner.",
+        "Roll to the right immediately as the floor hopper is going to take its fourth jump to get it off camera.",
+        "Once it is off camera, stop and wait for the next hopper to jump towards Samus, then roll under it as it jumps again."
+      ]
+    },
+    {
+      "link": [1, 5],
+      "name": "Mockball Entry, Precise Dodge",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "canTrickyDodgeEnemies",
+        "canCameraManip",
+        "h_canBombThings"
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Roll into the room, fall off the step and roll into the corner.",
+        "Roll to the right immediately as the floor hopper is going to take its fourth jump to get it off camera.",
+        "Once it is off camera, stop and wait for the next hopper to jump towards Samus, then roll under it as it jumps again."
       ]
     },
     {
@@ -1110,86 +1289,6 @@
       ],
       "clearsObstacles": ["B"],
       "note": "Place the Power Bomb, then exit g-mode before the bomb goes off."
-    },
-    {
-      "id": 57,
-      "link": [6, 1],
-      "name": "Sidehopper Hit on Entry",
-      "requires": [
-        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}}
-      ]
-    },
-    {
-      "id": 63,
-      "link": [6, 1],
-      "name": "Pause Abuse Sidehopper Hit",
-      "requires": [
-        "h_pauseAbuseMinimalReserveRefill"
-      ]
-    },
-    {
-      "id": 64,
-      "link": [6, 1],
-      "name": "Pause Abuse Quick Sidehopper Kill",
-      "requires": [
-        "h_pauseAbuseMinimalReserveRefill",
-        {"or": [
-          "Plasma",
-          {"enemyKill": {
-            "enemies": [["Sidehopper", "Sidehopper", "Sidehopper"]],
-            "explicitWeapons": ["Missile", "Super"]
-          }}
-        ]}
-      ],
-      "clearsObstacles": ["C"]
-    },
-    {
-      "id": 65,
-      "link": [6, 1],
-      "name": "Pause Abuse Pseudo Screw Sidehopper Kill",
-      "requires": [
-        "canPseudoScrew",
-        "h_pauseAbuseMinimalReserveRefill",
-        "h_pauseAbuseMinimalReserveRefill",
-        "h_pauseAbuseMinimalReserveRefill",
-        {"or": [
-          "h_pauseAbuseMinimalReserveRefill",
-          "Morph"
-        ]},
-        {"or": [
-          "h_pauseAbuseMinimalReserveRefill",
-          "canTrickyDodgeEnemies"
-        ]}
-      ],
-      "clearsObstacles": ["C"],
-      "note": [
-        "Pseudo Screw the first ground hopper and focus fire on it until it dies while taking 2-3 hits.",
-        "Kill the ceiling hopper while on the ground, crouched near the stair for some safety, or with Morph without risk.",
-        "The third hopper can be killed with another Pseudo Screw with pause abuse, a Morph dodge, or a dodge by jumping over it while it lunges towards Samus."
-      ]
-    },
-    {
-      "id": 58,
-      "link": [6, 1],
-      "name": "Free Passage",
-      "requires": [
-        "h_ZebesNotAwake"
-      ],
-      "clearsObstacles": ["C"],
-      "devNote": "The obstacle isn't really cleared, but should enable all strats that require it to be."
-    },
-    {
-      "id": 59,
-      "link": [6, 5],
-      "name": "Run Through",
-      "requires": [
-        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 2}},
-        {"or": [
-          "canCarefulJump",
-          {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}}
-        ]},
-        "h_canBombThings"
-      ]
     }
   ],
   "nextStratId": 66,
