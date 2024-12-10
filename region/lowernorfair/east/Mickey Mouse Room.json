@@ -16,6 +16,8 @@
       "nodeAddress": "0x001992a",
       "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false,
       "locks": [
         {
           "name": "Mickey Mouse Gray Lock (to Fast Pillars Setup Room)",
@@ -48,8 +50,7 @@
             "We went with the two most plausible ones."
           ]
         }
-      ],
-      "spawnAt": 8
+      ]
     },
     {
       "id": 2,
@@ -88,12 +89,6 @@
       "nodeType": "junction",
       "nodeSubType": "junction",
       "note": "Position to the left of the rightmost two Dessgeegas"
-    },
-    {
-      "id": 8,
-      "name": "Left Door Spawn At Junction (Multiviola Hit)",
-      "nodeType": "junction",
-      "nodeSubType": "junction"
     },
     {
       "id": 9,
@@ -146,14 +141,14 @@
       "groupName": "Mickey Mouse Bottom Multiviolas",
       "enemyName": "Multiviola",
       "quantity": 2,
-      "betweenNodes": [7, 8]
+      "betweenNodes": [1, 7]
     },
     {
       "id": "e2",
       "groupName": "Mickey Mouse Left Dessgeegas",
       "enemyName": "Dessgeega",
       "quantity": 3,
-      "betweenNodes": [7, 8]
+      "betweenNodes": [1, 7]
     },
     {
       "id": "e3",
@@ -233,12 +228,6 @@
       ]
     },
     {
-      "from": 8,
-      "to": [
-        {"id": 1}
-      ]
-    },
-    {
       "from": 9,
       "to": [
         {"id": 2},
@@ -315,6 +304,67 @@
       "devNote": "Taking a hit by the Multiviola isn't an option, as it will stop Samus' run and then the Dessgeega will be in the way."
     },
     {
+      "id": 77,
+      "link": [1, 1],
+      "name": "Base, Get Hit on Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Multiviola", "type": "contact", "hits": 1}},
+        {"heatFrames": 40}
+      ]
+    },
+    {
+      "id": 78,
+      "link": [1, 1],
+      "name": "Kill Multiviola on Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        {"or": [
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["PseudoScrew", "ScrewAttack"]
+            }},
+            {"heatFrames": 30}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["Missile", "Super"]
+            }},
+            {"heatFrames": 30}
+          ]},
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Multiviola"]],
+              "explicitWeapons": ["Charge+Ice", "Ice+Wave", "Ice+Spazer"]
+            }},
+            {"heatFrames": 60}
+          ]},
+          {"enemyKill": {
+            "enemies": [["Multiviola"]],
+            "explicitWeapons": ["Plasma", "Charge+Spazer", "Charge+Wave"]
+          }}
+        ]},
+        {"heatFrames": 40}
+      ],
+      "note": [
+        "The Multiviola will immediately reach Samus at the door when entering the room.",
+        "By entering the room in a jump and aiming down, there is just enough time to shoot the multiviola.",
+        "Or by entering the room aiming diagonally down and firing a beam shot."
+      ],
+      "devNote": [
+        "You can kill the Multiviola with a super without jumping but it would be a notable strat for being frame precise and its not worth separating it out.",
+        "This does not clear obstacle E, because this is not the Multiviola that can be used for the ice clip."
+      ]
+    },
+    {
       "id": 3,
       "link": [1, 1],
       "name": "Kill Multiviola on Entry (Blue Speed)",
@@ -338,6 +388,21 @@
         "h_canHeatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "Mockball Entry, Tank Hit",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Multiviola", "type": "contact", "hits": 1}},
+        {"heatFrames": 40}
+      ]
     },
     {
       "id": 5,
@@ -366,7 +431,8 @@
         }
       },
       "bypassesDoorShell": true,
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "note": "Samus will not take a hit by the Multiviola, as she still has i-frames when it reaches her."
     },
     {
       "id": 7,
@@ -385,7 +451,8 @@
         }
       },
       "bypassesDoorShell": true,
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "note": "Samus will not take a hit by the Multiviola, as she still has i-frames when it reaches her."
     },
     {
       "id": 8,
@@ -445,7 +512,7 @@
     {
       "id": 12,
       "link": [1, 7],
-      "name": "Tank the Damage",
+      "name": "Tank the Damage, Run Through on Entry",
       "entranceCondition": {
         "comeInNormally": {}
       },
@@ -1513,61 +1580,6 @@
         {"heatFrames": 400}
       ],
       "clearsObstacles": ["F"]
-    },
-    {
-      "id": 77,
-      "link": [8, 1],
-      "name": "Get Hit on Entry",
-      "requires": [
-        {"enemyDamage": {"enemy": "Multiviola", "type": "contact", "hits": 1}},
-        {"heatFrames": 40}
-      ]
-    },
-    {
-      "id": 78,
-      "link": [8, 1],
-      "name": "Kill Multiviola on Entry",
-      "requires": [
-        "canPrepareForNextRoom",
-        {"or": [
-          {"and": [
-            {"enemyKill": {
-              "enemies": [["Multiviola"]],
-              "explicitWeapons": ["PseudoScrew", "ScrewAttack"]
-            }},
-            {"heatFrames": 30}
-          ]},
-          {"and": [
-            "canTrickyJump",
-            {"enemyKill": {
-              "enemies": [["Multiviola"]],
-              "explicitWeapons": ["Missile", "Super"]
-            }},
-            {"heatFrames": 30}
-          ]},
-          {"and": [
-            {"enemyKill": {
-              "enemies": [["Multiviola"]],
-              "explicitWeapons": ["Charge+Ice", "Ice+Wave", "Ice+Spazer"]
-            }},
-            {"heatFrames": 60}
-          ]},
-          {"enemyKill": {
-            "enemies": [["Multiviola"]],
-            "explicitWeapons": ["Plasma", "Charge+Spazer", "Charge+Wave"]
-          }}
-        ]},
-        {"heatFrames": 40}
-      ],
-      "note": [
-        "The Multiviola will immediately reach Samus at the door when entering the room.",
-        "By entering the room in a jump and aiming down, there is just enough time to shoot the multiviola.",
-        "Or by entering the room aiming diagonally down and firing a beam shot."
-      ],
-      "devNote": [
-        "You can kill the Multiviola with a super without jumping but it would be a notable strat for being frame precise and its not worth separating it out.",
-        "This does not clear obstacle E, because this is not the Multiviola that can be used for the ice clip."
-      ]
     },
     {
       "id": 79,
