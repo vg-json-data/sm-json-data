@@ -15,6 +15,8 @@
       "nodeAddress": "0x0018fb2",
       "doorOrientation": "left",
       "doorEnvironments": [{"physics": "air"}],
+      "useImplicitComeInNormally": false,
+      "useImplicitComeInWithMockball": false,
       "locks": [
         {
           "name": "Pink Brinstar Hoppers Left Gray Lock (to Big Pink)",
@@ -155,16 +157,39 @@
       }
     },
     {
+      "link": [1, 1],
+      "name": "Leave With Runway, Use I-Frames",
+      "requires": [
+        {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+        "canUseIFrames"
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 1,
+          "openEnd": 1
+        }
+      },
+      "devNote": "This is worst-case scenario. A strat that comes in and leaves with a single hit could be added."
+    },
+    {
+      "link": [1, 1],
+      "name": "Base, Sidehopper Hit on Entry",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}}
+      ]
+    },
+    {
       "id": 2,
       "link": [1, 1],
       "name": "Power Beam Kill",
       "requires": [
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
         {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 3}}
       ],
       "clearsObstacles": ["A"],
-      "note": [
-        "This assumes you don't know you're entering this room, and take a Small Sidehopper hit quickly.",
+      "devNote": [
         "The Small Sidehoppers may deliver more of the hits, but this is an assumed worst case scenario"
       ]
     },
@@ -173,29 +198,25 @@
       "link": [1, 1],
       "name": "Intermediate Weapon Kill",
       "requires": [
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
         {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
         {"or": [
           "Spazer",
           "Wave"
         ]}
       ],
-      "clearsObstacles": ["A"],
-      "note": "This assumes you don't know you're entering this room, and take a Small Sidehopper hit quickly."
+      "clearsObstacles": ["A"]
     },
     {
       "id": 4,
       "link": [1, 1],
       "name": "Fast Weapon Kill",
       "requires": [
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
         {"enemyKill": {
           "enemies": [["Sidehopper", "Sm. Sidehopper", "Sm. Sidehopper"]],
           "explicitWeapons": ["Missile", "Super", "PowerBomb", "ScrewAttack", "Plasma"]
         }}
       ],
-      "clearsObstacles": ["A"],
-      "note": "This assumes you don't know you're entering this room, and take a Small Sidehopper hit quickly."
+      "clearsObstacles": ["A"]
     },
     {
       "id": 5,
@@ -216,11 +237,28 @@
       "id": 6,
       "link": [1, 1],
       "name": "Kill on Entry (Screw Attack)",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
       "requires": [
         "canPrepareForNextRoom",
         "ScrewAttack"
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [1, 1],
+      "name": "Kill on Entry (Charged Plasma)",
+      "entranceCondition": {
+        "comeInNormally": {}
+      },
+      "requires": [
+        "canPrepareForNextRoom",
+        "Charge",
+        "Plasma"
+      ],
+      "clearsObstacles": ["A"],
+      "note": "On entry, shoot diagonally downwards to kill the first two hoppers, then shoot the third."
     },
     {
       "id": 7,
@@ -327,9 +365,11 @@
       "name": "Reverse Gate Glitch (HiJump, Hoppers Alive)",
       "requires": [
         {"notable": "Reverse Gate Glitch"},
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
+        {"obstaclesNotCleared": ["A"]},
         {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+        "canTrickyJump",
         "canNeutralDamageBoost",
+        "canUseIFrames",
         "HiJump",
         "canOffScreenSuperShot"
       ],
@@ -449,12 +489,26 @@
       "flashSuitChecked": true
     },
     {
+      "link": [1, 1],
+      "name": "Mockball Entry, Tank Hit",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "adjacentMinTiles": 0,
+          "remoteAndLandingMinTiles": [[0, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}}
+      ]
+    },
+    {
       "id": 18,
       "link": [1, 1],
       "name": "G-Mode Setup - Get Hit By Hopper (Jump Entry)",
       "entranceCondition": {
         "comeInJumping": {
-          "minTiles": 1,
+          "minTiles": 0.4375,
           "speedBooster": "any"
         }
       },
@@ -474,8 +528,7 @@
       "link": [1, 1],
       "name": "G-Mode Setup - Get Hit By Hopper",
       "requires": [
-        {"obstaclesNotCleared": ["A"]},
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}}
+        {"obstaclesNotCleared": ["A"]}
       ],
       "exitCondition": {
         "leaveWithGModeSetup": {}
@@ -851,7 +904,7 @@
       "requires": [
         {"obstaclesNotCleared": ["A"]},
         "canTrickyUseFrozenEnemies",
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
+        "canTrickyJump",
         {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
         {"or": [
           {"and": [
@@ -1437,13 +1490,10 @@
       "requires": [
         {"obstaclesNotCleared": ["A"]},
         "canTrickyUseFrozenEnemies",
+        "canTrickyJump",
         {"or": [
           "HiJump",
           "canSpringBallJumpMidAir"
-        ]},
-        {"or": [
-          {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
-          "canTrickyJump"
         ]}
       ],
       "note": [
@@ -1455,14 +1505,20 @@
     {
       "id": 76,
       "link": [4, 4],
-      "name": "Reverse Gate Glitch (Ice)",
+      "name": "Reverse Gate Glitch (Frozen Hopper Platform)",
       "requires": [
         {"notable": "Reverse Gate Glitch"},
         {"obstaclesNotCleared": ["A"]},
         "canTrickyUseFrozenEnemies",
-        "h_canBackIntoCorner",
+        "canTrickyJump",
         "canOffScreenSuperShot",
-        {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}}
+        {"or": [
+          "h_canBackIntoCorner",
+          {"and": [
+            {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+            "canNeutralDamageBoost"
+          ]}
+        ]}
       ],
       "clearsObstacles": ["B"],
       "note": [
@@ -1473,29 +1529,6 @@
         "Fire a Super just above the door shell to hit the Gate.",
         "This strat involves shooting a Super diagonally from the correct height while flush against the left wall.",
         "Its acceleration will cause it to clip into the blue gate off-screen."
-      ]
-    },
-    {
-      "id": 77,
-      "link": [4, 4],
-      "name": "Reverse Gate Glitch (HiJump, Ice)",
-      "requires": [
-        {"notable": "Reverse Gate Glitch"},
-        {"obstaclesNotCleared": ["A"]},
-        {"or": [
-          "h_canBackIntoCorner",
-          {"enemyDamage": {"enemy": "Sm. Sidehopper", "type": "contact", "hits": 1}},
-          "canTrickyJump"
-        ]},
-        "HiJump",
-        "canOffScreenSuperShot"
-      ],
-      "clearsObstacles": ["B"],
-      "note": [
-        "This strat involves shooting a Super diagonally from the correct height while flush against the left wall.",
-        "Its acceleration will cause it to clip into the blue gate off-screen.",
-        "Jump straight up and shoot with the correct timing.",
-        "Taking damage can be used to align against the wall."
       ]
     }
   ],
