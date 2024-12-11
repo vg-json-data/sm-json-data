@@ -623,7 +623,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "tos": [],
                             "ids": [],
                             "names": [],
-                            "spawnAts": [],
                             "leaveCharged": {
                                 "from": {}
                             }
@@ -670,8 +669,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         else:
                             roomData["nodes"]["names"].append(node["name"])
                         roomData["nodes"]["ids"].append(node["id"])
-                        if "spawnAt" in node and node["spawnAt"] not in roomData["nodes"]["spawnAts"]:
-                            roomData["nodes"]["tos"].append(node["spawnAt"])
 
                         if node.get("useImplicitDoorUnlocks") is False:
                             nodes_without_implicit_unlocks.add(node['id'])
@@ -1046,14 +1043,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             nodeRef = f"{roomRef}:{node['id']}:{node['name']}"
                             orphaned = True
 
-                        foundNode = False
-                        if "spawnAt" in node:
-                            foundNode = node["spawnAt"] in roomData["nodes"]["froms"]
-                            orphaned = not foundNode
-                            if orphaned:
-                                msg = f"🔴ERROR: Orphaned SpawnAt! {nodeRef}::{node['spawnAt']}"
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
+                        foundNode = False  # spawnAts were removed, so this code can be simplified
 
                         # If it's orphaned, try to find a connection
                         if orphaned:

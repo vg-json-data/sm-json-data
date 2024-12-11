@@ -1535,8 +1535,6 @@ With certain exceptions described below, by default every door node and entrance
 
 This implicit strat can be disabled by setting the node property `"useImplicitComeInNormally": false`.
 
-If the node has a `spawnAt` property, then this implicit strat ends at the `spawnAt` node, rather than ending at the door node.
-
 ### Implicit Come In With Mockball
 
 With certain exceptions described below, by default every horizontal door node has an implicit strat from the node to itself, for entering the room through the door while in a mockball (or speedball). This implicit strat has a `comeInWithMockball` entrance condition. In unheated rooms, it has the following form:
@@ -1579,8 +1577,6 @@ This implicit strat is to cover cases where leaving with a mockball may be desir
 
 This implicit strat can be disabled by setting the node property `"useImplicitComeInWithMockball": false`.
 
-If the node has a `spawnAt` property, then this implicit strat is disabled, and should never be marked with `"useImplicitComeInWithMockball": true`.
-
 ### Implicit Carry G-Mode Back Through
 
 With certain exceptions described below, by default every door node has an implicit strat from the node to itself, for entering the room in direct G-mode through the door and then walking back out through the open doorway while still in G-mode. This implicit strat has a `comeInWithGMode` entrance condition and a `leaveWithGMode` exit condition and is of the following form:
@@ -1608,7 +1604,7 @@ Note that if there are strats from this door node to itself with `"gModeRegainMo
 
 This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeBackThrough": false`.
 
-If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeBackThrough": true`.
+If the node has `"isDoorImmediatelyClosed": true`, then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeBackThrough": true`.
 
 ### Implicit Carry G-Mode Morph Back Through
 
@@ -1639,7 +1635,7 @@ As with other `comeInWithGMode` strats having `"morphed": true`, it is assumed h
 
 This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeMorphBackThrough": false`.
 
-If the node has a `spawnAt` property, or if it has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back through a door, described in the previous section, which have no such exception.
+If the node has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back through a door, described in the previous section, which have no such exception.
 
 ## Run Speed
 

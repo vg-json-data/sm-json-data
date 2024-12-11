@@ -51,9 +51,6 @@ By default every door node has an implicit strat from the node to itself, for [u
 
 Most doors have a closing animation that occurs when entering through them. However, certain doors are immediately closed when the room is loaded. When entering through such a door in direct G-mode, the door will be closed, making it not possible to return back through the door without first exiting G-mode. It would also not be possible to get stuck inside the door shell using an X-ray climb setup.
 
-#### spawnAt
-The `spawnAt` property is used to represent situations where Samus enters a room via a node, but can quickly end up at another node without user input. This is only relevant in situations where there are requirements for getting back to the door Samus entered through. When a node has a `null` value for this property, Samus simply spawns at that node as normal.
-
 #### utility
 The `utility` property is an array of utility functions available to Samus at a node. Those include saving, map stations, as well as resource refills. Possible utilities are:
 * _save_
