@@ -287,6 +287,16 @@ def check_heat_req(req):
         if "or" in req:
             return all(check_heat_req(v) for v in req["or"])
 
+
+def check_cycle_frames_req(req):
+    if isinstance(req, dict):
+        if "cycleFrames" in req:
+            return True
+        if "and" in req:
+            return any(check_cycle_frames_req(v) for v in req["and"])
+        if "or" in req:
+            return all(check_cycle_frames_req(v) for v in req["or"])
+
 # give list of keys to check
 # give label for output message
 # give list of valid values
@@ -984,6 +994,16 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         if strat.get("bypassesDoorShell") == True:
                             if node_lookup[toNode]["nodeType"] != "door":
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
+                        has_cycle_frames = check_cycle_frames_req({"and": strat["requires"]})
+                        if has_cycle_frames and "farmCycleDrops" not in strat:
+                                msg = f"🔴ERROR: Strat has cycleFrames requirement but no farmCycleDrops:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                        if "farmCycleDrops" in strat and not has_cycle_frames:
+                                msg = f"🔴ERROR: Strat has farmCycleDrops but is missing cycleFrames covering all cases:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
 
