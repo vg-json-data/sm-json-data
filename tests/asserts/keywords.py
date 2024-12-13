@@ -695,7 +695,63 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             msg = f"🔴ERROR: Door orientation '{node_orientation}' inconsistent with connection position '{door_position}': {nodeRef}:{node['name']}"
                             messages["reds"].append(msg)
                             messages["counts"]["reds"] += 1
+
+                        if node.get("useImplicitLeaveNormally") is False and not any(
+                            s["link"][1] == node["id"]
+                            and s.get("exitCondition", {}).get("leaveNormally") is not None
+                            for s in room["strats"]
+                        ):
+                            msg = f"🔴ERROR: Node disables useImplicitLeaveNormally but has no leaveNormally strat: {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
                             
+                        if node.get("useImplicitComeInNormally") is False and not any(
+                            s["link"][0] == node["id"]
+                            and s.get("entranceCondition", {}).get("comeInNormally") is not None
+                            for s in room["strats"]
+                        ):
+                            msg = f"🔴ERROR: Node disables useImplicitComeInNormally but has no comeInNormally strat: {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+
+                        if node.get("useImplicitComeInWithMockball") is False and not any(
+                            s["link"][0] == node["id"]
+                            and s.get("entranceCondition", {}).get("comeInWithMockball") is not None
+                            for s in room["strats"]
+                        ):
+                            msg = f"🔴ERROR: Node disables useImplicitComeInWithMockball but has no comeInWithMockball strat: {nodeRef}:{node['name']}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+
+                        if node.get("useImplicitCarryGModeBackThrough") is False and not any(
+                            s["link"][0] == node["id"]
+                            and s.get("entranceCondition", {}).get("comeInWithGMode") is not None
+                            and s.get("exitCondition", {}).get("leaveWithGMode") is not None
+                            for s in room["strats"]
+                        ):
+                            if room["id"] == 321:
+                                # Toilet Bowl is an exception where there legitimately is no comeInWithGMode+leaveWithGMode strat
+                                pass
+                            else:
+                                msg = f"🔴ERROR: Node disables useImplicitCarryGModeBackThrough but has no comeInWithGMode+leaveWithGMode strat: {nodeRef}:{node['name']}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
+                        if node.get("useImplicitCarryGModeMorphBackThrough") is False and not any(
+                            s["link"][0] == node["id"]
+                            and s.get("entranceCondition", {}).get("comeInWithGMode") is not None
+                            and s.get("exitCondition", {}).get("leaveWithGMode") is not None
+                            and s["exitCondition"]["leaveWithGMode"]["morphed"]
+                            for s in room["strats"]
+                        ):
+                            if room["id"] == 321 or node["nodeSubType"] == "elevator":
+                                # Toilet Bowl and elevators are an exception where there legitimately is no comeInWithGMode+leaveWithGMode morphed strat
+                                pass
+                            else:
+                                msg = f"🔴ERROR: Node disables useImplicitCarryGModeMorphBackThrough but has no comeInWithGMode+leaveWithGMode morphed strat: {nodeRef}:{node['name']}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
                     # Document Links
                     link_set = set()
                     for link_from in room["links"]:
