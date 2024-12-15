@@ -1,6 +1,7 @@
 import argparse
 import json
 from pathlib import Path
+import copy
 
 import format_json
 
@@ -33,9 +34,9 @@ for path in sorted(Path("../region/").glob("**/*.json")):
         map_tile_list = node_tiles_by_id[node_id]
         height = len(room_geom["map"])
         width = len(room_geom["map"][0])
-        map_tile_mask = [[0 for _ in range(width)] for _ in range(height)]
+        map_tile_mask = copy.deepcopy(room_geom["map"])
         for [x, y] in map_tile_list:
-            map_tile_mask[y][x] = 1
+            map_tile_mask[y][x] = 2
         node_json["mapTileMask"] = map_tile_mask
 
     new_room_json = format_json.format(room_json, indent=2)
