@@ -3,7 +3,7 @@
 import json
 
 # Keys whose values should always be expanded to separate lines
-non_one_line_keys = {"requires", "techRequires", "otherRequires", "and", "or", "to", "id"}
+non_one_line_keys = {"requires", "techRequires", "otherRequires", "and", "or", "to", "id", "mapTileMask"}
 
 # Keys whose children are exceptions to the rule about `non_one_line_keys`
 one_line_parent_keys = {"unlocksDoors"}
