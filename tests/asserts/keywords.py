@@ -981,6 +981,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat has comeInShinecharged entranceCondition without `shineChargeFrames` covering all cases:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                            if "comeInShinechargedJumping" in strat["entranceCondition"]:
+                                if not covers_shinecharge_frames({"and": strat["requires"]}):
+                                    msg = f"🔴ERROR: Strat has comeInShinechargedJumping entranceCondition without `shineChargeFrames` covering all cases:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
                             if "comeInWithTemporaryBlue" in strat["entranceCondition"]:
                                 if (room["id"], fromNode) in vertical_door_nodes and "direction" not in strat["entranceCondition"]["comeInWithTemporaryBlue"]:
                                     msg = f"🔴ERROR: Strat has vertical comeInWithTemporaryBlue entranceCondition without 'direction':{stratRef}"

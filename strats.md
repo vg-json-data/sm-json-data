@@ -500,8 +500,8 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
 - _comeInSpaceJumping_: This indicates that Samus must Space Jump through the bottom of the doorway.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
-- _comeInShinecharged_: This indicates that Samus must enter the room with a shinecharge with a certain amount of frames remaining.
-- _comeInShinechargedJumping_: This indicates that Samus must jump into the the room with a shinecharge with a certain amount of frames remaining.
+- _comeInShinecharged_: This indicates that Samus must enter the room with a shinecharge.
+- _comeInShinechargedJumping_: This indicates that Samus must jump into the the room with a shinecharge.
 - _comeInWithSpark_: This indicates that Samus must shinespark into the room.
 - _comeInWithBombBoost_: This indicates that Samus must come into the room with a horizontal bomb boost.
 - _comeInStutterShinecharging_: This indicates that Samus must run into the room with a stutter immediately before the transition.
@@ -733,13 +733,13 @@ Note that a `comeInGettingBlueSpeed` entrance condition is compatible with prese
 
 ### Come In Shinecharged
 
-A `comeInShinecharged` entrance condition represents the need for Samus to run or jump into the room with a shinecharge with a certain amount of time remaining before it would expire. It has no properties.
+A `comeInShinecharged` entrance condition represents the need for Samus to run or jump into the room with a shinecharge. It has no properties.
 
-A strat with a `comeInShinecharged` condition should include a `shinespark` requirement in its `requires`; alternatively it may include a `leaveShinecharged` exit condition or `"endsWithShineCharge": true` property, if the shinecharge is still active at the end of the strat. It should also include a `shineChargeFrames` logical requirement to account for shinecharge frames that are required in order to be able to position for the spark (or to reach the ending location of the strat, if the shinecharge is still active).
+A strat with a `comeInShinecharged` condition should include a `shineChargeFrames` logical requirement to account for shinecharge frames that are required in order to be able to position for the spark (or to reach the ending location of the strat, if the shinecharge is still active). The shinecharge frame counts are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts or reducing the assumed starting shinecharge frames of 180. A `shinespark` requirement should also be included in the `requires`; alternatively it may include a `leaveShinecharged` exit condition or `"endsWithShineCharge": true` property, if the shinecharge is still active at the end of the strat.
 
 A `comeInShinecharged` must match with either a `leaveShinecharged` condition or a `leaveWithRunway` condition on the other side of the door. 
 
-- In order for `comeInShinecharged` to have a valid match with a `leaveShinecharged` condition, the `framesRequired` in the `comeInShinecharged` must be less than or equal to the `framesRemaining` of the `leaveShinecharged` condition. Aside from this, `comeInShinecharged` condition has no implicit requirements when matched with a `leaveShinecharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveShinecharged`. The frame counts in `comeInShinecharged` and `leaveShinecharged` are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts (to increase `framesRequired` or decrease `framesRemaining`).
+- A `comeInShinecharged` condition has no implicit requirements when matched with a `leaveShinecharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveShinecharged`.
 
 - A `comeInShinecharged` condition may also match with a `leaveWithRunway` condition. In this case it is assumed that the runway in the other room is used to obtain a shinecharge just before entering the transition, with 170 frames remaining. This comes with implicit requirements for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
@@ -776,11 +776,9 @@ A `comeInShinecharged` object does not provide any way to specify Samus' positio
 
 ### Come In Shinecharged Jumping
 
-A `comeInShinechargedJumping` entrance condition represents the need for Samus to jump into the room with a shinecharge with a certain amount of time remaining before it would expire. The jump must occur from an air environment on the other side of the door. It has the following property:
+A `comeInShinechargedJumping` entrance condition represents the need for Samus to jump into the room with a shinecharge. The jump must occur from an air environment on the other side of the door. It has no properties.
 
-- _framesRequired_: The number of frames that must be left on the shinespark charge when coming in. This must be a value between 1 and 179. Note that the shinecharge timer begins at 180 frames, and at least one frame must elapse between obtaining the shinecharge in the other room and crossing the door transition.
-
-A strat with a `comeInShinechargedJumping` condition should include a `shinespark` requirement in its `requires`.
+A strat with a `comeInShinechargedJumping` condition should include `shineChargeFrames` and `shinespark` requirements in its `requires`.
 
 The conditions for `comeInShinechargedJumping` are the same as for `comeInShinecharged`, with the added condition that the other side of the door must be an air environment. As with `comeInShinecharged`, it comes with an implicit requirement of `canShinechargeMovement` tech. 
 
