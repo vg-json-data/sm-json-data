@@ -648,6 +648,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Volcano Room will not be tested for heat requirements since it is sometimes not heated.
                     heated = all(e["heated"] for e in room["roomEnvironments"])
 
+                    # Check that room `mapTileMask` is a rectangle:
+                    mapHeight = len(room["mapTileMask"])
+                    mapWidth = len(room["mapTileMask"][0])
+                    if not all(len(row) == mapWidth for row in room["mapTileMask"]):
+                        msg = f"🔴ERROR: Not all rows of room mapTileMask have the same length: {roomRef}"
+                        messages["reds"].append(msg)
+                        messages["counts"]["reds"] += 1
+
                     # Document Obstacles
                     if "obstacles" in room:
                         for obstacle in room["obstacles"]:
@@ -663,6 +671,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     # Validate Nodes
                     node_lookup = {}
                     nodes_without_implicit_unlocks = set()
+                    node_tile_set = set()
                     for node in room["nodes"]:
                         node_lookup[node['id']] = node
                         nodeRef = f"{roomRef}:{node['id']}"
@@ -679,6 +688,27 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         else:
                             roomData["nodes"]["names"].append(node["name"])
                         roomData["nodes"]["ids"].append(node["id"])
+
+                        if len(node["mapTileMask"]) != mapHeight or not all(len(row) == mapWidth for row in node["mapTileMask"]):
+                            msg = f"🔴ERROR: Node mapTileMask has wrong shape: {nodeRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                        else:
+                            for y in range(mapHeight):
+                                for x in range(mapWidth):
+                                    node_tile = node["mapTileMask"][y][x]
+                                    room_tile = room["mapTileMask"][y][x]
+                                    if node_tile == 2:
+                                        node_tile_set.add((x, y))
+                                        if room_tile == 0:
+                                            msg = f"🔴ERROR: Node mapTileMask has 2 at invalid position ({x}, {y}): {nodeRef}"
+                                            messages["reds"].append(msg)
+                                            messages["counts"]["reds"] += 1
+                                    else:
+                                        if room_tile != node_tile:
+                                            msg = f"🔴ERROR: Node mapTileMask is inconsistent with room mapTileMask at position ({x}, {y}): {nodeRef}"
+                                            messages["reds"].append(msg)
+                                            messages["counts"]["reds"] += 1
 
                         if node.get("useImplicitDoorUnlocks") is False:
                             nodes_without_implicit_unlocks.add(node['id'])
@@ -749,6 +779,14 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 pass
                             else:
                                 msg = f"🔴ERROR: Node disables useImplicitCarryGModeMorphBackThrough but has no comeInWithGMode+leaveWithGMode morphed strat: {nodeRef}:{node['name']}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
+                    # Check that every map tile is covered by some node:
+                    for y in range(mapHeight):
+                        for x in range(mapWidth):
+                            if room["mapTileMask"][y][x] == 1 and (x, y) not in node_tile_set:
+                                msg = f"🔴ERROR: Map tile ({x}, {y}) is not covered by any node:{roomRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
 
