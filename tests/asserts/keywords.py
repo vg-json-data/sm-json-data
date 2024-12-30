@@ -371,6 +371,24 @@ def process_strats(src, paramData):
     return paramData
 
 
+def check_and_or(req, err_fn):
+    if isinstance(req, dict):
+        if "or" in req:
+            if len(req["or"]) < 2:
+                err_fn("'or' should have at least 2 elements")
+            for r in req["or"]:
+                if isinstance(r, dict) and "or" in r:
+                    err_fn("'or' should not have a directly nested 'or' inside.")
+                check_and_or(r, err_fn)
+        elif "and" in req:
+            if len(req["and"]) < 2:
+                err_fn("'and' should have at least 2 elements")
+            for r in req["and"]:
+                if isinstance(r, dict) and "and" in r:
+                    err_fn("'and' should not have a directly nested 'and' inside.")
+                check_and_or(r, err_fn)
+
+
 def has_reset_room(req):
     if isinstance(req, dict):
         if "resetRoom" in req:
@@ -980,6 +998,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not less than nextStratId ({next_strat_id}):{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+
+                        def strat_err_fn(msg):
+                            messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
+                            messages["counts"]["reds"] += 1
+                        for req in strat["requires"]:
+                            check_and_or(req, strat_err_fn)
                         if heated and not check_heat_req({"and": strat["requires"]}):
                             if fromNode == toNode and "leaveWithRunway" in strat.get("exitCondition", []):
                                 # Ok since there is implicit heat frames in leavesWithRunway, and it is normal
