@@ -29,6 +29,56 @@ messages = {            # track messages and message counts
     }
 }
 
+strat_name_entrance_conditions = [
+    ("Come In Normally", "comeInNormally"),
+    ("Come In Running", "comeInRunning"),
+    ("Come In Jumping", "comeInJumping"),
+    ("Come In Space Jumping", "comeInSpaceJumping"),
+    ("Come In Shinecharging", "comeInShinecharging"),
+    ("Come In Shinecharged", "comeInShinecharged"),
+    ("Carry Shinecharge", "comeInShinecharged"),
+    ("Come In With Spark", "comeInWithSpark"),
+    ("Come In With Bomb Boost", "comeInWithBombBoost"),
+    ("Come In Speedballing", "comeInSpeedballing"),
+    ("Come In With Temporary Blue", "comeInWithTemporaryBlue"),
+    ("Come In With Mockball", "comeInWithMockball"),
+    ("Come In With Spring Ball Bounce", "comeInWithSpringBallBounce"),
+    ("Come In With Blue Spring Ball Bounce", "comeInWithBlueSpringBallBounce"),
+    ("Come In Spinning", "comeInSpinning"),
+    ("Come In Blue Spinning", "comeInBlueSpinning"),
+    ("Stored Moonfall Clip", "comeInWithStoredFallSpeed"),
+    ("Transition with Stored Fall Speed", "comeInWithStoredFallSpeed"),
+    ("Carry Grapple Teleport", "comeInWithGrappleTeleport"),
+    ("Carry G-Mode", "comeInWithGMode"),
+    ("Grapple Teleport", "comeInWithGrappleTeleport"),
+    # TODO: add checks for cases not covered:
+    # G-Mode
+    # Cross Room Jump
+    # comeInStutterShinecharging
+    # comeInWithRMode
+]
+
+strat_name_exit_conditions = [
+    ("Leave Normally", "leaveNormally"),
+    ("Leave With Runway", "leaveWithRunway"),
+    ("Leave Shinecharged", "leaveShinecharged"),
+    ("Carry Shinecharge", "leaveShinecharged"),
+    ("Leave With Spark", "leaveWithSpark"),
+    ("Leave With Temporary Blue", "leaveWithTemporaryBlue"),
+    ("Leave Spinning", "leaveSpinning"),
+    ("Leave With Mockball", "leaveWithMockball"),
+    ("Leave With Spring Ball Bounce", "leaveWithSpringBallBounce"),
+    ("Leave Space Jumping", "leaveSpaceJumping"),
+    ("Leave With Stored Fall Speed", "leaveWithStoredFallSpeed"),
+    ("Leave With Moondance", "leaveWithStoredFallSpeed"),
+    ("Leave With Extended Moondance", "leaveWithStoredFallSpeed"),
+    ("G-Mode Setup", "leaveWithGModeSetup"),
+    ("Carry G-Mode", "leaveWithGMode"),
+    ("Leave With Door Frame Below", "leaveWithDoorFrameBelow"),
+    ("Leave With Platform Below", "leaveWithPlatformBelow"),
+    ("Leave With Grapple Teleport", "leaveWithGrappleTeleport"),
+]
+
 def process_keyvalue(k, v, metadata):
     '''
     Take a keyvalue pair and see if the value exists in our list of keywords
@@ -421,10 +471,11 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball"]:
+        elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball", "canXRayCancelShinecharge"]:
             if not states.issubset(["shinecharging", "blue"]):
-                err_fn(f"blue requirement while not in blue state: {req}")
+                err_fn(f"{req} while not in blue state")
             states = {"blue"}
+
     elif isinstance(req, dict):
         if "canShineCharge" in req:
             states = {"shinecharging"}
@@ -1092,6 +1143,30 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         if strat.get("endsWithShineCharge") is True:
                             if not covers_shinecharge_frames({"and": strat["requires"]}):
                                 msg = f"🔴ERROR: Strat has endsWithShineCharge without `shineChargeFrames` covering all cases:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+
+                        strat_name_lower = strat["name"].lower()
+                        for (phrase, entrance_condition_name) in strat_name_entrance_conditions:
+                            if phrase.lower() in strat_name_lower:
+                                if entrance_condition_name not in strat.get("entranceCondition", {}):
+                                    if phrase == "Carry G-Mode" and node_lookup[fromNode].get("nodeSubType") == "g-mode":
+                                        # A "Carry G-Mode" strat doesn't need a "comeInWithGMode" if it comes from a G-mode junction
+                                        continue
+                                    if phrase == "Grapple Teleport" and "leave with grapple teleport" in strat_name_lower:
+                                        # A "Grapple Teleport" strat doesn't need a "comeInWithGrappleTeleport" if it is a "Leave With Grapple Teleport"
+                                        continue
+                                    msg = f"🔴ERROR: Strat name contains '{phrase}' but there is no {entrance_condition_name} entrance condition:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                        for (phrase, exit_condition_name) in strat_name_exit_conditions:
+                            if phrase.lower() in strat["name"].lower():
+                                if exit_condition_name not in strat.get("exitCondition", {}):
+                                    msg = f"🔴ERROR: Strat name contains '{phrase}' but there is no {exit_condition_name} exit condition:{stratRef}"
+                                    messages["reds"].append(msg)
+                                    messages["counts"]["reds"] += 1
+                        if "g-mode-regain mobility" in strat_name_lower and "gModeRegainMobility" not in strat:
+                                msg = f"🔴ERROR: Strat name contains 'G-Mode Regain Mobility' but strat has no gModeRegainMobility property:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
 

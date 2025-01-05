@@ -78,7 +78,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveSpinning_: This indicates that it is possible to jump through this door with a spin jump from a runway not connected to the door, possibly with blue speed.
 - _leaveWithMockball_: This indicates that it is possible to mockball through the door with a certain amount of momentum, and possibly with blue speed, from a runway not connected to the door.
 - _leaveWithSpringBallBounce_: This indicates that it is possible to leave through this door with a spring ball bounce with a certain amount of momentum.
-- _leaveSpaceJumping: This indicates that it is possible to Space Jump through the bottom of the doorway (through a horizontal transition) with a certain amount of momentum, and possibly with blue speed.
+- _leaveSpaceJumping_: This indicates that it is possible to Space Jump through the bottom of the doorway (through a horizontal transition) with a certain amount of momentum, and possibly with blue speed.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
