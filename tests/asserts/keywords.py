@@ -35,6 +35,7 @@ strat_name_entrance_conditions = [
     ("Come In Jumping", "comeInJumping"),
     ("Come In Space Jumping", "comeInSpaceJumping"),
     ("Come In Shinecharging", "comeInShinecharging"),
+    ("Come In Shinecharged Jumping", "comeInShinechargedJumping"),
     ("Come In Shinecharged", "comeInShinecharged"),
     ("Carry Shinecharge", "comeInShinecharged"),
     ("Come In With Spark", "comeInWithSpark"),
@@ -1159,6 +1160,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat name contains '{phrase}' but there is no {entrance_condition_name} entrance condition:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                                break
                         for (phrase, exit_condition_name) in strat_name_exit_conditions:
                             if phrase.lower() in strat["name"].lower():
                                 if exit_condition_name not in strat.get("exitCondition", {}):
