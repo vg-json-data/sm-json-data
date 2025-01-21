@@ -491,6 +491,38 @@ A `leaveWithGrappleTeleport` comes with an implicit tech requirement `canGrapple
 }
 ```
 
+## Leave With Samus Eater Teleport
+
+A `leaveWithSamusEaterTeleport` exit condition represents that Samus can leave through this door immediately after initiating a teleport to the position of a Samus Eater in the room, by exiting G-mode. The position where Samus touched the Samus Eater determines where Samus will be placed in the next room. Most positions will result in Samus being placed behind the door after the transition, which will likely put Samus out of bounds. In some rooms, however, the space behind the door may be in-bounds; and there is a possibility of using specific Samus Eater locations to spawn Samus slightly in front of the door but lower than normal.
+
+A `leaveWithSamusEaterTeleport` object has the following properties:
+
+- _floorPositions_: A list of screen-local tile coordinates of floor Samus Eaters, indicating the left-most tile of the Samus Eater that Samus can interact with.
+- _ceilingPositions_: A list of screen-local tile coordinates of ceiling Samus Eaters, indicating the left-most tile of the Samus Eater that Samus can interact with.
+
+A `leaveWithSamusEaterTeleport` comes with an implicit tech requirement `canSamusEaterTeleport`.
+
+#### Example
+```json
+    {
+      "link": [1, 1],
+      "name": "Leave with Samus Eater Teleport",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "exitCondition": {
+        "leaveWithSamusEaterTeleport": {
+          "floorPositions": [[12, 13], [2, 13], [8, 13]],
+          "ceilingPositions": []
+        }
+      }    
+    },
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one of the following properties:
