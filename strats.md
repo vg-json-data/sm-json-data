@@ -85,6 +85,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
 - _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
+- _leaveWithSamusEaterTeleport_: This indicates that Samus can leave through this door immediately after teleporting into a Samus Eater by exiting G-Mode.
 
 Each of these properties is described in more detail below.
 
@@ -491,6 +492,38 @@ A `leaveWithGrappleTeleport` comes with an implicit tech requirement `canGrapple
 }
 ```
 
+## Leave With Samus Eater Teleport
+
+A `leaveWithSamusEaterTeleport` exit condition represents that Samus can leave through this door immediately after initiating a teleport to the position of a Samus Eater in the room, by exiting G-mode. The position where Samus touched the Samus Eater determines where Samus will be placed in the next room. Most positions will result in Samus being placed behind the door after the transition, which will likely put Samus out of bounds. In some rooms, however, the space behind the door may be in-bounds; and there is a possibility of using specific Samus Eater locations to spawn Samus slightly in front of the door but lower than normal.
+
+A `leaveWithSamusEaterTeleport` object has the following properties:
+
+- _floorPositions_: A list of screen-local tile coordinates of floor Samus Eaters, indicating the left-most tile of the Samus Eater that Samus can interact with.
+- _ceilingPositions_: A list of screen-local tile coordinates of ceiling Samus Eaters, indicating the left-most tile of the Samus Eater that Samus can interact with.
+
+A `leaveWithSamusEaterTeleport` comes with an implicit tech requirement `canSamusEaterTeleport`.
+
+#### Example
+```json
+{
+  "link": [1, 1],
+  "name": "Leave with Samus Eater Teleport",
+  "entranceCondition": {
+    "comeInWithGMode": {
+      "mode": "direct",
+      "morphed": false
+    }
+  },
+  "requires": [],
+  "exitCondition": {
+    "leaveWithSamusEaterTeleport": {
+      "floorPositions": [[12, 13], [2, 13], [8, 13]],
+      "ceilingPositions": []
+    }
+  }    
+}
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one of the following properties:
@@ -520,6 +553,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
+- _comeInWithSamusEaterTeleport_: This indicates that Samus must come into the room immediately after initiating a teleport into a Samus Eater by exiting G-Mode in the other room.
 
 In addition it may contain the following property:
 
@@ -1319,6 +1353,34 @@ A `comeInWithGrappleTeleport` comes with an implicit tech requirement `canGrappl
       "blockPositions": [[5, 3]]
     }
   }
+}
+```
+
+## Come In  With Samus Eater Teleport
+
+A `comeInWithSamusEaterTeleport` entrance condition represents that Samus must come into the room immediately after teleporting Samus to a Samus Eater in the other room, causing Samus to be placed in a different position in the current room.
+
+A `comeInWithSamusEaterTeleport` object has the following properties:
+
+- _floorPositions_: A list of screen-local tile coordinates of floor Samus Eaters that can work for this strat, matching with an entry of the corresponding `floorPositions` in the `leaveWithSamusEaterTeleport` strat in the other room.
+- _ceilingPositions_: A list of screen-local tile coordinates of ceiling Samus Eaters that can work for this strat, matching with an entry of the corresponding `ceilingPositions` in the `leaveWithSamusEaterTeleport` strat in the other room.
+
+A `comeInWithSamusEaterTeleport` comes with an implicit tech requirement `canSamusEaterTeleport`.
+
+#### Example
+```json
+{
+  "link": [5, 13],
+  "name": "Samus Eater Teleport",
+  "entranceCondition": {
+    "comeInWithSamusEaterTeleport": {
+      "floorPositions": [[12, 13], [14, 13], [15, 13]],
+      "ceilingPositions": []
+    }
+  },
+  "requires": [
+    "Morph"
+  ]
 }
 ```
 
