@@ -973,7 +973,8 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "fromNodes.",
                             "inRoomPath.",
                             "resetRoom.nodes.",
-                            "itemNotCollectedAtNode"
+                            "itemNotCollectedAtNode",
+                            "itemCollectedAtNode"
                         ],
                         "room",
                         roomData["nodes"]["froms"],

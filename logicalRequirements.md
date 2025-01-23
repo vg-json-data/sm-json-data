@@ -525,6 +525,16 @@ __Example:__
 ]}
 ```
 
+#### itemCollectedAtNode object
+An `itemCollectedAtNode` object represents the need to have collected the item at a given node in the same room. For example, the existance of such an item could unintentionally be used to overload PLMs in G-mode assuming the item has spawned.
+
+__Example:__
+```json
+{"requires": [
+  {"itemCollectedAtNode": 1}
+]}
+```
+
 ### Lock-related objects
 This section contains logical elements that are affected by Lock type Objects attached to Nodes.
 
