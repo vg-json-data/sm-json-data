@@ -146,6 +146,8 @@ def process_keyvalue(k, v, metadata):
         "maxExtraRunSpeed", # validated by schema
         "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
         "type",  # validated by schema in 'resourceAvailable', 'resourceCapacity'
+        "position",  # validated by schema
+        "environment",  # validated by schema
     ]
 
     # check if it's a key we want to check

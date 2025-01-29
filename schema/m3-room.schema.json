@@ -70,7 +70,7 @@
           "items": {
             "type": "integer",
             "title": "Node ID",
-            "description": "ID of node within this room where the strat begins or ends"  
+            "description": "ID of node within this room where the strat begins or ends"
           }
         },
         "name": {
@@ -668,6 +668,74 @@
                 }
               }
             },
+            "comeInWithGrappleSwing": {
+              "type": "object",
+              "description": "Represents that Samus must swing into the room using Grapple, giving Samus momentum and the ability to grapple jump.",
+              "requires": ["blocks"],
+              "additionalProperties": false,
+              "properties": {
+                "blocks": {
+                  "type": "array",
+                  "description": "A list of blocks that Samus could be grappled to, to swing out of the previous room.",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["position"],
+                    "properties": {
+                      "position": {
+                        "type": "array",
+                        "description": "Coordinates of a block that Samus could be grappled to, to swing out of the previous room.",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                          "type": "number",
+                          "description": "X or Y coordinate measured as a tile count, with 0 representing the top or left-most tile of the screen containing the door in the previous room."
+                        }
+                      },
+                      "environment": {
+                        "type": "string",
+                        "description": "Environment that Samus is in while using this block to swing out of the previous room.",
+                        "enum": ["water", "air"],
+                        "default": "air"
+                      },
+                      "obstructions": {
+                        "type": "array",
+                        "description": "Coordinates of blocks that Samus must avoid while swinging out of the previous room.",
+                        "default": [],
+                        "items": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "items": {
+                            "type": "integer",
+                            "description": "X or Y coordinate measured as a tile count, with 0 representing the top or left-most tile of the screen containing the door."
+                          }
+                        }
+                      },
+                      "note": {
+                        "$ref" : "m3-note.schema.json#/definitions/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "comeInWithGrappleJump": {
+              "type": "object",
+              "description": "Represents that Samus must come into the room by grapple jumping vertically through this door, with no horizontal momentum.",
+              "required": ["position"],
+              "additionalProperties": false,
+              "properties": {
+                "position": {
+                  "type": "string",
+                  "description": "Possible horizontal position in the doorway.",
+                  "enum": ["left", "right", "any"]
+                }
+              }
+            },
             "comeInWithGrappleTeleport": {
               "type": "object",
               "description": "Represents that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.",
@@ -688,7 +756,7 @@
                     }
                   }
                 }
-              }              
+              }
             },
             "comeInWithSamusEaterTeleport": {
               "type": "object",
@@ -722,7 +790,7 @@
                     }
                   }
                 }
-              }              
+              }
             },
             "comesThroughToilet": {
               "type": "string",
@@ -764,6 +832,8 @@
             {"required": ["comeInWithWallJumpBelow"]},
             {"required": ["comeInWithSpaceJumpBelow"]},
             {"required": ["comeInWithPlatformBelow"]},
+            {"required": ["comeInWithGrappleSwing"]},
+            {"required": ["comeInWithGrappleJump"]},
             {"required": ["comeInWithGrappleTeleport"]},
             {"required": ["comeInWithSamusEaterTeleport"]}
           ]
@@ -1086,6 +1156,74 @@
                 }
               }
             },
+            "leaveWithGrappleSwing": {
+              "type": "object",
+              "description": "Represents that Samus can leave through this door by swinging using Grapple, allowing Samus to carry momentum and the ability to grapple jump in the next room.",
+              "required": ["blocks"],
+              "additionalProperties": false,
+              "properties": {
+                "blocks": {
+                  "type": "array",
+                  "description": "A list of tile coordinates of blocks that Samus could be grappled to, to swing out of the room.",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["position"],
+                    "properties": {
+                      "position": {
+                        "type": "array",
+                        "description": "Coordinates of a block that Samus could be grappled to, to swing out of the room.",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                          "type": "number",
+                          "description": "X or Y coordinate measured as a tile count, with 0 representing the top or left-most tile of the screen containing the door."
+                        }
+                      },
+                      "environment": {
+                        "type": "string",
+                        "description": "Environment that Samus is in while using this block to swing out of the room.",
+                        "enum": ["water", "air"],
+                        "default": "air"
+                      },
+                      "obstructions": {
+                        "type": "array",
+                        "description": "Coordinates of blocks that Samus must avoid while swinging out of the room.",
+                        "default": [],
+                        "items": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "items": {
+                            "type": "integer",
+                            "description": "X or Y coordinate measured as a tile count, with 0 representing the top or left-most tile of the screen containing the door."
+                          }
+                        }
+                      },
+                      "note": {
+                        "$ref" : "m3-note.schema.json#/definitions/note"
+                      },
+                      "devNote": {
+                        "$ref" : "m3-note.schema.json#/definitions/devNote"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "leaveWithGrappleJump": {
+              "type": "object",
+              "description": "Represents that Samus can leave through this door by grapple jumping vertically through the door, with no horizontal momentum.",
+              "required": ["position"],
+              "additionalProperties": false,
+              "properties": {
+                "position": {
+                  "type": "string",
+                  "description": "Possible horizontal position in the doorway when exiting.",
+                  "enum": ["left", "right", "any"]
+                }
+              }
+            },
             "leaveWithGrappleTeleport": {
               "type": "object",
               "description": "Represents that Samus can leave through this door while grappling, which can enable a teleport in the next room.",
@@ -1106,7 +1244,7 @@
                     }
                   }
                 }
-              }              
+              }
             },
             "leaveWithSamusEaterTeleport": {
               "type": "object",
@@ -1142,7 +1280,7 @@
                     }
                   }
                 }
-              }              
+              }
             }
           }
         },
@@ -1669,6 +1807,10 @@
           "useImplicitCarryGModeMorphBackThrough": {
             "type": "boolean",
             "description": "Whether a standard strat should implicitly be included for entering the room with direct G-mode morphed and exiting."
+          },
+          "useImplicitComeInWithGrappleJump": {
+            "type": "boolean",
+            "description": "Whether a standard strat should implicitly be included for entering the room at this node with a grapple jump."
           },
           "useImplicitDoorUnlocks": {
             "type": "boolean",
