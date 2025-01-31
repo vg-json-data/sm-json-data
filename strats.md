@@ -1408,15 +1408,17 @@ A `comeInWithGrappleSwing` implicitly comes with a `canPreciseGrapple` requireme
   "name": "Grapple Jump",
   "entranceCondition": {
     "comeInWithGrappleSwing": {
-      "normalPhysicsBlockPositions": [[8, 3], [7, 3]],
-      "waterPhysicsBlockPositions": [[-1, 5]]
+      "blocks": [
+        {"position": [-1, 5], "environment": "water", "note": "Mt. Everest"},
+        {"position": [8, 3], "note": "Grapple Beam Room"},
+        {"position": [7, 3], "note": "Colosseum"}
+      ]
     }
   },
   "requires": [
     "canGrappleJump"
   ]
-}
-```
+}```
 
 ## Come In With Grapple Jump
 
