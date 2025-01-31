@@ -1420,7 +1420,7 @@ A `comeInWithGrappleSwing` implicitly comes with a `canPreciseGrapple` requireme
 
 ## Come In With Grapple Jump
 
-A `comeInWithGrappleJump` exit condition represents that Samus must enter by grapple jumping vertically up through this door, with no horizontal momentum.
+A `comeInWithGrappleJump` entrance condition represents that Samus must enter by grapple jumping vertically up through this door, with no horizontal momentum.
 
 A `comeWithGrappleJump` object has the following property:
 
