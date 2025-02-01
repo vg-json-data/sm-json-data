@@ -84,6 +84,8 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _leaveWithGrappleSwing_: This indicates that Samus can leave through this door by swinging using Grapple, carrying momentum and the ability to grapple jump in the next room.
+- _leaveWithGrappleJump_: This indicates that Samus can go up through this door by grapple jumping, with no horizontal momentum.
 - _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
 - _leaveWithSamusEaterTeleport_: This indicates that Samus can leave through this door immediately after teleporting into a Samus Eater by exiting G-Mode.
 
@@ -469,6 +471,57 @@ In a heated room, heat frames must be explicitly included in the strat `requires
 }
 ```
 
+## Leave With Grapple Swing
+
+A `leaveWithGrappleSwing` exit condition represents that Samus can leave through this door by swinging using Grapple, allowing Samus to carry momentum and the ability to grapple jump in the next room. This can apply to horizontal doors or to vertical doors leading upward.
+
+A `leaveWithGrappleSwing` object has the following property:
+
+- _blocks_: An array of block objects, each described a specific block that Samus could use to swing out of the room. Each block object has the following properties:
+    - _position_: Tile coordinates of blocks that Samus could be grappled to, to swing out of the room. Coordinates `[x, y]` are represented as tile counts with `[0, 0]` representing the top-left corner of the screen containing the door transition.
+    - _environment_: A string "air" or "water" indicating the environment Samus will be in when using this block to swing out of the room.
+    - _obstructions_: An array of coordinates of blocks that Samus must avoid while swinging out of the room.
+
+A `leaveWithGrappleSwing` implicitly comes with a `canPreciseGrapple` requirement, which includes the Grapple item requirement. If a mid-air morph or grapple jump is required, this should be specified explicitly in the `requires` either in this strat or in matching strats in the other room.
+
+#### Example
+```json
+{
+  "name": "Leave with Grapple Swing",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGrappleSwing": {
+      "blocks": [
+        {"position": [-1, 5], "environment": "water"}
+      ]
+    }
+  }
+}
+```
+
+## Leave With Grapple Jump
+
+A `leaveWithGrappleJump` exit condition represents that Samus can leave through this door by grapple jumping vertically up through the door, with no horizontal momentum.
+
+A `leaveWithGrappleJump` object has the following property:
+
+- _position_: This takes one of three possible values, "left", "right", or "any". The value "left" represents that Samus may leave while positioned within the left-most tile of the doorway. The value "right" represents that Samus may leave while positioned within the right-most tile of the doorway. The value "any" represents that Samus may leave in either a left or right position, depending on whichever is needed for the next room.
+
+A `leaveWithGrappleJump` implicitly comes with a `canGrappleJump` tech requirement, which includes the Grapple and Morph item requirements.
+
+#### Example
+```json
+{
+  "name": "Leave with Grapple Jump",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithGrappleJump": {
+      "position": "right"
+    }
+  }
+}
+```
+
 ## Leave With Grapple Teleport
 
 A `leaveWithGrappleTeleport` exit condition represents that Samus can leave through this door while grappled, which can enable a teleport in the next room. The position of the block that Samus is grappled to (counted in tiles from the top left corner of the room) determines the destination of the teleport in the next room. For the teleport to work, the next room must have a block in a corresponding position that Samus can remain grappled to; e.g. a solid tile will work but air will not.
@@ -552,6 +605,8 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _comeInWithGrappleSwing_: This indicates that Samus swing into the room using Grapple, giving momentum and possibly the ability to grapple jump.
+- _comeInWithGrappleJump_: This indicates that Samus must come into the room by grapple jumping vertically through this door, with no horizontal momentum.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
 - _comeInWithSamusEaterTeleport_: This indicates that Samus must come into the room immediately after initiating a teleport into a Samus Eater by exiting G-Mode in the other room.
 
@@ -1332,6 +1387,61 @@ __Example:__
 }
 ```
 
+## Come In With Grapple Swing
+
+A `comeInWithGrappleSwing` entrance condition represents that Samus must come in through this door by swinging using Grapple, allowing Samus to carry momentum and possibly the ability to grapple jump in the current room. This can apply to horizontal doors or to bottom vertical doors.
+
+A `comeInWithGrappleSwing` object has the following properties:
+
+- _blocks_: An array of block objects, each described a specific block that Samus could use to swing out of the previous room. Each block object has the following properties:
+    - _position_: Tile coordinates of blocks that Samus could be grappled to, to swing out of the room. Coordinates `[x, y]` are represented as tile counts with `[0, 0]` representing the top-left corner of the screen containing the door transition.
+    - _environment_: A string "air" or "water" indicating the environment Samus will be in when using this block to swing out of the room. The default is "air".
+    - _obstructions_: An array of coordinates of blocks that Samus must avoid while swinging out of the room. By default this is an empty array.
+
+A `comeInWithGrappleSwing` entrance condition matches with a `leaveWithGrappleSwing` exit condition if they share a common block object, having equality across all three fields `position`, `environment`, and `obstructions`.
+
+A `comeInWithGrappleSwing` implicitly comes with a `canPreciseGrapple` requirement, which includes the Grapple item requirement. If a mid-air morph or grapple jump is required, it would need to be specified explicitly in the `requires` of this strat or the matching strat in the other room.
+
+#### Example
+```json
+{
+  "name": "Grapple Jump",
+  "entranceCondition": {
+    "comeInWithGrappleSwing": {
+      "blocks": [
+        {"position": [-1, 5], "environment": "water", "note": "Mt. Everest"},
+        {"position": [8, 3], "note": "Grapple Beam Room"},
+        {"position": [7, 3], "note": "Colosseum"}
+      ]
+    }
+  },
+  "requires": [
+    "canGrappleJump"
+  ]
+}```
+
+## Come In With Grapple Jump
+
+A `comeInWithGrappleJump` entrance condition represents that Samus must enter by grapple jumping vertically up through this door, with no horizontal momentum.
+
+A `comeWithGrappleJump` object has the following property:
+
+- _position_: This takes one of three possible values, "left", "right", or "any". The value "left" represents that Samus must enter while positioned within the left-most tile of the doorway. The value "right" represents that Samus must enter while positioned within the right-most tile of the doorway. The value "any" represents that Samus can enter in either a left or right position.
+
+A `comeInWithGrappleJump` implicitly comes with a `canGrappleJump` tech requirement, which includes the Grapple and Morph item requirements.
+
+#### Example
+```json
+{
+  "name": "Grapple Jump",
+  "entranceCondition": {
+    "comeInWithGrappleJump": {
+      "position": "right"
+    }
+  },
+  "requires": []
+}
+```
 
 ### Come In With Grapple Teleport
 
@@ -1696,6 +1806,27 @@ As with other `comeInWithGMode` strats having `"morphed": true`, it is assumed h
 This implicit strat can be disabled by setting the node property `"useImplicitCarryGModeMorphBackThrough": false`.
 
 If the node has `"isDoorImmediatelyClosed": true`, or if the node is a vertical door in bottom position (leading up), then this implicit strat is disabled unless the node is explicitly marked as `"useImplicitCarryGModeMorphBackThrough": true`. Note that the exception about the node being a door in bottom position differs from unmorphed implicit strats for carrying G-mode back through a door, described in the previous section, which have no such exception.
+
+### Implicit Come In With Grapple Jump
+
+By default every bottom vertical door node has an implicit strat from the node to itself, for entering the room through the door while grapple jumping. This implicit strat has a `comeInWithGrappleJump` entrance condition. It has the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Come In With Grapple Jump",
+  "entranceCondition": {
+    "comeInWithGrappleJump": {
+      "position": "any"
+    }
+  },
+  "requires": []
+}
+```
+
+This implicit strat is to avoid the need to create duplicate copies of strats that leave through a vertical door by grapple jumping. This way the same strat can be used to either continue grapple jumping in the next room, or stop after reaching the door.
+
+This implicit strat can be disabled by setting the node property `"useImplicitComeInWithGrappleJump": false`.
 
 ## Run Speed
 
