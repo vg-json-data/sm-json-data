@@ -1959,55 +1959,64 @@ Without Speedbooster, the same table is also valid up through row 33 (when extra
 
 # Full run speed table
 
-The following table shows the maximum extra run speed attainable with a last-frame jump from a given runway length, with a closed end at the start and an open end before the jump, with Speedbooster equipped and holding dash the entire time:
+The following table shows the maximum extra run speed attainable with a last-frame jump from a given runway length, with Speedbooster equipped and holding dash the entire time, with various starting and ending conditions:
 
-| Runway length | Extra run speed |
-| ------------- | --------------- |
-| 1             |      $0.A       |
-| 2             |      $0.E       |
-| 3             |      $1.2       |
-| 4             |      $1.6       |
-| 5             |      $1.A       |
-| 6             |      $1.E       |
-| 7             |      $2.1       |
-| 8             |      $2.4       |
-| 9             |      $2.7       |
-| 10            |      $2.A       |
-| 11            |      $2.D       |
-| 12            |      $3.0       |
-| 13            |      $3.3       |
-| 14            |      $3.5       |
-| 15            |      $3.8       |
-| 16            |      $3.A       |
-| 17            |      $3.D       |
-| 18            |      $3.F       |
-| 19            |      $4.2       |
-| 20            |      $4.4       |
-| 21            |      $4.6       |
-| 22            |      $4.8       |
-| 23            |      $4.A       |
-| 24            |      $4.D       |
-| 25            |      $4.F       |
-| 26            |      $5.1       |
-| 27            |      $5.3       |
-| 28            |      $5.5       |
-| 29            |      $5.7       |
-| 30            |      $5.9       |
-| 31            |      $5.B       |
-| 32            |      $5.C       |
-| 33            |      $5.E       |
-| 34            |      $6.0       |
-| 35            |      $6.2       |
-| 36            |      $6.4       |
-| 37            |      $6.5       |
-| 38            |      $6.7       |
-| 39            |      $6.9       |
-| 40            |      $6.B       |
-| 41            |      $6.C       |
-| 42            |      $6.E       |
-| 43+           |      $7.0       |
+- Wall -> door: Start backed up against a wall, jump on the last possible frame before a door transition
+- Wall -> open: Start backed up against a wall, jump on the last possible frame before falling off a ledge
+- Open -> door: Start hanging off a ledge, jump on the last possible frame before a door transition
+- Open -> open: Start hanging off a ledge, jump on the last possible frame before falling off a ledge
+
+| Runway length | Wall -> door | Wall -> open | Open -> door | Open -> open
+| ------------- | ------------ | ------------ | ------------ | ------------
+| 1             |    $0.7      |    $0.A      |    $0.B      |    $0.C
+| 2             |    $0.D      |    $0.E      |    $0.F      |    $1.1*
+| 3             |    $1.1      |    $1.2      |    $1.4*     |    $1.5
+| 4             |    $1.5      |    $1.6      |    $1.7      |    $1.9* 
+| 5             |    $1.9      |    $1.A      |    $1.B      |    $1.C
+| 6             |    $1.D      |    $1.E      |    $1.F*     |    $2.0*
+| 7             |    $2.0      |    $2.1      |    $2.2      |    $2.3
+| 8             |    $2.3      |    $2.4      |    $2.5      |    $2.6
+| 9             |    $2.7      |    $2.7      |    $2.8      |    $2.9
+| 10            |    $2.9      |    $2.A      |    $2.B      |    $2.C
+| 11            |    $2.D      |    $2.D      |    $2.E      |    $2.F
+| 12            |    $2.F      |    $3.0      |    $3.1      |    $3.1
+| 13            |    $3.2      |    $3.3      |    $3.4      |    $3.4
+| 14            |    $3.5      |    $3.5      |    $3.6      |    $3.7
+| 15            |    $3.7      |    $3.8      |    $3.9      |    $3.9
+| 16            |    $3.A      |    $3.A      |    $3.B      |    $3.C
+| 17            |    $3.C      |    $3.D      |    $3.E      |    $3.E
+| 18            |    $3.F      |    $3.F      |    $4.0      |    $4.1*
+| 19            |    $4.1      |    $4.2      |    $4.3*     |    $4.3
+| 20            |    $4.4      |    $4.4      |    $4.5      |    $4.5
+| 21            |    $4.6      |    $4.6      |    $4.7      |    $4.7
+| 22            |    $4.8      |    $4.8      |    $4.9      |    $4.A*
+| 23            |    $4.A      |    $4.A      |    $4.B      |    $4.C
+| 24            |    $4.C      |    $4.D      |    $4.E*     |    $4.E
+| 25            |    $4.F      |    $4.F      |    $5.0      |    $5.0
+| 26            |    $5.1      |    $5.1      |    $5.2      |    $5.2
+| 27            |    $5.3      |    $5.3      |    $5.4      |    $5.4
+| 28            |    $5.5      |    $5.5      |    $5.6      |    $5.6
+| 29            |    $5.7      |    $5.7      |    $5.8      |    $5.8
+| 30            |    $5.9      |    $5.9      |    $5.A      |    $5.A
+| 31            |    $5.A      |    $5.B      |    $5.C*     |    $5.C*
+| 32            |    $5.C      |    $5.C      |    $5.D      |    $5.D
+| 33            |    $5.E      |    $5.E      |    $5.F      |    $5.F
+| 34            |    $6.0      |    $6.0      |    $6.1      |    $6.1
+| 35            |    $6.2      |    $6.2      |    $6.3      |    $6.3
+| 36            |    $6.4      |    $6.4      |    $6.5      |    $6.5
+| 37            |    $6.5      |    $6.5      |    $6.6      |    $6.6
+| 38            |    $6.7      |    $6.7      |    $6.8      |    $6.8
+| 39            |    $6.9      |    $6.9      |    $6.A      |    $6.A
+| 40            |    $6.B      |    $6.B      |    $6.C*     |    $6.C*
+| 41            |    $6.C      |    $6.C      |    $6.D      |    $6.D
+| 42            |    $6.E      |    $6.E      |    $6.F      |    $6.F*
+| 43+           |    $7.0      |    $7.0      |    $7.0      |    $7.0
 
 Without Speed Booster, the same table is valid except that extra run speed is capped at $2.0.
+
+If running and falling off an open ledge rather than jumping, an extra $0.1 of run speed would be available. On the other hand, running through a door transition gives the same amount of run speed in the next room as jumping through the door transition.
+
+In cases marked with an asterisk, the maximum speed depends on the starting subpixels, so without a method to normalize the subpixels the maximum speed may be $0.1 less.
 
 ### Blue run speed table
 
