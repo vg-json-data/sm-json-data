@@ -2012,11 +2012,11 @@ The following table shows the maximum extra run speed attainable with a last-fra
 | 42            |    $6.E      |    $6.E      |    $6.F      |    $6.F*
 | 43+           |    $7.0      |    $7.0      |    $7.0      |    $7.0
 
+In cases marked with an asterisk, the maximum speed depends on the starting subpixels, so without a method to normalize the subpixels the maximum speed may be $0.1 less.
+
 Without Speed Booster, the same table is valid except that extra run speed is capped at $2.0.
 
-If running and falling off an open ledge rather than jumping, an extra $0.1 of run speed would be available. On the other hand, running through a door transition gives the same amount of run speed in the next room as jumping through the door transition.
-
-In cases marked with an asterisk, the maximum speed depends on the starting subpixels, so without a method to normalize the subpixels the maximum speed may be $0.1 less.
+If running and falling off an open ledge rather than jumping, an extra $0.1 of run speed would be available. On the other hand, running through a door transition gives the same amount of run speed in the next room as jumping through the door transition. If using a combined runway across both sides of a transition, the table will not be accurate, because of how Samus is repositioned after the transition.
 
 ### Blue run speed table
 
