@@ -330,7 +330,9 @@ def check_shinecharge_req(req):
 def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_canHeatedCrystalFlash", "h_canHeatedLavaCrystalFlash", "h_LowerNorfairElevatorDownwardFrames",
-                   "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_canHeatedGreenGateGlitch"]:
+                   "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_canHeatedGreenGateGlitch",
+                   "h_DirectHeatedGModeLeaveSameDoor", "h_IndirectHeatedGModeOpenSameDoor",
+                   "h_HeatedGModeOpenDifferentDoor"]:
             return True
     if isinstance(req, dict):
         if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
