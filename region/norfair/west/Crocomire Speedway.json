@@ -93,6 +93,30 @@
         [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
         [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2]
       ]
+    },
+    {
+      "id": 7,
+      "name": "G-Mode Morph Junction (Bottom Right, Started at Right)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "mapTileMask": [
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2]
+      ],
+      "note": "Represents being at the bottom of the right shaft with G-Mode and having entered the room from a door on the right shaft"
+    },
+    {
+      "id": 8,
+      "name": "G-Mode Morph Junction (Bottom Right, Started at Left)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "mapTileMask": [
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2]
+      ],
+      "note": "Represents being at the bottom of the right shaft with G-Mode and having entered the room from the left side, PLMs are overloaded, and Samus is off screen"
     }
   ],
   "obstacles": [
@@ -138,7 +162,8 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 5}
+        {"id": 5},
+        {"id": 7}
       ]
     },
     {
@@ -151,7 +176,8 @@
           ]
         },
         {"id": 4},
-        {"id": 6}
+        {"id": 6},
+        {"id": 8}
       ]
     },
     {
@@ -160,7 +186,8 @@
         {"id": 2},
         {"id": 3},
         {"id": 4},
-        {"id": 6}
+        {"id": 6},
+        {"id": 7}
       ]
     },
     {
@@ -170,7 +197,8 @@
         {"id": 3},
         {"id": 4},
         {"id": 5},
-        {"id": 6}
+        {"id": 6},
+        {"id": 7}
       ]
     },
     {
@@ -180,7 +208,8 @@
         {"id": 2},
         {"id": 4},
         {"id": 5},
-        {"id": 6}
+        {"id": 6},
+        {"id": 7}
       ]
     },
     {
@@ -190,6 +219,26 @@
         {"id": 3},
         {"id": 4},
         {"id": 5}
+      ]
+    },
+    {
+      "from": 7,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
+      ]
+    },
+    {
+      "from": 8,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
       ]
     }
   ],
@@ -314,6 +363,21 @@
         {"types": ["missiles", "powerbomb"], "requires": ["never"]}
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 7],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": "Jump over the Cacatacs. Their projectiles remain inside of them and their hitbox is a bit smaller than it appears."
     },
     {
       "id": 5,
@@ -537,6 +601,164 @@
       "clearsObstacles": ["A"]
     },
     {
+      "link": [2, 8],
+      "name": "G-Mode with SpeedBooster",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_getBlueSpeedMaxRunway",
+        {"or": [
+          "canSpeedball",
+          "canInsaneJump",
+          "h_hasBeamUpgrade",
+          {"enemyKill": {
+            "enemies": [["Red Space Pirate (standing)"]],
+            "explicitWeapons": ["Missile", "Super", "ScrewAttack"]
+          }},
+          {"enemyDamage": {
+            "enemy": "Red Space Pirate (standing)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Run through the speed blocks then carefully cross the crumble bridge, as it will mostly be air.",
+        "Alternatively, a speedball will prevent PLMs from overloading and Samus can roll over the bridge.",
+        "Kill the pirate after the bridge before it places its invisible lasers, preventing Samus from getting through damageless.",
+        "Samus can simply run to the right and fall through the bridge to safety below the pirate and kill it from below.",
+        "It is also possible to perform one precise jump to cross most of the bridge and kill the pirate while blue."
+      ],
+      "devNote": "It is possible to shinecharge before the bridge and spark vertically above it, then move the camera to kill the pirate with speed echoes, but this isn't really easier."
+    },
+    {
+      "link": [2, 8],
+      "name": "G-Mode with Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"or": [
+          "canTrickyDodgeEnemies",
+          "h_canUsePowerBombs",
+          "ScrewAttack",
+          "h_hasBeamUpgrade",
+          {"ammo": {"type": "Missile", "count": 2}},
+          {"ammo": {"type": "Super", "count": 2}},
+          {"enemyDamage": {
+            "enemy": "Red Space Pirate (standing)",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        {"or": [
+          "canTrickyJump",
+          {"enemyDamage": {
+            "enemy": "Multiviola",
+            "type": "contact",
+            "hits": 1
+          }}
+        ]},
+        "Morph",
+        {"or": [
+          "h_canUsePowerBombs",
+          {"and": [
+            {"or": [
+              "h_canUseSpringBall",
+              "h_canUseMorphBombs"
+            ]},
+            {"or": [
+              "canLateralMidAirMorph",
+              "h_hasBeamUpgrade",
+              {"enemyKill": {
+                "enemies": [["Red Space Pirate (standing)"]],
+                "explicitWeapons": ["Missile", "Super", "ScrewAttack"]
+              }},
+              {"enemyDamage": {
+                "enemy": "Red Space Pirate (standing)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Carefully dodge or kill the enemies in the first half of the room.",
+        "With Morph, go over the first set of Speed Blocks, then kill the first Red Pirate or air ball over it.",
+        "It is also possible to kill or jump over the second pirate, but be careful to prevent it from shooting invisible lasers."
+      ]
+    },
+    {
+      "link": [2, 8],
+      "name": "G-Mode Morph",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "canTrickyJump",
+        {"or": [
+          {"ammo": {"type": "PowerBomb", "count": 6}},
+          {"and": [
+            {"or": [
+              {"and": [
+                "h_canArtificialMorphSpringBall",
+                "canTrickyDodgeEnemies"
+              ]},
+              {"and": [
+                "h_canArtificialMorphIBJ",
+                "canInsaneJump"
+              ]},
+              {"and": [
+                {"ammo": {"type": "PowerBomb", "count": 1}},
+                "h_canArtificialMorphSpringBall"
+              ]},
+              {"and": [
+                {"ammo": {"type": "PowerBomb", "count": 2}},
+                "h_canArtificialMorphIBJ"
+              ]}
+            ]},
+            {"or": [
+              "h_canArtificialMorphPowerBomb",
+              "h_hasBeamUpgrade",
+              {"enemyKill": {
+                "enemies": [["Red Space Pirate (standing)"]],
+                "explicitWeapons": ["Missile", "Super", "ScrewAttack"]
+              }},
+              {"enemyDamage": {
+                "enemy": "Red Space Pirate (standing)",
+                "type": "contact",
+                "hits": 1
+              }}
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "While artificially morphed, carefully dodge or kill the enemies in the first half of the room.",
+        "Go over the first set of Speed Blocks, then kill the first Red Pirate with a Power Bomb or after unmorphing.",
+        "It is possible to kill or jump over the second pirate, but be careful to prevent it from shooting invisible lasers.",
+        "Without any Power Bombs, this requires precise movement with Spring Ball or very precise movement with just Bombs."
+      ],
+      "devNote": "It is possible to jump over the left bridge pirate, but it is incredibly precise and not expected."
+    },
+    {
       "id": 10,
       "link": [3, 2],
       "name": "Reverse Spark",
@@ -754,6 +976,21 @@
         {"heatFrames": 85}
       ],
       "devNote": "This strat is not useful in-room, but can satisfy a strat in the room before with an exit shinespark."
+    },
+    {
+      "link": [3, 7],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 16,
@@ -1118,6 +1355,20 @@
       "requires": [
         {"heatFrames": 50}
       ]
+    },
+    {
+      "link": [4, 7],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 28,
@@ -1652,6 +1903,21 @@
       ]
     },
     {
+      "link": [5, 7],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": "Jump over the Cacatacs. Their projectiles remain inside of them and their hitbox is a bit smaller than it appears."
+    },
+    {
       "id": 43,
       "link": [6, 2],
       "name": "Base",
@@ -1761,6 +2027,202 @@
       "note": [
         "Move very quickly to bring a shinespark from the speedway up to the Save Room door.",
         "Preclear the Cacatacs, and it may help to not run while platforming if HiJump is not available."
+      ]
+    },
+    {
+      "link": [7, 1],
+      "name": "G-Mode",
+      "requires": [
+        "canEnterGMode",
+        "h_HeatedGModeOpenDifferentDoor"
+      ],
+      "flashSuitChecked": true,
+      "note": "Jump over the Cacatacs. Their projectiles remain inside of them and their hitbox is a bit smaller than it appears."
+    },
+    {
+      "link": [7, 2],
+      "name": "G-Mode, Simple Blind Movement",
+      "requires": [
+        "canEnterGMode",
+        {"or": [
+          {"and": [
+            "canTrickyJump",
+            "SpaceJump"
+          ]},
+          "SpeedBooster",
+          {"spikeHits": 1}
+        ]},
+        "h_HeatedGModeOffCameraDoor"
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The crumble bridge will be air. Either tank a spike hit, carefully Space Jump over it, or with SpeedBooster, use the full runway to run over the pit.",
+        "Note that there is a slight incline just before the bridge, which can be used as an indicator for where to Space Jump."
+      ],
+      "devNote": "Requires leaving the room, as Samus is off camera and shouldn't be expected to do more in-room."
+    },
+    {
+      "link": [7, 3],
+      "name": "G-Mode",
+      "requires": [
+        "canEnterGMode",
+        "h_HeatedGModeOpenDifferentDoor"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [7, 4],
+      "name": "G-Mode",
+      "requires": [
+        "canEnterGMode",
+        "h_HeatedGModeOpenDifferentDoor"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [7, 5],
+      "name": "G-Mode",
+      "requires": [
+        "canEnterGMode",
+        "h_HeatedGModeOpenDifferentDoor"
+      ],
+      "flashSuitChecked": true,
+      "note": "Jump over the Cacatacs. Their projectiles remain inside of them and their hitbox is a bit smaller than it appears."
+    },
+    {
+      "link": [8, 1],
+      "name": "G-Mode, Blind Movement",
+      "requires": [
+        "canEnterGMode",
+        "canOffScreenMovement",
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "canSpringBallJumpMidAir"
+        ]},
+        "h_HeatedGModeOffCameraDoor"
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The speed block platform above the bottom door will not be usable, so Samus must blindly wall jump up the first ledge or use some assist.",
+        "There is some visibility on the left side of the screen, which is useful in determining which ledge she is on.",
+        "The Cacatacs will not be able to damage Samus off screen."
+      ],
+      "devNote": [
+        "Requires leaving the room, as Samus is off camera and shouldn't be expected to do more in-room.",
+        "FIXME: It is possible to X-Ray climb from inside the speed blocks. Count shots to determine Samus' position."
+      ]
+    },
+    {
+      "link": [8, 3],
+      "name": "G-Mode, Simple Blind Movement",
+      "requires": [
+        "canEnterGMode",
+        {"or": [
+          {"heatFrames": 160},
+          {"and": [
+            "h_canUseMorphBombs",
+            {"heatFrames": 85}
+          ]},
+          {"and": [
+            "canUseGrapple",
+            {"heatFrames": 50}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Walk back and forth until it is obvious Samus is on the doorshell.",
+        "Use X-Ray, jump, and shoot down at the bottom of the jump, this may take a couple attempts.",
+        "For a faster exit, place a Bomb on the door, then quickly unmorph and use X-Ray.",
+        "With Grapple it is faster still; use X-Ray while crouched, then quickly use Grapple while angling down. "
+      ],
+      "devNote": [
+        "Requires leaving the room, as Samus is off camera and shouldn't be expected to do more in-room.",
+        "It's possible to use a Bomb while still artificially morphed, but that only saves a few heat frames and is ignored."
+      ]
+    },
+    {
+      "link": [8, 4],
+      "name": "G-Mode, Simple Blind Movement",
+      "requires": [
+        "canEnterGMode",
+        "h_HeatedGModeOffCameraDoor"
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": "Requires leaving the room, as Samus is off camera and shouldn't be expected to do more in-room."
+    },
+    {
+      "link": [8, 5],
+      "name": "G-Mode, Blind Movement",
+      "requires": [
+        "canEnterGMode",
+        "canOffScreenMovement",
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "canSpringBallJumpMidAir"
+        ]},
+        "h_HeatedGModeOffCameraDoor"
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 110}]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The speed block platform above the bottom door will not be usable, so Samus must blindly wall jump up the first ledge or use some assist.",
+        "There is some visibility on the left side of the screen, which is useful in determining which ledge she is on.",
+        "The Cacatacs will not be able to damage Samus off screen."
+      ],
+      "devNote": "Requires leaving the room, as Samus is off camera and shouldn't be expected to do more in-room."
+    },
+    {
+      "link": [8, 6],
+      "name": "Exit G-Mode, Fix Camera",
+      "requires": [
+        "canEnterGMode",
+        {"heatFrames": 250}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Exit G-Mode and jump back and forth to fix the camera. If Samus exits G-Mode while in the camera scroll block next to the speed blocks, the camera won't fix."
       ]
     }
   ],
