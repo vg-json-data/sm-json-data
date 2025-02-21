@@ -82,8 +82,9 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
-- _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
-- _leaveWithPlatformBelow_: This indicates that Samus can go up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
+- _leaveWithPlatformBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
+- _leaveWithSidePlatform_: This indicates that Samus can go through this horizontal door with upward momentum by jumping from a platform near the doorway but not attached to it.
 - _leaveWithGrappleSwing_: This indicates that Samus can leave through this door by swinging using Grapple, carrying momentum and the ability to grapple jump in the next room.
 - _leaveWithGrappleJump_: This indicates that Samus can go up through this door by grapple jumping, with no horizontal momentum.
 - _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
@@ -471,6 +472,36 @@ In a heated room, heat frames must be explicitly included in the strat `requires
 }
 ```
 
+### Leave With Side Platform
+
+A `leaveWithSidePlatform` exit condition represents that that Samus can leave through this door by jumping from a platform to the side, carrying upward momentum into the next room. This applies to horizontal door transitions with a platform below the doorway, close enough to it that Samus can jump through the door without bonking on the ceiling. A `leaveWithSidePlatform` exit condition can satisfy a `comeInWithSidePlatform` entrance condition in the next room.
+
+A `leaveWithSidePlatform` object has the following properties:
+
+- _height_: The vertical distance between the doorway and the platform, at the point where Samus would jump.
+- _runway_: A [runway geometry](#runway-geometry) object describing the geometry of the runway that can be used to gain speed before jumping. Parts of the runway that are unusable due to being too close to an obstruction should still be included.
+- _obstruction_: This indicates the position of the tile that most restricts Samus' ability to jump low through the door. Typically this is the solid tile at the corner in front of the doorway. For an open-ended runway where falling off the runway is the limiting factor, it would be the coordinates of the air tile where Samus would fall off. The X coordinate is measured as the number of tiles in front of the transition tiles. The Y coordinate is the number of tiles below the floor of the doorway. The most broadly useful type of side platform is one below a doorway that drops off just past the door shell, in which case the `obstruction` would be [1, 0].
+
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on a worst-case assumption of how the platform could need to be used. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to enter the door, shoot it open, position at the far end of the platform, run, and jump out.
+
+#### Example
+```json
+{
+  "name": "Leave With Side Platform",
+  "requires": [],
+  "exitCondition": {
+    "leaveWithSidePlatform": {
+      "height": 1,
+      "runway": {
+        "length": 4,
+        "openEnd": 0
+      },
+      "obstruction": [1, 0]
+    }
+  }
+}
+```
+
 ## Leave With Grapple Swing
 
 A `leaveWithGrappleSwing` exit condition represents that Samus can leave through this door by swinging using Grapple, allowing Samus to carry momentum and the ability to grapple jump in the next room. This can apply to horizontal doors or to vertical doors leading upward.
@@ -602,9 +633,10 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
-- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this door with momentum by wall-jumping in the door frame below.
-- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this door with momentum by using Space Jump in the door frame below.
-- _comeInWithPlatformBelow_: This indicates that Samus must come up through this door with momentum by jumping from a platform below, possibly with run speed.
+- _comeInWithWallJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by wall-jumping in the door frame below.
+- _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by using Space Jump in the door frame below.
+- _comeInWithPlatformBelow_: This indicates that Samus must come up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
+- _comeInWithSidePlatform_: This indicates that Samus must jump through this horizontal door with upward momentum, by jumping from a platform to the side of the doorway (but not attached to it) in the other room.
 - _comeInWithGrappleSwing_: This indicates that Samus swing into the room using Grapple, giving momentum and possibly the ability to grapple jump.
 - _comeInWithGrappleJump_: This indicates that Samus must come into the room by grapple jumping vertically through this door, with no horizontal momentum.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
@@ -712,7 +744,7 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 
 A `comeInSpaceJumping` entrance condition indicates that Samus must come in with a Space Jump through the bottom of the doorway, applicable to horizontal transitions. It has the following properties:
 
-* _speedBooster_: If true, then Speed Booster must be used while gaining run speed. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _speedBooster_: If true, then Speed Booster must be used while gaining run speed or jumping. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 
@@ -1379,6 +1411,49 @@ __Example:__
       "maxHeight": 6,
       "maxLeftPosition": 1,
       "minRightPosition": 2
+    }
+  },
+  "requires": [
+    "canCrossRoomJumpIntoWater"
+  ]
+}
+```
+
+### Come In With Side Platform
+
+A `comeInWithSidePlatform` entrance condition indicates that Samus must jump through this horizontal door with upward momentum, by jumping from a platform to the side of the doorway (but not attached to it) in the other room. It has one property:
+
+* _platforms_: An array of objects, each describing a type of platform geometry that can satisfy this condition.
+  - _minTiles_: Minimum length of platform runway in the other room, measured in tiles (including unusable tiles).
+  - _speedBooster_: If true, then Speed Booster must be used while gaining run speed or jumping. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+  - _minHeight:_ Minimum height of the platform that can satisfy this condition, measured in tiles. It expresses that the platform must be positioned at least a certain distance below the doorway.
+  - _maxHeight:_ Minimum height of the platform that can satisfy this condition, measured in tiles. It expresses that the platform must be positioned at most a certain distance below the doorway.
+  - _obstructions_: A list of possible `obstruction` positions that can satisfy this condition.
+  - _requires_: A list of logical requirements that are specific to this platform geometry object (optional).
+
+A `comeInWithSidePlatform` entrance condition must match with a `leaveWithSidePlatform` exit condition on the other side of the door. A match is valid provided that at least one of the `platforms` in the `comeInWithSidePlatform` condition matches the platform described in the `leaveWithSidePlatform` condition. A match consists of the following:
+
+- The effective runway length of the `runway` in `leaveWithSidePlatform` is at least `minTiles`.
+- `height` (in `leaveWithSidePlatform`) is between `minHeight` and `maxHeight`, inclusive.
+- The `obstruction` in `leaveWithSidePlatform` is contained in the list of `obstructions`.
+
+Any logical requirements of a matching platform object are treated as being prepended to the strat `requires`. If multiple platform objects match, then their `requires` are considered to be joined by an `or`.
+
+A `comeInWithSidePlatform` entrance condition has an implicit requirement of `canSidePlatformCrossRoomJump` tech.
+
+__Example:__
+```json
+{
+  "name": "Side Platform Cross Room Jump",
+  "entranceCondition": {
+    "comeInWithSidePlatform": {
+      "platforms": [{
+        "minTiles": 4,
+        "speedBooster": false,
+        "minHeight": 1,
+        "maxHeight": 2,
+        "obstructions": [[1, 0]]
+      }]
     }
   },
   "requires": [
