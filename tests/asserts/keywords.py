@@ -1018,6 +1018,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     previous_link = (0, 0)
                     strat_id_set = set()
                     used_notable_name_set = set()
+                    link_strat_names = set()
                     for strat in room["strats"]:
                         if "link" not in strat or tuple(strat["link"]) not in link_set:
                             # Errors are already generated above in this case.
@@ -1055,6 +1056,12 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not less than nextStratId ({next_strat_id}):{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+
+                        if (link[0], link[1], strat['name']) in link_strat_names:
+                                msg = f"🔴ERROR: Strat name not unique within link:{stratRef}"
+                                messages["reds"].append(msg)
+                                messages["counts"]["reds"] += 1
+                        link_strat_names.add((link[0], link[1], strat['name']))
 
                         def strat_err_fn(msg):
                             messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
