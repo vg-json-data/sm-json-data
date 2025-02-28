@@ -1310,6 +1310,7 @@ A `comeInWithGMode` entrance condition must match with either a `leaveWithGModeS
 
 When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit requirements:
 - The tech requirement `canEnterGMode`.
+- The requirement `h_heatedGMode` if either the previous room or current room is heated.
 - The `XRayScope` item requirement.
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).

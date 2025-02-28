@@ -332,7 +332,7 @@ def check_heat_req(req):
         if req in ["h_heatProof", "h_canHeatedCrystalFlash", "h_canHeatedLavaCrystalFlash", "h_LowerNorfairElevatorDownwardFrames",
                    "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_canHeatedGreenGateGlitch",
                    "h_DirectHeatedGModeLeaveSameDoor", "h_IndirectHeatedGModeOpenSameDoor",
-                   "h_HeatedGModeOpenDifferentDoor", "h_HeatedGModeOffCameraDoor"]:
+                   "h_HeatedGModeOpenDifferentDoor", "h_HeatedGModeOffCameraDoor", "h_heatedGModePauseAbuse"]:
             return True
     if isinstance(req, dict):
         if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
