@@ -108,6 +108,7 @@ def process_keyvalue(k, v, metadata):
         "$schema",          # immaterial
         "description",      # immaterial
         "devNote",          # immaterial
+        "detailNote",       # immaterial
         "note",             # immaterial
         "name",             # !!could check for unique
         "id",               # !!could check for unique
