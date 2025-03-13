@@ -1083,7 +1083,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 # Regain mobility strats also take place entirely in G-mode.
                                 pass
                             elif "comeInWithGrappleTeleport" in strat.get("entranceCondition", []) and \
-                                  strat.get("bypassesDoorShell") is in [True, "free"]:
+                                  strat.get("bypassesDoorShell") in [True, "free"]:
                                 # Strats that use a grapple teleport to bypass a door lock can be done without heat damage, 
                                 # since the door transition is touched immediately.
                                 pass
