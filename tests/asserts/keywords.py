@@ -149,6 +149,7 @@ def process_keyvalue(k, v, metadata):
         "type",  # validated by schema in 'resourceAvailable', 'resourceCapacity'
         "position",  # validated by schema
         "environment",  # validated by schema
+        "bypassesDoorShell",  # validated by schema
     ]
 
     # check if it's a key we want to check
@@ -290,11 +291,11 @@ def find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks
     nodes = find_door_unlocked_nodes_rec(strat["requires"])
     from_node = strat["link"][0]
     to_node = strat["link"][1]
-    if "exitCondition" in strat and strat.get("bypassesDoorShell") == False and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
+    if "exitCondition" in strat and strat.get("bypassesDoorShell") not in [True, "free"] and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
         nodes.add(to_node)
     if "entranceCondition" not in strat and from_node in nodes:
         nodes.remove(from_node)
-    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") == False and "gModeRegainMobility" not in strat:
+    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") not in [True, "free"] and "gModeRegainMobility" not in strat:
         nodes.add(to_node)
     return nodes
 
@@ -1082,7 +1083,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 # Regain mobility strats also take place entirely in G-mode.
                                 pass
                             elif "comeInWithGrappleTeleport" in strat.get("entranceCondition", []) and \
-                                  strat.get("bypassesDoorShell") is not False:
+                                  strat.get("bypassesDoorShell") is in [True, "free"]:
                                 # Strats that use a grapple teleport to bypass a door lock can be done without heat damage, 
                                 # since the door transition is touched immediately.
                                 pass
@@ -1204,7 +1205,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-                        if strat.get("bypassesDoorShell") != False:
+                        if strat.get("bypassesDoorShell") in [True, "free"]:
                             if node_lookup[toNode]["nodeType"] != "door":
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
                                 messages["reds"].append(msg)
