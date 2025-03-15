@@ -542,7 +542,7 @@ This section contains logical elements that are affected by Lock type Objects at
 
 A `doorUnlockedAtNode` object represents the need for a door to be unlocked, i.e. to be free of a lock such a red, green, yellow, or gray door shell. An example would be if the space in the door frame is needed as runway for a jump or shinecharge. 
 
-In order to support randomizers that may modify door colors, a `doorUnlockedAtNode` requirement should be used when appropriate even if the vanilla door color is blue. If a strat has an `exitCondition`, then there is an implicit `doorUnlockedAtNode` requirement on the destination door node, unless the strat has [`bypassesDoorShell`](strats.md#bypasses-door-shell) set to `true`.
+In order to support randomizers that may modify door colors, a `doorUnlockedAtNode` requirement should be used when appropriate even if the vanilla door color is blue. If a strat has an `exitCondition`, then there is an implicit `doorUnlockedAtNode` requirement on the destination door node, unless the strat has [`bypassesDoorShell`](strats.md#bypasses-door-shell) set to `true` or `"free"`.
 
 If the door node in a `doorUnlockedAtNode` also appears in the strat's [`unlocksDoors`](strats.md#unlocks-doors) property, then the `doorUnlockedAtNode` may also be fulfilled by unlocking the door as part of executing the strat (as an alternative to having been previously unlocked), and any `requires` for that locked door in the `unlocksDoors` then become part of the requirements for the strat.
 
