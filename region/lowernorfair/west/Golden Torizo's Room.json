@@ -133,6 +133,17 @@
         [1, 1],
         [2, 2]
       ]
+    },
+    {
+      "id": 7,
+      "name": "G-Mode Junction (Bottom of Room)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "mapTileMask": [
+        [1, 1],
+        [2, 2]
+      ],
+      "note": "Represents being at the bottom of the room with G-Mode"
     }
   ],
   "obstacles": [
@@ -157,7 +168,9 @@
       "from": 1,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
+        {"id": 4},
         {"id": 6}
       ]
     },
@@ -166,7 +179,10 @@
       "to": [
         {"id": 1},
         {"id": 2},
-        {"id": 5}
+        {"id": 3},
+        {"id": 4},
+        {"id": 5},
+        {"id": 7}
       ]
     },
     {
@@ -208,6 +224,14 @@
           ]
         },
         {"id": 5}
+      ]
+    },
+    {
+      "from": 7,
+      "to": [
+        {"id": 1},
+        {"id": 3},
+        {"id": 4}
       ]
     }
   ],
@@ -600,50 +624,6 @@
     },
     {
       "link": [2, 1],
-      "name": "G-Mode, Through the Crumble Blocks",
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "any",
-          "morphed": false
-        }
-      },
-      "requires": [
-        {"or": [
-          "f_DefeatedGoldenTorizo",
-          "canTrickyDodgeEnemies"
-        ]},
-        {"or": [
-          "SpaceJump",
-          {"and": [
-            "HiJump",
-            {"or": [
-              "canDelayedWalljump",
-              "canSpringBallJumpMidAir",
-              "SpeedBooster"
-            ]}
-          ]},
-          {"and": [
-            "canSpringBallJumpMidAir",
-            "SpeedBooster",
-            {"or": [
-              "f_DefeatedGoldenTorizo",
-              "canInsaneJump"
-            ]}
-          ]}
-        ]},
-        "h_HeatedGModeOpenDifferentDoor"
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the crumble blocks.",
-        "Jumping through them a single time is enough to overload them for the next jump.",
-        "It is possible to go though the crumble blocks while dodging GT.",
-        "With a speedy jump, it is possible to overload PLMs and run back to GT before it stands up, get into the safe spot location to get him to jump back, and use the runway again.",
-        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly."
-      ]
-    },
-    {
-      "link": [2, 1],
       "name": "G-Mode Morph, IBJ",
       "entranceCondition": {
         "comeInWithGMode": {
@@ -733,48 +713,146 @@
       "flashSuitChecked": true
     },
     {
-      "link": [2, 3],
-      "name": "G-Mode, Through the Crumble Blocks",
+      "link": [2, 2],
+      "name": "Direct G-Mode, GT Kill, Leave Through Open Door",
       "entranceCondition": {
         "comeInWithGMode": {
-          "mode": "any",
+          "mode": "direct",
           "morphed": false
         }
       },
       "requires": [
         "h_heatedGMode",
+        {"notable": "Safe Spot Kill"},
         {"or": [
-          "f_DefeatedGoldenTorizo",
-          "canTrickyDodgeEnemies"
+          {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+          "canInsaneJump"
         ]},
         {"or": [
-          "SpaceJump",
+          {"ammo": {"type": "Super", "count": 30}},
           {"and": [
-            "HiJump",
+            "Charge",
             {"or": [
-              "canDelayedWalljump",
-              "canSpringBallJumpMidAir",
-              "SpeedBooster"
-            ]}
-          ]},
-          {"and": [
-            "canSpringBallJumpMidAir",
-            "SpeedBooster",
-            {"or": [
-              "f_DefeatedGoldenTorizo",
-              "canInsaneJump"
+              "canBeVeryPatient",
+              {"and": [
+                "canBePatient",
+                "Wave"
+              ]},
+              {"and": [
+                "canBePatient",
+                "Spazer"
+              ]},
+              "Plasma",
+              {"and": [
+                "canBePatient",
+                {"ammo": {"type": "Super", "count": 15}}
+              ]}
             ]}
           ]}
         ]},
         {"heatFrames": 0}
       ],
+      "exitCondition": {
+        "leaveWithGMode": {
+          "morphed": false
+        }
+      },
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
       "flashSuitChecked": true,
       "note": [
-        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the crumble blocks.",
-        "Jumping through them a single time is enough to overload them for the next jump.",
-        "It is possible to go though the crumble blocks while dodging GT.",
-        "With a speedy jump, it is possible to overload PLMs and run back to GT before it stands up, get into the safe spot location to get him to jump back, and use the runway again.",
-        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly."
+        "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
+        "With more than 31 Missiles, Samus will have a 2 pixel window in which she must quickly get into to prevent touching GT or his lasers.",
+        "Wait long enough for the flag to be set, then Samus can then leave the room without exiting G-mode."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Indirect G-Mode, GT Kill, 31 Missiles or Fewer",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+        {"or": [
+          {"ammo": {"type": "Super", "count": 30}},
+          {"and": [
+            "Charge",
+            {"or": [
+              "canBeVeryPatient",
+              {"and": [
+                "canBePatient",
+                "Wave"
+              ]},
+              {"and": [
+                "canBePatient",
+                "Spazer"
+              ]},
+              "Plasma",
+              {"and": [
+                "canBePatient",
+                {"ammo": {"type": "Super", "count": 15}}
+              ]}
+            ]}
+          ]}
+        ]},
+        {"or": [
+          "h_IndirectHeatedGModeOpenSameDoor",
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "note": [
+        "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
+        "Having GT start with his Chozo Ball attack also will make it so there are drops which can be collected at the end of the fight,",
+        "otherwise they will have been overloaded. Pause abuse and jump to collect the drops on G-mode exit."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Indirect G-Mode, GT Kill, Too Many Missiles",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "indirect",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        "canInsaneJump",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 30}},
+          {"and": [
+            "Charge",
+            {"or": [
+              "canBeVeryPatient",
+              {"and": [
+                "canBePatient",
+                "Wave"
+              ]},
+              {"and": [
+                "canBePatient",
+                "Spazer"
+              ]},
+              "Plasma",
+              {"and": [
+                "canBePatient",
+                {"ammo": {"type": "Super", "count": 15}}
+              ]}
+            ]}
+          ]}
+        ]},
+        "h_IndirectHeatedGModeOpenSameDoor"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "note": [
+        "With more than 31 Missiles, Samus will have a 2 pixel window in which she must quickly get into to prevent touching GT or his lasers.",
+        "Having GT start with his laser attack will also make it so there are no drops which can be collected at the end of the fight."
       ]
     },
     {
@@ -805,64 +883,6 @@
         "Starting from a jump can help speed this up and make it much easier.",
         "Otherwise, it can help to IBJ through the left-most crumble block, as GT will often jump away when first reaching Samus.",
         "The left-most crumble block is the 4th tile away from the wall."
-      ]
-    },
-    {
-      "link": [2, 4],
-      "name": "G-Mode, Through the Crumble Blocks",
-      "entranceCondition": {
-        "comeInWithGMode": {
-          "mode": "any",
-          "morphed": false
-        }
-      },
-      "requires": [
-        "h_heatedGMode",
-        {"or": [
-          "f_DefeatedGoldenTorizo",
-          "canTrickyDodgeEnemies"
-        ]},
-        {"or": [
-          "SpaceJump",
-          {"and": [
-            "HiJump",
-            {"or": [
-              "canWalljump",
-              "canSpringBallJumpMidAir",
-              "SpeedBooster"
-            ]}
-          ]},
-          {"and": [
-            "canSpringBallJumpMidAir",
-            "SpeedBooster",
-            {"or": [
-              "f_DefeatedGoldenTorizo",
-              "canInsaneJump"
-            ]}
-          ]}
-        ]},
-        {"or": [
-          {"and": [
-            "h_canUsePowerBombs",
-            {"heatFrames": 70}
-          ]},
-          {"and": [
-            "h_canUseMorphBombs",
-            {"heatFrames": 250}
-          ]},
-          {"and": [
-            "ScrewAttack",
-            {"heatFrames": 50}
-          ]}
-        ]}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the bomb blocks near the right item.",
-        "Jumping through them a single time is enough to overload them. It is possible to do this while dodging GT.",
-        "With a speedy jump, it is possible to overload PLMs with one jump, then wait for it to get close and run under it and jump to the top right.",
-        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly.",
-        "Place a Power Bomb then quickly exit G-mode to quickly clear all of the bomb blocks, otherwise it is possible to get out with a few Bombs or Screw Attack."
       ]
     },
     {
@@ -917,6 +937,67 @@
         {"heatFrames": 50}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [2, 7],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 7],
+      "name": "G-Mode, GT Kill, Remain in G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        {"or": [
+          {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+          "canInsaneJump"
+        ]},
+        {"or": [
+          {"ammo": {"type": "Super", "count": 30}},
+          {"and": [
+            "Charge",
+            {"or": [
+              "canBeVeryPatient",
+              {"and": [
+                "canBePatient",
+                "Wave"
+              ]},
+              {"and": [
+                "canBePatient",
+                "Spazer"
+              ]},
+              "Plasma",
+              {"and": [
+                "canBePatient",
+                {"ammo": {"type": "Super", "count": 15}}
+              ]}
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 0}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "note": [
+        "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
+        "Having GT start with his Chozo Ball attack also will make it so there are drops which can be collected at the end of the fight, otherwise they will have been overloaded.",
+        "With more than 31 Missiles, Samus will have a 2 pixel window in which she must quickly get into to prevent touching GT or his lasers.",
+        "If GT starts with his laser attack, be sure to carefully jump over them before doing something else in the room."
+      ],
+      "devNote": "This exists because Samus can kill GT and stay in G-mode to then do something else in the room."
     },
     {
       "id": 21,
@@ -1659,6 +1740,135 @@
         {"heatFrames": 0}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "link": [7, 1],
+      "name": "G-Mode, Through the Crumble Blocks",
+      "requires": [
+        {"or": [
+          "f_DefeatedGoldenTorizo",
+          "canTrickyDodgeEnemies"
+        ]},
+        {"or": [
+          "SpaceJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canDelayedWalljump",
+              "canSpringBallJumpMidAir",
+              "SpeedBooster"
+            ]}
+          ]},
+          {"and": [
+            "canSpringBallJumpMidAir",
+            "SpeedBooster",
+            {"or": [
+              "f_DefeatedGoldenTorizo",
+              "canInsaneJump"
+            ]}
+          ]}
+        ]},
+        "h_HeatedGModeOpenDifferentDoor"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the crumble blocks.",
+        "Jumping through them a single time is enough to overload them for the next jump.",
+        "It is possible to go though the crumble blocks while dodging GT.",
+        "With a speedy jump, it is possible to overload PLMs and run back to GT before it stands up, get into the safe spot location to get him to jump back, and use the runway again.",
+        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly."
+      ]
+    },
+    {
+      "link": [7, 3],
+      "name": "G-Mode, Through the Crumble Blocks",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          "f_DefeatedGoldenTorizo",
+          "canTrickyDodgeEnemies"
+        ]},
+        {"or": [
+          "SpaceJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canDelayedWalljump",
+              "canSpringBallJumpMidAir",
+              "SpeedBooster"
+            ]}
+          ]},
+          {"and": [
+            "canSpringBallJumpMidAir",
+            "SpeedBooster",
+            {"or": [
+              "f_DefeatedGoldenTorizo",
+              "canInsaneJump"
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the crumble blocks.",
+        "Jumping through them a single time is enough to overload them for the next jump.",
+        "It is possible to go though the crumble blocks while dodging GT.",
+        "With a speedy jump, it is possible to overload PLMs and run back to GT before it stands up, get into the safe spot location to get him to jump back, and use the runway again.",
+        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly."
+      ]
+    },
+    {
+      "link": [7, 4],
+      "name": "G-Mode, Through the Crumble Blocks",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          "f_DefeatedGoldenTorizo",
+          "canTrickyDodgeEnemies"
+        ]},
+        {"or": [
+          "SpaceJump",
+          {"and": [
+            "HiJump",
+            {"or": [
+              "canWalljump",
+              "canSpringBallJumpMidAir",
+              "SpeedBooster"
+            ]}
+          ]},
+          {"and": [
+            "canSpringBallJumpMidAir",
+            "SpeedBooster",
+            {"or": [
+              "f_DefeatedGoldenTorizo",
+              "canInsaneJump"
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"and": [
+            "h_canUsePowerBombs",
+            {"heatFrames": 70}
+          ]},
+          {"and": [
+            "h_canUseMorphBombs",
+            {"heatFrames": 250}
+          ]},
+          {"and": [
+            "ScrewAttack",
+            {"heatFrames": 50}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Use the camera scroll blocks below the crumble blocks to overload PLMs to be able to go through the bomb blocks near the right item.",
+        "Jumping through them a single time is enough to overload them. It is possible to do this while dodging GT.",
+        "With a speedy jump, it is possible to overload PLMs with one jump, then wait for it to get close and run under it and jump to the top right.",
+        "Note that when GT attacks, it will place stationary invisible projectiles, so it is much more difficult if not getting up quickly.",
+        "Place a Power Bomb then quickly exit G-mode to quickly clear all of the bomb blocks, otherwise it is possible to get out with a few Bombs or Screw Attack."
+      ]
     }
   ],
   "notables": [
