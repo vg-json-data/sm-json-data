@@ -83,6 +83,28 @@
         [1],
         [2]
       ]
+    },
+    {
+      "id": 7,
+      "name": "Bottom Left Shinecharged",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "mapTileMask": [
+        [1],
+        [2]
+      ],
+      "note": "This represents being at the bottom left door, facing left, having just gained a shinecharge."
+    },
+    {
+      "id": 8,
+      "name": "Bottom Right Shinecharged",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "mapTileMask": [
+        [1],
+        [2]
+      ],
+      "note": "This represents being at the bottom right door, facing right, having just gained a shinecharge."
     }
   ],
   "obstacles": [
@@ -102,7 +124,8 @@
         {"id": 3},
         {"id": 4},
         {"id": 5},
-        {"id": 6}
+        {"id": 6},
+        {"id": 8}
       ]
     },
     {
@@ -113,7 +136,8 @@
         {"id": 3},
         {"id": 4},
         {"id": 5},
-        {"id": 6}
+        {"id": 6},
+        {"id": 7}
       ]
     },
     {
@@ -153,6 +177,26 @@
         {"id": 4},
         {"id": 5}
       ]
+    },
+    {
+      "from": 7,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
+    },
+    {
+      "from": 8,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 4},
+        {"id": 5},
+        {"id": 6}
+      ]
     }
   ],
   "strats": [
@@ -182,37 +226,6 @@
         }
       },
       "unlocksDoors": [{"nodeId": 2, "types": ["ammo"], "requires": []}]
-    },
-    {
-      "id": 3,
-      "link": [1, 1],
-      "name": "Stutter Water Shinecharge, Shinespark Return",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "canShinechargeMovementComplex",
-        "h_canShineChargeMaxRunway",
-        {"or": [
-          {"shinespark": {"frames": 9}},
-          {"and": [
-            "canShinechargeMovementTricky",
-            {"shinespark": {"frames": 2}}
-          ]}
-        ]}
-      ],
-      "exitCondition": {
-        "leaveWithSpark": {}
-      },
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ],
-      "note": "Get the shinecharge then move towards and shinespark out the left door."
     },
     {
       "id": 4,
@@ -349,16 +362,32 @@
       "clearsObstacles": ["A"]
     },
     {
+      "link": [1, 1],
+      "name": "Blue Speed (Come In Getting Blue Speed, Gravity)",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
       "id": 7,
       "link": [1, 1],
-      "name": "Blue Speed (Come In Getting Blue Speed)",
+      "name": "Blue Speed (Come In Getting Blue Speed, Water Shinecharge)",
       "entranceCondition": {
         "comeInGettingBlueSpeed": {
           "length": 3,
           "openEnd": 1
         }
       },
-      "requires": [],
+      "requires": [
+        "h_waterGetBlueSpeed"
+      ],
       "clearsObstacles": ["A"]
     },
     {
@@ -400,66 +429,25 @@
       "flashSuitChecked": true
     },
     {
-      "id": 10,
       "link": [1, 2],
-      "name": "Come In Shinecharging, Leave Shinecharged",
-      "entranceCondition": {
-        "comeInShinecharging": {
-          "length": 13,
-          "openEnd": 0
-        }
-      },
-      "requires": [
-        "Gravity",
-        {"shineChargeFrames": 10}
-      ],
-      "exitCondition": {
-        "leaveShinecharged": {}
-      },
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 11,
-      "link": [1, 2],
-      "name": "Stutter Water Shinecharge, Leave Shinecharged",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"shineChargeFrames": 10}
-      ],
-      "exitCondition": {
-        "leaveShinecharged": {}
-      },
-      "unlocksDoors": [
-        {"types": ["missiles", "super"], "requires": []},
-        {"types": ["powerbomb"], "requires": ["never"]}
-      ],
-      "flashSuitChecked": true,
-      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
-    },
-    {
-      "id": 12,
-      "link": [1, 2],
-      "name": "Come In Shinecharged, Leave With Sparkk",
+      "name": "Come In Shinecharged, Leave With Spark (Bottom Position)",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 20},
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 5}
+          ]},
+          {"shineChargeFrames": 10}
+        ]},
         {"shinespark": {"frames": 23}}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
       },
       "unlocksDoors": [
         {"types": ["super"], "requires": []},
@@ -468,24 +456,58 @@
       "flashSuitChecked": true
     },
     {
-      "id": 13,
       "link": [1, 2],
-      "name": "Leave With Temporary Blue (Stutter Water Shinecharge)",
+      "name": "Come In Shinecharged, Leave With Spark (Top Position)",
       "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2
-        }
+        "comeInShinecharged": {}
       },
       "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        "canChainTemporaryBlue"
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 10}
+          ]},
+          {"shineChargeFrames": 20}
+        ]},
+        {"shinespark": {"frames": 21}}
       ],
       "exitCondition": {
-        "leaveWithTemporaryBlue": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
-      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {}
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 55}
+          ]},
+          {"and": [
+            "canSuitlessMaridia",
+            {"shineChargeFrames": 150}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
       "flashSuitChecked": true
     },
     {
@@ -616,7 +638,7 @@
     {
       "id": 66,
       "link": [1, 3],
-      "name": "Come In Shinecharging, Leave Shinecharged",
+      "name": "Come In Shinecharging, Leave Shinecharged (Gravity, Screw Attack)",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 3,
@@ -650,38 +672,20 @@
     {
       "id": 17,
       "link": [1, 4],
-      "name": "Diagonal Suitless Shinespark to the Top",
+      "name": "Come In Shinecharged, Diagonal Suitless Shinespark to the Top",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 30},
+        {"shineChargeFrames": 10},
         "h_canNavigateUnderwater",
         {"shinespark": {"frames": 23, "excessFrames": 10}}
       ],
       "flashSuitChecked": true,
       "note": "The spark takes Samus directly to the top platform.",
       "devNote": [
-        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
         "With Gravity 1 -> 6 -> 4 would be used."
       ]
-    },
-    {
-      "id": 18,
-      "link": [1, 4],
-      "name": "Stutter Water Shinecharge, Diagonal Shinespark to the Top",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"shinespark": {"frames": 23, "excessFrames": 10}}
-      ],
-      "note": "Spark diagonally through the bomb blocks."
     },
     {
       "id": 19,
@@ -719,7 +723,7 @@
     {
       "id": 21,
       "link": [1, 6],
-      "name": "Left-Side X-Ray Climb",
+      "name": "X-Ray Climb",
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -732,18 +736,22 @@
     {
       "id": 22,
       "link": [1, 6],
-      "name": "Shinespark to Break the Blocks",
+      "name": "Come In Shinecharged, Shinespark to Break the Blocks",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 40},
+        {"shineChargeFrames": 25},
         "h_canNavigateUnderwater",
         {"or": [
           {"shinespark": {"frames": 10, "excessFrames": 8}},
           {"and": [
             "canMidairShinespark",
             {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
           ]}
         ]}
       ],
@@ -757,95 +765,146 @@
       ]
     },
     {
-      "id": 23,
-      "link": [1, 6],
-      "name": "Stutter Water Shinecharge - Spark to Break the Blocks",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"or": [
-          {"shinespark": {"frames": 10, "excessFrames": 8}},
-          {"and": [
-            "canMidairShinespark",
-            {"shinespark": {"frames": 7, "excessFrames": 7}}
-          ]}
-        ]}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
-      "devNote": [
-        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
-        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
-        "FIXME: Add temporary blue strats."
-      ]
-    },
-    {
-      "id": 24,
-      "link": [2, 1],
-      "name": "Come In Shinecharging, Leave Shinecharged",
+      "link": [1, 8],
+      "name": "Come In Shinecharging (Gravity)",
       "entranceCondition": {
         "comeInShinecharging": {
-          "length": 13,
+          "length": 12,
           "openEnd": 0
         }
       },
       "requires": [
         "Gravity",
-        {"shineChargeFrames": 10}
+        {"shineChargeFrames": 0}
       ],
-      "exitCondition": {
-        "leaveShinecharged": {}
-      },
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ],
-      "flashSuitChecked": true
+      "endsWithShineCharge": true
     },
     {
-      "id": 25,
-      "link": [2, 1],
-      "name": "Stutter Water Shinecharge, Leave Shinecharged",
+      "link": [1, 8],
+      "name": "Water Shinecharge",
       "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canWaterShineCharge",
+        {"shineChargeFrames": 0}
+      ],
+      "endsWithShineCharge": true
+    },
+    {
+      "link": [1, 8],
+      "name": "Precise Stutter Water Shinecharge",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canPreciseStutterWaterShineCharge",
+        {"shineChargeFrames": 0}
+      ],
+      "endsWithShineCharge": true
+    },
+    {
+      "link": [1, 8],
+      "name": "Precise Stutter Water Shinecharge (Shorter Runway)",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
           "minTiles": 2
         }
       },
       "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"shineChargeFrames": 10}
+        "canPreciseStutterWaterShineCharge",
+        {"or": [
+          {"doorUnlockedAtNode": 2},
+          "canInsaneJump"
+        ]},
+        {"shineChargeFrames": 0}
       ],
-      "exitCondition": {
-        "leaveShinecharged": {}
-      },
       "unlocksDoors": [
-        {"types": ["missiles", "super"], "requires": []},
-        {"types": ["powerbomb"], "requires": ["never"]}
+        {"nodeId": 2, "types": ["super", "missiles"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": ["never"]}
       ],
-      "flashSuitChecked": true,
-      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+      "endsWithShineCharge": true,
+      "note": [
+        "If only 2 tiles of runway are available and it is not possible to unlock the opposite door, then this requires a double frame-perfect stutter:",
+        "run toward the door, release forward for exactly 3 frames, pressing forward again on the last possible frame before the transition."
+      ],
+      "devNote": [
+        "FIXME: canInsaneJump is for difficulty placement; replace with a more appropriate tech since no jump is involved."
+      ]
     },
     {
-      "id": 26,
+      "link": [1, 8],
+      "name": "Precise Stutter Water Shinecharge (Very Short Runway)",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
+          "minTiles": 1
+        }
+      },
+      "requires": [
+        "canPreciseStutterWaterShineCharge",
+        "canInsaneJump",
+        "canBeVeryPatient",
+        {"doorUnlockedAtNode": 2},
+        {"shineChargeFrames": 0}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["super", "missiles"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "endsWithShineCharge": true,
+      "note": [
+        "With only 1 tile of runway in the other room, this requires subpixel-precise positioning and a double frame-perfect stutter:",
+        "At the start of the run, Samus must be on the last pixel of runway with X subpixels of $3FFF or less.",
+        "Run toward the door, releasing forward for exactly 1 frame and pressing it again on the last possible frame before the transition.",
+        "After the transition, shoot open the opposite door while running, to extend the runway by a tile."
+      ],
+      "detailNote": [
+        "Correct subpixels can be achieved using one of several methods:",
+        "1) press against the door ledge (or a wall aligned with it);",
+        "jump, and while mid-air, tap forward for exactly 1 frame to land with subpixels $BFFF,",
+        "moonwalk back for exactly 1 frame to end with subpixels $3FFF.",
+        "2) press against the door ledge (from a platform below, assuming one exists)",
+        "turn around (while on the ground), and moonwalk back two pixels,",
+        "then jump and mid-air turnaround onto the ledge;",
+        "if Samus jumped from the correct pixel but does not land on the ledge, then it was needed to moonwalk back 1 more frame;",
+        "in this case it is possible to retry by doing a mid-air turnaround back onto the platform, and moonwalking back for 1 frame.",
+        "3) if X-Ray is available, press against the door ledge (from a platform below, assuming one exists)",
+        "turn around (while on the ground), then jump and mid-air turnaround toward the door,",
+        "and use X-Ray to turnaround in place away from the door;",
+        "repeat this sequence 3 more times: jump, mid-air turnaround, X-Ray turnaround;",
+        "then do one more jump and mid-air turnaround, high enough to land on the door ledge,",
+        "and Samus should be in the correct position with subpixels $3FFF."
+      ],
+      "devNote": [
+        "The `canBeVeryPatient` is for difficulty placement; this could be improved with a more specific tech later,",
+        "since it does not actually take a long time to execute."
+      ]
+    },
+    {
       "link": [2, 1],
-      "name": "Come In Shinecharged, Leave With Spark",
+      "name": "Come In Shinecharged, Leave With Spark (Bottom Position)",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 25},
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 5}
+          ]},
+          {"shineChargeFrames": 10}
+        ]},
         {"shinespark": {"frames": 23}}
       ],
       "exitCondition": {
-        "leaveWithSpark": {}
+        "leaveWithSpark": {
+          "position": "bottom"
+        }
       },
       "unlocksDoors": [
         {"types": ["super"], "requires": []},
@@ -854,24 +913,58 @@
       "flashSuitChecked": true
     },
     {
-      "id": 27,
       "link": [2, 1],
-      "name": "Leave With Temporary Blue (Stutter Water Shinecharge)",
+      "name": "Come In Shinecharged, Leave With Spark (Top Position)",
       "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2
-        }
+        "comeInShinecharged": {}
       },
       "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        "canChainTemporaryBlue"
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 10}
+          ]},
+          {"shineChargeFrames": 20}
+        ]},
+        {"shinespark": {"frames": 21}}
       ],
       "exitCondition": {
-        "leaveWithTemporaryBlue": {}
+        "leaveWithSpark": {
+          "position": "top"
+        }
       },
-      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 1],
+      "name": "Carry Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharged": {}
+      },
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"or": [
+          {"and": [
+            "Gravity",
+            {"shineChargeFrames": 55}
+          ]},
+          {"and": [
+            "canSuitlessMaridia",
+            {"shineChargeFrames": 150}
+          ]}
+        ]}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
       "flashSuitChecked": true
     },
     {
@@ -942,37 +1035,6 @@
         }
       },
       "unlocksDoors": [{"nodeId": 1, "types": ["ammo"], "requires": []}]
-    },
-    {
-      "id": 32,
-      "link": [2, 2],
-      "name": "Stutter Water Shinecharge, Shinespark Return",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "canShinechargeMovementComplex",
-        "h_canShineChargeMaxRunway",
-        {"or": [
-          {"shinespark": {"frames": 9}},
-          {"and": [
-            "canShinechargeMovementTricky",
-            {"shinespark": {"frames": 2}}
-          ]}
-        ]}
-      ],
-      "exitCondition": {
-        "leaveWithSpark": {}
-      },
-      "unlocksDoors": [
-        {"types": ["super"], "requires": []},
-        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
-      ],
-      "note": "Get the shinecharge and move towards then shinespark out the right door."
     },
     {
       "id": 33,
@@ -1130,16 +1192,32 @@
       "clearsObstacles": ["A"]
     },
     {
+      "link": [2, 2],
+      "name": "Blue Speed (Come In Getting Blue Speed, Gravity)",
+      "entranceCondition": {
+        "comeInGettingBlueSpeed": {
+          "length": 9,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
       "id": 36,
       "link": [2, 2],
-      "name": "Blue Speed (Come In Getting Blue Speed)",
+      "name": "Blue Speed (Come In Getting Blue Speed, Water Shinecharge)",
       "entranceCondition": {
         "comeInGettingBlueSpeed": {
           "length": 3,
           "openEnd": 1
         }
       },
-      "requires": [],
+      "requires": [
+        "h_waterGetBlueSpeed"
+      ],
       "clearsObstacles": ["A"]
     },
     {
@@ -1266,7 +1344,7 @@
     {
       "id": 67,
       "link": [2, 3],
-      "name": "Come In Shinecharging, Leave Shinecharged",
+      "name": "Come In Shinecharging, Leave Shinecharged (Gravity, Screw Attack)",
       "entranceCondition": {
         "comeInShinecharging": {
           "length": 3,
@@ -1300,38 +1378,20 @@
     {
       "id": 40,
       "link": [2, 4],
-      "name": "Diagonal Suitless Shinespark to the Top",
+      "name": "Come In Shinecharged, Diagonal Suitless Shinespark to the Top",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 30},
+        {"shineChargeFrames": 10},
         "h_canNavigateUnderwater",
         {"shinespark": {"frames": 23, "excessFrames": 10}}
       ],
       "flashSuitChecked": true,
       "note": "The spark takes Samus directly to the top platform.",
       "devNote": [
-        "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
         "With Gravity 2 -> 6 -> 4 would be used."
       ]
-    },
-    {
-      "id": 41,
-      "link": [2, 4],
-      "name": "Stutter Water Shinecharge, Diagonal Shinespark to the Top",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"shinespark": {"frames": 23, "excessFrames": 10}}
-      ],
-      "note": "Spark diagonally through the bomb blocks."
     },
     {
       "id": 42,
@@ -1385,7 +1445,7 @@
     {
       "id": 45,
       "link": [2, 6],
-      "name": "Right-Side X-Ray Climb",
+      "name": "X-Ray Climb",
       "entranceCondition": {
         "comeInWithDoorStuckSetup": {}
       },
@@ -1396,49 +1456,24 @@
       "note": "This is a short climb, only a few tiles."
     },
     {
-      "id": 46,
-      "link": [2, 6],
-      "name": "Stutter Water Shinecharge - Spark to Break the Blocks",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": true,
-          "minTiles": 2.4375
-        }
-      },
-      "requires": [
-        "canStutterWaterShineCharge",
-        "h_canShineChargeMaxRunway",
-        {"or": [
-          {"shinespark": {"frames": 10, "excessFrames": 8}},
-          {"and": [
-            "canMidairShinespark",
-            {"shinespark": {"frames": 7, "excessFrames": 7}}
-          ]}
-        ]}
-      ],
-      "clearsObstacles": ["A"],
-      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
-      "devNote": [
-        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
-        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
-        "FIXME: Add temporary blue strats."
-      ]
-    },
-    {
       "id": 47,
       "link": [2, 6],
-      "name": "Spark to Break the Blocks",
+      "name": "Come In Shinecharged, Spark to Break the Blocks",
       "entranceCondition": {
         "comeInShinecharged": {}
       },
       "requires": [
-        {"shineChargeFrames": 40},
+        {"shineChargeFrames": 25},
         "h_canNavigateUnderwater",
         {"or": [
           {"shinespark": {"frames": 10, "excessFrames": 8}},
           {"and": [
             "canMidairShinespark",
             {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
           ]}
         ]}
       ],
@@ -1449,6 +1484,127 @@
         "This does not require canWaterShineCharge, as you can store the shinecharge before entering the room.",
         "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
         "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "link": [2, 7],
+      "name": "Come In Shinecharging (Gravity)",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 12,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "Gravity",
+        {"shineChargeFrames": 0}
+      ],
+      "endsWithShineCharge": true
+    },
+    {
+      "link": [2, 7],
+      "name": "Water Shinecharge",
+      "entranceCondition": {
+        "comeInShinecharging": {
+          "length": 4,
+          "openEnd": 0
+        }
+      },
+      "requires": [
+        "canWaterShineCharge",
+        {"shineChargeFrames": 0}
+      ],
+      "endsWithShineCharge": true
+    },
+    {
+      "link": [2, 7],
+      "name": "Precise Stutter Water Shinecharge",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
+          "minTiles": 2.4375
+        }
+      },
+      "requires": [
+        "canPreciseStutterWaterShineCharge",
+        {"shineChargeFrames": 0}
+      ],
+      "endsWithShineCharge": true
+    },
+    {
+      "link": [2, 7],
+      "name": "Precise Stutter Water Shinecharge (Shorter Runway)",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
+          "minTiles": 2
+        }
+      },
+      "requires": [
+        "canPreciseStutterWaterShineCharge",
+        {"or": [
+          {"doorUnlockedAtNode": 2},
+          "canInsaneJump"
+        ]},
+        {"shineChargeFrames": 0}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 2, "types": ["super", "missiles"], "requires": []},
+        {"nodeId": 2, "types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "endsWithShineCharge": true,
+      "note": [
+        "If only 2 tiles of runway are available and it is not possible to unlock the opposite door, then this requires a double frame-perfect stutter:",
+        "run toward the door, release forward for exactly 3 frames, pressing forward again on the last possible frame before the transition."
+      ],
+      "devNote": [
+        "FIXME: canInsaneJump is for difficulty placement; replace with a more appropriate tech since no jump is involved."
+      ]
+    },
+    {
+      "link": [2, 7],
+      "name": "Precise Stutter Water Shinecharge (Very Short Runway)",
+      "entranceCondition": {
+        "comeInStutterShinecharging": {
+          "minTiles": 1
+        }
+      },
+      "requires": [
+        "canPreciseStutterWaterShineCharge",
+        "canInsaneJump",
+        "canBeVeryPatient",
+        {"doorUnlockedAtNode": 1},
+        {"shineChargeFrames": 0}
+      ],
+      "unlocksDoors": [
+        {"nodeId": 1, "types": ["super", "missiles"], "requires": []},
+        {"nodeId": 1, "types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "endsWithShineCharge": true,
+      "note": [
+        "With only 1 tile of runway in the other room, this requires subpixel-precise positioning and a double frame-perfect stutter:",
+        "At the start of the run, Samus must be on the last pixel of runway with X subpixels of $C000 or greater.",
+        "Run toward the door, releasing forward for exactly 1 frame and pressing it again on the last possible frame before the transition.",
+        "After the transition, shoot open the opposite door while running, to extend the runway by a tile."
+      ],
+      "detailNote": [
+        "Correct subpixels can be achieved using one of several methods:",
+        "1) press against the door ledge (or a wall aligned with it);",
+        "jump, and while mid-air, tap forward for exactly 1 frame to land with subpixels $4000,",
+        "moonwalk back for exactly 1 frame to end with subpixels $C000.",
+        "2) press against the door ledge (from a platform below, assuming one exists)",
+        "turn around (while on the ground), and moonwalk back two pixels,",
+        "then jump and mid-air turnaround onto the ledge;",
+        "if Samus jumped from the correct pixel but does not land on the ledge, then it was needed to moonwalk back 1 more frame;",
+        "in this case it is possible to retry by doing a mid-air turnaround back onto the platform, and moonwalking back for 1 frame.",
+        "3) if X-Ray is available, press against the door ledge (from a platform below, assuming one exists)",
+        "turn around (while on the ground), then jump and mid-air turnaround toward the door,",
+        "and use X-Ray to turnaround in place away from the door;",
+        "repeat this sequence 3 more times: jump, mid-air turnaround, X-Ray turnaround;",
+        "then do one more jump and mid-air turnaround, high enough to land on the door ledge,",
+        "and Samus should be in the correct position with subpixels $C000."
+      ],
+      "devNote": [
+        "The `canBeVeryPatient` is for difficulty placement; this could be improved with a more specific tech later,",
+        "since it does not actually take a long time to execute."
       ]
     },
     {
@@ -1756,6 +1912,293 @@
         ]}
       ],
       "clearsObstacles": ["A"]
+    },
+    {
+      "id": 25,
+      "link": [7, 1],
+      "name": "Leave Shinecharged",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 10}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+    },
+    {
+      "id": 27,
+      "link": [7, 1],
+      "name": "Leave With Temporary Blue",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true,
+      "devNote": [
+        "The `h_getBlueSpeedMaxRunway` requirement is to satisfy the tests,",
+        "since we don't have a way to represent that the temporary blue originates from the startsWithShineCharge."
+      ]
+    },
+    {
+      "id": 32,
+      "link": [7, 2],
+      "name": "Leave With Spark",
+      "startsWithShineCharge": true,
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shineChargeFrames": 120},
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [7, 2],
+      "name": "Leave Shinecharged",
+      "startsWithShineCharge": true,
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"shineChargeFrames": 155}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [7, 2],
+      "name": "Leave With Temporary Blue",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canXRayTurnaround",
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true,
+      "devNote": [
+        "The `h_getBlueSpeedMaxRunway` requirement is to satisfy the tests,",
+        "since we don't have a way to represent that the temporary blue originates from the startsWithShineCharge."
+      ]
+    },
+    {
+      "id": 41,
+      "link": [7, 4],
+      "name": "Diagonal Shinespark to the Top",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 50},
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Spark diagonally through the bomb blocks."
+    },
+    {
+      "link": [7, 5],
+      "name": "Temporary Blue to Break the Blocks",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canTemporaryBlue",
+        "canXRayTurnaround"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "id": 46,
+      "link": [7, 6],
+      "name": "Shinespark to Break the Blocks",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 50},
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            "canMidairShinespark",
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
+    },
+    {
+      "id": 3,
+      "link": [8, 1],
+      "name": "Leave With Spark",
+      "startsWithShineCharge": true,
+      "requires": [
+        "canShinechargeMovementComplex",
+        {"shineChargeFrames": 120},
+        {"shinespark": {"frames": 9}}
+      ],
+      "exitCondition": {
+        "leaveWithSpark": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [8, 1],
+      "name": "Leave Shinecharged",
+      "startsWithShineCharge": true,
+      "requires": [
+        "canShinechargeMovementTricky",
+        {"shineChargeFrames": 155}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ]
+    },
+    {
+      "link": [8, 1],
+      "name": "Leave With Temporary Blue",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canXRayTurnaround",
+        "canChainTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true,
+      "devNote": [
+        "The `h_getBlueSpeedMaxRunway` requirement is to satisfy the tests,",
+        "since we don't have a way to represent that the temporary blue originates from the startsWithShineCharge."
+      ]
+    },
+    {
+      "id": 11,
+      "link": [8, 2],
+      "name": "Leave Shinecharged",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 10}
+      ],
+      "exitCondition": {
+        "leaveShinecharged": {}
+      },
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": "FIXME: This is a prime example for 3-room shinecharges, once the schema can model it."
+    },
+    {
+      "link": [8, 2],
+      "name": "Leave With Temporary Blue",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canTemporaryBlue"
+      ],
+      "exitCondition": {
+        "leaveWithTemporaryBlue": {}
+      },
+      "unlocksDoors": [{"types": ["ammo"], "requires": []}],
+      "flashSuitChecked": true,
+      "devNote": [
+        "The `h_getBlueSpeedMaxRunway` requirement is to satisfy the tests,",
+        "since we don't have a way to represent that the temporary blue originates from the startsWithShineCharge."
+      ]
+    },
+    {
+      "id": 18,
+      "link": [8, 4],
+      "name": "Diagonal Shinespark to the Top",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 50},
+        {"shinespark": {"frames": 23, "excessFrames": 10}}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Spark diagonally through the bomb blocks."
+    },
+    {
+      "link": [8, 5],
+      "name": "Temporary Blue to Break the Blocks",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 0},
+        "h_getBlueSpeedMaxRunway",
+        "canTemporaryBlue",
+        "canXRayTurnaround"
+      ],
+      "clearsObstacles": ["A"]
+    },
+    {
+      "id": 23,
+      "link": [8, 6],
+      "name": "Shinespark to Break the Blocks",
+      "startsWithShineCharge": true,
+      "requires": [
+        {"shineChargeFrames": 50},
+        {"or": [
+          {"shinespark": {"frames": 10, "excessFrames": 8}},
+          {"and": [
+            "canMidairShinespark",
+            {"shinespark": {"frames": 7, "excessFrames": 7}}
+          ]},
+          {"and": [
+            "canTrickyJump",
+            "canMidairShinespark",
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": "Spark vertically through the bomb blocks. It is still possible to break the blocks while below 30 Energy by jumping before sparking.",
+      "devNote": [
+        "It is possible to save some energy by sparking into the left wall, but it won't work with midair sparking, which saves the same amount and is easier.",
+        "Note that it is possible to spark into the ceiling to break the blocks without energy loss, but it has collision oscillation.",
+        "FIXME: Add temporary blue strats."
+      ]
     }
   ],
   "notables": [
