@@ -19,6 +19,7 @@ A `strat` can have the following properties:
   * _collectsItems_: An array listing items that are collected as part of this strat (e.g. for G-mode remote item acquire).
   * _setsFlags_: An array listing game flags that are set as part of this strat.
 These properties are described below in more detail.
+  * _wallJumpAvoid_: A boolean, which if true indicates that the strat is only useful if wall jump were somehow not possible to use.
   * _flashSuitChecked_: Indicates that the logical requirements of the strat have been verified to be logically sound with respect to whether a flash suit can be carried or not. Note that a `true` value does not necessarily mean that a flash suit can be carried with this strat, only that its logical requirements can be relied on to determine whether it can or not.
 ### Example
 
@@ -1728,6 +1729,14 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
   "setsFlags": ["f_MaridiaTubeBroken"]
 }
 ```
+
+## Wall Jump Avoid
+
+A `wallJumpAvoid` boolean can be used to indicate that a strat is only useful if wall jump is for some reason not possible to do, e.g. in case the wall jump ability is disabled due to a randomizer modification. By default, this property is `false`.
+
+This property should not be used in every case where a wall jump could be an alternative to the strat. Rather, it should only be used on strats that would be pointless if the player has the ability to wall jump. In other words, strats with `"wallJumpAvoid": true` should be ones where if the player has the ability to wall jump, then there would be no reason to ever do the strat. This property can then be used to filter out irrelevant strats in contexts where wall jump is available.
+
+Some strats may have components (as alternatives within an `or`) that are useful only in scenarios without the wall jump ability. However, the `"wallJumpAvoid": true` should only be used if the entire strat becomes useless in the presence of an ability to wall jump.
 
 ## Starts With Shinecharge
 
