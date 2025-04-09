@@ -92,6 +92,15 @@
       "mapTileMask": [
         [1, 2, 1, 1]
       ]
+    },
+    {
+      "id": 8,
+      "name": "Standing on Top Left of Mother Brain Tank",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "mapTileMask": [
+        [2, 1, 1, 1]
+      ]
     }
   ],
   "obstacles": [
@@ -175,7 +184,8 @@
       "from": 1,
       "to": [
         {"id": 1},
-        {"id": 3}
+        {"id": 3},
+        {"id": 8}
       ]
     },
     {
@@ -236,6 +246,13 @@
         {"id": 6},
         {"id": 7}
       ]
+    },
+    {
+      "from": 8,
+      "to": [
+        {"id": 1},
+        {"id": 3}
+      ]
     }
   ],
   "strats": [
@@ -292,6 +309,29 @@
       "flashSuitChecked": true
     },
     {
+      "id": 40,
+      "link": [1, 1],
+      "name": "Come in With R-Mode",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "id": 41,
+      "link": [1, 3],
+      "name": "Mother Brain Knockback",
+      "requires": [
+        "f_MotherBrainGlassBroken"
+      ],
+      "note": [
+        "When the glass is broken, touching Mother Brain from the left will instantly transport Samus to the right.",
+        "This gives Samus i-frames and knockback but does not cause damage."
+      ]
+    },
+    {
       "id": 6,
       "link": [1, 3],
       "name": "Grapple Teleport",
@@ -302,6 +342,92 @@
       },
       "requires": [
         "h_BypassMotherBrainRoom"
+      ]
+    },
+    {
+      "id": 42,
+      "link": [1, 8],
+      "name": "Suitless Crystal Flash Stand-Up With Ice",
+      "requires": [
+        {"notable": "Moondance Clip"},
+        {"not": "f_MotherBrainGlassBroken"},
+        "canTrickyDodgeEnemies",
+        "canTrickyUseFrozenEnemies",
+        "canCrystalFlash"
+      ],
+      "note": [
+        "Freeze all 3 Rinkas at close to the same time, ",
+        "then quickly jump into the morph nook at the top-left of Mother Brain,",
+        "and perform a Crystal Flash to stand up.",
+        "If executed correctly, the Rinkas will not respawn during the Crystal Flash, so Samus will not take damage."
+      ]
+    },
+    {
+      "id": 43,
+      "link": [1, 8],
+      "name": "G-Mode Morph Crystal Flash Stand-Up With Full Suit Protection",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"notable": "Moondance Clip"},
+        {"not": "f_MotherBrainGlassBroken"},
+        "h_canArtificialMorphMovement",
+        "h_canArtificialMorphCrystalFlash",
+        "h_fullEnemyDamageReduction",
+        {"resourceCapacity": [{"type": "RegularEnergy", "count": 299}]},
+        {"resourceAtMost": [{"type": "Energy", "count": 800}]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Use artificial morph to go inside the nook at the top-left of Mother Brain,",
+        "then perform a Crystal Flash to stand up.",
+        "Samus will take rapid damage from the Rinkas during the Crystal Flash but will be able to survive",
+        "with the help of 75% damage reduction from suit protection."
+      ],
+      "devNote": [
+        "We don't bother modeling the obstacle 'A' state here.",
+        "The strat will end with R-mode if direct G-mode was used.",
+        "But it doesn't matter, since this strat requires an E-Tank,",
+        "which means that R-mode (for 'light pillar' during the Mother Brain 2 fight) wouldn't be useful."
+      ]
+    },
+    {
+      "id": 44,
+      "link": [1, 8],
+      "name": "G-Mode Morph Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"notable": "Moondance Clip"},
+        {"not": "f_MotherBrainGlassBroken"},
+        "h_canArtificialMorphMovement",
+        "h_canArtificialMorphCrystalFlash",
+        {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 299}]},
+        {"autoReserveTrigger": {"minReserveEnergy": 100}},
+        {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}},
+        {"gainFlashSuit": {}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Enter in R-mode or direct G-mode, and perform a Crystal Flash in the morph nook to the top-left of Mother Brain.",
+        "During the Crystal Flash, allow the Rinkas to damage Samus down and trigger an auto-reserve refill,",
+        "which will interrupt the Crystal Flash."
+      ],
+      "detailNote": [
+        "The interruption of the Crystal Flash (due to the R-mode forced standup) limits the damage that Samus takes during it;",
+        "After the reserve trigger, Samus will take just one more Rinka hit."
+      ],
+      "devNote": [
+        "Having a small amount of E-Tanks ensures the reserve tanks can be filled by the Crystal Flash before the auto-reserve trigger.",
+        "FIXME: A larger amount of E-Tanks can also work, but the reserves will not completely fill, so less energy would remain at the end."
       ]
     },
     {
@@ -917,6 +1043,62 @@
         {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}}
       ],
       "setsFlags": ["f_KilledZebetites4"]
+    },
+    {
+      "id": 45,
+      "link": [8, 1],
+      "name": "Moondance Clip Break Glass",
+      "requires": [
+        {"notable": "Moondance Clip"},
+        "Wave",
+        "canTrickyDodgeEnemies",
+        {"or": [
+          "Ice",
+          "canBeExtremelyPatient"
+        ]},
+        "canMoondance",
+        {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}},
+        {"ammo": {"type": "Missile", "count": 18}}
+      ],
+      "setsFlags": ["f_MotherBrainGlassBroken"],
+      "note": [
+        "To be able to break the glass and leave out the left side, Samus must be at a specific horizontal X pixel position ($63).",
+        "Therefore, the Crystal Flash should have been performed at this position;",
+        "For the moondance, moonfalls must be performed only left-to-right, or Samus will fall out.",
+        "After 176 moonfalls, Samus will clip down into the tank.",
+        "Angle down and fire 18 Missiles into Mother Brain to break the tank.",
+        "If Samus is correctly positioned, she will then fall out and be free to move to the left."
+      ],
+      "detailNote": [
+        "If Samus is at position $62 (a pixel to the left of the correct position),",
+        "it is possible for a Rinka hit to knock back Samus into position $63."
+      ],
+      "devNote": [
+        "FIXME: Using some Supers in place of Missiles could be possible,",
+        "but if too many are used it might trigger the fight cutscene."
+      ]
+    },
+    {
+      "id": 46,
+      "link": [8, 3],
+      "name": "Moondance Clip Rinka Wall Ice Clip",
+      "requires": [
+        {"notable": "Moondance Clip"},
+        "Wave",
+        "canTrickyDodgeEnemies",
+        "canMoondance",
+        "canWallIceClip",
+        {"spikeHits": 1}
+      ],
+      "note": [
+        "Perform a moondance while killing the Rinkas, carefully avoiding being hit by them.",
+        "After 176 moonfalls, Samus will clip down into the tank.",
+        "Samus will be unable to turn around and will be invulnerable to Rinka hits.",
+        "Freeze a Rinka several pixels in front of Samus, to cause Samus to clip horizontally.",
+        "This will work regardless of whether Samus is facing left or right.",
+        "When Samus is close enough to the end, quickly turn around back and forth to wiggle out,",
+        "to avoid taking too much damage from the invisible spikes in the air."
+      ]
     }
   ],
   "notables": [
@@ -956,11 +1138,22 @@
         "Note that Zebetites cause i-frames but deal no damage.",
         "With Ice+Wave, the Rinka can be frozen from above. With Ice+Plasma, Samus must crouch while freezing the Rinka from below."
       ]
+    },
+    {
+      "id": 5,
+      "name": "Moondance Clip",
+      "note": [
+        "Perform a Crystal Flash to stand up in the nook at the top-left of the Mother Brain tank.",
+        "Then moondance to clip down into the tank.",
+        "Use frozen Rinkas to clip through Mother Brain to the right.",
+        "Alternatively, with precise positioning, break the glass from the left side."
+      ]
     }
   ],
-  "nextStratId": 40,
-  "nextNotableId": 5,
+  "nextStratId": 47,
+  "nextNotableId": 6,
   "devNote": [
+    "FIXME: Add strats for destroying or clipping past Zebetites left-to-right.",
     "FIXME: Maybe we can split MB into several events to properly indicate the ammo requirements?",
     "FIXME: It is possible to Grapple teleport from Moat to the left of Mother Brain, through currently it has no known use."
   ]

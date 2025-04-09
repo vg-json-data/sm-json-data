@@ -354,6 +354,23 @@ __Example:__
 ]}
 ```
 
+#### resourceMaxCapacity object
+A `resourceMaxCapacity` object represents the need for Samus to have a capacity that does not exceed a set amount of a specific resource. It can have the following properties:
+* _type:_ The type of resource. Can have the following values:
+  * Missile
+  * Super
+  * PowerBomb
+  * RegularEnergy
+  * ReserveEnergy
+* _count:_ The amount of capacity that Samus must not exceed.
+
+A `resourceMaxCapacity` requirement generally includes an implicit requirement of `canRiskPermanentLossOfAccess`. In some randomizer contexts, this may be unnecessary, for example if it is known that the player cannot have collected items that would exceed the expected capacity, or if it is possible for the player to disable the extra items.
+
+__Example:__
+```json
+{"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 299}]}
+```
+
 #### resourceAvailable object
 A `resourceAvailable` object represents the need for Samus to be holding at least a set amount of a specific resource. It has the following properties:
 * _type:_ The type of resource. Can have the following values:
