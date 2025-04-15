@@ -164,7 +164,7 @@ A `leaveShinecharged` object does not provide any way to specify Samus' position
 {
   "name": "Leave Shinecharged",
   "requires": [
-    {"canShinecharge": {
+    {"canShineCharge": {
       "usedTiles": 20,
       "openEnd": 0
     }}
@@ -191,7 +191,7 @@ The `leaveWithTemporaryBlue` object has the following property:
 {
   "name": "Leave With Temporary Blue",
   "requires": [
-    {"canShinecharge": {
+    {"canShineCharge": {
       "usedTiles": 20,
       "openEnd": 0
     }}
@@ -218,7 +218,7 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 {
   "name": "Leave With Spark",
   "requires": [
-    {"canShinecharge": {
+    {"canShineCharge": {
       "usedTiles": 20,
       "openEnd": 0
     }},
