@@ -108,6 +108,18 @@
         [0, 1, 0, 0, 0, 0],
         [0, 1, 0, 0, 0, 0]
       ]
+    },
+    {
+      "id": 9,
+      "name": "G-Mode Morph Junction Left of Morph Tunnel (Off-Camera)",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "mapTileMask": [
+        [1, 1, 2, 2, 1, 1],
+        [0, 1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0]
+      ],
+      "note": "Represents being left of the morph tunnel with G-Mode and morph or artificial morph"
     }
   ],
   "obstacles": [
@@ -169,7 +181,8 @@
       "from": 2,
       "to": [
         {"id": 2},
-        {"id": 8}
+        {"id": 8},
+        {"id": 9}
       ]
     },
     {
@@ -224,6 +237,14 @@
         {"id": 2},
         {"id": 7},
         {"id": 8}
+      ]
+    },
+    {
+      "from": 9,
+      "to": [
+        {"id": 1},
+        {"id": 2},
+        {"id": 7}
       ]
     }
   ],
@@ -350,6 +371,27 @@
       "devNote": "FIXME: Heat count assumes the Kzan is blocking your path."
     },
     {
+      "link": [1, 5],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        "h_heatedGMode",
+        "h_canUsePowerBombs"
+      ],
+      "flashSuitChecked": true,
+      "note": "Climb the room and place a Power Bomb near the top before exiting G-mode.",
+      "devNote": [
+        "It is possible to do this with artificial morph, but progressing anywhere else in the room requires Morph.",
+        "FIXME: It looks like the heat frames going up from 5 don't take into account that the Power Bomb blocks could already be broken."
+      ],
+      "clearsObstacles": ["A", "B"]
+    },
+    {
       "id": 9,
       "link": [1, 6],
       "name": "X-Ray Climb",
@@ -448,6 +490,25 @@
       "name": "Base",
       "requires": [
         {"heatFrames": 50}
+      ]
+    },
+    {
+      "link": [2, 9],
+      "name": "G-Mode, Simple Blind Movement",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_canArtificialMorphMovement"
+      ],
+      "flashSuitChecked": true,
+      "note": "Get into the cove next to the bomb block and carefully wiggle in that camera scroll block to overload PLMs and move to the item to the left.",
+      "devNote": [
+        "It is possible to damage boost off of the Hibashi instead of requiring artificial morph movement,",
+        "but there is no known way to get here with Energy and artificial morph (a Power Bomb will solidify the bomb block)."
       ]
     },
     {
@@ -1669,6 +1730,109 @@
       "flashSuitChecked": true,
       "devNote": [
         "FIXME: This can have a side effect of damaging the Bomb block which is not modelled."
+      ]
+    },
+    {
+      "link": [9, 1],
+      "name": "G-Mode, Collect the Item and Go Down Blind",
+      "requires": [
+        "h_heatedGMode",
+        "canOffScreenMovement",
+        "h_canUsePowerBombs",
+        {"or": [
+          "canTrickyGMode",
+          {"spikeHits": 1}
+        ]},
+        {"heatFrames": 550}
+      ],
+      "collectsItems": [3],
+      "flashSuitChecked": true,
+      "note": [
+        "Exit G-mode while on the item pedestal, while off-camera, then return to the right through the Dessgeega that can't damage Samus off-screen.",
+        "Use a Power Bomb and fall down the spiky shaft and get to the door. Avoiding a spike hit is possible but tricky."
+      ],
+      "devNote": "FIXME: Strats could be added on remote acquire strats that use the item for the escape, such as Morph, explosives, or an E-Tank."
+    },
+    {
+      "link": [9, 1],
+      "name": "G-Mode, Go Down Blind",
+      "requires": [
+        "h_heatedGMode",
+        "canOffScreenMovement",
+        "h_canArtificialMorphPowerBomb",
+        {"or": [
+          "h_canArtificialMorphMovement",
+          {"heatFrames": 100}
+        ]},
+        {"or": [
+          "canTrickyGMode",
+          {"spikeHits": 1}
+        ]},
+        {"heatFrames": 350}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "With a way to move while morphed, use a Power Bomb while on the Power Bomb blocks and quickly exit G-mode.",
+        "Otherwise, do so to the right of the Power Bomb blocks, quickly exit G-mode, and jump up and over to fall through the blocks.",
+        "Fall down the spiky shaft and get to the door. Avoiding a spike hit is possible but tricky."
+      ]
+    },
+    {
+      "link": [9, 2],
+      "name": "G-Mode, Collect the Item and Return to the Right",
+      "requires": [
+        "h_heatedGMode",
+        "Morph",
+        {"or": [
+          {"and": [
+            "h_canUseMorphBombs",
+            {"heatFrames": 1000}
+          ]},
+          {"and": [
+            {"heatFrames": 850},
+            {"ammo": {"type": "PowerBomb", "count": 3}}
+          ]}
+        ]},
+        {"or": [
+          "canOffScreenMovement",
+          {"heatFrames": 200}
+        ]}
+      ],
+      "collectsItems": [3],
+      "flashSuitChecked": true,
+      "note": [
+        "Exit G-mode while on the item pedestal, while off-camera, then return to the right through the Dessgeegas that can't damage Samus off-screen.",
+        "It is possible to use a Power Bomb and quickly exiting G-mode to have the bomb block broken on exit,",
+        "but this will also partially break the Power Bomb blocks and could make exit traversal less straightforward."
+      ]
+    },
+    {
+      "link": [9, 7],
+      "name": "G-Mode, Collect the Item and Reset Camera in the Right Morph Tunnel",
+      "requires": [
+        "h_heatedGMode",
+        "Morph",
+        {"or": [
+          {"and": [
+            "h_canUseMorphBombs",
+            {"heatFrames": 800}
+          ]},
+          {"and": [
+            {"heatFrames": 700},
+            {"ammo": {"type": "PowerBomb", "count": 2}}
+          ]}
+        ]},
+        {"or": [
+          "canOffScreenMovement",
+          {"heatFrames": 200}
+        ]}
+      ],
+      "collectsItems": [3],
+      "flashSuitChecked": true,
+      "note": [
+        "Exit G-mode while on the item pedestal, while off-camera, then return to the right through the Dessgeegas that can't damage Samus off-screen.",
+        "It is possible to use a Power Bomb and quickly exiting G-mode to have the bomb block broken on exit,",
+        "but this will also partially break the Power Bomb blocks and could make exit traversal less straightforward."
       ]
     }
   ],
