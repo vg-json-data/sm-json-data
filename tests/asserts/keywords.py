@@ -34,6 +34,7 @@ strat_name_entrance_conditions = [
     ("Come In Running", "comeInRunning"),
     ("Come In Jumping", "comeInJumping"),
     ("Come In Space Jumping", "comeInSpaceJumping"),
+    ("Come In Blue Space Jumping", "comeInBlueSpaceJumping"),
     ("Come In Shinecharging", "comeInShinecharging"),
     ("Come In Shinecharged Jumping", "comeInShinechargedJumping"),
     ("Come In Shinecharged", "comeInShinecharged"),
@@ -536,7 +537,8 @@ def check_speed_states(strat, err_fn):
             states = {"shinecharged"}
         elif "comeInWithSpark" in keys:
             states = {"preshinespark"}
-        elif keys.intersection(["comeInWithTemporaryBlue", "comeInGettingBlueSpeed", "comeInSpeedballing", "comeInWithBlueSpringBallBounce", "comeInBlueSpinning"]):
+        elif keys.intersection(["comeInWithTemporaryBlue", "comeInGettingBlueSpeed", "comeInSpeedballing", "comeInWithBlueSpringBallBounce", 
+                                "comeInBlueSpinning", "comeInBlueSpaceJumping"]):
             states = {"blue"}
         if strat.get("startsWithShineCharge") is True:
             err_fn("startsWithShineCharge should not be combined with an entranceCondition")
