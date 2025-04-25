@@ -59,6 +59,16 @@
       "mapTileMask": [
         [1, 2, 1]
       ]
+    },
+    {
+      "id": 4,
+      "name": "G-Mode Junction",
+      "nodeType": "junction",
+      "nodeSubType": "g-mode",
+      "mapTileMask": [
+        [2, 2, 2]
+      ],
+      "note": "Represents being anywhere in the room with G-Mode"
     }
   ],
   "obstacles": [
@@ -83,7 +93,8 @@
       "to": [
         {"id": 1},
         {"id": 2},
-        {"id": 3}
+        {"id": 3},
+        {"id": 4}
       ]
     },
     {
@@ -91,7 +102,8 @@
       "to": [
         {"id": 1},
         {"id": 2},
-        {"id": 3}
+        {"id": 3},
+        {"id": 4}
       ]
     },
     {
@@ -100,6 +112,13 @@
         {"id": 1},
         {"id": 2},
         {"id": 3}
+      ]
+    },
+    {
+      "from": 4,
+      "to": [
+        {"id": 1},
+        {"id": 2}
       ]
     }
   ],
@@ -302,6 +321,21 @@
         "FIXME: It's possible to activate a spark on the ground at 27 energy and collect drops in time.",
         "The canFarmWhileShooting presumes spawning the drops on the ground where they can be collected while charging the next shinespark."
       ]
+    },
+    {
+      "id": 37,
+      "link": [1, 4],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 9,
@@ -547,6 +581,21 @@
         "FIXME: It's possible to activate a spark on the ground at 27 energy and collect drops in time.",
         "The canFarmWhileShooting presumes spawning the drops on the ground where they can be collected while charging the next shinespark."
       ]
+    },
+    {
+      "id": 38,
+      "link": [2, 4],
+      "name": "G-Mode",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        }
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 20,
@@ -921,6 +970,260 @@
         "Use the Echoes created by shinesparking to defeat the Metal Pirates.",
         "This involves Shineparking into a precise point while also turning the Pirates vulnerable as the echoes reach them."
       ]
+    },
+    {
+      "id": 39,
+      "link": [4, 1],
+      "name": "G-Mode, Cross the Room",
+      "requires": [
+        "h_heatedGMode",
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "id": 40,
+      "link": [4, 1],
+      "name": "G-Mode, Ammo Kill",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 6}},
+          {"ammo": {"type": "Missile", "count": 36}}
+        ]},
+        {"or": [
+          {"heatFrames": 45},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Be careful to avoid the stationary, invisible projectiles that the pirates spawn from where they jump.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and get to the door."
+      ],
+      "devNote": [
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
+    },
+    {
+      "id": 41,
+      "link": [4, 1],
+      "name": "G-Mode, Beam Kill",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          "Plasma",
+          {"and": [
+            "Charge",
+            "Spazer"
+          ]},
+          {"and": [
+            "Charge",
+            "Wave"
+          ]},
+          {"and": [
+            "Spazer",
+            "Ice",
+            "Wave"
+          ]},
+          {"and": [
+            "canBePatient",
+            {"or": [
+              {"and": [
+                "Charge",
+                "Ice"
+              ]},
+              {"and": [
+                "Spazer",
+                "Ice"
+              ]},
+              {"and": [
+                "Spazer",
+                "Wave"
+              ]}
+            ]}
+          ]},
+          {"and": [
+            "canBeVeryPatient",
+            {"or": [
+              "Charge",
+              "Spazer"
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"heatFrames": 45},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Be careful to avoid the stationary, invisible projectiles that the pirates spawn from where they jump.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and get to the door."
+      ],
+      "devNote": [
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
+    },
+    {
+      "id": 42,
+      "link": [4, 1],
+      "name": "G-Mode, Shinespark Kill",
+      "requires": [
+        "h_heatedGMode",
+        "canTrickyGMode",
+        {"notable": "Speed Echoes Kill"},
+        {"canShineCharge": {"usedTiles": 18, "openEnd": 1}},
+        {"shinespark": {"frames": 9, "excessFrames": 9}},
+        {"shinespark": {"frames": 9, "excessFrames": 9}},
+        "canUseSpeedEchoes",
+        {"or": [
+          {"heatFrames": 45},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "The pirates will place stationary, invisible projectiles when they jump or Samus runs through them, making that portion of the runway unusable without taking damage.",
+        "To prevent this, it is important to shinecharge with only a small portion of the room to prevent the opposite pirate from placing a projectile.",
+        "After shinecharging through the first pirate, stand between where it jumps, then near the end of the shinecharge timer, spark vertically with low energy to kill the pirate.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and get to the door."
+      ],
+      "devNote": [
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
+    },
+    {
+      "id": 43,
+      "link": [4, 2],
+      "name": "G-Mode, Cross the Room",
+      "requires": [
+        "h_heatedGMode",
+        {"heatFrames": 45}
+      ]
+    },
+    {
+      "id": 44,
+      "link": [4, 2],
+      "name": "G-Mode, Ammo Kill",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 6}},
+          {"ammo": {"type": "Missile", "count": 36}}
+        ]},
+        {"or": [
+          {"heatFrames": 190},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Be careful to avoid the stationary, invisible projectiles that the pirates spawn from where they jump.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and open the door and leave.",
+        "Otherwise, it requires exiting G-mode at the left side of the room, shooting the door and returning to the right side of the room."
+      ],
+      "devNote": [
+        "FIXME: These heat frames would be lower if both doors were locked and either could be used to set the metal pirates kill flag.",
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
+    },
+    {
+      "id": 45,
+      "link": [4, 2],
+      "name": "G-Mode, Beam Kill",
+      "requires": [
+        "h_heatedGMode",
+        {"or": [
+          "Plasma",
+          {"and": [
+            "Charge",
+            "Spazer"
+          ]},
+          {"and": [
+            "Charge",
+            "Wave"
+          ]},
+          {"and": [
+            "Spazer",
+            "Ice",
+            "Wave"
+          ]},
+          {"and": [
+            "canBePatient",
+            {"or": [
+              {"and": [
+                "Charge",
+                "Ice"
+              ]},
+              {"and": [
+                "Spazer",
+                "Ice"
+              ]},
+              {"and": [
+                "Spazer",
+                "Wave"
+              ]}
+            ]}
+          ]},
+          {"and": [
+            "canBeVeryPatient",
+            {"or": [
+              "Charge",
+              "Spazer"
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"heatFrames": 190},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "Be careful to avoid the stationary, invisible projectiles that the pirates spawn from where they jump.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and open the door and leave.",
+        "Otherwise, it requires exiting G-mode at the left side of the room, shooting the door and returning to the right side of the room."
+      ],
+      "devNote": [
+        "FIXME: These heat frames would be lower if both doors were locked and either could be used to set the metal pirates kill flag.",
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
+    },
+    {
+      "id": 46,
+      "link": [4, 2],
+      "name": "G-Mode, Shinespark Kill",
+      "requires": [
+        "h_heatedGMode",
+        "canTrickyGMode",
+        {"notable": "Speed Echoes Kill"},
+        {"canShineCharge": {"usedTiles": 18, "openEnd": 1}},
+        {"shinespark": {"frames": 9, "excessFrames": 9}},
+        {"shinespark": {"frames": 9, "excessFrames": 9}},
+        "canUseSpeedEchoes",
+        {"or": [
+          {"heatFrames": 190},
+          "h_heatedGModePauseAbuse"
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "note": [
+        "The pirates will place stationary, invisible projectiles when they jump or Samus runs through them, making that portion of the runway unusable without taking damage.",
+        "To prevent this, it is important to shinecharge with only a small portion of the room to prevent the opposite pirate from placing a projectile.",
+        "After shinecharging through the first pirate, stand between where it jumps, then near the end of the shinecharge timer, spark vertically with low energy to kill the pirate.",
+        "It is possible to exit G-mode and quicky pause abuse, to collect the pirates' drops and open the door and leave.",
+        "Otherwise, it requires exiting G-mode at the left side of the room, shooting the door and returning to the right side of the room."
+      ],
+      "devNote": [
+        "FIXME: These heat frames would be lower if both doors were locked and either could be used to set the metal pirates kill flag.",
+        "It is possible to enter the room in direct G-mode, kill the pirates, return to the open door, then exit G-mode and quickly touch the transition to awaken Zebes (but not get the metal pirates kill flag).",
+        "This is not included, as it is a very niche knowledge check, and at that point, you might as well pause abuse to get the pirate drops and both flags."
+      ]
     }
   ],
   "notables": [
@@ -933,7 +1236,7 @@
       ]
     }
   ],
-  "nextStratId": 37,
+  "nextStratId": 47,
   "nextNotableId": 2,
   "devNote": "All kill heatframes have been lowered by 250 to adjust for the traversal requirement"
 }
