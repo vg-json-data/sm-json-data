@@ -142,6 +142,11 @@
       "id": "D",
       "name": "3 Dessgeegas",
       "obstacleType": "enemies"
+    },
+    {
+      "id": "E",
+      "name": "Shutter Under Spikes",
+      "obstacleType": "inanimate"
     }
   ],
   "enemies": [
@@ -497,7 +502,7 @@
     {
       "id": 97,
       "link": [2, 9],
-      "name": "G-Mode, Simple Blind Movement",
+      "name": "G-Mode Morph, Simple Blind Movement",
       "entranceCondition": {
         "comeInWithGMode": {
           "mode": "any",
@@ -514,6 +519,65 @@
       "devNote": [
         "It is possible to damage boost off of the Hibashi instead of requiring artificial morph movement,",
         "but there is no known way to get here with Energy and artificial morph (a Power Bomb will solidify the bomb block)."
+      ]
+    },
+    {
+      "link": [2, 9],
+      "name": "G-Mode Morph, Simple Blind Movement, Activate Shutter",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "h_canArtificialMorphMovement",
+        "h_canArtificialMorphPowerBomb",
+        {"heatFrames": 0}
+      ],
+      "clearsObstacles": ["E"],
+      "flashSuitChecked": true,
+      "note": [
+        "Get into the cove next to the bomb block and carefully wiggle in that camera scroll block to overload PLMs and move to the item to the left.",
+        "Then use a Power Bomb to activate the shutter."
+      ],
+      "devNote": [
+        "It is possible to damage boost off of the Hibashi instead of requiring artificial morph movement,",
+        "but there is no known way to get here with Energy and artificial morph (a Power Bomb will solidify the bomb block)."
+      ]
+    },
+    {
+      "link": [2, 9],
+      "name": "G-Mode, Simple Blind Movement, Activate Shutter",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": false
+        },
+        "comesThroughToilet": "any"
+      },
+      "requires": [
+        "Morph",
+        "canTrickyJump",
+        {"or": [
+          "canInsaneJump",
+          {"ammo": {"type": "Super", "count": 1}},
+          {"ammo": {"type": "Missile", "count": 1}},
+          "Charge",
+          "Ice",
+          "Wave",
+          "Spazer",
+          "Plasma"
+        ]},
+        {"heatFrames": 0}
+      ],
+      "clearsObstacles": ["E"],
+      "note": [
+        "Raise the shutter by shooting a missile or upgraded beam at it.",
+        "Stand on the right side of lowest safe tile and shoot diagonally down while crouched if using missiles, or standing otherwise.",
+        "A basic beam shot will work if fired vertically down, onto the side of the spike.",
+        "Then, get into the cove next to the bomb block and carefully wiggle in that camera scroll block to overload PLMs."
       ]
     },
     {
@@ -1603,11 +1667,16 @@
       "requires": [
         "h_heatResistant",
         "h_canBombThings",
-        "h_canUsePowerBombs",
+        {"or": [
+          "h_canUsePowerBombs",
+          "canInsaneJump",
+          {"obstaclesCleared": ["E"]}
+        ]},
         {"heatFrames": 350}
       ],
+      "clearsObstacles": ["E"],
       "note": [
-        "The hibashi hit can be avoided by waiting for the pillar to go up.",
+        "The hibashi hit can be avoided by waiting for the shutter to go up.",
         "That requires the use of one PB and more time than is worth unless heat proof."
       ],
       "devNote": "Note that if using PBs, two is required. One each from h_canBombThings, h_canUsePowerBombs."
@@ -1632,7 +1701,8 @@
         {"ammo": {"type": "PowerBomb", "count": 2}},
         {"heatFrames": 350},
         {"hibashiHits": 1}
-      ]
+      ],
+      "clearsObstacles": ["E"]
     },
     {
       "id": 90,
@@ -1723,7 +1793,8 @@
             {"heatFrames": 240}
           ]}
         ]}
-      ]
+      ],
+      "clearsObstacles": ["E"]
     },
     {
       "id": 95,
@@ -1732,9 +1803,40 @@
       "requires": [
         "h_canHeatedCrystalFlash"
       ],
+      "clearsObstacles": ["E"],
       "flashSuitChecked": true,
       "devNote": [
         "FIXME: This can have a side effect of damaging the Bomb block which is not modelled."
+      ]
+    },
+    {
+      "link": [8, 8],
+      "name": "Raise Shutter",
+      "requires": [
+        "canTrickyJump",
+        {"or": [
+          {"and":[
+            "canInsaneJump",
+            {"heatFrames": 60}
+          ]},
+          {"ammo": {"type": "Super", "count": 1}},
+          {"ammo": {"type": "Missile", "count": 1}},
+          "Charge",
+          "Ice",
+          "Wave",
+          "Spazer",
+          "Plasma"
+        ]},
+        {"heatFrames": 40}
+      ],
+      "clearsObstacles": ["E"],
+      "note": [
+        "Raise the shutter by shooting a missile or upgraded beam at it.",
+        "Stand on the right side of lowest safe tile and shoot diagonally down while crouched if using missiles, or standing otherwise.",
+        "A basic beam shot will work if fired vertically down, onto the side of the spike."
+      ],
+      "devNote": [
+        "Power Bombs is handled by another strat."
       ]
     },
     {
@@ -1804,6 +1906,16 @@
         {"or": [
           "canOffScreenMovement",
           {"heatFrames": 200}
+        ]},
+        {"or": [
+          {"and": [
+            "canInsaneJump",
+            {"heatFrames": 60}
+          ]},
+          {"obstaclesCleared": ["E"]},
+          "h_canUseSpringBall",
+          {"hibashiHits": 1},
+          {"ammo": {"type": "PowerBomb", "count": 1}}
         ]}
       ],
       "collectsItems": [3],
@@ -1812,7 +1924,33 @@
         "Exit G-mode while on the item pedestal, while off-camera, then return to the right through the Dessgeegas that can't damage Samus off-screen.",
         "It is possible to use a Power Bomb and quickly exiting G-mode to have the bomb block broken on exit,",
         "but this will also partially break the Power Bomb blocks and could make exit traversal less straightforward."
-      ]
+      ],
+      "devNote": "FIXME: The Hibashi doesn't need a 4th PB in the power bomb case."
+    },
+    {
+      "link": [9, 2],
+      "name": "G-Mode, Blind Temporary Blue and Speedball",
+      "requires": [
+        "canEnterGMode",
+        "h_heatProof",
+        "canOffScreenMovement",
+        {"getBlueSpeed": {"usedTiles": 20, "steepDownTiles": 4, "openEnd": 1}},
+        "canChainTemporaryBlue",
+        "canTrickyJump",
+        "canSpeedball",
+        {"or": [
+          "canInsaneJump",
+          "h_canUseSpringBall",
+          {"ammo": {"type": "PowerBomb", "count": 1}},
+          {"hibashiHits": 1},
+          {"obstaclesCleared": ["E"]}
+        ]}
+      ],
+      "collectsItems": [3],
+      "clearsObstacles": ["B"],
+      "note": [
+        "Use Speedbooster to break the bomb block near the item to collect it and then again to speedball back to the door."
+      ]    
     },
     {
       "id": 101,
