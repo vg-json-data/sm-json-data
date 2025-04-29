@@ -1070,6 +1070,37 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         def strat_err_fn(msg):
                             messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
                             messages["counts"]["reds"] += 1
+                            
+                        def make_and(reqs):
+                            if len(reqs) == 0:
+                                return "free"
+                            elif len(reqs) == 1:
+                                return reqs[0]
+                            else:
+                                return {"and": reqs}
+                            
+                        def make_or(reqs):
+                            if len(reqs) == 0:
+                                return "never"
+                            elif len(reqs) == 1:
+                                return reqs[0]
+                            else:
+                                out = []
+                                for r in reqs:
+                                    if isinstance(r, dict) and "or" in r:
+                                        out.extend(r["or"])
+                                    else:
+                                        out.append(r)
+                                return {"or": out}
+                            
+    
+                        requires = strat["requires"]
+                        if "entranceCondition" in strat and "comeInWithSidePlatform" in strat["entranceCondition"]:
+                            reqs = []
+                            for platform in strat["entranceCondition"]["comeInWithSidePlatform"]["platforms"]:
+                                reqs.append(make_and(platform.get("requires", [])))
+                            requires.append(make_or(reqs))
+                            
                         for req in strat["requires"]:
                             check_and_or(req, strat_err_fn)
                         if heated and not check_heat_req({"and": strat["requires"]}):
