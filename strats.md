@@ -617,6 +617,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInRunning_: This indicates that Samus must run into the room, with speed in a certain range.
 - _comeInJumping_: This indicates that Samus must run and jump just before hitting the transition, with speed in a certain range.
 - _comeInSpaceJumping_: This indicates that Samus must Space Jump through the bottom of the doorway.
+- _comeInBlueSpaceJumping_: This indicates that Samus must Space Jump through the bottom of the doorway while having blue speed.
 - _comeInShinecharging_: This indicates that Samus must run into the room with enough space to complete a shinecharge.
 - _comeInShinecharged_: This indicates that Samus must enter the room with a shinecharge.
 - _comeInShinechargedJumping_: This indicates that Samus must jump into the the room with a shinecharge.
@@ -763,6 +764,30 @@ A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` 
   "requires": [
     "canCrossRoomJumpIntoWater"
   ]
+}
+```
+
+### Come In Blue Space Jumping
+
+A `comeInBlueSpaceJumping` entrance condition indicates that Samus must come in with a Space Jump through the bottom of the doorway, while having blue speed, applicable to horizontal transitions. It has the following properties:
+
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
+- _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too high of a speed.
+
+A `comeInBlueSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door, with the following requirements:
+  - The `blue` property of the matching `leaveSpaceJumping` must be "yes" or "any".
+  - `SpeedBooster` and `SpaceJump` item requirements.
+  - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
+
+```json
+{
+  "name": "Come In Blue Space Jumping",
+  "entranceCondtion": {
+    "comeInBlueSpinning": {
+      "maxExtraRunSpeed": "$2.1"
+    }
+  },
+  "requires": []
 }
 ```
 
@@ -1079,7 +1104,7 @@ A `comeInSpinning` entrance condition must match with a `leaveSpinning` or `leav
 
 ### Come In Blue Spinning
 
-A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, possibly while having blue speed, applicable to horizontal transitions. It has the following properties:
+A `comeInBlueSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, while having blue speed, applicable to horizontal transitions. It has the following properties:
 
 - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
 - _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.

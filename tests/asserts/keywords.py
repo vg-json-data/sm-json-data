@@ -34,6 +34,7 @@ strat_name_entrance_conditions = [
     ("Come In Running", "comeInRunning"),
     ("Come In Jumping", "comeInJumping"),
     ("Come In Space Jumping", "comeInSpaceJumping"),
+    ("Come In Blue Space Jumping", "comeInBlueSpaceJumping"),
     ("Come In Shinecharging", "comeInShinecharging"),
     ("Come In Shinecharged Jumping", "comeInShinechargedJumping"),
     ("Come In Shinecharged", "comeInShinecharged"),
@@ -536,7 +537,8 @@ def check_speed_states(strat, err_fn):
             states = {"shinecharged"}
         elif "comeInWithSpark" in keys:
             states = {"preshinespark"}
-        elif keys.intersection(["comeInWithTemporaryBlue", "comeInGettingBlueSpeed", "comeInSpeedballing", "comeInWithBlueSpringBallBounce", "comeInBlueSpinning"]):
+        elif keys.intersection(["comeInWithTemporaryBlue", "comeInGettingBlueSpeed", "comeInSpeedballing", "comeInWithBlueSpringBallBounce", 
+                                "comeInBlueSpinning", "comeInBlueSpaceJumping"]):
             states = {"blue"}
         if strat.get("startsWithShineCharge") is True:
             err_fn("startsWithShineCharge should not be combined with an entranceCondition")
@@ -1068,6 +1070,37 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         def strat_err_fn(msg):
                             messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
                             messages["counts"]["reds"] += 1
+                            
+                        def make_and(reqs):
+                            if len(reqs) == 0:
+                                return "free"
+                            elif len(reqs) == 1:
+                                return reqs[0]
+                            else:
+                                return {"and": reqs}
+                            
+                        def make_or(reqs):
+                            if len(reqs) == 0:
+                                return "never"
+                            elif len(reqs) == 1:
+                                return reqs[0]
+                            else:
+                                out = []
+                                for r in reqs:
+                                    if isinstance(r, dict) and "or" in r:
+                                        out.extend(r["or"])
+                                    else:
+                                        out.append(r)
+                                return {"or": out}
+                            
+    
+                        requires = strat["requires"]
+                        if "entranceCondition" in strat and "comeInWithSidePlatform" in strat["entranceCondition"]:
+                            reqs = []
+                            for platform in strat["entranceCondition"]["comeInWithSidePlatform"]["platforms"]:
+                                reqs.append(make_and(platform.get("requires", [])))
+                            requires.append(make_or(reqs))
+                            
                         for req in strat["requires"]:
                             check_and_or(req, strat_err_fn)
                         if heated and not check_heat_req({"and": strat["requires"]}):
