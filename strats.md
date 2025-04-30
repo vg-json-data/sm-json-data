@@ -1679,7 +1679,7 @@ An `unlocksDoors` array lists possibilities of doors that can be unlocked as par
 - _useImplicitRequires_: A boolean, true by default, indicating whether standard requirements should be implicitly appended to the `requires` in this object. This can be set this to false if the standard requirements are already accounted for in the strat `requires`, for example if the strat involves using a Power Bomb which would already unlock the door as a side effect, or if it uses a Super as a hero shot to open the door. If this property is set to true, the implicit standard requirements are based on the door type, as follows:
     - For "missiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 5}}`.
     - For "super", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
-    - For "powerbomb", the implicit requirement is `h_usePowerBombs`.
+    - For "powerbomb", the implicit requirement is `h_usePowerBomb`.
     - For "gadoraMissiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 3}}`.
     - For "gadoraSuper", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
     
@@ -1749,7 +1749,7 @@ A `setsFlags` array lists the names of game flags that become set (if not alread
   "link": [5, 6],
   "name": "Break the Tube",
   "requires": [
-    "h_usePowerBombs"
+    "h_usePowerBomb"
   ],
   "setsFlags": ["f_MaridiaTubeBroken"]
 }
