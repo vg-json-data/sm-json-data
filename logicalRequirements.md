@@ -620,7 +620,7 @@ A `gainFlashSuit` object has no properties.
 
 With certain exceptions explained below, a flash suit can generally be carried around by any sequence of strats until it is used. A flash suit use is indicated by a `useFlashSuit` logical requirement. 
 
-The need to perform actions that cannot preserve a flash suit are indicated by a `noFlashSuit` logical requirement; typically this is expressed indirectly through tech or helpers, such as `canCrouchJump`, `canXRayStandup`, `canCrystalFlash`, or `h_canMidAirShootUp`. A `canShineCharge` logical requirement also cannot preserve a flash suit.
+The need to perform actions that cannot preserve a flash suit are indicated by a `noFlashSuit` logical requirement; typically this is expressed indirectly through tech or helpers, such as `canCrouchJump`, `canXRayStandup`, `canCrystalFlash`, or `h_midAirShootUp`. A `canShineCharge` logical requirement also cannot preserve a flash suit.
 
 The process of verifying which strats allow preserving a flash suit is not yet complete. Strats which have been checked are indicated by a property `"flashSuitChecked": true`. Any strat without this property should be assumed to be logically unusable for carrying a flash suit. Note that a strat with `"flashSuitChecked": true` may or may not be able to preserve a flash suit, depending on its logical requirements.
 
