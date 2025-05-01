@@ -320,7 +320,7 @@ def check_shinespark_req(req):
 
 def check_shinecharge_req(req):
     if isinstance(req, str):
-        if req in ["h_shineChargeMaxRunway", "canStutterWaterShineCharge", "canPreciseStutterWaterShineCharge"]:
+        if req in ["h_shinechargeMaxRunway", "canStutterWaterShineCharge", "canPreciseStutterWaterShineCharge"]:
             return True
     if isinstance(req, dict):
         if "canShineCharge" in req:
@@ -334,8 +334,8 @@ def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_heatedCrystalFlash", "h_heatedLavaCrystalFlash", "h_LowerNorfairElevatorDownwardFrames",
                    "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_heatedGreenGateGlitch",
-                   "h_DirectHeatedGModeLeaveSameDoor", "h_IndirectHeatedGModeOpenSameDoor",
-                   "h_HeatedGModeOpenDifferentDoor", "h_HeatedGModeOffCameraDoor", "h_heatedGModePauseAbuse"]:
+                   "h_heatedDirectGModeLeaveSameDoor", "h_heatedIndirectGModeOpenSameDoor",
+                   "h_heatedGModeOpenDifferentDoor", "h_heatedGModeOffCameraDoor", "h_heatedGModePauseAbuse"]:
             return True
     if isinstance(req, dict):
         if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
@@ -473,7 +473,7 @@ def covers_shinecharge_frames(req):
 
 def process_req_speed_state(req, states, err_fn):
     if isinstance(req, str):
-        if req in ["h_shineChargeMaxRunway", "canWaterShineCharge", "canStutterWaterShineCharge", "canPreciseStutterWaterShineCharge", "h_shinechargeSlideTemporaryBlue"]:
+        if req in ["h_shinechargeMaxRunway", "canWaterShineCharge", "canStutterWaterShineCharge", "canPreciseStutterWaterShineCharge", "h_shinechargeSlideTemporaryBlue"]:
             states = {"shinecharging"}
         elif req in ["h_getBlueSpeedMaxRunway", "canSpeedKeep", "h_waterGetBlueSpeed", "h_stutterWaterGetBlueSpeed"]:
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
