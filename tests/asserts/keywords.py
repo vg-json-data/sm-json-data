@@ -837,8 +837,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             and s.get("exitCondition", {}).get("leaveWithGMode") is not None
                             for s in room["strats"]
                         ):
-                            if room["id"] == 321:
-                                # Toilet Bowl is an exception where there legitimately is no comeInWithGMode+leaveWithGMode strat
+                            if room["id"] == 321 or (room["id"] == 44 and node["id"] == 1):
+                                # Toilet Bowl (321) is an exception where there legitimately is no comeInWithGMode+leaveWithGMode strat
+                                # Green Brinstar Main Shaft (44) is also an exception because the elevator takes Samus to a G-mode junction which can lead back up
                                 pass
                             else:
                                 msg = f"🔴ERROR: Node disables useImplicitCarryGModeBackThrough but has no comeInWithGMode+leaveWithGMode strat: {nodeRef}:{node['name']}"
