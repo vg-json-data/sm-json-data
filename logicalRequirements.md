@@ -651,6 +651,32 @@ __Example:__
 {"noFlashSuit": {}}
 ```
 
+### Boss requirements
+
+#### Ridley kill
+
+A `ridleyKill` requirement represents the need to kill Ridley, including ammo and energy requirements depending on the player's assumed skill level and available items. The expected duration of the fight can be estimated based on the following:
+- Supers can be used once every 0.5 seconds.
+- Missiles can be used once every 0.34 seconds.
+- Power Bombs can be used once every 3 seconds.
+- A charged beam shot can be used once every 1.4 seconds.
+
+Patience requirements `canBePatient`, `canBeVeryPatient`, and `canBeExtremelyPatient` should be applied based on the expected duration of the fight.
+
+A leniency multiplier should normally be applied to the time taken between shots, as well as to the accuracy rate of shots hitting Ridley successfully.
+
+Heat frame requirements should be included for the period before the fight begins, as well as after the fight until drops occurs, which can be estimated (slightly generously) at 16 seconds, or 960 heat frames.
+
+If neither Morph nor Screw Attack are available, then at the highest skill level it can be assumed that the player takes unavoidable enemy damage at a rate of 10 energy per second. If Morph or Screw Attack is available, then it is possible to avoid all enemy damage, but for leniency normally some damage should still be assumed.
+
+A `ridleyKill` requirement has the following optional properties which modify the assumptions of the fight:
+* _gMode_: A boolean indicating if the fight happens in G-mode. If true, then Samus will be protected from heat damage, but Ridley's fireballs become invisible and immobile while still being dangerous to Samus.
+- _stuck_: A boolean indicating that the fight happens with Ridley stuck in a corner, where Samus can freely avoid damage from Ridley while inflicting damage to Ridley at a higher rate:
+  - Supers can be used once every 0.34 seconds.
+  - Missiles can be used once every 0.17 seconds.
+  - Power Bombs can be used once every 2.65 seconds.
+  - A charged beam shot can be used once every 1.1 seconds.
+
 ### Other requirements
 
 #### tech object
