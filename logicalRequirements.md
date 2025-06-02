@@ -655,15 +655,13 @@ __Example:__
 
 #### Ridley kill
 
-A `ridleyKill` requirement represents the need to kill Ridley, including ammo and energy requirements depending on the player's assumed skill level and available items. The expected duration of the fight can be estimated based on the following:
+A `ridleyKill` requirement represents the need to kill Ridley, including ammo and energy requirements depending on the player's assumed skill level and available items. The expected duration of the fight can be estimated based on the following assumptions:
 - Supers can be used once every 0.5 seconds.
 - Missiles can be used once every 0.34 seconds.
 - Power Bombs can be used once every 3 seconds.
 - A charged beam shot can be used once every 1.4 seconds.
 
-Patience requirements `canBePatient`, `canBeVeryPatient`, and `canBeExtremelyPatient` should be applied based on the expected duration of the fight.
-
-A leniency multiplier should normally be applied to the time taken between shots, as well as to the accuracy rate of shots hitting Ridley successfully.
+Heat frames are included based on the expected duration of the fight. Patience requirements `canBePatient`, `canBeVeryPatient`, and `canBeExtremelyPatient` are likewise also included. In both cases, a leniency multiplier should be applied to the time taken between shots. Leniency should also be applied based on the assumed accuracy rate of shots hitting Ridley successfully.
 
 Heat frame requirements should be included for the period before the fight begins, as well as after the fight until drops occurs, which can be estimated (slightly generously) at 16 seconds, or 960 heat frames.
 
@@ -672,7 +670,7 @@ If neither Morph nor Screw Attack are available, then at the highest skill level
 A `ridleyKill` requirement has the following optional properties which modify the assumptions of the fight:
 - _powerBombs_: A boolean indicating if Power Bombs can be used during the fight (default: true).
 - _gMode_: A boolean indicating if the fight happens in G-mode. If true, then Samus will be protected from heat damage, but Ridley's fireballs become invisible and immobile while still being dangerous to Samus.
-- _stuck_: An enum with possible values "top" or "bottom", indicating the part of the room where Ridley gets stuck, allowing Samus can freely avoid damage from Ridley while inflicting damage to Ridley. If Ridley is stuck at the bottom of the room, then damage can be inflicted at a higher rate (not taking into account lag, which may be increased by using a Crystal Flash in G-mode):
+- _stuck_: An enum with possible values "top" or "bottom", indicating the part of the room where Ridley gets stuck, allowing Samus can freely avoid damage from Ridley while inflicting damage to Ridley. If Ridley is stuck at the bottom of the room, then damage can be inflicted at a higher rate (not taking into account lag, which may be increased if a Crystal Flash is used in G-mode):
   - Supers can be used once every 0.34 seconds.
   - Missiles can be used once every 0.17 seconds.
   - Power Bombs can be used once every 2.65 seconds.
