@@ -670,7 +670,7 @@ If neither Morph nor Screw Attack are available, then at the highest skill level
 A `ridleyKill` requirement has the following optional properties which modify the assumptions of the fight:
 - _powerBombs_: A boolean indicating if Power Bombs can be used during the fight (default: true).
 - _gMode_: A boolean indicating if the fight happens in G-mode. If true, then Samus will be protected from heat damage, but Ridley's fireballs become invisible and immobile while still being dangerous to Samus.
-- _stuck_: An enum with possible values "top" or "bottom", indicating the part of the room where Ridley gets stuck, allowing Samus can freely avoid damage from Ridley while inflicting damage to Ridley. If Ridley is stuck at the bottom of the room, then damage can be inflicted at a higher rate (not taking into account lag, which may be increased if a Crystal Flash is used in G-mode):
+- _stuck_: An enum with possible values "top" or "bottom", indicating the part of the room where Ridley gets stuck, allowing Samus to freely avoid damage from Ridley while inflicting damage to Ridley. If Ridley is stuck at the bottom of the room, then damage can be inflicted at a higher rate (not taking into account lag, which may be increased if a Crystal Flash is used in G-mode):
   - Supers can be used once every 0.34 seconds.
   - Missiles can be used once every 0.17 seconds.
   - Power Bombs can be used once every 2.65 seconds.
