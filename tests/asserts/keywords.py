@@ -588,6 +588,7 @@ with open(keywordsPath, encoding="utf-8") as keywordsFile:
 
 keywords["values"] = [
     "never",
+    "free",
     "spinjump"
 ]
 

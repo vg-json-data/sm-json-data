@@ -7,6 +7,7 @@ A logical requirement is an array of logical elements, which are implicitly link
 * _The name of a tech._ Techs are defined in [tech.json](tech.json).  Those represent a technique that players can perform, which may also imply logical requirements of their own. By convention, a tech's name should start with `can`.
 * _The name of an item._ Those are defined in [items.json](items.json).
 * _The name of a game flag._ Those are defined in [items.json](items.json), and are used to represent game events such as defeating a boss, or breaking the Maridia tube. By convention, a game flag's name should start with `f_`.
+* _"free"._ This indicates a logical element that is automatically fulfilled.
 * _"never"._ This indicates a logical element that cannot be fulfilled under any conditions.
 * More complex elements which will be defined in their own sub-sections
 
@@ -658,8 +659,8 @@ __Example:__
 A `ridleyKill` requirement represents the need to kill Ridley, including ammo and energy requirements depending on the player's assumed skill level and available items. The expected duration of the fight can be estimated based on the following assumptions:
 - Supers can be used once every 0.5 seconds.
 - Missiles can be used once every 0.34 seconds.
-- Power Bombs can be used once every 3 seconds.
 - A charged beam shot can be used once every 1.4 seconds.
+- Power Bombs can be used once every 3 seconds.
 
 Heat frames are included based on the expected duration of the fight. Patience requirements `canBePatient`, `canBeVeryPatient`, and `canBeExtremelyPatient` are likewise also included. In both cases, a leniency multiplier should be applied to the time taken between shots. Leniency should also be applied based on the assumed accuracy rate of shots hitting Ridley successfully.
 
@@ -673,8 +674,8 @@ A `ridleyKill` requirement has the following optional properties which modify th
 - _stuck_: An enum with possible values "top" or "bottom", indicating the part of the room where Ridley gets stuck, allowing Samus to freely avoid damage from Ridley while inflicting damage to Ridley. If Ridley is stuck at the bottom of the room, then damage can be inflicted at a higher rate (not taking into account lag, which may be increased if a Crystal Flash is used in G-mode):
   - Supers can be used once every 0.34 seconds.
   - Missiles can be used once every 0.17 seconds.
-  - Power Bombs can be used once every 2.65 seconds.
   - A charged beam shot can be used once every 1.1 seconds.
+  - Power Bombs can be used once every 2.65 seconds, though because there is no known way to keep Ridley stuck while using Power Bombs, strats should set `powerBombs` to `false` when `stuck` is `true`.
 
 ### Other requirements
 
