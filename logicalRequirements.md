@@ -206,12 +206,17 @@ __Example:__
 ```
 
 #### cycleFrames object
-A `cycleFrames` object represents the need for Samus to spend time (measured as an amount of in-game frames) in a room as part of a farming cycle. Including a `cycleFrames` requirement is mandatory in farming strats with a [`farmCycleDrops`](strats.md#farm-cycle-drops) property. The `cycleFrames` can be used to determine how many cycles of a farm a player can reasonably be expected to perform, based on an assumed amount of "patience".
+A `cycleFrames` object represents the need for Samus to spend time (measured as an amount of in-game frames) in a room as part of a farming cycle. Including a `cycleFrames` requirement is mandatory in farming strats with a [`farmCycleDrops`](strats.md#farm-cycle-drops) property. The `cycleFrames` can be used to determine how many cycles of a farm a player can reasonably be expected to perform, based on an assumed amount of "patience". The frame counts listed tend to be somewhat optimized, so it recommended to apply a lenience factor based on difficulty.
 
 __Example:__
 ```json
 {"cycleFrames": 100}
 ```
+
+#### simpleCycleFrames object
+
+A `simpleCycleFrames` object represents the need for Samus to spend time (measured as an amount of in-game frames) in a room as part of a farming cycle. It is identical to `cycleFrames` except that the time spent in `simpleCycleFrames` is intended to be invariant, not affected by leniency. This can be useful in cases that involve doing something simple for a significant amount of time, such as standing in place while farming bugs.
+
 
 #### heatFrames object
 A `heatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for heated rooms is 1 damage every 4 frames, negated by Varia or Gravity Suit. The effect of Gravity suit on heat damage may be modified by randomizers. A `heatFrames` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
@@ -223,7 +228,11 @@ __Example:__
 
 __Additional considerations__
 
-Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be strictly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a leniency factor to those, possibly as an option that can vary by difficulty.
+Much like the other logical elements that represent environmental frame damage, the heat frame counts listed in this project might not be strictly "perfect" play, but they are very much unforgiving. Their most significant value is to provide relative lengths to different heat runs. It's recommended to apply a lenience factor to those, possibly as an option that can vary by difficulty.
+
+#### simpleHeatFrames object
+
+A `simpleHeatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. It is identical to `heatFrames` except that the time spent in `simpleHeatFrames` is intended to be invariant, not affected by leniency. This can be useful in cases that involve doing something simple for a significant amount of time, such as standing in place or running through a long hallway.
 
 #### heatFramesWithEnergyDrops object
 
