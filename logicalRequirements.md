@@ -242,6 +242,22 @@ __Example:__
 }}
 ```
 
+#### lavaFramesWithEnergyDrops object
+
+A `lavaFramesWithEnergyDrops` object represents the need for Samus to spend time in lava, but with the possibility of offsetting some of the lava damage using energy drops from enemies. Any lava damage is logically applied before the energy gain, so Samus must be able to survive the heat before picking up the drops. Any energy gain is logically capped to not exceed the heat damage, so this logical requirement cannot result in a net energy gain.
+
+The actual amount of energy gained typically depends on RNG and also on which ammo types are completely full. The drop probabilities for each enemy type is given in the [enemies](enemies/main.json) file. Because of the randomness involved, the logical amount of energy gain is open to various interpretations. For example, the mean, the median, or a lower confidence limit could be used.
+
+__Example:__
+```json
+{"lavaFramesWithEnergyDrops": {
+  "frames": 200,
+  "drops": [
+    {"enemy": "Fune", "count": 1}
+  ]
+}}
+```
+
 #### gravitylessHeatFrames object
 A `gravitylessHeatFrames` object represents Samus in a heated environment with Gravity Suit turned off, even if it is available. The number of frames here needs to be represented as `heatFrames` without the reduction effects given by Gravity Suit.
 
