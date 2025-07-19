@@ -25,7 +25,7 @@ def is_one_liner_dict(obj, parent_keys, nesting_allowed=True):
         return False
     if any(not is_allowed_one_line_key(x, parent_keys) for x in obj.keys()):
         return False
-    if len(obj) == 0:
+    if all(is_simple_value(x) for x in obj.values()):
         return True
     if len(obj) == 1:
         key, value = next(iter(obj.items()))
@@ -33,7 +33,7 @@ def is_one_liner_dict(obj, parent_keys, nesting_allowed=True):
             return False
         return is_one_liner(value, parent_keys + [key], nesting_allowed=nesting_allowed)
     else:
-        return all(is_simple_value(x) for x in obj.values())
+        return False
 
 
 def is_one_liner_list(obj, parent_keys, nesting_allowed=True):
