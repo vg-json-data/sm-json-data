@@ -627,23 +627,6 @@ A `leaveWithSuperSink` condition comes with an implicit tech requirement `canSup
 }
 ```
 
-
-#### Example
-```json
-{
-  "name": "Moondance to Store Fall Speed",
-  "requires": [
-    "h_canUseBombs",
-    "canMoondance"
-  ],
-  "exitCondition": {
-    "leaveWithStoredFallSpeed": {
-      "fallSpeedInTiles": 1
-    }
-  }
-}
-```
-
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one of the following properties:
