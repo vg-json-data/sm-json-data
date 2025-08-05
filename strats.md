@@ -90,6 +90,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithGrappleJump_: This indicates that Samus can go up through this door by grapple jumping, with no horizontal momentum.
 - _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
 - _leaveWithSamusEaterTeleport_: This indicates that Samus can leave through this door immediately after teleporting into a Samus Eater by exiting G-Mode.
+- _leaveWithSuperSink_: This indicates that Samus can leave through this door while morphed and continuing to gain fall speed from a super sink.
 
 Each of these properties is described in more detail below.
 
@@ -609,6 +610,23 @@ A `leaveWithSamusEaterTeleport` comes with an implicit tech requirement `canSamu
 }
 ```
 
+### Leave With Super Sink
+
+A `leaveWithSuperSink` exit condition represents that Samus can leave through this door morphed while continuing to gain fall speed from a super sink. A `leaveWithSuperSink` object has no properties.
+
+A `leaveWithSuperSink` condition comes with an implicit tech requirement `canSuperSink`.
+
+#### Example
+```json
+{
+  "name": "Leave With Super Sink",
+  "requires": [],
+  "entranceCondtion": {
+    "leaveWithSuperSink": {}
+  },
+}
+```
+
 ## Entrance conditions
 
 In all strats with an `entranceCondition`, the `from` node of the strat must be a door node or entrance node. An `entranceCondition` object must contain exactly one of the following properties:
@@ -643,6 +661,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithGrappleJump_: This indicates that Samus must come into the room by grapple jumping vertically through this door, with no horizontal momentum.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
 - _comeInWithSamusEaterTeleport_: This indicates that Samus must come into the room immediately after initiating a teleport into a Samus Eater by exiting G-Mode in the other room.
+- _comeInWithSuperSink_: This indicates that Samus must enter through this door while morphed and continuing to gain fall speed from a super sink.
 
 In addition it may contain the following property:
 
@@ -1568,7 +1587,7 @@ A `comeInWithGrappleTeleport` comes with an implicit tech requirement `canGrappl
 }
 ```
 
-## Come In  With Samus Eater Teleport
+### Come In With Samus Eater Teleport
 
 A `comeInWithSamusEaterTeleport` entrance condition represents that Samus must come into the room immediately after teleporting Samus to a Samus Eater in the other room, causing Samus to be placed in a different position in the current room.
 
@@ -1593,6 +1612,23 @@ A `comeInWithSamusEaterTeleport` comes with an implicit tech requirement `canSam
   "requires": [
     "Morph"
   ]
+}
+```
+
+### Come In With Super Sink
+
+A `comeInWithSuperSink` entrance condition represents that Samus must enter through this door morphed while continuing to gain fall speed from performing a super sink in the other room. A `comeInWithSuperSink` object has no properties.
+
+A `comeInWithSuperSink` condition comes with an implicit tech requirement `canSuperSink`.
+
+#### Example
+```json
+{
+  "name": "Super Sink",
+  "entranceCondtion": {
+    "comeInWithSuperSink": {}
+  },
+  "requires": []
 }
 ```
 
