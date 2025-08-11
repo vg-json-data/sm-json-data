@@ -1105,10 +1105,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             for platform in strat["entranceCondition"]["comeInWithSidePlatform"]["platforms"]:
                                 reqs.append(make_and(platform.get("requires", [])))
                             requires.append(make_or(reqs))
+                            if len(requires) == 1 and isinstance(requires[0], dict) and "and" in requires[0]:
+                                requires = requires[0]["and"]
                             
-                        for req in strat["requires"]:
+                        for req in requires:
                             check_and_or(req, strat_err_fn)
-                        if heated and not check_heat_req({"and": strat["requires"]}):
+                            if isinstance(req, dict) and "and" in req:
+                                strat_err_fn("'and' not allowed at top level.")
+                        
+                        if heated and not check_heat_req({"and": requires}):
                             if fromNode == toNode and "leaveWithRunway" in strat.get("exitCondition", []):
                                 # Ok since there is implicit heat frames in leavesWithRunway, and it is normal
                                 # if no explicit ones to be present for a strat going from the door to itself.
