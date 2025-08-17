@@ -231,12 +231,12 @@ def process_keyvalue(k, v, metadata):
                                     msg = f"🔴ERROR: {k}:{last_enemy} doesn't have attack '{v}'"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-                        last_enemy = ""
                     else:
                         msg = f"🔴ERROR: {last_enemy} not found!"
                         messages["reds"].append(msg)
                         messages["counts"]["reds"] += 1
             else:
+                last_enemy = ""
                 # if it doesn't match a known value type
                 if not isArea and \
                     not isEnemy and \
