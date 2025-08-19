@@ -1311,7 +1311,7 @@ A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode w
 A `comeInWithRMode` object does not have any properties.
 
 A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` entrance condition on the other side of the door. It comes with the following implicit requirements:
-- The tech requirement `canEnterRMode`.
+- The tech requirement `canRMode`.
 - The `XRayScope` item requirement.
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
@@ -1354,7 +1354,7 @@ A `comeInWithGMode` entrance condition must match with either a `leaveWithGModeS
 - If `mode` is "direct", then it can only match with a `leaveWithGModeSetup`. If `mode` is "indirect", then it can only match with a `leaveWithGMode`.
 
 When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit requirements:
-- The tech requirement `canEnterGMode`.
+- The tech requirement `canGMode`.
 - The requirement `h_heatedGMode` if either the previous room or current room is heated.
 - The `XRayScope` item requirement.
 - A requirement to have at least 1 reserve energy.
