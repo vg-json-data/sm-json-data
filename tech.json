@@ -2483,7 +2483,7 @@
         },
         {
           "id": 161,
-          "name": "canEnterRMode",
+          "name": "canRMode",
           "techRequires": [
             "canUseEnemies"
           ],
@@ -2499,7 +2499,7 @@
         },
         {
           "id": 162,
-          "name": "canEnterGMode",
+          "name": "canGMode",
           "techRequires": [
             "canUseEnemies",
             "canPreciseReserveRefill"
@@ -2530,7 +2530,7 @@
               "id": 205,
               "name": "canComplexGMode",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
@@ -2564,7 +2564,7 @@
               "id": 198,
               "name": "canHeatedGMode",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
@@ -2573,13 +2573,14 @@
                 "With slightly too much Energy, Samus can take damage then use X-Ray until her i-frames expire to immediately be able to take damage again.",
                 "While G-mode provides heat protection (sometimes referred to as 'artificial Varia'), entering G-mode in a heated room is risky, as a fail will likely result in death if Samus had only 4 Reserve Energy.",
                 "Exiting G-mode while in a heated environment will remove Samus' artificial heat protection; luring and killing an enemy near the door to collect its drop with a pause abuse is possible."
-              ]
+              ],
+              "devNote": "FIXME: This could be used for entering R-mode, with G-mode disabled. But for now, G-mode is more refined and easier to understand, so it would be somewhat odd to turn this on and not G-mode."
             },
             {
               "id": 163,
-              "name": "canEnterGModeImmobile",
+              "name": "canGModeImmobile",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
@@ -2593,7 +2594,7 @@
               "id": 164,
               "name": "canArtificialMorph",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
@@ -2607,12 +2608,14 @@
               "id": 206,
               "name": "canPowerBombItemOverloadPLMs",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
                 "Ability to overload PLMs by having a Power Bomb explosion interact with an item, while being able to optimally place them to overload PLMs with as few Power Bombs as possible.",
-                "The number of PLMs spawned is highly dependent on the distance between the bomb and the item.",
+                "The number of PLMs spawned is highly dependent on the distance between the bomb and the item."
+              ],
+              "detailNote": [
                 "There is a special distance from the item in which two Power Bombs can fully overload PLMs - 16 tiles away horizontally or 12 tiles vertically away from the item.",
                 "This magic distance forms a rectangle around the item, which is approximately one tile thick.",
                 "Slightly outside this rectangle will not spawn any PLMs, slightly inside of it will require dozens of Power Bombs to overload them.",
@@ -2626,7 +2629,7 @@
               "id": 194,
               "name": "canSamusEaterTeleport",
               "techRequires": [
-                "canEnterGMode"
+                "canGMode"
               ],
               "otherRequires": [],
               "note": [
@@ -2635,7 +2638,9 @@
                 "Exiting G-mode will teleport Samus to position where she touched the Samus Eater.",
                 "At the start of the door transition, Samus' X and Y pixel positions are reduced modulo 256 (the size of a screen),",
                 "so the relative position within the screen is all the matters (not the absolute position in the room).",
-                "The transition must be touched 2 frames after control is regained after releasing X-Ray.",
+                "The transition must be touched exactly 2 frames after control is regained after releasing X-Ray."
+              ],
+              "detailNote": [
                 "A normalized method to do this is to position Samus slightly more than 1 pixel from the door (but less than $1.3 pixels away),",
                 "then hold forward toward the door while X-Ray is released.",
                 "Correct subpixels for this method can be obtained in the following way: 1) jump and press against a wall above,",
@@ -2646,49 +2651,44 @@
                 "If Samus is 2 pixels away from the door after the final jump turnaround, then the position is correct;",
                 "if Samus is 1 pixel away from the door, then the position is incorrect, and the setup should be repeated."
               ]
-            },
-            {
-              "id": 165,
-              "name": "canDownwardGModeSetup",
-              "techRequires": [
-                "canEnterGMode"
-              ],
-              "otherRequires": [],
-              "note": [
-                "Ability to setup an R-mode or G-mode through a downward door or sand transition.",
-                "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition."
-              ],
-              "detailNote": [
-                "There are three known ways to enter a downward transition where X-Ray is usable on entry: 1) Clip into the floor next to the transition, then move forward to touch the transition.",
-                "2) Freeze an enemy on the ground above and near the transition, typically with 1-2 pixels of air horizontally between the enemy and the transition,",
-                "run and fall over the doorframe and hit the opposite wall to wall ice clip Samus into the wall to force a stand up, which will expand her hitbox to touch the transition.",
-                "3) Crouch in quicksand and press forward to stand up to expand Samus' hitbox and touch the transition on the first frame the hitbox expands."
-              ],
-              "devNote": "FIXME: This could be used for entering R-mode, with G-mode disabled. But for now, G-mode is more refined and easier to understand, so it would be somewhat odd to turn this on and not G-mode."
-            },
-            {
-              "id": 166,
-              "name": "canUpwardGModeSetup",
-              "techRequires": [
-                "canEnterGMode",
-                "canTwoTileSqueeze"
-              ],
-              "otherRequires": [],
-              "note": [
-                "Ability to setup an R-mode or G-mode through an upward door.",
-                "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition.",
-                "This is typically done by standing or crouching on an enemy as a platform beneath the transition and pressing forward to activate the transition."
-              ],
-              "detailNote": [
-                "Getting Samus onto the enemy without activating the transition can usually be done by spin jumping against the enemy and quickly releasing jump and forward once on top of it.",
-                "If the vertical space between the enemy and transition is 2 tiles or fewer, Samus needs to aim down before landing to prevent touching the transition as she lands.",
-                "it is also possible to get onto the enemy by jumping and aiming down with horizontal momentum while avoiding hitting the side of the enemy or the transition above.",
-                "This may also be done more easily with Spring Ball or a room geometry that makes it easy to midair morph directly onto the enemy.",
-                "Unmorphing when on top of the enemy will put Samus in a crouch, where a forward press will stand up and activate the transition.",
-                "If Samus is completely against the wall, an X-Ray turnaround or crouch is necessary to be able to activate the transition tiles with a forward press."
-              ],
-              "devNote": "FIXME: This could be used for entering R-mode, with G-mode disabled. But for now, G-mode is more refined and easier to understand, so it would be somewhat odd to turn this on and not G-mode."
             }
+          ]
+        },
+        {
+          "id": 165,
+          "name": "canDownwardGModeSetup",
+          "techRequires": [],
+          "otherRequires": [],
+          "note": [
+            "Ability to setup R-mode or G-mode through a downward door or sand transition.",
+            "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition."
+          ],
+          "detailNote": [
+            "There are three known ways to enter a downward transition where X-Ray is usable on entry: 1) Clip into the floor next to the transition, then move forward to touch the transition.",
+            "2) Freeze an enemy on the ground above and near the transition, typically with 1-2 pixels of air horizontally between the enemy and the transition,",
+            "run and fall over the doorframe and hit the opposite wall to wall ice clip Samus into the wall to force a stand up, which will expand her hitbox to touch the transition.",
+            "3) Crouch in quicksand and press forward to stand up to expand Samus' hitbox and touch the transition on the first frame the hitbox expands."
+          ]
+        },
+        {
+          "id": 166,
+          "name": "canUpwardGModeSetup",
+          "techRequires": [
+            "canTwoTileSqueeze"
+          ],
+          "otherRequires": [],
+          "note": [
+            "Ability to setup R-mode or G-mode through an upward door.",
+            "Samus needs to be in a standing or walking position with no vertical speed on the first frame in the next room, while taking damage through the transition.",
+            "This is typically done by standing or crouching on an enemy as a platform beneath the transition and pressing forward to activate the transition."
+          ],
+          "detailNote": [
+            "Getting Samus onto the enemy without activating the transition can usually be done by spin jumping against the enemy and quickly releasing jump and forward once on top of it.",
+            "If the vertical space between the enemy and transition is 2 tiles or fewer, Samus needs to aim down before landing to prevent touching the transition as she lands.",
+            "it is also possible to get onto the enemy by jumping and aiming down with horizontal momentum while avoiding hitting the side of the enemy or the transition above.",
+            "This may also be done more easily with Spring Ball or a room geometry that makes it easy to midair morph directly onto the enemy.",
+            "Unmorphing when on top of the enemy will put Samus in a crouch, where a forward press will stand up and activate the transition.",
+            "If Samus is completely against the wall, an X-Ray turnaround or crouch is necessary to be able to activate the transition tiles with a forward press."
           ]
         }
       ]
