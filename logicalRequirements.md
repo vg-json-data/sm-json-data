@@ -516,7 +516,7 @@ __Example:__
 
 __Additional considerations__
 
-* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object.
+* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object. A `canShineCharge` requirement causes a flash suit to be lost.
 
 #### getBlueSpeed object
 
