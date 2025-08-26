@@ -821,7 +821,7 @@ The length should not include any tiles that Samus skips over through the transi
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
 A `comeInShinecharging` object also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the current strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
-- A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement as well as a check that the combined runway length is long enough that charging a shinespark is possible.
+- A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement as well as a check that the combined runway length is long enough that charging a shinespark is possible. It also includes a requirement that a flash suit is lost.
 - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room.
 - If the current room is heated, then `heatFrames` are included based on the time spent running in this room.
 - If the previous door environment is water, then `Gravity` is required.
@@ -1082,7 +1082,7 @@ A `comeInWithTemporaryBlue` entrance condition indicates that Samus must come in
 
 A `comeInWithTemporaryBlue` entrance condition must match with one of the following exit conditions on the other side of the door: `leaveWithTemporaryBlue`, `leaveWithRunway`:
 
-- To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`. 
+- To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`, including the loss of a flash suit. 
 - A match with `leaveWithRunway` comes with implicit requirements:
   - The tech `canTemporaryBlue`.
   - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement).
