@@ -347,7 +347,11 @@ The `leaveSpaceJumping` object has the following properties:
 - _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) with which it is possible to leave with this condition. There is already an implicit speed limit based on the length of the remote runway (see the [full run speed table](#full-run-speed-table)), and for leaving with blue speed there is a different implicit limit based on a combination of runway length and shortcharging skill (see the [blue run speed table](#blue-run-speed-table)); so this property only needs to be specified as an additional constraint in case something else prevents Samus from reaching the door transition (in the needed positions) at high speeds.
 - _blue_: This takes one of three possible values, "yes", "no", or "any", indicating whether this strat can be used for leaving with blue speed, without blue speed, or either. The default is "any".
 
-A `leaveSpaceJumping` condition implicitly includes the `SpaceJump` item requirement. If it is used for blue speed in the next room, then it also implicitly includes a `canShinecharge` requirement (including the `SpeedBooster` item) and the `canBlueSpaceJump` tech requirement. Heat frames are not included and would have to described explicitly in the strat "requires".
+A `leaveSpaceJumping` condition comes with implicit requirements:
+- The `SpaceJump` item requirement.
+- A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
+- If used for blue speed in the next room, a `getBlueSpeed` requirement (including the `SpeedBooster` item) and the `canBlueSpaceJump` tech requirement. 
+- Heat frames are not included and would have to described explicitly in the strat "requires".
 
 #### Example
 ```json
@@ -769,7 +773,10 @@ A `comeInSpaceJumping` entrance condition indicates that Samus must come in with
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 
-A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with an implicit `SpaceJump` item requirement.
+A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with implicit requirements:
+
+- The `SpaceJump` item requirement.
+- A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
 
 ```json
 {
@@ -796,6 +803,7 @@ A `comeInBlueSpaceJumping` entrance condition indicates that Samus must come in 
 A `comeInBlueSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door, with the following requirements:
   - The `blue` property of the matching `leaveSpaceJumping` must be "yes" or "any".
   - `SpeedBooster` and `SpaceJump` item requirements.
+  - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
   - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
 
 ```json
