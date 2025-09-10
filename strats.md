@@ -1036,9 +1036,7 @@ A `comeInStutterGettingBlueSpeed` condition must match with a `leaveWithRunway` 
       "minTiles": 2
     }
   },
-  "requires": [
-    {"shinespark": {"frames": 60}}
-  ]
+  "requires": []
 }
 ```
 
