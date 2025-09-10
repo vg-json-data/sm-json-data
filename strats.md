@@ -1024,7 +1024,8 @@ A `comeInStutterGettingBlueSpeed` entrance condition indicates that Samus must r
 - _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
 
 A `comeInStutterGettingBlueSpeed` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
-- The helper `h_stutterWaterGetBlueSpeed`, which includes the `canStutterWaterShineCharge` tech and the `SpeedBooster` item, but while being able to retain a flash suit.
+- The `SpeedBooster` item.
+- The tech requirement `{"tech": "canStutterWaterShineCharge"}`. Note that this allows retaining a flash suit.
 - If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
 
 #### Example
@@ -1032,7 +1033,7 @@ A `comeInStutterGettingBlueSpeed` condition must match with a `leaveWithRunway` 
 {
   "name": "Come In Stutter Getting Blue Speed",
   "entranceCondition": {
-    "comeInStutterGettingBlueSpped": {
+    "comeInStutterGettingBlueSpeed": {
       "minTiles": 2
     }
   },
