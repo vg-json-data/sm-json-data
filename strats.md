@@ -1018,6 +1018,29 @@ A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` con
 }
 ```
 
+### Come In Stutter Getting Blue Speed
+
+A `comeInStutterGettingBlueSpeed` entrance condition indicates that Samus must run into the room with SpeedBooster equipped, with a stutter immediately before the transition. This is used when entering a water room in order to obtain blue speed in a shorter amount of space than would otherwise be possible. It has the following property:
+- _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
+
+A `comeInStutterGettingBlueSpeed` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
+- The `SpeedBooster` item.
+- The tech requirement `{"tech": "canStutterWaterShineCharge"}`. Note that this allows retaining a flash suit.
+- If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
+
+#### Example
+```json
+{
+  "name": "Come In Stutter Getting Blue Speed",
+  "entranceCondition": {
+    "comeInStutterGettingBlueSpeed": {
+      "minTiles": 2
+    }
+  },
+  "requires": []
+}
+```
+
 ### Come In With Bomb Boost
 
 A `comeInWithBombBoost` entrance condition indicates that Samus must come into the room with a horizontal bomb boost. This object has no properties.
