@@ -1636,7 +1636,7 @@ A `comeInWithSamusEaterTeleport` comes with an implicit tech requirement `canSam
   "name": "Samus Eater Teleport",
   "entranceCondition": {
     "comeInWithSamusEaterTeleport": {
-      "floorPositions": [[12, 13], [14, 13], [15, 13]],
+      "floorPositions": [[12, 13], [13, 13], [15, 13]],
       "ceilingPositions": []
     }
   },
