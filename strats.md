@@ -911,7 +911,7 @@ A `comeInShinecharged` entrance condition represents the need for Samus to run o
 
 A strat with a `comeInShinecharged` condition should include a `shineChargeFrames` logical requirement to account for shinecharge frames that are required in order to be able to position for the spark (or to reach the ending location of the strat, if the shinecharge is still active). The shinecharge frame counts are based on highly skilled (but humanly viable) play; leniency could be added by adjusting these counts or reducing the assumed starting shinecharge frames of 180. A `shinespark` requirement should also be included in the `requires`; alternatively it may include a `leaveShinecharged` exit condition or `"endsWithShineCharge": true` property, if the shinecharge is still active at the end of the strat.
 
-A `comeInShinecharged` must match with either a `leaveShinecharged` condition or a `leaveWithRunway` condition on the other side of the door. 
+A `comeInShinecharged` must match with a `leaveShinecharged`, `leaveWithRunway`, or `leaveNormally` condition on the other side of the door:
 
 - A `comeInShinecharged` condition has no implicit requirements when matched with a `leaveShinecharged` conditions: all requirements in the other room are assumed to be explicitly accounted for in the strat with the `leaveShinecharged`.
 
@@ -919,6 +919,8 @@ A `comeInShinecharged` must match with either a `leaveShinecharged` condition or
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 10 heat frames are assumed for leaving the room after the shinecharge is obtained.
   - If the previous door environment is water, then `Gravity` is required.
+
+- A `comeInShinecharged` condition matches with a `leaveNormally` condition, with a `{"useFlashSuit": {}}` requirement.
 
 In every case, a `comeInShinecharged` condition comes with an implicit requirement of `canShinechargeMovement` tech. 
 
@@ -967,7 +969,7 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 
 A strat with a `comeInWithSpark` condition should include a `shinespark` requirement in its `requires`.
 
-A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, or `leaveWithRunway` condition on the other side of the door:
+A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, `leaveWithRunway`, or `leaveNormally` condition on the other side of the door:
 
 - A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
 - A match with `leaveShinecharged` is always valid. It comes with an implicit requirement of `canShinechargeMovement`.
@@ -975,6 +977,7 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveS
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
+- A match with `leaveNormally` comes with a `{"useFlashSuit": {}}` requirement.
 
 In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canMidairShinespark` if the `position` property is "top" in either the `comeInWithSpark` or a matching `leaveWithSpark`.
 
