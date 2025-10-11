@@ -403,6 +403,7 @@ A `leaveWithGModeSetup` object contains the following property:
 
 A `leaveWithGModeSetup` comes with implicit requirements, which are described in detail under the entrance conditions `comeInWithRMode` and `comeInWithGMode`. The implicit requirements depend on the specifics of the entrance condition in the next room, but they always include at least the following:
 - The `XRayScope` item requirement.
+- A requirement `{"or": ["canBlueSuitGModeSetup", {"noBlueSuit": {}}]}`.
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves.
 
@@ -677,9 +678,7 @@ Each of these properties is described in more detail below.
 
 A `comeInNormally` entrance condition represents the need for Samus to enter the room through this door, with no other particular requirements. It has no properties.
 
-A `comeInNormally` condition can be satisfied by a matching strat on the other side of the door with a `leaveNormally` or `leaveWithRunway` exit condition. 
-
-When matching with a `leaveWithRunway` condition in a heated room on a strat having distinct `from` and `to` nodes, heat frame requirements must be included for the run performed in the other room; for details, see the `comeInRunning` condition below.
+A `comeInNormally` condition can be satisfied by a matching strat on the other side of the door with a `leaveNormally` exit condition. 
 
 #### Example
 ```json
@@ -704,9 +703,10 @@ A `comeInRunning` condition can be satisfied only by a matching strat on the oth
 
 Where applicable, a `comeInRunning` condition also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
 - If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
-- If `speedBooster` is false, then there is an implicit `canDisableEquipment` tech requirement.
+- If `speedBooster` is false, then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
 - If the previous room is heated, then `heatFrames` are required based on the time needed to perform the run. 
 - If the previous door environment is water, then `Gravity` is required.
+- In every case, there is an implicit `canDash` requirement (including loss of any blue suit).
 
 Heat frames may be calculated based on the following table of approximations (which include almost no lenience):
 
@@ -749,7 +749,7 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 
-`comeInJumping` is very similar to `comeInRunning`, the only difference being the jump which happens just before the transition. Heat frames and other implicit requirements are generated in exactly the same way.
+`comeInJumping` is very similar to `comeInRunning`, the only difference being the jump which happens just before the transition. Heat frames and other implicit requirements are generated in the same way, except that the `canDash` requirement is omitted in case `minTiles` is 0.
 
 #### Example
 ```json
@@ -775,7 +775,10 @@ A `comeInSpaceJumping` entrance condition indicates that Samus must come in with
 
 A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with implicit requirements:
 
+- If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
+- If `speedBooster` is false, then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
 - The `SpaceJump` item requirement.
+- The `canDash` tech requirement (including loss of any blue suit).
 - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
 
 ```json
@@ -803,6 +806,7 @@ A `comeInBlueSpaceJumping` entrance condition indicates that Samus must come in 
 A `comeInBlueSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door, with the following requirements:
   - The `blue` property of the matching `leaveSpaceJumping` must be "yes" or "any".
   - `SpeedBooster` and `SpaceJump` item requirements.
+  - The `canDash` tech requirement (including loss of any blue suit).
   - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
   - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
 
@@ -829,7 +833,7 @@ The length should not include any tiles that Samus skips over through the transi
 A `comeInShinecharging` must match with a corresponding `leaveWithRunway` condition on the other side of the door. 
 
 A `comeInShinecharging` object also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the current strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
-- A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement as well as a check that the combined runway length is long enough that charging a shinespark is possible. It also includes a requirement that a flash suit is lost.
+- A `canShinecharge` requirement is included based on the combined runway length. This includes a `SpeedBooster` item requirement, the `canDash` tech requirement, as well as a check that the combined runway length is long enough that charging a shinespark is possible. It also includes a requirement that any flash suit or blue suit is lost.
 - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room.
 - If the current room is heated, then `heatFrames` are included based on the time spent running in this room.
 - If the previous door environment is water, then `Gravity` is required.
@@ -889,7 +893,7 @@ A `comeInGettingBlueSpeed` entrance condition represents the need for Samus to r
 
 A `comeInGettingBlueSpeed` must match with a corresponding `leaveWithRunway` condition on the other side of the door, and it includes the same requirements as a `comeInShinecharging` except with a `getBlueSpeed` requirement in place of a `canShinecharge`.
 
-Note that a `comeInGettingBlueSpeed` entrance condition is compatible with preserving a flash suit, while `comeInShinecharging` is not.
+Note that a `comeInGettingBlueSpeed` entrance condition is compatible with preserving a flash suit, while `comeInShinecharging` is not; but both will lose a blue suit.
 
 #### Example
 ```json
@@ -920,7 +924,7 @@ A `comeInShinecharged` must match with a `leaveShinecharged`, `leaveWithRunway`,
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with. An extra 10 heat frames are assumed for leaving the room after the shinecharge is obtained.
   - If the previous door environment is water, then `Gravity` is required.
 
-- A `comeInShinecharged` condition matches with a `leaveNormally` condition, with a `{"useFlashSuit": {}}` requirement.
+- A `comeInShinecharged` condition matches with a `leaveNormally` condition, with a `"or": [{"useFlashSuit": {}}, {"blueSuitShinecharge": {}}]` requirement.
 
 In every case, a `comeInShinecharged` condition comes with an implicit requirement of `canShinechargeMovement` tech. 
 
@@ -977,7 +981,7 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveS
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
-- A match with `leaveNormally` comes with a `{"useFlashSuit": {}}` requirement.
+- A match with `leaveNormally` comes with a `"or": [{"useFlashSuit": {}}, {"blueSuitShinecharge": {}}]` requirement.
 
 In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canMidairShinespark` if the `position` property is "top" in either the `comeInWithSpark` or a matching `leaveWithSpark`.
 
@@ -1028,8 +1032,10 @@ A `comeInStutterGettingBlueSpeed` entrance condition indicates that Samus must r
 
 A `comeInStutterGettingBlueSpeed` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
 - The `SpeedBooster` item.
+- The tech requirement `canDash` (including loss of any blue suit).
 - The tech requirement `{"tech": "canStutterWaterShineCharge"}`. Note that this allows retaining a flash suit.
 - If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
+
 
 #### Example
 ```json
@@ -1102,7 +1108,7 @@ Note that a `comeInSpeedballing` entrance condition can always be satisfied by c
 
 A `comeInSpeedballing` entrance condition must match with one of the following conditions on the other side of the door: `leaveWithRunway`, `leaveSpinning`, `leaveWithMockball`. 
 
-In every case, there is an implicit tech requirement of `canSpeedball`. A match with a `leaveWithRunway` comes with the following implicit requirements:
+In every case, there is an implicit tech requirement of `canSpeedball` (including the Morph item and a loss of any blue suit). A match with a `leaveWithRunway` comes with the following implicit requirements:
   - A `speedBall` requirement based on the combined runway length.
   - If the previous door environment is water, then `Gravity` is required.
   - If the previous room is heated, then `heatFrames` are required based on the time needed. This can be calculated in the same way as for `comeInShinecharging`.
@@ -1119,7 +1125,7 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 - To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`, including the loss of a flash suit. 
 - A match with `leaveWithRunway` comes with implicit requirements:
   - The tech `canTemporaryBlue`.
-  - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement).
+  - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement and `canDash` tech requirement, including loss of any blue suit).
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. An extra `{"heatFrames": 200}` is assumed for gaining temporary blue and leaving the room.
   - If the previous door environment is water, then `Gravity` is required.
 
@@ -1141,6 +1147,8 @@ A `comeInSpinning` entrance condition must match with a `leaveSpinning` or `leav
   - There must exist a possible value of extra run speed satisfying any applicable constraints: `minExtraRunSpeed` or `maxExtraRunSpeed` in the entrance condition, and the effective runway length (with `unusableTiles` subtracted) in the exit condition (see the [full run speed table](#full-run-speed-table)).
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInRunning`, except here there is no second runway to combine with. The `unusableTiles` are ignored (i.e. not subtracted) for the purposes of determining heat frames, since heat damage is still taken during the jump.
   - If the previous door environment is water, then `Gravity` is required.
+
+In every case, if non-zero speed is required, then `canDash` is required (including loss of any blue suit).
 
 ```json
 {
@@ -1174,6 +1182,8 @@ A `comeInBlueSpinning` entrance condition must match with a `leaveSpinning` or `
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. The `unusableTiles` are ignored (i.e. not subtracted) for the purposes of determining heat frames, since heat damage is still taken during the jump.
   - If the previous door environment is water, then `Gravity` is required.
 
+In every case `canDash` is required (including loss of any blue suit).
+
 ```json
 {
   "name": "Come In Blue Spinning",
@@ -1199,7 +1209,7 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 - A match with `leaveWithMockball` has the following requirements:
   - The `blue` property of `leaveWithMockball` must be "no" or "any".
   - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
-  - The `canMockball` tech (including `Morph` item).
+  - The `canMockball` tech (including `Morph` item and `canDash` tech requirement, including loss of any blue suit).
 - A match with `leaveWithRunway` has the following requirements:
   - The effective runway length must be at least `adjacentMinTiles`.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
@@ -1231,7 +1241,7 @@ A `comeInWithSpringBallBounce` entrance condition indicates that Samus must ente
   - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
 A `comeInWithSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
-- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items) is implicitly required.
+- The `canSpringBallBounce` tech is implicitly required (including `Morph` and `SpringBall` items, and the `canDash` tech, including loss of any blue suit).
 
 There are additional requirements depending on the exit condition:
 
@@ -1249,7 +1259,7 @@ There are additional requirements depending on the exit condition:
   - The effective runway length must be at least `adjacentMinTiles`.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
   - If the previous door environment is water, then `Gravity` is required.
-  - The `canMockball` tech (including `Morph` item) is required.
+  - The `canMockball` tech is required.
 
 
 ```json
@@ -1278,9 +1288,9 @@ A `comeInWithBlueSpringBallBounce` entrance condition indicates that Samus must 
   - "controlled" refers to movement type $12, which occurs when jumping using Spring Ball while rolling on the ground (e.g. from a mockball). In this state it is possible to control the height of each bounce by releasing jump.
   - "uncontrolled" refers to movement type $13, which occurs when performing a lateral mid-air morph high enough that the morph animation completes before landing and bouncing. This state also occurs when rolling off of a ledge (e.g. after a mockball). In this state, Samus' horizontal speed will reach a slightly higher value, and without the need for a longer landing platform to accelerate on. However, it will not be possible to control the height of the bounce.
 
-A `comeInWithBlueSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirement applies in every case:
-- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items).
-- The `Speedbooster` item.
+A `comeInWithBlueSpringBallBounce` entrance condition must match with a `leaveWithSpringBallBounce`, `leaveWithMockball`, or `leaveWithRunway` on the other side of the door. The following requirements apply in every case:
+- The `canSpringBallBounce` tech (including `Morph` and `SpringBall` items, and the `canDash` tech, including loss of any blue suit).
+- The `SpeedBooster` item.
 - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the runway in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
 
 There are additional requirements depending on the exit condition:
@@ -1391,6 +1401,7 @@ When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit req
 - The tech requirement `canGMode`.
 - The requirement `h_heatedGMode` if either the previous room or current room is heated.
 - The `XRayScope` item requirement.
+- A requirement `{"or": ["canBlueSuitGModeSetup", {"noBlueSuit": {}}]}`.
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
 - The requirement `{"or": ["Morph", "canArtificialMorph"]}`, if the `morphed` property of `comeInWithGMode` is true.
@@ -1479,7 +1490,7 @@ $$\text{minHeight} \leq \text{height} \leq \text{maxHeight}$$
 $$\text{leftPosition} \leq \text{maxLeftPosition}$$
 $$\text{rightPosition} \geq \text{minRightPosition}$$
 
-A `comeInWithPlatformBelow` entrance condition has no implicit requirements.
+A `comeInWithPlatformBelow` entrance condition has no implicit requirements. A `canSpeedyJump` requirement is commonly needed and should be explicitly included if applicable.
 
 __Example:__
 ```json
@@ -1519,7 +1530,7 @@ A `comeInWithSidePlatform` entrance condition must match with a `leaveWithSidePl
 
 Any logical requirements of a matching platform object are treated as being prepended to the strat `requires`. If multiple platform objects match, then their `requires` are considered to be joined by an `or`.
 
-A `comeInWithSidePlatform` entrance condition has an implicit requirement of `canSidePlatformCrossRoomJump` tech.
+A `comeInWithSidePlatform` entrance condition has an implicit requirement of `canSidePlatformCrossRoomJump` tech (including loss of any blue suit).
 
 __Example:__
 ```json
@@ -1573,7 +1584,8 @@ A `comeInWithGrappleSwing` implicitly comes with a `canPreciseGrapple` requireme
   "requires": [
     "canGrappleJump"
   ]
-}```
+}
+```
 
 ## Come In With Grapple Jump
 
