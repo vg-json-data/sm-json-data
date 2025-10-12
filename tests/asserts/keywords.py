@@ -483,7 +483,7 @@ def process_req_speed_state(req, states, err_fn):
             states = {"blue"}
         elif req in ["h_flashSuitIceClip"]:
             states = {"preshinespark"}
-        elif req in ["h_smallFarmRModeSpark"]:
+        elif req in ["h_smallFarmRModeKnockbackSpark"]:
             if not states.issubset(["shinecharging", "shinecharged"]):
                 err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
             states = {"shinespark"}
