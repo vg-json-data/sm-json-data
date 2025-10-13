@@ -776,6 +776,7 @@ A `comeInSpaceJumping` entrance condition indicates that Samus must come in with
 A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with implicit requirements:
 
 - The `SpaceJump` item requirement.
+- A `canSidePlatformCrossRoomJump` tech requirement.
 - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
 
 ```json
@@ -803,6 +804,7 @@ A `comeInBlueSpaceJumping` entrance condition indicates that Samus must come in 
 A `comeInBlueSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door, with the following requirements:
   - The `blue` property of the matching `leaveSpaceJumping` must be "yes" or "any".
   - `SpeedBooster` and `SpaceJump` item requirements.
+  - A `canSidePlatformCrossRoomJump` tech requirement.
   - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
   - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
 
