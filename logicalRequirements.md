@@ -777,4 +777,6 @@ __Example:__
 {"disableEquipment": "HiJump"}
 ```
 
-Note that while carrying a blue suit, disabling Speed Booster would result in a loss of the blue suit.
+While carrying a blue suit, disabling Speed Booster would result in a loss of the blue suit.
+
+Note that the requirement `{"disableEquipment": "ETank"}` occurs in some strats. This is not a functionality of the vanilla game but may be supported in randomizers or other modifications of the game: it means that the player has a way to control the amount of ETanks that are currently active. It is commonly required in R-mode strats where the player may need to farm non-respawning enemies in the room to put energy back into reserves.
