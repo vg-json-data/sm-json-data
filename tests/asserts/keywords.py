@@ -333,7 +333,7 @@ def check_shinecharge_req(req):
 def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_heatedCrystalFlash", "h_heatedLavaCrystalFlash", "h_heatedAcidCrystalFlash",
-                   "h_LowerNorfairElevatorDownwardFrames",
+                   "h_heatedCrystalSpark", "h_LowerNorfairElevatorDownwardFrames",
                    "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_heatedGreenGateGlitch",
                    "h_heatedDirectGModeLeaveSameDoor", "h_heatedIndirectGModeOpenSameDoor",
                    "h_heatedGModeOpenDifferentDoor", "h_heatedGModeOffCameraDoor", "h_heatedGModePauseAbuse",
@@ -473,6 +473,19 @@ def covers_shinecharge_frames(req):
             return False
 
 
+def check_disallowed_reqs(req, err_fn):
+    if isinstance(req, dict):
+        if "or" in req:
+            for r in req["or"]:
+                check_disallowed_reqs(r, err_fn)
+        elif "and" in req:
+            for r in req["and"]:
+                check_disallowed_reqs(r, err_fn)
+    if isinstance(req, str):
+        if req in ["canCrystalSpark"]:
+            err_fn(f"{req} disallowed outside of helper.")
+                            
+
 def process_req_speed_state(req, states, err_fn):
     if isinstance(req, str):
         if req in ["h_shinechargeMaxRunway", "canWaterShineCharge", "canStutterWaterShineCharge", "canPreciseStutterWaterShineCharge", "h_shinechargeSlideTemporaryBlue"]:
@@ -483,18 +496,14 @@ def process_req_speed_state(req, states, err_fn):
             states = {"blue"}
         elif req in ["h_flashSuitIceClip"]:
             states = {"preshinespark"}
-        elif req in ["h_RModeKnockbackSpark"]:
+        elif req in ["h_CrystalSpark", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "h_RModeKnockbackSpark"]:
             if not states.issubset(["shinecharging", "shinecharged"]):
-                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
-            states = {"shinespark"}
-        elif req in ["h_SpikeXModeSpikeSuit"]:
+                err_fn(f"{req} while not shinecharging/shinecharged")            
+            states = {"normal"}
+        elif req in ["h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit"]:
             if not states.issubset(["shinecharging", "shinecharged"]):
-                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
-            states = {"shinespark"}
-        elif req in ["h_ThornXModeSpikeSuit"]:
-            if not states.issubset(["shinecharging", "shinecharged"]):
-                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
-            states = {"shinespark"}
+                err_fn(f"{req} while not shinecharging/shinecharged")            
+            states = {"preshinespark"}          
         elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball", "canXRayCancelShinecharge"]:
             if not states.issubset(["shinecharging", "blue"]):
                 err_fn(f"{req} while not in blue state")
@@ -1241,6 +1250,11 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat name contains 'G-Mode Regain Mobility' but strat has no gModeRegainMobility property:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+
+                        def generic_err_fn(msg):
+                            messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
+                            messages["counts"]["reds"] += 1
+                        check_disallowed_reqs({"and": strat["requires"]}, generic_err_fn)
 
                         def speed_err_fn(msg):
                             messages["reds"].append(f"🔴ERROR: Invalid speed state transition:{stratRef}:{msg}")
