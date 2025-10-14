@@ -127,6 +127,8 @@ A `shinespark` object represents the need for Samus to spend energy performing a
 * _frames_: The duration of the shinespark in frames, assuming the spark is completed without being interrupted by reaching 29 energy. The shinespark frames equals the amount of energy spent, as a shinespark uses 1 energy per frame. 
 * _excessFrames_: The shinespark duration (in frames) that is not required to complete the objective of the shinespark. Subtracting this from the `frames` defines the lower limit of the shinespark energy cost.
 
+A `shinespark` requirement causes a blue suit to be lost.
+
 #### acidFrames object
 An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
 
@@ -516,13 +518,12 @@ __Example:__
 
 __Additional considerations__
 
-* A `canShineCharge` object implicitly requires the Speed Booster. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object. A `canShineCharge` requirement causes a flash suit to be lost.
+* A `canShineCharge` object implicitly requires the Speed Booster item and `canDash` tech. Energy requirements for the shinespark (if applicable) are specified separately using a `shinespark` object. A `canShineCharge` requirement causes a loss of any flash suit or blue suit.
 
 #### getBlueSpeed object
 
-A `getBlueSpeed` object represents the need for Samus to be able to gain blue speed using a specified runway. It is very similar to `canShineCharge`, including the same set of properties, except that `getBlueSpeed` does not involve crouching to enter a shinecharge state for performing a shinespark. Instead, `getBlueSpeed` involves using the blue speed directly, such as to destroy enemies, bomb blocks, or Speed blocks.
+A `getBlueSpeed` object represents the need for Samus to be able to gain blue speed using a specified runway. It is very similar to `canShineCharge`, including the same set of properties and the same implicit requirements, except that `getBlueSpeed` does not result in the loss of flash suit (it does still result in loss of blue suit). Instead of crouching to enter a shinecharge state for performing a shinespark, `getBlueSpeed` involves using the blue speed directly, such as to destroy enemies, bomb blocks, or Speed blocks.
 
-Note that a `getBlueSpeed` requirement is compatible with preserving a flash suit, while `canShinecharge` is not.
 
 __Example:__
 ```json
@@ -534,10 +535,9 @@ __Example:__
 }},
 ```
 
-
 #### speedBall object
 
-A `speedBall` object represents the need for Samus to be able to gain blue speed and jump into a speedball using a specified runway. It includes a `canSpeedball` tech requirement. Whether a speedball can performed within a given runway length depends on the player's ability to shortcharge as well as to perform a short-hop mockball. The [blue run speed table](strats.md#blue-run-speed-table) describes several tiers of shortcharging skill, their associated runway lengths over which blue speed can be attained, and the resulting run speed. For determining whether a speedball is logically possible, the lowest run speed should be used within the range of what is possible for that skill level; this corresponds to using the "Ideal speed" from the table. The total runway length required can then be computed as follows:
+A `speedBall` object represents the need for Samus to be able to gain blue speed and jump into a speedball using a specified runway. It includes a `canSpeedball` requirement. Whether a speedball can performed within a given runway length depends on the player's ability to shortcharge as well as to perform a short-hop mockball. The [blue run speed table](strats.md#blue-run-speed-table) describes several tiers of shortcharging skill, their associated runway lengths over which blue speed can be attained, and the resulting run speed. For determining whether a speedball is logically possible, the lowest run speed should be used within the range of what is possible for that skill level; this corresponds to using the "Ideal speed" from the table. The total runway length required can then be computed as follows:
 
 $$\text{minimum speedball runway} = \text{minimal blue speed runway} + \text{short-hop mockball frames} * \text{mid-air speed}$$
 
@@ -677,6 +677,52 @@ __Example:__
 {"noFlashSuit": {}}
 ```
 
+#### gainBlueSuit object
+
+A `gainBlueSuit` object represents that Samus gains a blue suit as part of executing this strat. A blue suit is a special state in which Samus remains blue indefinitely, being able to pass through and destroy bomb blocks, Speed blocks, and most enemies. This state can potentially be carried to distant rooms from where the blue suit was gained. 
+
+A `gainBlueSuit` object has no properties.
+
+With certain exceptions explained below, a blue suit can generally be carried around by any sequence of strats until some action is taken which would cause the blue suit to be lost. The need to perform actions that cannot preserve a blue suit are indicated by a `noBlueSuit` logical requirement; typically this is expressed indirectly through tech or helpers, most notably `canDash`.
+
+The process of verifying which strats allow preserving a blue suit is not yet complete. Strats which have been checked are indicated by a property `"blueSuitChecked": true`. Any strat without this property should be assumed to be logically unusable for carrying a blue suit, as though the strat had an extra requirement `{"noBlueSuit": {}}` appended. Note that a strat with `"blueSuitChecked": true` may or may not be able to preserve a blue suit, depending on its logical requirements.
+
+__Example:__
+```json
+{"gainBlueSuit": {}}
+```
+
+#### haveBlueSuit object
+
+A `haveBlueSuit` indicates a need to have a blue suit. This does not consume the blue suit.
+
+__Example:__
+```json
+{"haveBlueSuit": {}}
+```
+
+#### blueSuitShinecharge object
+
+A `blueSuitShinecharge` indicates a need to have a blue suit, in order to perform a shinecharge. A strat with `blueSuitShinecharge` should have a subsequent `shinespark` logical requirement to specify the energy loss from shinesparking, and the `shinespark` requirement will result in the loss of the blue suit.
+
+A `blueSuitShinecharge` object has no properties.
+
+__Example:__
+```json
+{"blueSuitShinecharge": {}}
+```
+
+#### noBlueSuit
+
+A `noBlueSuit` indicates a need to perform actions that are incompatible with preserving a blue suit; it therefore requires that Samus not be in a blue suit state.
+
+A `noBlueSuit` object has no properties.
+
+__Example:__
+```json
+{"noBlueSuit": {}}
+```
+
 ### Boss requirements
 
 #### Ridley kill
@@ -730,3 +776,7 @@ __Example:__
 ```json
 {"disableEquipment": "HiJump"}
 ```
+
+While carrying a blue suit, disabling Speed Booster would result in a loss of the blue suit.
+
+Note that the requirement `{"disableEquipment": "ETank"}` occurs in some strats. This is not a functionality of the vanilla game but may be supported in randomizers or other modifications of the game: it means that the player has a way to control the amount of ETanks that are currently active. It is commonly required in R-mode strats where the player may need to farm non-respawning enemies in the room to put energy back into reserves.
