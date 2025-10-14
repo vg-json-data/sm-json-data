@@ -556,6 +556,7 @@
                   "id": 37,
                   "name": "canLateralMidAirMorph",
                   "techRequires": [
+                    "canDash",
                     "canMidAirMorph"
                   ],
                   "otherRequires": [],
@@ -587,9 +588,11 @@
                       "id": 40,
                       "name": "canStationaryLateralMidAirMorph",
                       "techRequires": [
-                        "canLateralMidAirMorph"
+                        {"tech": "canLateralMidAirMorph"}
                       ],
-                      "otherRequires": [],
+                      "otherRequires": [
+                        "Morph"
+                      ],
                       "note": [
                         "While performing a stationary vertical jump and after the first down press, Morph with down and forward being pressed on the same frame (neither before the other).",
                         "Doing this immediately gives a noticable horizontal speed boost.",
@@ -606,6 +609,7 @@
           "id": 41,
           "name": "canMockball",
           "techRequires": [
+            "canDash",
             "canMidAirMorph"
           ],
           "otherRequires": [],
@@ -637,6 +641,7 @@
           "name": "canBounceBall",
           "techRequires": [],
           "otherRequires": [
+            "canDash",
             "Morph"
           ],
           "note": "Using Morph to retain momentum when transitioning to water physics."
@@ -705,6 +710,7 @@
           "name": "canMomentumConservingMorph",
           "techRequires": [],
           "otherRequires": [
+            "canDash",
             "Morph"
           ],
           "note": [
@@ -989,6 +995,7 @@
               ]
             }
           ]
+
         },
         {
           "id": 185,
@@ -1380,16 +1387,6 @@
             "The bottom of Samus' hitbox must be completely in the respawning block or she will fall out.",
             "Because of this, it is typically required to aim down or morph to stay in the block."
           ]
-        },
-        {
-          "id": 197,
-          "name": "canSidePlatformCrossRoomJump",
-          "techRequires": [],
-          "otherRequires": [],
-          "note": [
-            "The ability to jump through a horizontal door transition from a nearby platform below the doorway,",
-            "jumping close and low enough through the door to be able to pass through while carrying upward momentum into the next room."
-          ]
         }
       ]
     },
@@ -1669,8 +1666,14 @@
               "techRequires": [
                 "canUseEnemies"
               ],
-              "otherRequires": [],
+              "otherRequires": [
+                {"noBlueSuit": {}}
+              ],
               "note": "Using the small vertical knockback from taking enemy damage, while not holding any directional inputs, to assist Samus in her movement.",
+              "devNote": [
+                "A damage boost can be performed with a blue suit if Samus is stationary,",
+                "but that is not the normal expectation of this tech and would be specified using an override or helper."
+              ],
               "extensionTechs": [
                 {
                   "id": 104,
@@ -2082,6 +2085,44 @@
       "description": "Techs related to Speed Booster use. Note that short charging is not a tech per se.",
       "techs": [
         {
+          "name": "canDash",
+          "techRequires": [],
+          "otherRequires": [
+            {"noBlueSuit": {}}
+          ],
+          "note": [
+            "The ability to use the dash button to gain run speed."
+          ],
+          "devNote": [
+            "This is ability is very simple, but it is useful to model since dashing may not be possible in some contexts,",
+            "such as while carrying a blue suit."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canSpeedyJump",
+              "techRequires": ["canDash"],
+              "otherRequires": [
+                "SpeedBooster"
+              ],
+              "note": [
+                "The ability to use dash speed with Speed Booster to jump higher."
+              ],
+              "extensionTechs": [
+                {
+                  "id": 197,
+                  "name": "canSidePlatformCrossRoomJump",
+                  "techRequires": ["canSpeedyJump"],
+                  "otherRequires": [],
+                  "note": [
+                    "The ability to jump through a horizontal door transition from a nearby platform below the doorway,",
+                    "jumping close and low enough through the door to be able to pass through while carrying upward momentum into the next room."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": 132,
           "name": "canShinespark",
           "techRequires": [],
@@ -2412,6 +2453,80 @@
           ]
         },
         {
+          "name": "canCarryBlueSuit",
+          "techRequires": [],
+          "otherRequires": [
+            "SpeedBooster"
+          ],
+          "note": [
+            "A blue suit is a glitched state where Samus has the ability to pass through (and destroy) bomb blocks, Speed blocks, and most enemies.",
+            "This is similar to the blue state obtained by running with Speed Booster, except that a blue suit continues even after Samus stops moving.",
+            "A blue suit is obtained by interrupting a shinespark or shinespark wind-up,",
+            "for example using a Crystal Flash or R-Mode forced standup, or by killing Draygon or being drained by the Baby Metroid.",
+            "Actions that cause Samus to lose a blue suit include dashing, shinesparking, or falling into sand (though walking across sand is fine)."
+          ],
+          "devNote": [
+            "It is possible to carry a blue suit without Speed Booster, but in this case the blue suit will be lost if the game is paused,",
+            "and we are not yet prepared to model this."
+          ],
+          "extensionTechs": [
+            {
+              "name": "canRModeSparkInterrupt",
+              "techRequires": [
+                "canCarryBlueSuit"
+              ],
+              "otherRequires": [
+                {"gainBlueSuit": {}},
+                {"noFlashSuit": {}}
+              ],
+              "note": [
+                "The ability to gain a blue suit by triggering an R-Mode forced stand-up during a shinespark wind-up.",
+                "To do this, enter a room in R-Mode and put some energy back into reserves,",
+                "for example by farming enemy drops or performing a Crystal Flash.",
+                "Damage down to where auto-reserves will trigger after one more enemy hit.",
+                "Use a runway to gain a shinecharge, and press jump to activate shinespark wind-up near an enemy,",
+                "in such a way that the enemy hits Samus during the wind-up, triggering an R-Mode forced stand-up."
+              ]
+            },
+            {
+              "name": "canCrystalSpark",
+              "techRequires": [
+                "canCarryBlueSuit"
+              ],
+              "otherRequires": [
+                "canCrystalFlash",
+                {"gainBlueSuit": {}},
+                {"noFlashSuit": {}}
+              ],
+              "note": [
+                "The ability to gain a blue suit by activating a Crystal Flash during shinespark wind-up.",
+                "This is done by gaining a shinecharge, jumping, mid-air morphing, and laying a Power Bomb at a pixel-perfect height,",
+                "unmorphing, activating the shinespark wind-up by pressing jump, then holding the Crystal Flash inputs."
+              ],
+              "detailNote": [
+                "If unlimited shinecharge frames are available (e.g. if using a flash suit),",
+                "there is a 31-frame window for when to activate the shinespark wind-up:",
+                "the window begins 1 frame after the Power Bomb explosion has reached its maximum size,",
+                "and it ends some time after the screen has fully faded back to normal brightness.",
+                "But normally it is necessary to activate the wind-up in the earlier part of the window, before shinecharge frames run out.",
+                "The shinespark may be activated with Samus in a crouched pose, a crouched pose with angle-down held, or a standing pose,",
+                "each of these has a different requirement for the height of the Power Bomb.",
+                "It is recommended to aim for the crouched angle-down position, which is the lowest one:",
+                "a visual cue is that the Power Bomb becomes flush against the morph ball at the peak of its animation.",
+                "If the Power Bomb overlaps the morph ball animation at all then it is laid too low.",
+                "The standing pose works with the Power Bomb placed 2 pixels higher than with the crouched angle-down pose.",
+                "The crouch pose works with the Power Bomb placed 8 pixels higher than with the standing pose.",
+                "The position that works from the standing pose is 1 pixel higher than the position where",
+                "Samus would be able to Crystal Flash while standing without sparking."
+              ],
+              "devNote": [
+                "This tech should not be used directly; instead use a helper,",
+                "in order to correctly account for the amount of Crystal Flash refill, which depends on the environment."
+              ]
+            }
+          ]
+        },
+        {
           "id": 143,
           "name": "canSpeedKeep",
           "techRequires": [
@@ -2529,7 +2644,8 @@
           "id": 150,
           "name": "canWaterShineCharge",
           "techRequires": [
-            "canSuitlessMaridia"
+            "canSuitlessMaridia",
+            "canDash"
           ],
           "otherRequires": [
             "SpeedBooster",
@@ -2941,6 +3057,20 @@
             "This may also be done more easily with Spring Ball or a room geometry that makes it easy to midair morph directly onto the enemy.",
             "Unmorphing when on top of the enemy will put Samus in a crouch, where a forward press will stand up and activate the transition.",
             "If Samus is completely against the wall, an X-Ray turnaround or crouch is necessary to be able to activate the transition tiles with a forward press."
+          ]
+        },
+        {
+          "name": "canBlueSuitGModeSetup",
+          "techRequires": [
+            "canCarryBlueSuit"
+          ],
+          "otherRequires": [],
+          "note": [
+            "Ability to setup R-mode or G-mode while carrying a blue suit.",
+            "In order to take damage from an enemy while having a blue suit, Samus needs to not have momentum.",
+            "Entering a transition without momentum is done by positioning exactly 1 pixel from the transition.",
+            "X-Ray can be used to slow down the process of positioning,",
+            "stopping time to prevent the enemy from reaching Samus before she is in position."
           ]
         }
       ]
