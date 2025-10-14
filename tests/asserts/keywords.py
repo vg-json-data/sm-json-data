@@ -487,6 +487,14 @@ def process_req_speed_state(req, states, err_fn):
             if not states.issubset(["shinecharging", "shinecharged"]):
                 err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
             states = {"shinespark"}
+        elif req in ["h_SpikeXModeSpikeSuit"]:
+            if not states.issubset(["shinecharging", "shinecharged"]):
+                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
+            states = {"shinespark"}
+        elif req in ["h_ThornXModeSpikeSuit"]:
+            if not states.issubset(["shinecharging", "shinecharged"]):
+                err_fn(f"shinespark requirement while not in shinecharging/shinecharged/shinespark state: {req}")
+            states = {"shinespark"}
         elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball", "canXRayCancelShinecharge"]:
             if not states.issubset(["shinecharging", "blue"]):
                 err_fn(f"{req} while not in blue state")
