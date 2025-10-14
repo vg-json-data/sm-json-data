@@ -165,6 +165,7 @@
       "from": 4,
       "to": [
         {"id": 1},
+        {"id": 2},
         {"id": 3},
         {"id": 4},
         {"id": 5}
@@ -512,7 +513,7 @@
       "link": [1, 4],
       "name": "Base",
       "requires": [
-        {"heatFrames": 250},
+        {"heatFrames": 220},
         {"or": [
           {"noFlashSuit": {}},
           "canComplexCarryFlashSuit",
@@ -1509,6 +1510,29 @@
         "Overload PLMs by bombing the gate or crumble blocks, then go through the crumble blocks below and get to the door.",
         "IBJ past the Ripper or kill it. The Kago bugs will not spawn until Samus exits G-mode, so it is fine to kill it or IBJ from on top of it."
       ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Delayed Walljump",
+      "requires": [
+        "canTrickyWalljump",
+        "canConsecutiveWalljump",
+        "canTrickyJump",
+        "canUseEnemies",
+        "canPrepareForNextRoom",
+        {"heatFrames": 300},
+        {"or": [
+          {"noFlashSuit": {}},
+          "canComplexCarryFlashSuit",
+          "Ice",
+          "Wave",
+          "Spazer",
+          "Plasma",
+          {"heatFrames": 300}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "note": "Wall jump up the left wall, perform a delayed wall jump on the Fune."
     },
     {
       "id": 26,
@@ -2658,14 +2682,37 @@
     {
       "id": 51,
       "link": [3, 4],
-      "name": "Spike Spring Ball Jump",
+      "name": "Spring Ball Jump (Spike or Ripper I-Frames)",
       "requires": [
         "canUseIFrames",
-        {"spikeHits": 1},
+        {"or": [
+          {"spikeHits": 1},
+          {"and": [
+            "canTrickyJump",
+            {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
+            {"heatFrames": 20}
+          ]}
+        ]},
         "canSpringBallJumpMidAir",
-        {"heatFrames": 300}
+        {"heatFrames": 240}
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [3, 4],
+      "name": "Crumble Jump Spring Fling",
+      "requires": [
+        "canCrumbleJump",
+        "canTrickySpringBallJump",
+        "canSpringFling",
+        "h_trickyToCarryFlashSuit",
+        {"heatFrames": 270}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Pause while crumble jumping, and quickly mid-air morph and equip Spring Ball,",
+        "to obtain a boost in horizontal speed before mid-air Spring Ball jumping."
+      ]
     },
     {
       "id": 52,
@@ -2680,61 +2727,103 @@
       "requires": [
         "canMomentumConservingMorph",
         "canSpringFling",
-        {"heatFrames": 120}
+        {"heatFrames": 140}
       ],
       "flashSuitChecked": true,
       "devNote": [
-        "The momentum-conserving morph is not stricly required (particularly with longer runways) but makes it easier."
+        "The momentum-conserving morph is not strictly required (particularly with longer runways) but makes it easier."
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Spring Ball Bounce Spring Fling",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "remoteAndLandingMinTiles": [[6.4375, 0]],
+          "speedBooster": "any"
+        }
+      },
+      "requires": [
+        "canSpringBallBounce",
+        "canSpringFling",
+        {"heatFrames": 140}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Speedy Spring Ball Bounce Spring Fling",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "remoteAndLandingMinTiles": [[5, 0]],
+          "speedBooster": true
+        }
+      },
+      "requires": [
+        "canSpringBallBounce",
+        "canSpringFling",
+        {"heatFrames": 150}
+      ]
+    },
+    {
+      "link": [3, 4],
+      "name": "Speedy Spring Ball Bounce Double Spring Fling",
+      "entranceCondition": {
+        "comeInWithMockball": {
+          "remoteAndLandingMinTiles": [[4, 0]],
+          "speedBooster": true
+        }
+      },
+      "requires": [
+        "canSpringBallBounce",
+        "canSpringFling",
+        "canInsaneJump",
+        "canBeVeryPatient",
+        {"heatFrames": 145}
+      ],
+      "note": [
+        "Pause immediately on room entry, and bounce just before Samus would roll off the runway.",
+        "Unequip Spring Ball, then pause again as soon as possible and re-equip Spring Ball."
+      ],
+      "detailNote": [
+        "In the case of entering with minimal extra run speed ($1.7):",
+        "The bounce should be done on the last possible frame;",
+        "otherwise the timing for the first pause is frame-perfect (with a 2-frame window for the second pause).",
+        "With a first-frame pause and last-frame bounce, the second pause has a 4-frame window.",
+        "With a second-frame pause and last-frame bounce, the second pause has a 3-frame window.",
+        "With a third-frame pause and last-frame bounce, the second pause is frame-perfect."
       ]
     },
     {
       "id": 53,
       "link": [3, 4],
-      "name": "Spike HiJump",
+      "name": "HiJump Wall Jump (Spike or Ripper I-Frames)",
       "requires": [
         "canUseIFrames",
-        {"spikeHits": 1},
-        "canWalljump",
-        "HiJump",
-        {"heatFrames": 300}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 89,
-      "link": [3, 4],
-      "name": "Ripper I-Frames, Spike Jump",
-      "requires": [
-        "canPrepareForNextRoom",
-        "canUseIFrames",
-        {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
         {"or": [
-          "canHorizontalDamageBoost",
+          {"spikeHits": 1},
           {"and": [
-            "HiJump",
-            "canTrickyJump"
+            "canTrickyJump",
+            {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
+            {"heatFrames": 20}
           ]}
         ]},
-        {"or": [
-          {"and": [
-            "HiJump",
-            "canWalljump"
-          ]},
-          "canTrickySpringBallJump"
-        ]},
-        {"heatFrames": 300}
+        "canWalljump",
+        "HiJump",
+        {"heatFrames": 230}
       ],
-      "flashSuitChecked": true,
-      "note": [
-        "Run off or perform a short hop off the ledge into the Ripper and damage boost to the left of the spikes.",
-        "Using the i-frames from the Ripper, quickly jump from the spikes to the item.",
-        "With HiJump, it is also possible to avoid the damage boost and land right of the crumble blocks and get a good jump to the left."
+      "flashSuitChecked": true      
+    },
+    {
+      "link": [3, 4],
+      "name": "Crumble Jump HiJump Wall Jump",
+      "requires": [
+        "HiJump",
+        "canInsaneJump",
+        "canCrumbleJump",
+        "canWalljump",
+        {"heatFrames": 340}
       ],
-      "devNote": [
-        "FIXME: It is possible to avoid the Ripper and jump off of the crumble blocks.",
-        "With a Spring Ball jump, this requires an very precise jump and very quick pause to get as much horizontal speed as possible before the second jump.",
-        "With HiJump + Wall Jump, it is possible to crumble spin jump from the first crumbles to the second crumbles and then wall jump."
-      ]
+      "flashSuitChecked": true      
     },
     {
       "id": 54,
@@ -2771,10 +2860,17 @@
     {
       "id": 56,
       "link": [3, 4],
-      "name": "Spike Speedjump",
+      "name": "HiJump Speedy Jump (Spike or Ripper I-Frames)",
       "requires": [
         "canUseIFrames",
-        {"spikeHits": 1},
+        {"or": [
+          {"spikeHits": 1},
+          {"and": [
+            "canTrickyJump",
+            {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
+            {"heatFrames": 20}
+          ]}
+        ]},
         "SpeedBooster",
         "HiJump",
         {"heatFrames": 200}
@@ -2792,13 +2888,14 @@
           {"and": [
             {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
             "canHorizontalDamageBoost",
-            "canInsaneJump"
+            "canInsaneJump",
+            {"heatFrames": 25}
           ]}
         ]},
         "canUseIFrames",
         "canTrickyDashJump",
         "canPreciseWalljump",
-        {"heatFrames": 300}
+        {"heatFrames": 260}
       ],
       "flashSuitChecked": true,
       "failures": [
@@ -2814,6 +2911,14 @@
         "If using a spike hit to gain i-frames, be sure to be holding forward (left) when landing, in order to get pushed back into the corner.",
         "If using the Ripper to gain i-frames, perform a damage boost from a relatively low position,",
         "in order to land quickly enough to reach the crumble blocks before i-frames run out."
+      ],
+      "detailNote": [
+        "The extra run speed values that work are $2.0, $2.1, $3.0, and $3.1.",
+        "Values of $2.0 and $3.0 give a lower jump that is only barely high enough, requiring a very precise wall jump to get up.",
+        "Run speeds $3.0 and $3.1 correspond to jumping as Samus reaches the end of the crumble blocks.",
+        "Run speeds $2.0 and $2.1 correspond to jumping a little more than a tile before reaching the crumble blocks.",
+        "With the damage boost method, the Ripper will normally be blocking the path if jumping at speed $2.0 or $2.1;",
+        "whereas jumping at the end of the crumble blocks (at speeds $3.0 and $3.1) will always works."
       ]
     },
     {
@@ -3096,7 +3201,7 @@
       "link": [3, 5],
       "name": "Base",
       "requires": [
-        {"heatFrames": 250}
+        {"heatFrames": 180}
       ],
       "flashSuitChecked": true
     },
@@ -3289,11 +3394,11 @@
       "link": [4, 1],
       "name": "Base",
       "requires": [
-        {"heatFrames": 250},
+        {"heatFrames": 215},
         {"or": [
           {"and": [
             "Wave",
-            {"heatFrames": 100}
+            {"heatFrames": 35}
           ]},
           {"obstaclesCleared": ["A"]}
         ]}
@@ -3365,12 +3470,28 @@
       ]
     },
     {
+      "link": [4, 2],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 155},
+        {"or": [
+          {"and": [
+            "Wave",
+            {"heatFrames": 60}
+          ]},
+          {"obstaclesCleared": ["A"]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
       "id": 63,
       "link": [4, 3],
       "name": "Walljump",
       "requires": [
         "canWalljump",
-        {"heatFrames": 300}
+        {"heatFrames": 225}
       ],
       "collectsItems": [4],
       "flashSuitChecked": true
@@ -3409,7 +3530,7 @@
       "name": "Walljump Leave with Runway",
       "requires": [
         "canWalljump",
-        {"heatFrames": 280}
+        {"heatFrames": 205}
       ],
       "exitCondition": {
         "leaveWithRunway": {
@@ -3507,14 +3628,53 @@
     {
       "id": 70,
       "link": [4, 3],
-      "name": "Mid-Air Spring Ball Jump",
+      "name": "Spring Ball Jump (Spike or Ripper I-Frames)",
       "requires": [
         "canUseIFrames",
-        {"spikeHits": 1},
+        {"or": [
+          {"spikeHits": 1},
+          {"and": [
+            "canTrickyJump",
+            {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}},
+            {"heatFrames": 10}
+          ]}
+        ]},
         "canSpringBallJumpMidAir",
-        {"heatFrames": 300}
+        {"heatFrames": 260}
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [4, 3],
+      "name": "Speedy Jump Spring Fling",
+      "requires": [
+        "SpeedBooster",
+        "canMomentumConservingMorph",
+        "canSpringFling",
+        {"heatFrames": 190}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [4, 3],
+      "name": "Crumble Jump Spring Fling",
+      "requires": [
+        "canCrumbleJump",
+        "canTrickySpringBallJump",
+        "canSpringFling",
+        "canInsaneJump",
+        "h_trickyToCarryFlashSuit",
+        {"heatFrames": 280}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Pause while crumble jumping, and quickly mid-air morph and equip Spring Ball,",
+        "to obtain a boost in horizontal speed before mid-air Spring Ball jumping."
+      ],
+      "devNote": [
+        "Compared to the other direction, this direction requires traveling one more tile horizontally,",
+        "which makes it more difficult."
+      ]
     },
     {
       "id": 71,
@@ -3522,7 +3682,13 @@
       "name": "HiJump, Speedy Jump from the Spikes",
       "requires": [
         "canUseIFrames",
-        {"spikeHits": 1},
+        {"or": [
+          {"spikeHits": 1},
+          {"and": [
+            "canTrickyJump",
+            {"enemyDamage": {"enemy": "Ripper 2 (green)", "type": "contact", "hits": 1}}
+          ]}
+        ]},
         "HiJump",
         "SpeedBooster",
         {"heatFrames": 250}
@@ -3533,7 +3699,7 @@
     {
       "id": 72,
       "link": [4, 3],
-      "name": "XMode Shinespark",
+      "name": "X-Mode Shinespark",
       "requires": [
         "canXMode",
         "h_XModeSpikeHit",
@@ -3629,7 +3795,7 @@
       "link": [4, 5],
       "name": "Base",
       "requires": [
-        {"heatFrames": 160}
+        {"heatFrames": 135}
       ],
       "flashSuitChecked": true
     },
@@ -3639,7 +3805,7 @@
       "name": "Base",
       "requires": [
         "Morph",
-        {"heatFrames": 200}
+        {"heatFrames": 170}
       ],
       "flashSuitChecked": true
     },
@@ -3961,8 +4127,8 @@
   "nextStratId": 144,
   "nextNotableId": 5,
   "devNote": [
-    "FIXME: Heat frames could be represented more accurately if a node were added to the left of the morph tunnel (or possibly if node 5 were moved to be on that side):",
-    "e.g. this could be used to tighten the Leave Shinecharged or Leave With Temporary Blue strats out through node 2 when coming from the right.",
+    "FIXME: Heat frames could be tightened by adding 5->1 strats:",
+    "More 5->2 strats could also be added, e.g. Leave Shinecharged or Leave With Temporary Blue;",
     "FIXME: It's possible to use a crumble jump to carry temp blue out through node 3."
   ]
 }
