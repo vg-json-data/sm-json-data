@@ -494,16 +494,12 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["h_flashSuitIceClip"]:
+        elif req in ["h_flashSuitIceClip", "h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit"]:
             states = {"preshinespark"}
         elif req in ["h_CrystalSpark", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "h_RModeKnockbackSpark"]:
             if not states.issubset(["shinecharging", "shinecharged"]):
                 err_fn(f"{req} while not shinecharging/shinecharged")            
             states = {"normal"}
-        elif req in ["h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit"]:
-            if not states.issubset(["shinecharging", "shinecharged"]):
-                err_fn(f"{req} while not shinecharging/shinecharged")            
-            states = {"preshinespark"}          
         elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball", "canXRayCancelShinecharge"]:
             if not states.issubset(["shinecharging", "blue"]):
                 err_fn(f"{req} while not in blue state")
