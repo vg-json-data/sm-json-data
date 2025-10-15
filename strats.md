@@ -778,7 +778,8 @@ A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` 
 - If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
 - If `speedBooster` is false, then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
 - The `SpaceJump` item requirement.
-- The `canDash` tech requirement (including loss of any blue suit).
+- A `canSidePlatformCrossRoomJump` tech requirement.
+- A `canDash` tech requirement (including loss of any blue suit).
 - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
 
 ```json
@@ -806,7 +807,8 @@ A `comeInBlueSpaceJumping` entrance condition indicates that Samus must come in 
 A `comeInBlueSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door, with the following requirements:
   - The `blue` property of the matching `leaveSpaceJumping` must be "yes" or "any".
   - `SpeedBooster` and `SpaceJump` item requirements.
-  - The `canDash` tech requirement (including loss of any blue suit).
+  - A `canSidePlatformCrossRoomJump` tech requirement.
+  - A `canDash` tech requirement (including loss of any blue suit).
   - A `h_trickyToCarryFlashSuit` requirement, because being 1 frame late on the doorway Space Jump results in loss of a flash suit.
   - There must exist a possible value of extra run speed satisfying any applicable constraints, including any `minExtraRunSpeed` or `maxExtraRunSpeed` properties in the entrance condition and/or exit condition, along with implicit constraints based on shortcharge skill and the effective runway length of the `remoteRunway` in the exit condition (see the [blue run speed table](#blue-run-speed-table)).
 
