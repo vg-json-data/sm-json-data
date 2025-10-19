@@ -1492,7 +1492,7 @@ $$\text{minHeight} \leq \text{height} \leq \text{maxHeight}$$
 $$\text{leftPosition} \leq \text{maxLeftPosition}$$
 $$\text{rightPosition} \geq \text{minRightPosition}$$
 
-A `comeInWithPlatformBelow` entrance condition has no implicit requirements. A `canSpeedyJump` requirement is commonly needed and should be explicitly included if applicable.
+A `comeInWithPlatformBelow` entrance condition has no implicit requirements. A `canSpeedyJump` requirement is commonly needed and should included if applicable.
 
 __Example:__
 ```json
