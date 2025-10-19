@@ -591,11 +591,7 @@ If the door node in a `doorUnlockedAtNode` also appears in the strat's [`unlocks
 
 __Example:__
 ```json
-{"requires": [
-  {"doorUnlockedAtNode": 1},
-  "HiJump",
-  "SpeedBooster"
-]}
+{"doorUnlockedAtNode": 1}
 ```
 
 ### Obstacle-related objects
