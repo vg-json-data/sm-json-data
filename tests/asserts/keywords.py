@@ -505,8 +505,6 @@ def process_req_speed_state(req, states, err_fn):
                 err_fn(f"{req} while not in blue state")
             states = {"blue"}
         elif req in ["h_spikeXModeShinecharge", "h_thornXModeShinecharge"]:
-            if not states.issubset(["shinecharged"]):
-                err_fn(f"{req} while not shinecharged")
             states = {"shinecharged"}
 
     elif isinstance(req, dict):
