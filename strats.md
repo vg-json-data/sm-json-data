@@ -13,6 +13,7 @@ A `strat` can have the following properties:
   * _clearsObstacles_: An array containing the ID of obstacles that will be cleared by executing this strat (if they are not already cleared).
   * _resetsObstacles_: An array containing the ID of obstacles that will be reset (i.e. returned to their original state) by executing this strat.
   * _comesThroughToilet_: Indicates whether this strat is applicable if the Toilet comes between this room and the other room.
+  * _comesInHeated_: Indicates whether this strat is applicable if coming from a heated room without heat protection.
   * _gModeRegainMobility_: Indicates that this strat allows regaining mobility when entering with G-mode immobile.
   * _bypassesDoorShell_: Indicates that this strat allows exiting without opening the door.
   * _unlocksDoors_: An array describing possible doors that can be unlocked as part of this strat.
@@ -114,7 +115,7 @@ A `leaveNormally` object indicates that Samus can leave the room through this do
 ### Leave With Runway
 A `leaveWithRunway` object indicates that a strat exits the current room using a runway. The `leaveWithRunway` exit condition is unique in that it describes available geometry rather than a specific way to leave the room. This is done in order to reduce the amount of redundant boilerplate that would otherwise be required, since every door node in the game will have at least one strat with `leaveWithRunway`. The specific way that the runway is used depends on the entrance condition in the destination room. A `leaveWithRunway` condition implies that the area around the door must be clear of any enemies that would interfere with using the runway.
 
-A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInGettingBlueSpeed`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInWithStutter`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, `comeInWithTemporaryBlue`, `comeInSpinning`, `comeInBlueSpinning`, and `comeInWithMockball`. Details are given under the corresponding entrance conditions below.
+A `leaveWithRunway` exit condition can satisfy the following entrance conditions in the next room: `comeInRunning`, `comeInJumping`, `comeInShinecharging`, `comeInGettingBlueSpeed`, `comeInShinecharged`, `comeInWithSpark`, `comeInWithBombBoost`, `comeInStutterShinecharging`, `comeInWithDoorStuckSetup`, `comeInSpeedballing`, `comeInWithTemporaryBlue`, `comeInSpinning`, `comeInBlueSpinning`, and `comeInWithMockball`. Details are given under the corresponding entrance conditions below.
 
 `leaveWithRunway` has the following properties describing the runway geometry (see [runway geometry](#runway-geometry) above for details):
 
@@ -668,9 +669,10 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithSamusEaterTeleport_: This indicates that Samus must come into the room immediately after initiating a teleport into a Samus Eater by exiting G-Mode in the other room.
 - _comeInWithSuperSink_: This indicates that Samus must enter through this door while morphed and continuing to gain fall speed from a super sink.
 
-In addition it may contain the following property:
+In addition it may contain the following properties:
 
 - _comesThroughToilet_: This indicates whether the strat is applicable if the Toilet comes between this room and the other room.
+- _comesInHeated_: This indicates whether the strat is applicable if coming from a heated environment without heat protection.
 
 Each of these properties is described in more detail below.
 
@@ -1009,7 +1011,7 @@ A `comeInStutterShinecharging` entrance condition indicates that Samus must run 
 - _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
 
 A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
-- The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item.
+- The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item and loss of any blue suit.
 - If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
 
 #### Example
@@ -1080,7 +1082,22 @@ A `comeInWithDoorStuckSetup` condition must match with a `leaveWithRunway` condi
 - If the current room is heated and leniency is desired for failed attempts, then a minimum requirement of `{"heatFrames": 50}` should be included per potential failed attempt.
 - If the previous room is to the left, then a tech requirement `canStationarySpinJump` is included.
 - If the previous room is to the right, then a tech requirement `canRightSideDoorStuck` is included.
-- If the previous door environment is water and is to the right, then a requirement `{"or": ["Gravity", "canRightSideDoorStuckFromWater"]}` is included.
+- If the previous door environment is water and is to the right, then the following requirement is included:
+```json
+{"or": [
+  {"and": [
+    "Gravity",
+    "canDash"
+  ]}, 
+  {"and": [
+    {"disableEquipment": "Gravity"},
+    "canRightSideDoorStuckFromWater"
+  ]},
+  "canRightSideDashlessDoorStuck"
+]}
+```
+- If the previous door environment is not water and is to the right, then a requirement `{"or": ["canDash", "canRightSideDashlessDoorStuck"]}` is included.
+- If the previous room is heated and is to the right, then a requirement `{"or": ["canDash", "h_heatProof"]}` is included.
 
 #### Example
 ```json
@@ -1211,12 +1228,12 @@ A `comeInWithMockball` entrance condition must match with one of the following c
 - A match with `leaveWithMockball` has the following requirements:
   - The `blue` property of `leaveWithMockball` must be "no" or "any".
   - `remoteAndLandingMinTiles` must contain at least one pair `(minRemoteLength, minLandingLength)` such that the effective length of the `remoteRunway` is at least `minRemoteLength` and the effective length of the `landingRunway` is at least `minLandingLength`.
-  - The `canMockball` tech (including `Morph` item and `canDash` tech requirement, including loss of any blue suit).
 - A match with `leaveWithRunway` has the following requirements:
   - The effective runway length must be at least `adjacentMinTiles`.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as for `comeInRunning` (and `comeInJumping`).
   - If the previous door environment is water, then `Gravity` is required.
-  - The `canMockball` tech (including `Morph` item) is required.
+
+In either case, the `canMockball` tech is required, including the `Morph` item and `canDash` tech requirement, including loss of any blue suit.
 
 ```json
 {
@@ -1705,6 +1722,31 @@ Inside an `entranceCondition` object, a `comesThroughToilet` property indicates 
     "canDownGrab"
   ]
 }
+```
+
+### Comes In Heated
+
+Inside an `entranceCondition` object, a `comesInHeated` property indicates if the strat is applicable when coming from a heat environment without heat protection. It has three possible values:
+
+- "yes": The strat is applicable only if the other room is heated.
+- "no": The strat is applicable only if the other room is unheated or if heat protection is available.
+- "any": The strat is applicable regardless of whether the other room is heated.
+
+### Example
+```json
+{
+  "name": "Gain Blue Suit (Come in Shinecharging, Crystal Spark)",
+  "entranceCondition": {
+    "comeInShinecharging": {
+      "length": 13,
+      "openEnd": 0
+    },
+    "comesInHeated": "no"
+  },
+  "requires": [
+    "h_CrystalSpark"
+  ]
+},
 ```
 
 ## G-Mode Regain Mobility
