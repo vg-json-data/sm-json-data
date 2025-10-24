@@ -85,7 +85,17 @@
       ]
     }
   ],
-  "obstacles": [],
+  "obstacles": [
+    {
+      "id": "A",
+      "name": "Holtzes",
+      "obstacleType": "enemies",
+      "devNote": [
+        "We only track this obstacle when coming from the right,",
+        "in order to use the remote runway on the left."
+      ]
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -700,10 +710,10 @@
       "link": [2, 5],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "ScrewAttack",
-        {"heatFrames": 270}
+        {"heatFrames": 210}
       ],
+      "clearsObstacles": ["A"],
       "flashSuitChecked": true
     },
     {
@@ -720,7 +730,7 @@
             {"enemyDamage": {"enemy": "Magdollite", "type": "flame", "hits": 1}}
           ]}
         ]},
-        {"heatFrames": 330}
+        {"heatFrames": 290}
       ],
       "flashSuitChecked": true,
       "note": "Wait for the first Holtz to attack then either use the Magdollite for i-frames, or avoid the projectiles and continue dodging bats."
@@ -740,16 +750,102 @@
     {
       "id": 21,
       "link": [2, 5],
-      "name": "Full Beam Kill",
+      "name": "Kill Holtzes (Strong Weapon)",
       "requires": [
-        "h_navigateHeatRooms",
-        "Charge",
-        "Ice",
-        "Wave",
-        "Plasma",
-        {"heatFrames": 360}
+        {"or": [
+          {"and": [
+            "Plasma",
+            "Wave",
+            "Ice",
+            {"heatFrames": 300}
+          ]},
+          {"and": [
+            "Plasma",
+            {"or": [
+              "Wave",
+              "Ice"
+            ]},
+            {"heatFrames": 390}
+          ]},
+          {"and": [
+            {"ammo": {"type": "Super", "count": 9}},
+            {"heatFrames": 420}
+          ]}
+        ]}
       ],
+      "clearsObstacles": ["A"],
       "flashSuitChecked": true
+    },
+    {
+      "link": [2, 5],
+      "name": "Kill Holtzes (Medium Weapon)",
+      "requires": [
+        "canDodgeWhileShooting",
+        {"or": [
+          {"and": [
+            "Spazer",
+            "Wave",
+            "Ice",
+            {"heatFrames": 480}
+          ]},
+          {"and": [
+            "Plasma",
+            {"heatFrames": 510}
+          ]},
+          {"and": [
+            "Ice",
+            {"or": [
+              "Wave",
+              "Spazer"
+            ]},
+            {"heatFrames": 750}
+          ]},
+          {"and": [
+            "canTrickyDodgeEnemies",
+            "Morph",
+            {"ammo": {"type": "PowerBomb", "count": 3}},
+            {"heatFrames": 850}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 5],
+      "name": "Kill Holtzes (Slow Weapon)",
+      "requires": [
+        "canTrickyDodgeEnemies",
+        {"or": [
+          {"and": [
+            "Spazer",
+            "Wave",
+            {"heatFrames": 1280}
+          ]},
+          {"and": [
+            "Spazer",
+            {"heatFrames": 2060}
+          ]},
+          {"and": [
+            "Wave",
+            {"heatFrames": 1640}
+          ]},
+          {"and": [
+            "Ice",
+            {"heatFrames": 1560}
+          ]},
+          {"and": [
+            "Morph",
+            {"ammo": {"type": "PowerBomb", "count": 10}},
+            {"heatFrames": 2160}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "devNote": [
+        "FIXME: This could probably be done with just Power Beam, but dodging the Holtzes becomes very tricky."
+      ]
     },
     {
       "id": 22,
@@ -971,30 +1067,41 @@
       "link": [5, 2],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "ScrewAttack",
-        {"heatFrames": 240}
+        {"heatFrames": 210},
+        {"or": [
+          "canTrickyJump",
+          {"heatFrames": 30}
+        ]}
       ],
+      "clearsObstacles": ["A"],
       "flashSuitChecked": true
     },
     {
       "id": 33,
       "link": [5, 2],
-      "name": "Avoid Damage",
+      "name": "Magdollite Damage Boost",
       "requires": [
-        "h_navigateHeatRooms",
-        {"or": [
-          "canTrickyJump",
-          {"and": [
-            "canHorizontalDamageBoost",
-            "canUseIFrames",
-            {"enemyDamage": {"enemy": "Magdollite", "type": "flame", "hits": 1}}
-          ]}
-        ]},
-        {"heatFrames": 375}
+        {"enemyDamage": {"enemy": "Magdollite", "type": "flame", "hits": 1}},
+        "canHorizontalDamageBoost",
+        "canUseIFrames",
+        {"heatFrames": 290}
       ],
       "flashSuitChecked": true,
-      "note": "Wait for the Magdollite to attack then either use it for i-frames, or jump over the swooping Holtzes."
+      "note": "Wait for the Magdollite to attack then use it for i-frames."
+    },
+    {
+      "link": [5, 2],
+      "name": "Tricky Avoid Damage",
+      "requires": [
+        "canTrickyDodgeEnemies",
+        {"heatFrames": 280},
+        {"or": [
+          "canInsaneJump",
+          {"heatFrames": 20}
+        ]}
+      ],
+      "flashSuitChecked": true
     },
     {
       "id": 34,
@@ -1014,16 +1121,170 @@
     {
       "id": 35,
       "link": [5, 2],
-      "name": "Full Beam Kill",
+      "name": "Strong Beam Kill",
       "requires": [
         "h_navigateHeatRooms",
-        "Charge",
         "Ice",
         "Wave",
         "Plasma",
-        {"heatFrames": 375}
+        {"heatFrames": 330}
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Plasma Hitbox Insane Jump",
+      "requires": [
+        "h_PlasmaHitbox",
+        "canInsaneJump",
+        {"heatFrames": 190}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Leave Spinning (Space Jump)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatedRemoteRunwaySpaceJump",
+        {"heatFrames": 185}
+      ],
+      "exitCondition": {
+        "leaveSpinning": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          }
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": [
+        "It is assumed that the door was shot open when entering on the right,",
+        "but extra heat frames are included here for it."
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Leave With Mockball (Space Jump)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatedRemoteRunwaySpaceJump",
+        {"heatFrames": 165}
+      ],
+      "exitCondition": {
+        "leaveWithMockball": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "minExtraRunSpeed": "$2.0"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Leave With Controlled Spring Ball Bounce",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatedRemoteRunwayTrickySpringBall",
+        {"heatFrames": 185}
+      ],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "movementType": "controlled",
+          "minExtraRunSpeed": "$2.0"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": [
+        "It is assumed that the door was shot open when entering on the right,",
+        "but extra heat frames are included here for it."
+      ]
+    },
+    {
+      "link": [5, 2],
+      "name": "Leave With Spring Ball Bounce (Space Jump)",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatedRemoteRunwaySpaceJump",
+        {"heatFrames": 165}
+      ],
+      "exitCondition": {
+        "leaveWithSpringBallBounce": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          },
+          "landingRunway": {
+            "length": 4,
+            "openEnd": 1
+          },
+          "movementType": "uncontrolled",
+          "minExtraRunSpeed": "$2.0"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Leave Space Jumping",
+      "requires": [
+        {"obstaclesCleared": ["A"]},
+        "h_heatedRemoteRunwayPreciseSpaceJump",
+        {"heatFrames": 185}
+      ],
+      "exitCondition": {
+        "leaveSpaceJumping": {
+          "remoteRunway": {
+            "length": 10,
+            "openEnd": 1
+          },
+          "minExtraRunSpeed": "$2.0"
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["missiles"], "requires": [{"heatFrames": 50}]},
+        {"types": ["super"], "requires": []},
+        {"types": ["powerbomb"], "requires": [{"heatFrames": 50}]}
+      ],
+      "flashSuitChecked": true,
+      "devNote": [
+        "It is assumed that the door was shot open when entering on the right,",
+        "but extra heat frames are included here for it."
+      ]
     },
     {
       "id": 44,
