@@ -140,6 +140,7 @@ def process_keyvalue(k, v, metadata):
         "speedBooster", # validated by schema
         "framesRemaining",  # validated by schema
         "comesThroughToilet",  # validated by schema
+        "comesInHeated",  # validated by schema
         "direction",  # validated by schema
         "blue",  # validated by schema
         "movementType",  # validated by schema
@@ -494,16 +495,22 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["h_flashSuitIceClip", "h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit"]:
+        elif req in ["h_flashSuitIceClip", "h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit", "h_storedSpark"]:
             states = {"preshinespark"}
-        elif req in ["h_CrystalSpark", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "h_RModeKnockbackSpark"]:
-            if not states.issubset(["shinecharging", "shinecharged"]):
-                err_fn(f"{req} while not shinecharging/shinecharged")            
+        elif req in ["canSpikeSuit"]:
+            if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
+                err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
+            states = {"preshinespark"}
+        elif req in ["h_CrystalSpark", "h_CrystalSparkWithoutLenience", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "h_RModeKnockbackSpark"]:
+            if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
+                err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
             states = {"normal"}
         elif req in ["canTemporaryBlue", "canChainTemporaryBlue", "canLongChainTemporaryBlue", "canSpeedball", "canXRayCancelShinecharge"]:
             if not states.issubset(["shinecharging", "blue"]):
                 err_fn(f"{req} while not in blue state")
             states = {"blue"}
+        elif req in ["h_spikeXModeShinecharge", "h_thornXModeShinecharge"]:
+            states = {"shinecharged"}
 
     elif isinstance(req, dict):
         if "canShineCharge" in req:
