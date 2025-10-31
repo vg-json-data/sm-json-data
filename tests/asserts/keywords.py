@@ -983,6 +983,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     notable_name_set = set()
                     for notable in room.get("notables", []):
                         notable_id = notable["id"]
+                        notable_name = notable["name"]
                         if notable_id in notable_id_set:
                             msg = f"🔴ERROR: Non-unique notable ID {notable_id} in notable:{roomRef}:{notable_name}"
                             messages["reds"].append(msg)
@@ -994,7 +995,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["counts"]["reds"] += 1                            
                         notable_id_set.add(notable["id"])
 
-                        notable_name = notable["name"]
                         if notable_name in notable_name_set:
                             msg = f"🔴ERROR: Non-unique notable name {notable_name} in notable:{roomRef}"
                             messages["reds"].append(msg)
