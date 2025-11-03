@@ -495,13 +495,13 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["h_flashSuitIceClip", "h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit"]:
+        elif req in ["h_flashSuitIceClip", "h_SpikeXModeSpikeSuit", "h_ThornXModeSpikeSuit", "h_storedSpark"]:
             states = {"preshinespark"}
         elif req in ["canSpikeSuit"]:
             if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
                 err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
             states = {"preshinespark"}
-        elif req in ["h_CrystalSpark", "h_CrystalSparkWithoutLenience", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "h_RModeKnockbackSpark", "h_spikeXModeBlueSuit", "h_thornXModeBlueSuit"]:
+        elif req in ["h_CrystalSpark", "h_CrystalSparkWithoutLenience", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "canRModePauseAbuseSparkInterrupt", "h_RModeKnockbackSpark", "h_spikeXModeBlueSuit", "h_thornXModeBlueSuit"]:
             if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
                 err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
             states = {"normal"}
@@ -983,6 +983,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     notable_name_set = set()
                     for notable in room.get("notables", []):
                         notable_id = notable["id"]
+                        notable_name = notable["name"]
                         if notable_id in notable_id_set:
                             msg = f"🔴ERROR: Non-unique notable ID {notable_id} in notable:{roomRef}:{notable_name}"
                             messages["reds"].append(msg)
@@ -994,7 +995,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["counts"]["reds"] += 1                            
                         notable_id_set.add(notable["id"])
 
-                        notable_name = notable["name"]
                         if notable_name in notable_name_set:
                             msg = f"🔴ERROR: Non-unique notable name {notable_name} in notable:{roomRef}"
                             messages["reds"].append(msg)
