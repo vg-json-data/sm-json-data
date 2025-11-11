@@ -518,6 +518,8 @@ def process_req_speed_state(req, states, err_fn):
     elif isinstance(req, dict):
         if "canShineCharge" in req:
             states = {"shinecharging"}
+        elif "blueSuitShinecharge" in req:
+            states = {"shinecharged"}
         elif "shineChargeFrames" in req:
             if not states.issubset(["shinecharging", "shinecharged"]):
                 err_fn(f"shineChargeFrames requirement while not in shinecharged state: {req}")
