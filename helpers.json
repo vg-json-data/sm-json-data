@@ -1639,38 +1639,63 @@
           ]
         },
         {
-          "name": "h_RModeHeatedCrystalFlashForReserves",
+          "name": "h_RModeCrystalFlashForReserves",
           "requires": [
-            {"simpleHeatFrames": 185},
-            {"or": [
-              {"and": [
-                "h_heatProof",
-                "canCrystalFlash"
-              ]},
-              {"and": [
-                "canHeatedCrystalFlash"
-              ]}
-            ]},
+            "canCrystalFlash",
             {"or": [
               {"and": [
                 {"or": [
                   {"disableEquipment": "ETank"},
-                  {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 999}]}
+                  {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 1099}]}
                 ]},
-                {"partialRefill": {"type": "RegularEnergy", "limit": 999}},
+                {"partialRefill": {"type": "RegularEnergy", "limit": 1099}},
                 {"refill": ["ReserveEnergy"]}
               ]},
+              {"and": [
+                {"refill": ["RegularEnergy"]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 51}}
+              ]}
             ]},
             {"simpleHeatFrames": 20}
+          ],
+          "note": [
+            "This helper represents using a Crystal Flash with the specific goal of getting reserves, which is",
+            "particularly important in R-Mode due to needing reserves for R-Mode standup.",
+            "If Energy Tanks can be disabled, regular energy will be capped at 10 E-Tanks to provide up to 400 Reserves.",
+            "Without this, reserve energy will be capped at 51: the maximum possible when the player has all 14 E-Tanks."
+          ]
+        },
+        {
+          "name": "h_RModeHeatedCrystalFlashForReserves",
+          "requires": [
+            {"or": [
+              {"and": [
+                "h_heatProof",
+                "h_RModeCrystalFlashForReserves"
+              ]},
+              {"and": [
+                {"simpleHeatFrames": 185},
+                "canHeatedCrystalFlash",
+                {"and": [
+                  {"or": [
+                    {"disableEquipment": "ETank"},
+                    {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 999}]}
+                  ]},
+                  {"partialRefill": {"type": "RegularEnergy", "limit": 999}},
+                  {"refill": ["ReserveEnergy"]}
+                ]},
+                {"simpleHeatFrames": 20}
+              ]}
+            ]}
           ],
           "note": [
             "This helper represents using a Crystal Flash in heat with the specific goal of getting reserves, which is",
             "particularly important in R-Mode due to needing reserves for R-Mode standup.",
             "In unprotected heat, at 14 E-Tanks, a Crystal Flash would normally fail to reach the energy maximum and",
             "provide reserves.",
-            "If Energy Tanks can be disabled, regular energy will be capped at 9 E-Tanks to provide up to 400 Reserves.",
-            "Without this, reserve energy will be scaled based on the player's E-Tank collection: the only scenario that",
-            "doesn't risk loss of access is with heat protection and a maximum of 51 Reserves."
+            "If Energy Tanks can be disabled, regular energy will be capped at 9 E-Tanks (10 if heat protection is available)",
+            "to provide up to 400 Reserves. Without this, heat protection is mandatory, and Reserve energy will be capped at 51:",
+            "the maximum possible when the player has all 14 E-Tanks."
           ]
         },
         {
