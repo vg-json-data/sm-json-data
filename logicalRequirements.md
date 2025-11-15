@@ -238,8 +238,7 @@ A `simpleHeatFrames` object represents the need for Samus to spend time (measure
 
 #### suitlessHeatFrames object
 
-A `suitlessHeatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room, while having heat-protection turned off (normally, both Varia
-and Gravity Suit must be turned off for this apply). This can occur, for example, when using heat to drain energy 
+A `suitlessHeatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room, while having heat-protection turned off (normally, both Varia and Gravity Suit must be turned off for this apply). This can occur, for example, when using heat to drain energy.
 
 #### heatFramesWithEnergyDrops object
 
