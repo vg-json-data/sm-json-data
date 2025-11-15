@@ -341,7 +341,7 @@ def check_heat_req(req):
                    "h_heatedGrappleTeleportWallEscape"]:
             return True
     if isinstance(req, dict):
-        if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
+        if "heatFrames" in req or "heatFramesWithEnergyDrops" or "suitlessHeatFrames" in req in req:
             return True
         if "and" in req:
             return any(check_heat_req(v) for v in req["and"])

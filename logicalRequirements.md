@@ -236,6 +236,10 @@ Much like the other logical elements that represent environmental frame damage, 
 
 A `simpleHeatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room. It is identical to `heatFrames` except that the time spent in `simpleHeatFrames` is intended to be invariant, not affected by leniency. This can be useful in cases that involve doing something simple for a significant amount of time, such as standing in place or running through a long hallway.
 
+#### suitlessHeatFrames object
+
+A `suitlessHeatFrames` object represents the need for Samus to spend time (measured in frames) in a heated room, while having heat-protection turned off (normally, both Varia and Gravity Suit must be turned off for this apply). This can occur, for example, when using heat to drain energy.
+
 #### heatFramesWithEnergyDrops object
 
 A `heatFramesWithEnergyDrops` object represents the need for Samus to spend time in a heated room, but with the possibility of offsetting some of the heat damage using energy drops from enemies. Any heat damage is logically applied before the energy gain, so Samus must be able to survive the heat before picking up the drops. Any energy gain is logically capped to not exceed the heat damage, so this logical requirement cannot result in a net energy gain. A `heatFramesWithEnergyDrops` object implicitly includes a requirement `{"or": ["h_heatProof", "canHeatRun"]}`.
