@@ -201,7 +201,7 @@ An `autoReserveTrigger` object represents a logical requirement for "auto" reser
 
 * _minReserveEnergy_: The minimum amount of energy in reserves which will satisfy this requirement (default: 1).
 * _maxReserveEnergy_: The maximum amount of energy in reserves which will satisfy this requirement (default: 400).
-* _implicitHeatFrames_: Default is yes, which applies heatFrames equal to the amount of reserve transferred if the room is heated. No prevents this application, and the value "suitless" applies suitlessHeatFrames instead.
+* _implicitHeatFrames_: This takes one of three possible values, "yes", "no", or "suitless". The default is "yes", which applies `heatFrames` equal to the amount of reserve transferred if the room is heated. This application is prevented by the value "no", while the value "suitless" applies `suitlessHeatFrames` instead.
 
 __Example:__
 ```json
