@@ -1051,6 +1051,25 @@
           ]
         },
         {
+          "name": "h_underwaterCrystalSpark",
+          "requires": [
+            {"tech": "canUnderwaterCrystalSpark"},
+            "canMidAirMorph",
+            "h_CrystalFlash",
+            "h_CrystalSparkLeniency",
+            {"gainBlueSuit": {}}
+          ]
+        },
+        {
+          "name": "h_underwaterCrystalSparkWithoutLenience",
+          "requires": [
+            {"tech": "canUnderwaterCrystalSpark"},
+            "canMidAirMorph",
+            "h_CrystalFlash",
+            {"gainBlueSuit": {}}
+          ]
+        },
+        {
           "name": "h_heatedCrystalSpark",
           "requires": [
             "h_heatProof",
@@ -1430,6 +1449,18 @@
               {"blueSuitShinecharge": {}}
             ]}
           ]
+        },
+        {
+          "name": "h_stationaryNeutralDamageBoost",
+          "requires": [
+            {"tech": "canNeutralDamageBoost"}
+          ],
+          "note": [
+            "This is for neutral damage boosts that are compatible with carrying a blue suit,",
+            "because of not needing to be moving when hit.",
+            "Note that even if pressing against a wall, holding a direction input can cause a blue suit to kill the enemy before the boost would occur;",
+            "therefore, if carrying a blue suit, no direction inputs should be pressed until after taking the hit."
+          ]
         }
       ]
     },
@@ -1606,6 +1637,32 @@
           ]
         },
         {
+          "name": "h_artificialMorphRModeCrystalFlashInterrupt",
+          "requires": [
+            {"tech": "canRModeCrystalFlashInterrupt"},
+            {"resourceAtMost": [{"type": "RegularEnergy", "count": 50}]},
+            {"resourceAtMost": [{"type": "ReserveEnergy", "count": 0}]},
+            {"or": [
+              {"disableEquipment": "ETank"},
+              {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 99}]}
+            ]},
+            "h_artificialMorphPowerBomb",
+            {"resourceAvailable": [{"type": "Missile", "count": 10}]},
+            {"resourceAvailable": [{"type": "Super", "count": 10}]},
+            {"resourceAvailable": [{"type": "PowerBomb", "count": 10}]},
+            {"disableEquipment": "Varia"},
+            {"disableEquipment": "Gravity"},
+            {"gainFlashSuit": {}}
+          ]
+        },
+        {
+          "name": "h_artificialMorphTrickyRModeCrystalFlashInterrupt",
+          "requires": [
+            {"tech": "canTrickyRModeCrystalFlashInterrupt"},
+            "h_artificialMorphRModeCrystalFlashInterrupt"
+          ]
+        },
+        {
           "name": "h_artificialMorphMovement",
           "requires": [
             {"or": [
@@ -1624,6 +1681,33 @@
           ]
         },
         {
+          "name": "h_MoreRTanksThanETanks",
+          "requires": [
+            {"or": [
+              {"and": [
+                {"disableEquipment": "ETank"},
+                {"resourceCapacity": [{"type": "ReserveEnergy", "count": 100}]}
+              ]},
+              {"and": [
+                {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 99}]},
+                {"resourceCapacity": [{"type": "ReserveEnergy", "count": 100}]}
+              ]},
+              {"and": [
+                {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 199}]},
+                {"resourceCapacity": [{"type": "ReserveEnergy", "count": 200}]}
+              ]},
+              {"and": [
+                {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 299}]},
+                {"resourceCapacity": [{"type": "ReserveEnergy", "count": 300}]}
+              ]},
+              {"and": [
+                {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 399}]},
+                {"resourceCapacity": [{"type": "ReserveEnergy", "count": 400}]}
+              ]}
+            ]}
+          ]
+        },
+        {
           "name": "h_RModeCanRefillReserves",
           "requires": [
             {"or": [
@@ -1636,6 +1720,67 @@
                 "canRiskPermanentLossOfAccess"
               ]}
             ]}
+          ]
+        },
+        {
+          "name": "h_CrystalFlashForReserveEnergy",
+          "requires": [
+            "canCrystalFlash",
+            {"or": [
+              {"and": [
+                {"or": [
+                  {"disableEquipment": "ETank"},
+                  {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 1099}]}
+                ]},
+                {"partialRefill": {"type": "RegularEnergy", "limit": 1099}},
+                {"refill": ["ReserveEnergy"]}
+              ]},
+              {"and": [
+                {"refill": ["RegularEnergy"]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 51}}
+              ]}
+            ]},
+            {"resourceAvailable": [{"type": "ReserveEnergy", "count": 1}]}
+          ],
+          "note": [
+            "This helper represents using a Crystal Flash with the specific goal of getting reserves, which is",
+            "particularly important in R-Mode due to needing reserves for R-Mode standup.",
+            "If Energy Tanks can be disabled, regular energy will be capped at 10 E-Tanks to provide up to 400 Reserves.",
+            "Without this, reserve energy will be capped at 51: the maximum possible when the player has all 14 E-Tanks."
+          ]
+        },
+        {
+          "name": "h_heatedCrystalFlashForReserveEnergy",
+          "requires": [
+            {"or": [
+              {"and": [
+                "h_heatProof",
+                "h_CrystalFlashForReserveEnergy"
+              ]},
+              {"and": [
+                {"simpleHeatFrames": 185},
+                "canHeatedCrystalFlash",
+                {"and": [
+                  {"or": [
+                    {"disableEquipment": "ETank"},
+                    {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 999}]}
+                  ]},
+                  {"partialRefill": {"type": "RegularEnergy", "limit": 999}},
+                  {"refill": ["ReserveEnergy"]}
+                ]},
+                {"simpleHeatFrames": 20}
+              ]}
+            ]},
+            {"resourceAvailable": [{"type": "ReserveEnergy", "count": 1}]}
+          ],
+          "note": [
+            "This helper represents using a Crystal Flash in heat with the specific goal of getting reserves, which is",
+            "particularly important in R-Mode due to needing reserves for R-Mode standup.",
+            "In unprotected heat, at 14 E-Tanks, a Crystal Flash would normally fail to reach the energy maximum and",
+            "provide reserves.",
+            "If Energy Tanks can be disabled, regular energy will be capped at 9 E-Tanks (10 if heat protection is available)",
+            "to provide up to 400 Reserves. Without this, heat protection is mandatory, and Reserve energy will be capped at 51:",
+            "the maximum possible when the player has all 14 E-Tanks."
           ]
         },
         {
@@ -1713,8 +1858,7 @@
           "requires":[
             "canDoubleXModeBlueSuit",
             "h_spikeXModeShinecharge",
-            "h_spikeXModeBlueSuit",
-            {"shinespark": {"frames": 4, "excessFrames": 4}}
+            "h_spikeXModeBlueSuit"
           ]
         },
         {
@@ -1722,8 +1866,7 @@
           "requires":[
             "canDoubleXModeBlueSuit",
             "h_thornXModeShinecharge",
-            "h_thornXModeBlueSuit",
-            {"shinespark": {"frames": 4, "excessFrames": 4}}
+            "h_thornXModeBlueSuit"
           ]
         }
       ]

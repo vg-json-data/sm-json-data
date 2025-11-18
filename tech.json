@@ -1224,6 +1224,7 @@
                   "id": 75,
                   "name": "canCWJ",
                   "techRequires": [
+                    "canDash",
                     "canTrickyJump",
                     "canWalljump"
                   ],
@@ -2388,6 +2389,66 @@
               ]
             },
             {
+              "id": 221,
+              "name": "canRModeCrystalFlashInterrupt",
+              "techRequires": [
+                "canRMode",
+                {"tech": "canCrystalFlash"},
+                "canCarryFlashSuit"
+              ],
+              "otherRequires": [
+                {"resourceAtMost": [{"type": "RegularEnergy", "count": 50}]},
+                {"resourceAtMost": [{"type": "ReserveEnergy", "count": 0}]},
+                {"or": [
+                  {"disableEquipment": "ETank"},
+                  {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 99}]}
+                ]},
+                "Morph",
+                {"ammo": {"type": "PowerBomb", "count": 1}},
+                {"resourceAvailable": [{"type": "Missile", "count": 10}]},
+                {"resourceAvailable": [{"type": "Super", "count": 10}]},
+                {"resourceAvailable": [{"type": "PowerBomb", "count": 10}]},
+                {"disableEquipment": "Varia"},
+                {"disableEquipment": "Gravity"},
+                {"gainFlashSuit": {}}
+              ],
+              "note": [
+                "The ability to gain a flash suit by interrupting a Crystal Flash with an R-mode forced standup.",
+                "This can be done by taking enough damage to force an auto reserve trigger after the Crystal Flash has at least partially filled the Reserve Energy."
+              ],
+              "detailNote": [
+                "It is typically required to have a small number of E-Tanks in order to be able to take enough damage to trigger reserves.",
+                "It is also required to use an enemy that can survive a Power Bomb explosion, or one that can respawn near Samus and deal enough damage before dying.",
+                "Note that the more Energy in reserves Samus has when they are triggered, the fewer remaining i-frames she will have when regaining mobility,",
+                "so a second hit may be difficult to avoid or may trigger automatically, if the enemy stays nearby."
+              ],
+              "devNote": [
+                "Strats are only tested with zero E-Tanks, unless otherwise documented.",
+                "FIXME: Some strats can be done with more than one E-Tank, which needs to be represented without requiring disabling E-Tanks.",
+                "The amount of resources consumed depends upon when during the Crystal Flash the reserves trigger, which will be strat dependent.",
+                "The amount of Energy remaining after the strat is complex and depends on the number of Reserve Tanks, when Samus gets hit, and by which enemy;",
+                "for simplicity, it is just assumed that Samus retains the small amount of Energy she had before the Crystal Flash (50 or less) and doesn't gain any refill.",
+                "For artificial morph setups, the reserve trigger exits G-mode.",
+                "Being able to toggle suits is important for most applications; while it is not required for all applications, the logic is currently written assuming you can toggle them."
+              ],
+              "extensionTechs": [
+                {
+                  "id": 226,
+                  "name": "canTrickyRModeCrystalFlashInterrupt",
+                  "techRequires": [
+                    "canRModeCrystalFlashInterrupt"
+                  ],
+                  "otherRequires": [],
+                  "note": [
+                    "The ability to R-mode forced standup Crystal Flash interrupt in more complex scenarios.",
+                    "This may include timing enemy contact to occur immediately after Samus gains Reserve Energy, to prevent a double hit;",
+                    "unintuitive enemy positioning, to prevent the enemy from being killed by the Power Bomb or light orb;",
+                    "and other unusual enemy setups."
+                  ]
+                }
+              ]
+            },
+            {
               "id": 213,
               "name": "canRModeKnockbackSpark",
               "techRequires": [
@@ -2466,7 +2527,7 @@
             },
             {
               "id": 214,
-              "name": "canFlashSuitDoubleSpark",
+              "name": "canUseFlashSuitInitialSpark",
               "techRequires": [
                 "canCarryFlashSuit"
               ],
@@ -2491,6 +2552,11 @@
             "A blue suit is obtained by interrupting a shinespark or shinespark wind-up,",
             "for example using a Crystal Flash or R-Mode forced standup, or by killing Draygon or being drained by the Baby Metroid.",
             "Actions that cause Samus to lose a blue suit include dashing, shinesparking, or falling into sand (though walking across sand is fine)."
+          ],
+          "detailNote": [
+            "While carrying a blue suit, if Samus is morphed and pressing against a wall,",
+            "Samus will not be boosted by Bombs, Power Bombs, or enemy damage;",
+            "therefore, release directional inputs in order to get such a boost."
           ],
           "devNote": [
             "It is possible to carry a blue suit without Speed Booster, but in this case the blue suit will be lost if the game is paused,",
@@ -2517,6 +2583,7 @@
               ],
               "extensionTechs": [
                 {
+                  "id": 222,
                   "name": "canRModePauseAbuseSparkInterrupt",
                   "techRequires": [
                     "canPauseAbuse",
@@ -2571,9 +2638,28 @@
               "devNote": [
                 "This tech should not be used directly; instead use a helper,",
                 "in order to correctly account for the amount of Crystal Flash refill, which depends on the environment."
+              ],
+              "extensionTechs": [
+                {
+                  "id": 227,
+                  "name": "canUnderwaterCrystalSpark",
+                  "techRequires": [
+                    "canCrystalSpark",
+                    "canSuitlessMaridia"
+                  ],
+                  "otherRequires": [],
+                  "note": [
+                    "Perform a Crystal Spark while on a shinecharge timer with underwater physics."
+                  ],
+                  "detailNote": [
+                    "If performing the spark from an angle-down crouch, angle-down must be released immediately after jumping,",
+                    "in order for the spark to activate."
+                  ]
+                }
               ]
             },
             {
+              "id": 223,
               "name": "canXModeBlueSuit",
               "techRequires": [
                 "canXMode",
@@ -2592,10 +2678,11 @@
               ]
             },
             {
+              "id": 224,
               "name": "canDoubleXModeBlueSuit",
               "techRequires": [
-               "canXModeBlueSuit",
-               "canCarryBlueSuit"
+                "canXModeBlueSuit",
+                "canCarryBlueSuit"
               ],
               "otherRequires": [
                 {"gainBlueSuit": {}},
@@ -2810,6 +2897,20 @@
           ]
         },
         {
+          "name": "canReserverTriggerBufferXRay",
+          "techRequires": [],
+          "otherRequires": [
+            "XRayScope",
+            {"noFlashSuit": {}}
+          ],
+          "note": [
+            "Starting an automatic reserve transfer while having X-Ray already selected allows the player to buffer",
+            "the dash button to instantly start X-Ray Scope and pause time as soon as the reserve transfer finishes.",
+            "One side effect of this is that the normal application of heat damage accumulated during a reserve trigger",
+            "is prevented."
+          ]
+        },
+        {
           "id": 153,
           "name": "canXRayTurnaround",
           "techRequires": [],
@@ -2980,6 +3081,7 @@
           ]
         },
         {
+          "id": 225,
           "name": "canSlopeXMode",
           "techRequires": [],
           "otherRequires": [
@@ -3013,6 +3115,19 @@
           "note": [
             "Ability to enter R-mode.",
             "Have some energy in reserves (set to Auto), take damage while going through a door, use X-Ray while entering the next room, and release X-Ray after reserves have finished filling."
+          ],
+          "extensionTechs": [
+            {
+              "id": 228,
+              "name": "canRModeStandupClip",
+              "techRequires": [
+                "canRMode"
+              ],
+              "otherRequires": [],
+              "note": [
+                "After entering a room in R-Mode, put some energy into reserves (set to Auto) and then have reserves trigger to force Samus into a standing pose."
+              ]
+            }
           ]
         },
         {
@@ -3494,5 +3609,5 @@
       ]
     }
   ],
-  "nextTechId": 221
+  "nextTechId": 229
 }

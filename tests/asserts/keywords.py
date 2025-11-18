@@ -334,6 +334,7 @@ def check_shinecharge_req(req):
 def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_heatedCrystalFlash", "h_heatedLavaCrystalFlash", "h_heatedAcidCrystalFlash",
+                   "h_heatedCrystalFlashForReserveEnergy",
                    "h_heatedCrystalSpark", "h_LowerNorfairElevatorDownwardFrames",
                    "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_heatedGreenGateGlitch",
                    "h_heatedDirectGModeLeaveSameDoor", "h_heatedIndirectGModeOpenSameDoor",
@@ -341,7 +342,7 @@ def check_heat_req(req):
                    "h_heatedGrappleTeleportWallEscape"]:
             return True
     if isinstance(req, dict):
-        if "heatFrames" in req or "heatFramesWithEnergyDrops" in req:
+        if "heatFrames" in req or "heatFramesWithEnergyDrops" or "suitlessHeatFrames" in req in req:
             return True
         if "and" in req:
             return any(check_heat_req(v) for v in req["and"])
@@ -501,7 +502,10 @@ def process_req_speed_state(req, states, err_fn):
             if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
                 err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
             states = {"preshinespark"}
-        elif req in ["h_CrystalSpark", "h_CrystalSparkWithoutLenience", "h_heatedCrystalSpark", "canRModeSparkInterrupt", "canRModePauseAbuseSparkInterrupt", "h_RModeKnockbackSpark", "h_spikeXModeBlueSuit", "h_thornXModeBlueSuit"]:
+        elif req in ["h_CrystalSpark", "h_CrystalSparkWithoutLenience",
+                     "h_underwaterCrystalSpark", "h_underwaterCrystalSparkWithoutLenience", "h_heatedCrystalSpark",
+                     "canRModeSparkInterrupt", "canRModePauseAbuseSparkInterrupt", "h_RModeKnockbackSpark",
+                     "h_spikeXModeBlueSuit", "h_thornXModeBlueSuit"]:
             if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
                 err_fn(f"{req} while not shinecharging/shinecharged/preshinespark")
             states = {"normal"}
@@ -515,6 +519,8 @@ def process_req_speed_state(req, states, err_fn):
     elif isinstance(req, dict):
         if "canShineCharge" in req:
             states = {"shinecharging"}
+        elif "blueSuitShinecharge" in req:
+            states = {"shinecharged"}
         elif "shineChargeFrames" in req:
             if not states.issubset(["shinecharging", "shinecharged"]):
                 err_fn(f"shineChargeFrames requirement while not in shinecharged state: {req}")
