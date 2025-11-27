@@ -109,6 +109,11 @@
       "name": "Room Not Filled With Acid",
       "obstacleType": "abstract",
       "note": "Entering trough the left door means there is time before the room fills with acid."
+    },
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -403,6 +408,23 @@
         "On entry, fall to the right to land past the first pirate, then run and jump over the next pirate and continue to the top door.",
         "It is possible but precise to cross the room without any items or a wall jump by jumping from the slightly raised platform on the right."
       ]
+    },
+    {
+      "link": [1, 3],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"or": [
+          "ScrewAttack",
+          {"heatFrames": 60}
+        ]},
+        {"heatFrames": 300}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode", "A"]
     },
     {
       "id": 37,
@@ -703,6 +725,85 @@
       "flashSuitChecked": true
     },
     {
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt (Gain Blue Suit) - Outrun the Rising Acid",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"obstaclesCleared": ["A"]},
+        {"or": [
+          "h_heatedCrystalFlashForReserveEnergy",
+          {"and": [
+            {"or": [
+              "ScrewAttack",
+              {"and": [
+                "Charge", "Plasma", "canXRayWaitForIFrames"
+              ]},
+              {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"]], "explicitWeapons": ["Super"]}}
+            ]},
+            "h_RModeCanRefillReserves",
+            {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"]]}},
+        {"canShineCharge": {"usedTiles": 20, "gentleDownTiles": 6, "openEnd": 1}},
+        {"or": [
+          "h_heatTriggerRModeSparkInterrupt",
+          {"and": [
+            "h_heatProof",
+            {"autoReserveTrigger": {}},
+            "canRModeSparkInterrupt",
+            {"acidFrames": 32}
+          ]}
+        ]}
+      ],
+      "resetsObstacles": ["R-Mode", "A"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "If you're fast, you can find enough time to kill a Yellow Pirate on the way up: Supers, Screw Attack,",
+        "or charged Microwave are fast enough to do this.",
+        "Either way, kill the pirate at the top, Crystal Flash if you need it, and get the shinecharge. If you're",
+        "heat-proof, wait for the acid to finish rising and you can interrupt in the small bit that reaches the",
+        "runway. Otherwise, use heat to interrupt."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt (Gain Blue Suit) - Room Full of Acid",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"or": [
+          "h_heatedCrystalFlashForReserveEnergy",
+          {"and": [
+            "h_RModeCanRefillReserves",
+            {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"]]}},
+            {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"canShineCharge": {"usedTiles": 20, "gentleDownTiles": 6, "openEnd": 1}},
+        {"or": [
+          "h_heatTriggerRModeSparkInterrupt",
+          {"and": [
+            {"autoReserveTrigger": {}},
+            "canRModeSparkInterrupt",
+            {"acidFrames": 32},
+            {"heatFrames": 32}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Kill the runway pirate for a drop and Crystal Flash if needed. To interrupt, you can either",
+        "use heat, or stand in the acid at the very end of the runway. Acid damage does not accumulate",
+        "during reserve trigger as heat does, so escape quickly to minimize exposure."
+      ]
+    },
+    {
       "id": 10,
       "link": [2, 2],
       "name": "Leave With Runway (Pirate Alive)",
@@ -795,7 +896,7 @@
           ]}
         ]}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Yellow Space Pirate (standing)", "count": 1}],
       "flashSuitChecked": true
     },
@@ -1537,6 +1638,7 @@
         ]}
       ],
       "clearsObstacles": ["A"],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [{"enemy": "Yellow Space Pirate (standing)", "count": 1}],
       "flashSuitChecked": true
     }
