@@ -147,26 +147,22 @@ def process_keyvalue(k, v, metadata):
         "doorOrientation",  # validated by schema
         "minExtraRunSpeed", # validated by schema
         "maxExtraRunSpeed", # validated by schema
-        "types",  # validated by schema in 'unlocksDoors', manually in 'enemyDamage'
-        "type",  # validated by schema in 'resourceAvailable', 'resourceCapacity'
+        "types",  # validated by schema in 'unlocksDoors',
+        "type", # validated by schema in resourceAvailable, resourceCapacity, resourceConsumed, resourceAtMost, resourceMissingAtMost, resourceMaxCapacity
         "position",  # validated by schema
         "environment",  # validated by schema
         "bypassesDoorShell",  # validated by schema
     ]
 
+    # Keys that need validation but share a name with a filtered key
+    keys_to_validate = [
+        "enemyDamage.enemy",
+        "enemyDamage.type"
+    ]
+
     # check if it's a key we want to check
-    if k in badKeys or k in goodKeys:
-        processValue = False
-    else:
-        for checkKey in badKeys:
-            if checkKey in k:
-                processValue = False
-        for checkKey in manualKeys:
-            if checkKey in k:
-                processValue = False
-        for checkKey in goodKeys:
-            if checkKey in k:
-                processValue = False
+    processValue = not any(checkKey in k for checkKey in (*badKeys, *manualKeys, *goodKeys)) \
+                    or any(checkKey in k for checkKey in keys_to_validate) 
 
     isSkip = False
     kCheck = k.split(".")[-1]
