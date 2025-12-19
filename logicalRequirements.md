@@ -323,12 +323,12 @@ __Example:__
 {"gravitylessLavaFrames": 70}
 ```
 
-#### samusEaterFrames object
-A `samusEaterFrames` object represents the need for Samus to take damage from the environmental enemy known as a Samus Eater.  When captured, fixed damage is dealt over a set number of frames. The frame amount is 320 for ceiling and 160 for floor variations.  The vanilla damage is 2 per 20 frames in Power Suit, 1 per 20 frames in Varia Suit, 1 per 40 frames in Gravity Suit.
+#### samusEaterCycles object
+A `samusEaterCycles` object represents the need for Samus to take damage from the environmental enemy known as a Samus Eater. When captured, damage is dealt in small hits multiple times. The vanilla damage is 8 hits of 2 damage with Power Suit, 8 hits of 1 damage in Varia Suit, or 4 hits of 1 damage in Gravity Suit. As there is no known way to escape a Samus Eater between hits, this is simplified as energy loss per cycle. Note that Samus is stuck in the ceiling variants for twice as long, which would be represented as 2 cycles.
 
 __Example:__
 ```json
-{"samusEaterFrames": 160}
+{"samusEaterCycles": 1}
 ```
 
 #### metroidFrames object
