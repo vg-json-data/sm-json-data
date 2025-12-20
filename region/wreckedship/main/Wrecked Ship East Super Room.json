@@ -55,10 +55,9 @@
   ],
   "obstacles": [
     {
-      "id": "A",
-      "name": "R-Mode",
-      "obstacleType": "abstract",
-      "note": "Samus is in R-Mode."
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -508,6 +507,7 @@
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_CrystalFlash"
       ],
       "flashSuitChecked": true,
@@ -518,6 +518,7 @@
       "link": [1, 1],
       "name": "10 Power Bomb Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "f_DefeatedPhantoon",
         {"or": [
           {"resourceAvailable": [{"type": "RegularEnergy", "count": 50}]},
@@ -558,12 +559,12 @@
     {
       "id": 16,
       "link": [1, 1],
-      "name": "Come in in R-Mode",
+      "name": "R-Mode Entry",
       "entranceCondition": {
         "comeInWithRMode": {}
       },
       "requires": [],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["R-Mode"],
       "flashSuitChecked": true
     },
     {
@@ -839,6 +840,7 @@
       "link": [2, 1],
       "name": "Crystal Flash Clip",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         {"notable": "Crystal Flash Clip"},
         {"or": [
           "canTrivialMidAirMorph",
@@ -860,12 +862,47 @@
       ]
     },
     {
+      "link": [1, 1],
+      "name": "R-Mode Pause Abuse Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"or": [
+          {"and": [
+            "h_CrystalFlashForReserveEnergy",
+            "canTrickyDodgeEnemies"
+          ]},
+          {"and": [
+            "h_RModeCanRefillReserves",
+            {"enemyKill": {"enemies": [["Bull", "Bull"]], "excludedWeapons": ["PowerBomb"]}},
+            {"resourceMissingAtMost": [{"type": "PowerBomb", "count": 0}]},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 40}}
+          ]}
+        ]},
+        {"or": [
+          {"canShineCharge": {"usedTiles": 14, "openEnd": 0}},
+          {"and": [
+            "f_DefeatedPhantoon",
+            {"canShineCharge": {"usedTiles": 20, "openEnd": 2}}
+          ]}
+        ]},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Power Off: Farm using Coverns or trapped Atomics. Use any conveyor belt to shinecharge and then use the next Covern spawn to interrupt.",
+        "Power On: Kill one Bull for energy. Run against a conveyor belt direction to shinecharge, and then use the other Bull to interrupt."
+      ]
+    },
+    {
       "id": 25,
       "link": [2, 1],
       "name": "R-Mode Standup Clip",
       "requires": [
         {"notable": "R-Mode Standup Clip"},
-        {"obstaclesCleared": ["A"]},
+        {"obstaclesCleared": ["R-Mode"]},
         "canRModeStandupClip",
         "canCeilingClip",
         "canBePatient",
@@ -876,11 +913,13 @@
           "Plasma",
           "ScrewAttack"
         ]},
+        {"partialRefill": {"type": "ReserveEnergy", "limit": 20}},
         {"or": [
           "canTrivialMidAirMorph",
           "h_useSpringBall",
           "h_bombThings"
-        ]}
+        ]},
+        {"autoReserveTrigger": {}}
       ],
       "flashSuitChecked": true,
       "note": [
