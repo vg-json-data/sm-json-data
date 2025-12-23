@@ -115,6 +115,11 @@
       "id": "A",
       "name": "Bomb Blocks",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -231,9 +236,37 @@
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [1, 1],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"]
+    },
+    {
+      "link": [1, 1],
+      "name": "R-Mode Entry, Crystal Flash",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0},
+        "h_heatedCrystalFlashForReserveEnergy"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"]
     },
     {
       "id": 3,
@@ -376,70 +409,6 @@
         {"types": ["missiles", "powerbomb"], "requires": ["never"]}
       ],
       "flashSuitChecked": true
-    },
-    {
-      "link": [1, 4],
-      "name": "R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        "Charge",
-        {"or": [
-          {"and": [
-            "h_heatedCrystalFlashForReserveEnergy",
-            {"or": [
-              {"and": [
-                {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"]], "explicitWeapons": ["ScrewAttack", "Charge+Ice+Wave+Plasma"]}},
-                {"heatFrames": 400}
-              ]},
-              {"heatFrames": 520},
-              {"and": [
-                "canTrickyJump",
-                {"heatFrames": 270},
-                {"or": [
-                  "canDownBack",
-                  "Morph",
-                  {"heatFrames": 40}
-                ]}
-              ]},
-              {"and": [
-                "canInsaneJump",
-                "canTrickyDodgeEnemies",
-                {"heatFrames": 190},
-                {"or": [
-                  "canDownBack",
-                  "Morph",
-                  {"heatFrames": 40}
-                ]}
-              ]}
-            ]}
-          ]},
-          {"and": [
-            "h_heatProof",
-            {"or": [
-              "Plasma",
-              {"and": ["Ice", "Wave", "Spazer"]},
-              "canBePatient"
-            ]},
-            {"enemyKill": {"enemies": [["Namihe", "Namihe", "Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
-            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
-          ]}
-        ]},
-        {"heatFrames": 40},
-        "canKago",
-        {"enemyDamage": {"enemy": "Namihe", "type": "kago", "hits": 1}},
-        {"disableEquipment": "ScrewAttack"},
-        {"enemyKill": {"enemies": [["Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
-        {"canShineCharge": {"usedTiles": 12, "openEnd": 0}},
-        "h_heatTriggerRModeSparkInterrupt"
-      ],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "Crystal Flash at the door, or farm Pirates and Namihe on the way down.",
-        "Use a Kago and Pseudo Screw to kill the Nahime at the bomb blocks and shinecharge. Use heat damage to interrupt."
-      ]
     },
     {
       "id": 83,
@@ -621,16 +590,47 @@
         ]},
         {"cycleFrames": 285}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Yellow Space Pirate (wall)", "count": 2}],
       "flashSuitChecked": true,
       "devNote": "FIXME: There are more possible beam combinations."
+    },
+    {
+      "link": [2, 2],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"]
+    },
+    {
+      "link": [2, 2],
+      "name": "R-Mode Entry, Crystal Flash (Frozen Namihe)",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0},
+        "Plasma",
+        "Ice",
+        "h_heatedCrystalFlashForReserveEnergy"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"],
+      "note": ["Refreeze the Namihe after laying the Power Bomb, to avoid taking damage"]
     },
     {
       "id": 8,
       "link": [2, 2],
       "name": "Crystal Flash (Frozen Namihe)",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "Plasma",
         "Ice",
         "h_heatedCrystalFlash"
@@ -643,12 +643,13 @@
       "link": [2, 2],
       "name": "Crystal Flash (Floating Platform)",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         {"heatFrames": 60},
         "h_heatedCrystalFlash",
         {"heatFrames": 90},
         {"resetRoom": {"nodes": [2]}}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "flashSuitChecked": true,
       "note": [
         "Perform the Crystal Flash on the bottom part of the floating platform, to avoid taking damage.",
@@ -1609,9 +1610,37 @@
       "link": [3, 3],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "link": [3, 3],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"]
+    },
+    {
+      "link": [3, 3],
+      "name": "R-Mode Entry, Crystal Flash",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"heatFrames": 0},
+        "h_heatedCrystalFlashForReserveEnergy"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "clearsObstacles": ["R-Mode"]
     },
     {
       "id": 84,
@@ -1625,79 +1654,6 @@
       "note": [
         "Spin jump over the pirate; aiming down mid jump can help.",
         "Then weave between the platforms below."
-      ]
-    },
-    {
-      "link": [3, 4],
-      "name": "R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        "Charge",
-        {"or": [
-          {"and": [
-            "h_heatedCrystalFlashForReserveEnergy",
-            {"or": [
-              {"and": [
-                "ScrewAttack",
-                {"heatFrames": 260}
-              ]},
-              {"and": [
-                {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"]], "explicitWeapons": ["Super"]}},
-                {"heatFrames": 310}
-              ]},
-              {"and": [
-                "Charge", "Plasma", "Wave",
-                {"heatFrames": 360}
-              ]},
-              {"heatFrames": 490},
-              {"and": [
-                "canTrickyJump",
-                {"heatFrames": 175}
-              ]},
-              {"and": [
-                "canHitbox",
-                {"or": [
-                  {"and": [
-                    "h_usePowerBomb",
-                    {"heatFrames": 175}
-                  ]},
-                  {"and": [
-                    "canDodgeWhileShooting",
-                    "Charge",
-                    "Plasma",
-                    {"heatFrames": 125}
-                  ]}
-                ]},
-                {"heatFrames": 160}
-              ]}
-            ]}
-          ]},
-          {"and": [
-            "h_heatProof",
-            {"or": [
-              "Plasma",
-              {"and": ["Ice", "Wave", "Spazer"]},
-              "canBePatient"
-            ]},
-            {"enemyKill": {"enemies": [["Namihe", "Namihe", "Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
-            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
-          ]}
-        ]},
-        {"heatFrames": 40},
-        "canKago",
-        {"enemyDamage": {"enemy": "Namihe", "type": "kago", "hits": 1}},
-        {"disableEquipment": "ScrewAttack"},
-        {"enemyKill": {"enemies": [["Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
-        {"canShineCharge": {"usedTiles": 12, "openEnd": 0}},
-        "h_heatTriggerRModeSparkInterrupt"
-      ],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "Crystal Flash at the door, or farm Pirates and Namihe on the way down.",
-        "Use a Kago and Pseudo Screw to kill the Nahime at the bomb blocks and shinecharge. Use heat damage to interrupt."
       ]
     },
     {
@@ -1823,10 +1779,77 @@
       ]
     },
     {
+      "link": [4, 4],
+      "name": "X-Mode Shinecharge, R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"notable": "X-Mode Temporary Blue"},
+        {"or": [
+          {"resourceAvailable": [{"type": "ReserveEnergy", "count": 1}]},
+          {"and": [
+            "h_heatProof",
+            {"enemyKill": {"enemies": [["Yellow Space Pirate (standing)"], ["Yellow Space Pirate (standing)"], ["Yellow Space Pirate (standing)"]]}},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"heatFrames": 290},
+        "canLateralMidAirMorph",
+        "canXMode",
+        "h_XModeSpikeHit",
+        "h_shinechargeMaxRunway",
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Crystal Flash at the door, or farm Pirates and Namihe on the way down.",
+        "Jump-morph toward the Namihe below the spike and enter Spike X-Mode to shinecharge. Use the Namihe's fireball to interrupt."
+      ]
+    },
+    {
+      "link": [4, 4],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"obstaclesNotCleared": ["A"]},
+        "Charge",
+        {"or": [
+          {"resourceAvailable": [{"type": "ReserveEnergy", "count": 1}]},
+          {"and": [
+            "h_heatProof",
+            {"or": [
+              "Plasma",
+              {"and": ["Ice", "Wave", "Spazer"]},
+              "canBePatient"
+            ]},
+            {"enemyKill": {"enemies": [["Namihe", "Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"heatFrames": 40},
+        "canKago",
+        {"enemyDamage": {"enemy": "Namihe", "type": "kago", "hits": 1}},
+        {"disableEquipment": "ScrewAttack"},
+        {"enemyKill": {"enemies": [["Namihe"]], "explicitWeapons": ["PseudoScrew"]}},
+        {"canShineCharge": {"usedTiles": 12, "openEnd": 0}},
+        "h_heatTriggerRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Crystal Flash at the door, or farm Pirates and Namihe on the way down.",
+        "Use a Kago and Pseudo Screw to kill the Nahime at the bomb blocks and shinecharge. Use heat damage to interrupt."
+      ]
+    },
+    {
       "id": 39,
       "link": [4, 4],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
@@ -2086,7 +2109,7 @@
           ]}
         ]}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Yellow Space Pirate (standing)", "count": 1}],
       "flashSuitChecked": true,
       "devNote": "FIXME: There are more possible beam combinations."
@@ -2096,6 +2119,7 @@
       "link": [5, 5],
       "name": "Crystal Flash (Frozen Namihe)",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "Plasma",
         "Ice",
         "h_heatedCrystalFlash"
@@ -2108,6 +2132,7 @@
       "link": [5, 5],
       "name": "Crystal Flash (On Top of Namihe)",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         {"heatFrames": 40},
         {"enemyDamage": {"enemy": "Namihe", "type": "kago", "hits": 1}},
         "h_heatedCrystalFlash",
@@ -2296,6 +2321,7 @@
       "link": [6, 6],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
