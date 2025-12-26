@@ -982,7 +982,7 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveS
 - A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
 - A match with `leaveShinecharged` is always valid. It comes with an implicit requirement of `canShinechargeMovement`.
 - A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInShinecharged`) for actions to be performed in the previous room:
-  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement as well as a check that the effective runway length is enough that charging a shinespark is possible.
+  - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement, a check that the effective runway length is enough that charging a shinespark is possible, and the loss of any blue suit or flash suit.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
 - A match with `leaveNormally` comes with a `"or": [{"useFlashSuit": {}}, {"blueSuitShinecharge": {}}]` requirement.
