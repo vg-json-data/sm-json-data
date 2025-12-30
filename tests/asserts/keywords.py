@@ -1024,6 +1024,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         fromNode = link[0]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
                         toNode = link[1]
+
+                        strat_id = strat.get("id")
+                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:{strat_id}:'{strat['name']}'"
+                        if fromNode not in roomData["nodes"]["ids"]:
+                            msg = f"🔴ERROR: From node {fromNode} doesn't exist:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
+                        if toNode not in roomData["nodes"]["ids"]:
+                            msg = f"🔴ERROR: To node {toNode} doesn't exist:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
+
                         paramData = {
                             "key": "linkStrats",
                             "fromNode": fromNode,
@@ -1033,10 +1047,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "bail": bail
                         }
                         paramData = process_strats([strat], paramData)
-                        fromNode = link[0]
-                        toNode = link[1]
-                        strat_id = strat.get("id")
-                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:{strat_id}:'{strat['name']}'"
+
                         if strat_id is not None:
                             if "id" in strat and strat_id in strat_id_set:
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not unique:{stratRef}"
