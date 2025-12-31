@@ -22,7 +22,7 @@ A room has an array of nodes. Nodes represent points of interest in a room. Thos
 * _entrance:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to enter the room it's in, not exit it. Please note that this is not intended to represent gray doors, even those that can never be unlocked. Rather, this is for an entrance node with no exit trigger, such a sand chute at the top of a room.
 * _exit:_ A node that is connected to another node in another room, in a one-way connection. This node can only be used to exit the room it's in, not enter it
 * _item:_ A node that represents an item that can be picked up
-* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several similar links. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at location X while obstacle Y is broken).
+* _junction:_ A node that has no special in-game meaning. Its purpose is to represent a specific spot in a room, to which it would make sense to connect other nodes. They are often used to reduce logic duplication by preventing the very same requirements from having to be repeated in several strats that cross through the same section of a room. In some cases, junctions represent not only a location in a room, but also a condition (e.g. being at a location with specific enemy positioning or Samus is in a specific state).
 * _utility:_ A node that represents some kind of utility station, such as a refill station or a save capsule.
 
 A node's `name` property has to be unique across the entire model.
@@ -78,7 +78,7 @@ The `locks` property is an array that contains different ways a node can be lock
 
 __Additional considerations__
 
-None of the locks must be active for Samus to be able to properly interact with a node. Note that unlike traversing links, `unlocking` a lock is an action that needs to be done only once. Interacting with a node, which requires no locks to be active, can take several forms such as:
+None of the locks must be active for Samus to be able to properly interact with a node. Note that unlike traversing strats, `unlocking` a lock is an action that needs to be done only once. Interacting with a node, which requires no locks to be active, can take several forms such as:
 * Using a door node to go to another room
 * Picking up the item at an item node
 * Using any `utility` that is present at a node
@@ -129,11 +129,6 @@ A room can have an array of enemies. This is the list of enemies that may be pre
 * _betweenNodes:_ An array of exactly two nodes, indicating that the enemy is encountered while travelling between those two nodes. Mutually exclusive with `homeNodes`.
 * _spawn:_ The `spawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to spawn in the room. If this is missing, the enemy can spawn in the room from game start.
 * _stopSpawn:_ The `stopSpawn` property lists [logical requirements](../logicalRequirements.md) that must be fulfilled in order for the enemy to no longer spawn in the room. If this is missing, the enemy will never stop spawning in the room after its spawn conditions have been met.
-
-### Links
-A room has an array of links. Links define how Samus can navigate within a room. Each link has a `from` property that defines the node where Samus must be to use it, and a `to` property which is an array of possible destinations. Each destination of a link has the following properties:
-* _id:_ The in-room ID of the node to which the link leads
-* _strats:_ An array of [strats](../strats.md), each of which represents a way Samus can go to that destination.
 
 ### Notable Strats
 Some strats are flagged as "notable". this means a few things:

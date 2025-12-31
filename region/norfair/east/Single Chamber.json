@@ -129,6 +129,13 @@
       "note": "Represents the platform below the middle right door of the left shaft."
     }
   ],
+  "obstacles": [
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -173,88 +180,6 @@
       "betweenNodes": [2, 3]
     }
   ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 6}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 8}
-      ]
-    },
-    {
-      "from": 3,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 7},
-        {"id": 8}
-      ]
-    },
-    {
-      "from": 4,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 6},
-        {"id": 7}
-      ]
-    },
-    {
-      "from": 5,
-      "to": [
-        {"id": 1},
-        {"id": 5},
-        {"id": 6}
-      ]
-    },
-    {
-      "from": 6,
-      "to": [
-        {"id": 1},
-        {"id": 4},
-        {"id": 6},
-        {"id": 7}
-      ]
-    },
-    {
-      "from": 7,
-      "to": [
-        {"id": 3},
-        {"id": 4},
-        {"id": 6},
-        {"id": 8}
-      ]
-    },
-    {
-      "from": 8,
-      "to": [
-        {"id": 2},
-        {"id": 3},
-        {"id": 7}
-      ]
-    }
-  ],
   "strats": [
     {
       "id": 1,
@@ -284,6 +209,7 @@
           {"cycleFrames": 30}
         ]}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [{"enemy": "Multiviola", "count": 1}],
       "flashSuitChecked": true
     },
@@ -321,6 +247,7 @@
         ]},
         {"cycleFrames": 285}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [
         {"enemy": "Multiviola", "count": 1},
         {"enemy": "Alcoon", "count": 2}
@@ -332,9 +259,22 @@
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 132,
+      "link": [1, 1],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 3,
@@ -823,6 +763,7 @@
         ]},
         {"cycleFrames": 245}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [
         {"enemy": "Multiviola", "count": 1},
         {"enemy": "Alcoon", "count": 1}
@@ -834,9 +775,54 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 133,
+      "link": [2, 2],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 134,
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"or": [
+          "h_heatedCrystalFlashForReserveEnergy",
+          {"and": [
+            "h_heatProof",
+            "h_RModeCanRefillReserves",
+            {"resourceMissingAtMost": [{"type": "PowerBomb", "count": 0}]},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"or": [
+          {"canShineCharge": {"usedTiles": 12, "gentleUpTiles": 4, "openEnd": 0}},
+          {"and": [
+            {"doorUnlockedAtNode": 2},
+            {"canShineCharge": {"usedTiles": 13, "gentleUpTiles": 4, "openEnd": 0}}
+          ]}
+        ]},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Farm the enemies, and leave the bottom Alcoon alive to interrupt after shinecharging at the bottom door."
+      ]
     },
     {
       "id": 12,
@@ -1601,6 +1587,7 @@
         ]},
         {"cycleFrames": 210}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [
         {"enemy": "Multiviola", "count": 1},
         {"enemy": "Alcoon", "count": 1}
@@ -1612,9 +1599,22 @@
       "link": [3, 3],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 135,
+      "link": [3, 3],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 31,
@@ -2312,6 +2312,7 @@
         ]},
         {"cycleFrames": 450}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [
         {"enemy": "Multiviola", "count": 1},
         {"enemy": "Alcoon", "count": 2}
@@ -2334,6 +2335,7 @@
           {"cycleFrames": 30}
         ]}
       ],
+      "resetsObstacles": ["R-Mode"],
       "farmCycleDrops": [{"enemy": "Multiviola", "count": 1}],
       "flashSuitChecked": true,
       "note": "Jump and aim down two to three times to activate the Multiviola."
@@ -2343,9 +2345,22 @@
       "link": [4, 4],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 136,
+      "link": [4, 4],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 64,
@@ -2622,9 +2637,22 @@
       "link": [5, 5],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 137,
+      "link": [5, 5],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 52,
@@ -3355,7 +3383,7 @@
     }
   ],
   "notables": [],
-  "nextStratId": 132,
+  "nextStratId": 138,
   "nextNotableId": 1,
   "devNote": [
     "FIXME: Using a Power Bomb (e.g. for Crystal Flash) prevents using frozen enemies."

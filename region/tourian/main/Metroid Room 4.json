@@ -71,22 +71,6 @@
       "homeNodes": [1, 2]
     }
   ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
-    }
-  ],
   "strats": [
     {
       "id": 1,
@@ -200,6 +184,45 @@
       "devNote": [
         "FIXME: It may be possible to kill the Metroids starting at the bottom door.",
         "It is possible, but quite difficult to do this with 4 Power Bombs."
+      ]
+    },
+    {
+      "id": 32,
+      "link": [1, 1],
+      "name": "R-Mode Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "canRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}},
+        {"ammo": {"type": "Super", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash directly above or below a Rinka Spawner."
+      ],
+      "devNote": [
+        "Note that this and the top of Metroid Room 2 are the only of the Metroid rooms that currently allows the Metroids to be alive, as they can get stuck on the ledge.",
+        "This is not possible in G-mode, because the Power Bomb will kill the Rinka and prevent more from spawning."
+      ]
+    },
+    {
+      "id": 33,
+      "link": [1, 1],
+      "name": "R-Mode Crystal Flash Light Orb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "canComplexGMode",
+        "h_CrystalFlash"
+      ],
+      "setsFlags": ["f_KilledMetroidRoom4"],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage.",
+        "Lure the Metroids after Crystal Flashing, and return to the light orb to kill them."
       ]
     },
     {
@@ -323,7 +346,8 @@
           {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}}
         ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "note": "Note that angle-down shots with a Metroid on Samus are unreliable, so it is recommended to jump and shoot down to open the door if one grabs her."
     },
     {
       "id": 13,
@@ -358,8 +382,37 @@
       "requires": [
         {"metroidFrames": 240}
       ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["missiles"],
+          "requires": [
+            {"ammo": {"type": "Missile", "count": 1}},
+            {"metroidFrames": 50}
+          ]
+        },
+        {
+          "types": ["super"],
+          "requires": [
+            "canTrickyJump",
+            {"metroidFrames": 50}
+          ]
+        },
+        {
+          "types": ["powerbomb"],
+          "requires": [{"metroidFrames": 50}]
+        }
+      ],
       "flashSuitChecked": true,
-      "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage."
+      "note": [
+        "Taking a rinka hit stops the Metroid damage for a while and is less damage.",
+        "Note that angle-down shots with a Metroid on Samus are unreliable, so it is recommended to jump and shoot down to open the door."
+      ],
+      "devNote": [
+        "Power Bombs negate some of the damage taken while waiting for the door to unlock."
+      ]
     },
     {
       "id": 16,
@@ -390,6 +443,47 @@
       ],
       "devNote": [
         "It might technically be possible to get through the 3-tile-high part without Spring Ball, but this probably isn't really viable?"
+      ]
+    },
+    {
+      "id": 34,
+      "link": [1, 2],
+      "name": "R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "Ice",
+        {"or": [
+          {"and": [
+            "h_CrystalFlashForReserveEnergy",
+            "f_KilledMetroidRoom4"
+          ]},
+          {"and": [
+            {"not": "f_KilledMetroidRoom4"},
+            "canRiskPermanentLossOfAccess",
+            "h_RModeCanRefillReserves",
+            {"enemyKill": {
+              "enemies": [["Metroid"], ["Metroid"]],
+              "explicitWeapons": ["Missile", "Super"]
+            }},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}},
+            {"or": [
+              "Morph",
+              "canMetroidAvoid"
+            ]}
+          ]}
+        ]},
+        {"canShineCharge": {"usedTiles": 12, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Do not kill all three Metroids, or else they cannot be farmed again, leaving only Crystal Flash as an option.",
+        "Kill two and lure the remaining Metroid to the top of the room. Shinecharge in the narrow space at the bottom door",
+        "and use a Rinka to interrupt."
       ]
     },
     {
@@ -561,9 +655,31 @@
         {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}},
         {"metroidFrames": 256}
       ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["missiles"],
+          "requires": [
+            {"metroidFrames": 50},
+            {"ammo": {"type": "Missile", "count": 2}}
+          ]
+        },
+        {
+          "types": ["super"],
+          "requires": [
+            {"ammo": {"type": "Super", "count": 1}}
+          ]
+        },
+        {"types": ["powerbomb"], "requires": []}
+      ],
       "flashSuitChecked": true,
       "note": "Taking a rinka hit stops the Metroid damage for a while and is less damage.",
-      "devNote": "Avoiding Rinkas is more difficult than getting hit, so it is not important to know to want to get hit."
+      "devNote": [
+        "Avoiding Rinkas is more difficult than getting hit, so it is not important to know to want to get hit.",
+        "Opening a door with a Power Bomb is energy neutral since you can place it early."
+      ]
     },
     {
       "id": 27,
@@ -600,6 +716,45 @@
       ]
     },
     {
+      "id": 35,
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {},
+        "comesThroughToilet": "no"
+      },
+      "requires": [
+        "Ice",
+        {"or": [
+          {"and": [
+            "f_KilledMetroidRoom4",
+            "h_CrystalFlashForReserveEnergy"
+          ]},
+          {"and": [
+            {"not": "f_KilledMetroidRoom4"},
+            "canRiskPermanentLossOfAccess",
+            "h_RModeCanRefillReserves",
+            {"enemyKill": {
+              "enemies": [["Metroid"], ["Metroid"]],
+              "explicitWeapons": ["Missile", "Super"]
+            }},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}},
+            "canCarefulJump"
+          ]}
+        ]},
+        {"canShineCharge": {"usedTiles": 12, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Do not kill all three Metroids, or else they cannot be farmed again, leaving only Crystal Flash as an option.",
+        "Kill two and lure the remaining Metroid to the top of the room. Shinecharge in the narrow space at the bottom door",
+        "and use a Rinka to interrupt."
+      ]
+    },
+    {
       "id": 28,
       "link": [2, 2],
       "name": "G-Mode Regain Mobility",
@@ -613,6 +768,29 @@
       "gModeRegainMobility": {},
       "flashSuitChecked": true,
       "note": "If alive, the Metroids do up to 78 damage before the Rinka hits. Entering through the middle of the door will require less damage."
+    },
+    {
+      "id": 36,
+      "link": [2, 2],
+      "name": "R-Mode Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {},
+        "comesThroughToilet": "no"
+      },
+      "requires": [
+        "f_KilledMetroidRoom4",
+        "canRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}},
+        {"ammo": {"type": "Super", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash directly above or below a Rinka Spawner."
+      ],
+      "devNote": [
+        "There could be a variant with the Metroids alive, but they will all lure to Samus and the light orb will disappear, so she will take heavy damage.",
+        "This is not possible in G-mode, because the Power Bomb will kill the Rinka and prevent more from spawning."
+      ]
     }
   ],
   "notables": [
@@ -650,6 +828,6 @@
       ]
     }
   ],
-  "nextStratId": 32,
+  "nextStratId": 37,
   "nextNotableId": 5
 }

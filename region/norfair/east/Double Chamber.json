@@ -102,6 +102,11 @@
       "id": "A",
       "name": "Blue Gate",
       "obstacleType": "inanimate"
+    },
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -127,73 +132,6 @@
       "homeNodes": [5]
     }
   ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 7}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 7}
-      ]
-    },
-    {
-      "from": 3,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5},
-        {"id": 6},
-        {"id": 7}
-      ]
-    },
-    {
-      "from": 4,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 5,
-      "to": [
-        {"id": 2},
-        {"id": 3},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 6,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
-    },
-    {
-      "from": 7,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
-    }
-  ],
   "strats": [
     {
       "id": 1,
@@ -213,6 +151,7 @@
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
@@ -236,7 +175,7 @@
           ]}
         ]}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Ripper 2 (green)", "count": 1}],
       "flashSuitChecked": true
     },
@@ -310,6 +249,18 @@
       "devNote": [
         "This uses the runway in the middle of the room but logically starts at the door, to ensure it can be opened."
       ]
+    },
+    {
+      "id": 168,
+      "link": [1, 1],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 3,
@@ -662,13 +613,12 @@
       "name": "Walljump Climb Using the Kamer",
       "requires": [
         {"notable": "Walljump Climb Using the Kamer"},
-        "canPreciseWalljump",
+        "canTrickyWalljump",
         "canConsecutiveWalljump",
         "canUseEnemies",
         {"or": [
-          {"heatFrames": 560},
           {"and": [
-            "canTrickyWalljump",
+            "canDodgeWhileShooting",
             {"heatFrames": 360}
           ]},
           {"and": [
@@ -703,12 +653,28 @@
         {"notable": "Walljump Climb Using the Kamer"},
         "HiJump",
         "canUseEnemies",
-        "canWalljump",
+        "canPreciseWalljump",
         {"or": [
           {"heatFrames": 360},
           {"and": [
-            "canCarefulJump",
-            {"heatFrames": 250}
+            "canTrickyJump",
+            {"heatFrames": 230}
+          ]}
+        ]},
+        {"or": [
+          "canDodgeWhileShooting",
+          {"enemyDamage": {"enemy": "Fune", "type": "fireball", "hits": 1}},
+          {"and": [
+            "canUseFrozenEnemies",
+            {"heatFrames": 70}
+          ]},
+          {"and": [
+            {"ammo": {"type": "Super", "count": 1}},
+            {"heatFrames": 70}
+          ]},
+          {"and": [
+            {"ammo": {"type": "PowerBomb", "count": 1}},
+            {"heatFrames": 90}
           ]}
         ]}
       ],
@@ -1157,6 +1123,64 @@
       "devNote": ["The Kamers make this tricky since it's easy to bonk on them."]
     },
     {
+      "id": 169,
+      "link": [2, 1],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        "HiJump",
+        {"or": [
+          "SpaceJump",
+          {"and": [
+            "canPreciseWalljump",
+            "canTrickyJump"
+          ]}
+        ]},
+        {"or": [
+          "h_heatedCrystalFlashForReserveEnergy",
+          {"and": [
+            "h_RModeCanRefillReserves",
+            {"or": [
+              {"and": [
+                "h_heatProof",
+                {"enemyKill": {
+                  "enemies": [["Fune"], ["Fune"]]
+                }},
+                {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+              ]},
+              {"and": [
+                "Morph",
+                {"heatFrames": 560},
+                {"or": [
+                  {"disableEquipment": "ETank"},
+                  "h_heatProof"
+                ]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 100}},
+                {"heatFrames": 160}
+              ]}
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 400},
+        {"canShineCharge": {
+          "usedTiles": 28,
+          "gentleUpTiles": 3,
+          "gentleDownTiles": 3,
+          "openEnd": 0
+        }},
+        "h_heatTriggerRModeSparkInterrupt",
+        {"heatFrames": 10}
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Speedy jump to farm a Fune or Morph over to the Kago. Shinecharge at the bottom left, then jump back up and",
+        "heat interrupt at the top left door before leaving."
+      ]
+    },
+    {
       "id": 101,
       "link": [2, 1],
       "name": "G-Mode",
@@ -1248,6 +1272,7 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
@@ -1379,6 +1404,68 @@
         "leaveWithTemporaryBlue": {}
       },
       "flashSuitChecked": true
+    },
+    {
+      "id": 170,
+      "link": [2, 2],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 171,
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"or": [
+          "h_heatedCrystalFlashForReserveEnergy",
+          {"and": [
+            "h_RModeCanRefillReserves",
+            {"or": [
+              {"and": [
+                "h_heatProof",
+                {"enemyKill": {
+                  "enemies": [["Fune"], ["Fune"]]
+                }},
+                {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+              ]},
+              {"and": [
+                "Morph",
+                {"heatFrames": 560},
+                {"or": [
+                  {"disableEquipment": "ETank"},
+                  "h_heatProof"
+                ]},
+                {"partialRefill": {"type": "ReserveEnergy", "limit": 100}},
+                {"heatFrames": 160}
+              ]}
+            ]}
+          ]}
+        ]},
+        {"heatFrames": 300},
+        {"canShineCharge": {
+          "usedTiles": 28,
+          "gentleUpTiles": 3,
+          "gentleDownTiles": 3,
+          "openEnd": 0
+        }},
+        "h_heatTriggerRModeSparkInterrupt",
+        {"heatFrames": 10}
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Speedy jump to farm a Fune or Morph over to the Kago. Shinecharge at the bottom left, then heat interrupt in the",
+        "door and quickly leave."
+      ]
     },
     {
       "id": 103,
@@ -1526,6 +1613,7 @@
       ]
     },
     {
+      "id": 166,
       "link": [2, 3],
       "name": "R-Mode Standup Clip",
       "entranceCondition": {
@@ -1550,6 +1638,7 @@
       "devNote": "FIXME: Add suitless version."
     },
     {
+      "id": 167,
       "link": [2, 3],
       "name": "Direct G-Mode Morph, R-Mode Standup Clip",
       "entranceCondition": {
@@ -2415,6 +2504,7 @@
       "link": [3, 3],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true
@@ -2430,7 +2520,7 @@
         {"resetRoom": {"nodes": [3]}},
         {"cycleFrames": 230}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Ripper 2 (green)", "count": 1}],
       "flashSuitChecked": true,
       "devNote": "FIXME: It is possible but risky to farm using hijump, walljump, and crumble jumps."
@@ -2607,6 +2697,18 @@
       "devNote": [
         "Two spike hits are expected per attempt (with any additional leniency hits being multiplied by this amount)."
       ]
+    },
+    {
+      "id": 172,
+      "link": [3, 3],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 120,
@@ -3956,7 +4058,7 @@
           ]}
         ]}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "R-Mode"],
       "farmCycleDrops": [{"enemy": "Kago", "count": 1}],
       "flashSuitChecked": true,
       "devNote": "FIXME: There are more possible item combinations."
@@ -4211,7 +4313,7 @@
       ]
     }
   ],
-  "nextStratId": 166,
+  "nextStratId": 173,
   "nextNotableId": 5,
   "devNote": [
     "FIXME: Heat frames could be tightened by adding 5->1 strats:",

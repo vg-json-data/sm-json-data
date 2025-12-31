@@ -51,6 +51,13 @@
       ]
     }
   ],
+  "obstacles": [
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
+    }
+  ],
   "enemies": [
     {
       "id": "e1",
@@ -66,22 +73,6 @@
       "enemyName": "Rinka",
       "quantity": 9,
       "homeNodes": [1, 2]
-    }
-  ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2}
-      ]
     }
   ],
   "strats": [
@@ -340,6 +331,55 @@
       "flashSuitChecked": true
     },
     {
+      "id": 53,
+      "link": [1, 1],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 54,
+      "link": [1, 1],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        {"or": [
+          "h_CrystalFlashForReserveEnergy",
+          {"and": [
+            "canRiskPermanentLossOfAccess",
+            {"not": "f_KilledMetroidRoom3"},
+            "h_RModeCanRefillReserves",
+            "Ice",
+            {"enemyKill": {
+              "enemies": [["Metroid"], ["Metroid"]],
+              "explicitWeapons": ["Missile", "Super"]
+            }},
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        {"or": [
+          "f_KilledMetroidRoom3",
+          "Ice",
+          "canMetroidAvoid"
+        ]},
+        {"canShineCharge": {"usedTiles": 29, "openEnd": 2}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Do not kill all three Metroids, or else they cannot be farmed again, leaving only Crystal Flash as an option.",
+        "Shinecharge at the long tunnel near the left door, then use a Rinka or the acid to interrupt."
+      ]
+    },
+    {
       "id": 13,
       "link": [1, 1],
       "name": "G-Mode Setup - Get Hit By Rinka",
@@ -419,6 +459,45 @@
       ]
     },
     {
+      "id": 55,
+      "link": [1, 1],
+      "name": "R-Mode Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "f_KilledMetroidRoom3",
+        "canRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}},
+        {"ammo": {"type": "Super", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash directly above or below a Rinka Spawner."
+      ],
+      "devNote": [
+        "There could be a variant with the Metroids alive, but they will all lure to Samus and the light orb will disappear, so she will take heavy damage.",
+        "This is not possible in G-mode, because the Power Bomb will kill the Rinka and prevent more from spawning."
+      ]
+    },
+    {
+      "id": 56,
+      "link": [1, 1],
+      "name": "R-Mode Crystal Flash Light Orb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "canComplexGMode",
+        "h_CrystalFlash"
+      ],
+      "setsFlags": ["f_KilledMetroidRoom3"],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage."
+      ]
+    },
+    {
       "id": 51,
       "link": [1, 1],
       "name": "Direct G-Mode Morph Crystal Flash Light Orb Metroid Kill",
@@ -436,7 +515,7 @@
       "setsFlags": ["f_KilledMetroidRoom3"],
       "flashSuitChecked": true,
       "note": [
-        "On entry, dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage.",
+        "On entry, kill or dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage.",
         "Note that it is necessary to exit G-Mode before exiting the room in order for the Metroids to remain killed. To do this, trigger Reserves in the acid or on a Rinka.",
         "To minimize damage taken, lure a Rinka away from its spawner before touching it to prevent multiple hits during the auto Reserve trigger."
       ]
@@ -588,7 +667,28 @@
       "requires": [
         {"metroidFrames": 670}
       ],
-      "flashSuitChecked": true
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["missiles"],
+          "requires": [
+            {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}},
+            {"ammo": {"type": "Missile", "count": 2}}
+          ]
+        },
+        {
+          "types": ["super"],
+          "requires": [
+            {"metroidFrames": 15},
+            {"ammo": {"type": "Super", "count": 1}}
+          ]
+        },
+        {"types": ["powerbomb"], "requires": []}
+      ],
+      "flashSuitChecked": true,
+      "devNote": ["PB at door is energy neutral."]
     },
     {
       "id": 25,
@@ -751,6 +851,31 @@
       "name": "Tank the Damage",
       "requires": [
         {"metroidFrames": 600}
+      ],
+      "exitCondition": {
+        "leaveNormally": {}
+      },
+      "unlocksDoors": [
+        {
+          "types": ["missiles"],
+          "requires": [
+            {"enemyDamage": {"enemy": "Rinka", "type": "contact", "hits": 1}},
+            {"ammo": {"type": "Missile", "count": 2}}
+          ]
+        },
+        {
+          "types": ["super"],
+          "requires": [
+            {"or": [
+              {"ammo": {"type": "Super", "count": 1}},
+              "canDodgeWhileShooting"
+            ]}
+          ]
+        },
+        {
+          "types": ["powerbomb"],
+          "requires": [{"metroidFrames": 25}]
+        }
       ],
       "flashSuitChecked": true
     },
@@ -1004,11 +1129,24 @@
       "link": [2, 2],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "f_KilledMetroidRoom3",
         "h_CrystalFlash"
       ],
       "flashSuitChecked": true,
       "note": ["Be at a safe distance from Rinkas before performing the Crystal Flash."]
+    },
+    {
+      "id": 57,
+      "link": [2, 2],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 47,
@@ -1070,6 +1208,45 @@
       ]
     },
     {
+      "id": 58,
+      "link": [2, 2],
+      "name": "R-Mode Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "f_KilledMetroidRoom3",
+        "canRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}},
+        {"ammo": {"type": "Super", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash directly above or below a Rinka Spawner."
+      ],
+      "devNote": [
+        "There could be a variant with the Metroids alive, but they will all lure to Samus and the light orb will disappear, so she will take heavy damage.",
+        "This is not possible in G-mode, because the Power Bomb will kill the Rinka and prevent more from spawning."
+      ]
+    },
+    {
+      "id": 59,
+      "link": [2, 2],
+      "name": "R-Mode Crystal Flash Light Orb Metroid Kill",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "canComplexGMode",
+        "h_CrystalFlash"
+      ],
+      "setsFlags": ["f_KilledMetroidRoom3"],
+      "flashSuitChecked": true,
+      "note": [
+        "On entry, kill or dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage."
+      ]
+    },
+    {
       "id": 52,
       "link": [2, 2],
       "name": "Direct G-Mode Morph Crystal Flash Light Orb Metroid Kill",
@@ -1087,7 +1264,7 @@
       "setsFlags": ["f_KilledMetroidRoom3"],
       "flashSuitChecked": true,
       "note": [
-        "On entry, dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage.",
+        "On entry, kill or dodge the first Rinkas then Crystal Flash. While in the light orb, Samus will be almost immune and the Metroids will take damage.",
         "Note that it is necessary to exit G-Mode before exiting the room in order for the Metroids to remain killed. To do this, trigger Reserves in the acid or on a Rinka.",
         "The Rinkas will likely all be dead, so jump into the acid then start jumping out just before the Reserves trigger to minimize damage taken."
       ],
@@ -1095,6 +1272,6 @@
     }
   ],
   "notables": [],
-  "nextStratId": 53,
+  "nextStratId": 60,
   "nextNotableId": 1
 }

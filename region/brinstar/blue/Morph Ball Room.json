@@ -157,48 +157,6 @@
       "spawn": ["f_ZebesAwake"]
     }
   ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 2},
-        {"id": 3},
-        {"id": 4}
-      ]
-    },
-    {
-      "from": 3,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 4,
-      "to": [
-        {"id": 2},
-        {"id": 4},
-        {"id": 5}
-      ]
-    },
-    {
-      "from": 5,
-      "to": [
-        {"id": 1},
-        {"id": 4},
-        {"id": 5}
-      ]
-    }
-  ],
   "strats": [
     {
       "id": 1,
@@ -240,60 +198,6 @@
         "Max extra run speed $4.A.",
         "Using the full runway, this requires a last-frame jump, followed by a 2-frame window for the morph."
       ]
-    },
-    {
-      "id": 76,
-      "link": [1, 1],
-      "name": "R-Mode Spark Interrupt (Gain Blue Suit)",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        "h_ZebesIsAwake",
-        {"or": [
-          "ScrewAttack",
-          {"and": [
-            {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
-            {"enemyKill": {
-              "enemies": [["Sidehopper", "Sidehopper"]],
-              "explicitWeapons": ["Missile", "Super", "PowerBomb", "Plasma"]
-            }}
-          ]}
-        ]},
-        {"or": [
-          "h_CrystalFlash",
-          {"and": [
-            "h_RModeCanRefillReserves",
-            {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
-            {"resourceMissingAtMost": [{"type": "Super", "count": 0}]},
-            {"or": [
-              {"and": [
-                {"partialRefill": {"type": "ReserveEnergy", "limit": 5}},
-                "canBePatient"
-              ]},
-              {"and": [
-                {"partialRefill": {"type": "ReserveEnergy", "limit": 20}},
-                "canBeExtremelyPatient"
-              ]}
-            ]}
-          ]}
-        ]},
-        "canTrickyDodgeEnemies",
-        "canShinechargeMovementComplex",
-        {"canShineCharge": {"usedTiles": 25, "openEnd": 0}},
-        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
-        "canRModeSparkInterrupt"
-      ],
-      "clearsObstacles": ["C"],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "Due to R-Mode Entry, getting hit by the Sidehopper can only be avoided by a quick Screw Attack after releasing the X-Ray Scope.",
-        "You can attempt to farm the two ground Sidehoppers for Reserve Energy. Otherwise, you must use a Crystal Flash.",
-        "Leave the ceiling Sidehopper alive to clear the runway for a shortcharge.",
-        "Initiate the shinespark in midair so that Samus is in the path to be hit."
-      ],
-      "devNote": ["FIXME: More equipment combinations can work."]
     },
     {
       "id": 57,
@@ -785,6 +689,57 @@
       ],
       "gModeRegainMobility": {},
       "flashSuitChecked": true
+    },
+    {
+      "id": 76,
+      "link": [1, 1],
+      "name": "R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "h_ZebesIsAwake",
+        {"or": [
+          "ScrewAttack",
+          {"and": [
+            {"enemyDamage": {"enemy": "Sidehopper", "type": "contact", "hits": 1}},
+            {"enemyKill": {
+              "enemies": [["Sidehopper", "Sidehopper"]],
+              "explicitWeapons": ["Missile", "Super", "PowerBomb", "Plasma"]
+            }}
+          ]}
+        ]},
+        {"or": [
+          "h_CrystalFlashForReserveEnergy",
+          {"and": [
+            "h_RModeCanRefillReserves",
+            {"or": [
+              {"and": [
+                {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+                {"resourceMissingAtMost": [{"type": "Super", "count": 0}]}
+              ]},
+              "canBeVeryLucky"
+            ]},
+            "canBeLucky",
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
+          ]}
+        ]},
+        "canTrickyDodgeEnemies",
+        "canShinechargeMovementComplex",
+        {"canShineCharge": {"usedTiles": 25, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "clearsObstacles": ["C"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Due to R-Mode Entry, getting hit by the Sidehopper can only be avoided by a quick Screw Attack after releasing the X-Ray Scope.",
+        "You can attempt to farm the two ground Sidehoppers for Reserve Energy. Otherwise, you must use a Crystal Flash.",
+        "Leave the ceiling Sidehopper alive to clear the runway for a shortcharge.",
+        "Initiate the shinespark in midair so that Samus is in the path to be hit."
+      ],
+      "devNote": ["FIXME: More equipment combinations can work."]
     },
     {
       "id": 17,
@@ -1368,30 +1323,26 @@
     {
       "id": 77,
       "link": [3, 1],
-      "name": "R-Mode Spark Interrupt (Gain Blue Suit)",
+      "name": "R-Mode Spark Interrupt",
       "entranceCondition": {
         "comeInWithRMode": {}
       },
       "requires": [
         "h_ZebesIsAwake",
         {"or": [
-          "h_CrystalFlash",
+          "h_CrystalFlashForReserveEnergy",
           {"and": [
             "h_usePowerBomb",
             "h_RModeCanRefillReserves",
-            {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
-            {"resourceMissingAtMost": [{"type": "Super", "count": 0}]},
-            {"partialRefill": {"type": "ReserveEnergy", "limit": 1}},
             {"or": [
               {"and": [
-                {"partialRefill": {"type": "ReserveEnergy", "limit": 5}},
-                "canBePatient"
+                {"resourceMissingAtMost": [{"type": "Missile", "count": 0}]},
+                {"resourceMissingAtMost": [{"type": "Super", "count": 0}]}
               ]},
-              {"and": [
-                {"partialRefill": {"type": "ReserveEnergy", "limit": 20}},
-                "canBeVeryPatient"
-              ]}
-            ]}
+              "canBeVeryLucky"
+            ]},
+            "canBeLucky",
+            {"partialRefill": {"type": "ReserveEnergy", "limit": 20}}
           ]}
         ]},
         {"or": [

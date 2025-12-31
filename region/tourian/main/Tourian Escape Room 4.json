@@ -100,6 +100,11 @@
       "id": "A",
       "name": "Acid Filling the Right Runway",
       "obstacleType": "abstract"
+    },
+    {
+      "id": "R-Mode",
+      "name": "Entered with R-Mode",
+      "obstacleType": "abstract"
     }
   ],
   "enemies": [
@@ -116,45 +121,6 @@
       "enemyName": "Tourian Space Pirate (all)",
       "quantity": 7,
       "homeNodes": [2]
-    }
-  ],
-  "links": [
-    {
-      "from": 1,
-      "to": [
-        {"id": 1},
-        {"id": 4}
-      ]
-    },
-    {
-      "from": 2,
-      "to": [
-        {"id": 1},
-        {"id": 2},
-        {"id": 3},
-        {"id": 4}
-      ]
-    },
-    {
-      "from": 3,
-      "to": [
-        {"id": 1},
-        {
-          "id": 2,
-          "note": "The acid starts rising when Samus is at the bottom of the long fall"
-        },
-        {"id": 3}
-      ]
-    },
-    {
-      "from": 4,
-      "to": [
-        {"id": 1},
-        {
-          "id": 3,
-          "note": "The acid starts rising when Samus is at the bottom of the long fall"
-        }
-      ]
     }
   ],
   "strats": [
@@ -248,9 +214,22 @@
       "link": [1, 1],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_CrystalFlash"
       ],
       "flashSuitChecked": true
+    },
+    {
+      "id": 41,
+      "link": [1, 1],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 6,
@@ -265,6 +244,68 @@
       ],
       "gModeRegainMobility": {},
       "flashSuitChecked": true
+    },
+    {
+      "id": 42,
+      "link": [1, 1],
+      "name": "R-Mode Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "canComplexRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}},
+        {"or": [
+          "canWalljump",
+          "HiJump",
+          "SpaceJump",
+          "canIBJ",
+          "canSpringBallJumpMidAir",
+          {"and": [
+            "canTrickyUseFrozenEnemies",
+            "canTrickyDodgeEnemies"
+          ]},
+          {"and": [
+            "canInsaneJump",
+            {"doorUnlockedAtNode": 1}
+          ]}
+        ]}
+      ],
+      "unlocksDoors": [
+        {"types": ["missiles", "super"], "requires": []},
+        {"types": ["powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "At the bottom of the room, Crystal Flash below a wall pirate to have it walk into Samus.",
+        "The pirate will randomly walk up and down and wall, but if it sees Samus and jumps across, it will start climbing up the left wall or down the right wall.",
+        "Without any movement options, it is possible to do this in the left doorframe without any luck, as the pirate just above will start moving down once on screen."
+      ],
+      "devNote": "It is possible to get up with nothing but morph and a neutral damage boost, but its pretty tricky, especially with a flash suit."
+    },
+    {
+      "id": 43,
+      "link": [1, 1],
+      "name": "Direct G-mode Morph, Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        "h_artificialMorphComplexRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "At the bottom of the room, Crystal Flash below a wall pirate to have it walk into Samus.",
+        "The pirate will randomly walk up and down and wall, but if it sees Samus and jumps across, it will start climbing up the left wall or down the right wall.",
+        "With a bit of luck, the pirate will sometimes climb down and hit Samus before it goes off camera.",
+        "Try to delay as much as possible if it is going down, then fall in a way to make it hop to the right wall and continue down.",
+        "Be sure to avoid any stationary, invisible lasers that they might place.",
+        "Without any movement options, it is recommended to land in the doorframe as Samus morphs, then Crystal Flash on the ledge, as the pirate above will be moving down."
+      ]
     },
     {
       "id": 7,
@@ -486,6 +527,65 @@
       "flashSuitChecked": true
     },
     {
+      "id": 44,
+      "link": [2, 1],
+      "name": "G-mode Morph, Long IBJ",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "any",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "Morph",
+          "h_artificialMorphSpringBall",
+          "canComplexGMode",
+          {"and": [
+            "h_artificialMorphPowerBomb",
+            "h_artificialMorphPowerBomb"
+          ]}
+        ]},
+        "h_artificialMorphLongIBJ"
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The acid does not rise in G-mode. Bomb boost near the first pirate until it places 18 lasers and fully overloads them so that other pirates won't place more.",
+        "Very carefully IBJ over it or use Spring Ball or Power Bombs to kill it. Climb the shaft with a very long IBJ."
+      ]
+    },
+    {
+      "id": 45,
+      "link": [2, 1],
+      "name": "Direct G-mode Morph, Long IBJ, Crystal Flash Interrupt",
+      "entranceCondition": {
+        "comeInWithGMode": {
+          "mode": "direct",
+          "morphed": true
+        }
+      },
+      "requires": [
+        {"or": [
+          "h_artificialMorphSpringBall",
+          "canComplexGMode",
+          {"and": [
+            "h_artificialMorphPowerBomb",
+            "h_artificialMorphPowerBomb"
+          ]}
+        ]},
+        "h_artificialMorphLongIBJ",
+        "h_artificialMorphComplexRModeCrystalFlashInterrupt",
+        {"ammo": {"type": "Missile", "count": 10}}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "The acid does not rise in G-mode. Bomb boost near the first pirate until it places 18 lasers and fully overloads them so that other pirates won't place more.",
+        "Very carefully IBJ over it or use Spring Ball or Power Bombs to kill it. Climb the shaft with a very long IBJ.",
+        "At the top of the room, Crystal Flash on one of the ledges, below a wall pirate, to have it walk into Samus and trigger reserves.",
+        "The pirate will randomly walk up and down and wall, but if it sees Samus and jumps across, it will start climbing up the left wall or down the right wall."
+      ]
+    },
+    {
       "id": 11,
       "link": [2, 2],
       "name": "Leave with Runway",
@@ -616,6 +716,50 @@
       "flashSuitChecked": true
     },
     {
+      "id": 46,
+      "link": [2, 2],
+      "name": "R-Mode Entry",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [],
+      "clearsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 47,
+      "link": [2, 2],
+      "name": "R-Mode Spark Interrupt",
+      "requires": [
+        {"obstaclesCleared": ["R-Mode"]},
+        "h_CrystalFlashForReserveEnergy",
+        {"or": [
+          {"and": [
+            {"obstaclesNotCleared": ["A"]},
+            {"canShineCharge": {"usedTiles": 25, "openEnd": 1}}
+          ]},
+          {"and": [
+            {"enemyKill": {
+              "enemies": [["Tourian Space Pirate (all)"], ["Tourian Space Pirate (all)"]],
+              "explicitWeapons": ["Plasma", "ScrewAttack", "Missile", "Super"]
+            }},
+            {"canShineCharge": {"usedTiles": 25, "openEnd": 1}}
+          ]},
+          {"canShineCharge": {"usedTiles": 16, "openEnd": 0}}
+        ]},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "resetsObstacles": ["R-Mode"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Crystal Flash then get to the right door runway. Clear one pirate for a short runway and use the other to interrupt. Or clear both then drop",
+        "to the ledge below and interrupt with that Pirate."
+      ]
+    },
+    {
       "id": 13,
       "link": [2, 3],
       "name": "Base",
@@ -655,6 +799,7 @@
       "link": [2, 4],
       "name": "Crystal Flash Grapple Clip",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_jumpIntoCrystalFlashClip",
         "HiJump",
         "Grapple"
@@ -713,6 +858,14 @@
             "HiJump",
             "canPseudoScrew"
           ]}
+        ]},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 2
+          }},
+          "canTrickyJump"
         ]}
       ],
       "flashSuitChecked": true,
@@ -734,6 +887,14 @@
             "HiJump",
             "SpaceJump"
           ]}
+        ]},
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Tourian Space Pirate (all)",
+            "type": "contact",
+            "hits": 2
+          }},
+          "canTrickyJump"
         ]}
       ],
       "flashSuitChecked": true,
@@ -787,7 +948,7 @@
       "requires": [
         {"notable": "Bootless Walljumpless Space Jump"},
         "canPreciseSpaceJump",
-        "canTrickyJump",
+        "canInsaneJump",
         {"acidFrames": 50}
       ],
       "exitCondition": {
@@ -1081,6 +1242,7 @@
       "link": [3, 3],
       "name": "Crystal Flash",
       "requires": [
+        {"obstaclesNotCleared": ["R-Mode"]},
         "h_CrystalFlash"
       ],
       "flashSuitChecked": true,
@@ -1144,6 +1306,6 @@
       ]
     }
   ],
-  "nextStratId": 41,
+  "nextStratId": 48,
   "nextNotableId": 5
 }
