@@ -252,25 +252,6 @@ def process_keyvalue(k, v, metadata):
                     messages["counts"]["reds"] += 1
     return goodValue
 
-# try to navigate a path between nodes if no direct path
-def search_for_path(fromNodes, sourceNode, targetNode, stratRef):
-    foundPath = False
-    msg = ""
-    for tNode in fromNodes[str(sourceNode)]["to"]:
-        if not foundPath:
-            # print(f"Testing {sourceNode}:{tNode}:{targetNode}")
-            if (str(tNode) in roomData["links"]["from"]) and \
-                (str(targetNode) in roomData["links"]["from"][str(tNode)]["to"]):
-                foundPath = True
-                # msg = f"🟢Found Path:{stratRef}::{sourceNode}:{tNode}:{targetNode}"
-                # print(msg)
-                # messages["greens"].append(msg)
-                # messages["counts"]["greens"] += 1
-    if not foundPath:
-        msg = f"🟡WARNING: Path not found:{stratRef}::{sourceNode}:{tNode}:{targetNode}::Is it longer than a 3-node chain? Gave up looking"
-
-    return [foundPath, msg]
-
 
 def find_door_unlocked_nodes_rec(req):
     if isinstance(req, dict):
@@ -733,9 +714,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         "subarea": subarea,
                         "subsubarea": subsubarea,
                         "fullarea": fullarea,
-                        "links": {
-                            "from": {}
-                        },
                         "nodes": {
                             "froms": [],
                             "tos": [],
@@ -899,22 +877,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
 
-                    # Document Links
-                    link_set = set()
-                    for link_from in room["links"]:
-                        from_node_id = link_from["from"]
-                        if from_node_id not in roomData["nodes"]["ids"]:                            
-                            msg = f"🔴ERROR: In links, from node {from_node_id} doesn't exist."
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
-                        for link in link_from["to"]:
-                            to_node_id = link["id"]
-                            if to_node_id not in roomData["nodes"]["ids"]:                            
-                                msg = f"🔴ERROR: In links, to node {to_node_id} doesn't exist."
-                                messages["reds"].append(msg)
-                                messages["counts"]["reds"] += 1
-                            link_set.add((from_node_id, to_node_id))
-
                     # Document Link Strats
                     for strat in room["strats"]:
                         if "link" not in strat:
@@ -923,11 +885,6 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             messages["counts"]["reds"] += 1
                             continue
                         link = strat["link"]
-                        linkRef = str(link)
-                        if tuple(strat["link"]) not in link_set:
-                            msg = f"🔴ERROR: Link {linkRef} doesn't exist: {roomRef}:{strat['name']}"
-                            messages["reds"].append(msg)
-                            messages["counts"]["reds"] += 1
                         toNode = link[1]
                         roomData["nodes"]["tos"].append(toNode)
 
@@ -1055,7 +1012,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     used_notable_name_set = set()
                     link_strat_names = set()
                     for strat in room["strats"]:
-                        if "link" not in strat or tuple(strat["link"]) not in link_set:
+                        if "link" not in strat:
                             # Errors are already generated above in this case.
                             continue
                         link = strat["link"]
@@ -1067,6 +1024,20 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         fromNode = link[0]
                         fromNodeRef = f"Node[{roomRef}:{fromNode}]"
                         toNode = link[1]
+
+                        strat_id = strat.get("id")
+                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:{strat_id}:'{strat['name']}'"
+                        if fromNode not in roomData["nodes"]["ids"]:
+                            msg = f"🔴ERROR: From node {fromNode} doesn't exist:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
+                        if toNode not in roomData["nodes"]["ids"]:
+                            msg = f"🔴ERROR: To node {toNode} doesn't exist:{stratRef}"
+                            messages["reds"].append(msg)
+                            messages["counts"]["reds"] += 1
+                            continue
+
                         paramData = {
                             "key": "linkStrats",
                             "fromNode": fromNode,
@@ -1076,10 +1047,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             "bail": bail
                         }
                         paramData = process_strats([strat], paramData)
-                        fromNode = link[0]
-                        toNode = link[1]
-                        strat_id = strat.get("id")
-                        stratRef = f"{roomRef}:LINK:FromNode[{fromNode}]:ToNode[{toNode}]:{strat_id}:'{strat['name']}'"
+
                         if strat_id is not None:
                             if "id" in strat and strat_id in strat_id_set:
                                 msg = f"🔴ERROR: Strat ID {strat_id} is not unique:{stratRef}"
