@@ -50,7 +50,7 @@ if old_string_requirements_schema == new_string_requirements_schema:
     print("Schema is up to date.")
 else:
     if args.verify:
-        print("Schema is out of date. Please run 'python3 scripts/update_schema.py' to update it.")
+        print("🔴 Schema is out of date. Please run 'python3 scripts/update_schema.py' to update it.")
         exit(1)
     else:
         open(string_requirements_path, "w").write(new_string_requirements_schema)
