@@ -1735,7 +1735,7 @@ Inside an `entranceCondition` object, a `comesInHeated` property indicates if th
 ### Example
 ```json
 {
-  "name": "Gain Blue Suit (Come in Shinecharging, Crystal Spark)",
+  "name": "Come in Shinecharging, Crystal Spark",
   "entranceCondition": {
     "comeInShinecharging": {
       "length": 13,
