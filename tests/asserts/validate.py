@@ -24,6 +24,13 @@ def format_validation_error(error, value):
     if len(error.path) >= 4 and error.path[0] == "helperCategories" and error.path[2] == "helpers":
         helper = value["helperCategories"][error.path[1]]["helpers"][error.path[3]]
         msg = f"In helper {helper.get('name')}\n{msg}"
+    if len(error.path) >= 4 and error.path[0] == "techCategories" and error.path[2] == "techs":
+        tech = value["techCategories"][error.path[1]]["techs"][error.path[3]]
+        i = 4
+        while i < len(error.path) and error.path[i] == "extensionTechs":
+            tech = tech["extensionTechs"][error.path[i + 1]]
+            i += 2
+        msg = f"In tech {tech.get('name')}\n{msg}"
     return msg
 
 print("LOAD SCHEMAS")
