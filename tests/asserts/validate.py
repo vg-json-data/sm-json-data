@@ -16,6 +16,23 @@ schemas = {}
 errors = []
 bail = False
 
+def format_validation_error(error, value):
+    msg = f"{list(error.path)}\n{error.message}"
+    if len(error.path) >= 2 and error.path[0] == "strats":
+        strat = value["strats"][error.path[1]]
+        msg = f"In strat (id={strat['id']}): {strat['name']}\n{msg}"
+    if len(error.path) >= 4 and error.path[0] == "helperCategories" and error.path[2] == "helpers":
+        helper = value["helperCategories"][error.path[1]]["helpers"][error.path[3]]
+        msg = f"In helper {helper.get('name')}\n{msg}"
+    if len(error.path) >= 4 and error.path[0] == "techCategories" and error.path[2] == "techs":
+        tech = value["techCategories"][error.path[1]]["techs"][error.path[3]]
+        i = 4
+        while i < len(error.path) and error.path[i] == "extensionTechs":
+            tech = tech["extensionTechs"][error.path[i + 1]]
+            i += 2
+        msg = f"In tech {tech.get('name')}\n{msg}"
+    return msg
+
 print("LOAD SCHEMAS")
 schemaDir = os.path.join(".", "schema")
 schemaAbsPath = os.path.abspath(schemaDir)
@@ -123,7 +140,7 @@ for region in os.listdir(os.path.join(".", "connection")):
                         except JSONSchemaExceptions.ValidationError as e:
                             errors.append([
                                 f"🔴ERROR: Connection data '{region}/{subregion}' doesn't validate!",
-                                e,
+                                format_validation_error(e, connectionJSON),
                                 "---"
                             ])
                             bail = True
@@ -182,7 +199,7 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
                     except JSONSchemaExceptions.ValidationError as e:
                         errors.append([
                             f"🔴ERROR: Enemy data '{os.path.join(r,filename)}' doesn't validate!",
-                            e,
+                            format_validation_error(e, enemiesJSON),
                             "---"
                         ])
                         bail = True
@@ -251,7 +268,7 @@ for region in os.listdir(os.path.join(".", "region")):
                                     except JSONSchemaExceptions.ValidationError as e:
                                         errors.append([
                                             f"🔴ERROR: Room '{region}/{subregion}/{roomName}' doesn't validate!",
-                                            e,
+                                            format_validation_error(e, roomJSON),
                                             "---"
                                         ])
                                         bail = True
@@ -305,7 +322,7 @@ for r,d,f in os.walk(os.path.join(".", "weapons")):
                     except JSONSchemaExceptions.ValidationError as e:
                         errors.append([
                             f"🔴ERROR: Weapons data '{os.path.join(r,filename)}' doesn't validate!",
-                            e,
+                            format_validation_error(e, weaponsJSON),
                             "---"
                         ])
                         bail = True
@@ -361,7 +378,7 @@ for rootType in [
             except JSONSchemaExceptions.ValidationError as e:
                 errors.append([
                     f"🔴ERROR: {rootType} data '{filePath}' doesn't validate!",
-                    e,
+                    format_validation_error(e, fileJSON),
                     "---"
                 ])
                 bail = True
