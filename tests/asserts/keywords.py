@@ -85,6 +85,10 @@ def process_keyvalue(k, v, metadata):
     '''
     Take a keyvalue pair and see if the value exists in our list of keywords
     '''
+    if isinstance(v, str) and v.startswith("n_"):
+        # Skip checks for numeric parameters, as these are already validated by the schema.
+        return True
+    
     global last_enemy
     goodValue = True
     processValue = True

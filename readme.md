@@ -13,31 +13,37 @@ This project's representation of Super Metroid is split-up between different fol
 
 ### Regions
 
-[A folder that details the game's rooms](region/region-readme.md)
+The [region](region/region-readme.md) folder defines the logic for each of the game's rooms. This is where the bulk of the data for the project is found.
 
 ### Connections
 
-[A folder that details connections between the game's rooms](connection/connection-readme.md)
+The [connections](connection/connection-readme.md) folder defines how the doors of each room are connected to neighboring rooms.
 
 ### Enemies
 
-[A folder that details the game's enemies](enemies/enemies-readme.md)
+The [enemies](enemies/enemies-readme.md) folder details the game's enemies.
 
 ### Weapons
 
-[A folder that details possible types of attacks](weapons/weapons-readme.md)
+The [weapons](weapons/weapons-readme.md) folder details Samus' possible attacks.
 
 ### helpers.json
 
-A file that defines helper functions. They are [logical requirement](logicalRequirements.md) expressions that are used frequently, and prevent having to copy the same thing all over the place.
+The [helpers.json](helpers.json) file defines helper functions. They are [logical requirement](logicalRequirements.md) expressions that are used frequently, and prevent having to copy the same thing all over the place.
+
+### numerics.json
+
+The [numerics.json](numerics.json) file defines leniency values for techniques that may
+require multiple attempts to succeed. It provides default values which may be overridden
+by randomizers or other tools depending on the desired difficulty.
 
 ### items.json
 
-A file that contains a lot of the initial game state configuration. It contains all existing items and game flags, as well as starting items, resources, game flags, open locks, and location.
+The [items.json](items.json) file that contains a lot of the initial game state configuration. It contains all existing items and game flags, as well as starting items, resources, game flags, open locks, and location.
 
 ### tech.json
 
-A file that contains techs and their [logical requirements](logicalRequirements.md). Techs are in-game techniques that players might want to be able to logically turn off.
+The [tech.json](tech.json) file contains techs and their [logical requirements](logicalRequirements.md). Techs are in-game techniques that players might want to be able to logically turn off.
 
 At the first level, the techs are grouped into broad tech categories. Each category contains an array of techs.
 
