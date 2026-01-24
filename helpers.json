@@ -415,54 +415,6 @@
           "devNote": "1 Power Bomb leniency per attempt, 8 leniency attempts."
         },
         {
-          "name": "h_XModeSpikeHitLeniency",
-          "requires": [
-            {"spikeHits": 1}
-          ]
-        },
-        {
-          "name": "h_XModeThornHitLeniency",
-          "requires": [
-            {"thornHits": 1}
-          ]
-        },
-        {
-          "name": "h_thornXModeFramePerfectExtraLeniency",
-          "requires": [
-            {"thornHits": 1}
-          ]
-        },
-        {
-          "name": "h_thornDoubleXModeFramePerfectExtraLeniency",
-          "requires":[
-            {"thornHits": 4}
-          ]
-        },
-        {
-          "name": "h_spikeSuitSpikeHitLeniency",
-          "requires": [
-            {"spikeHits": 2}
-          ]
-        },
-        {
-          "name": "h_spikeSuitThornHitLeniency",
-          "requires": [
-            {"thornHits": 2}
-          ]
-        },
-        {
-          "name": "h_spikeSuitSamusEaterLeniency",
-          "requires": [
-            {"samusEaterCycles": 2}
-          ]
-        },
-        {
-          "name": "h_spikeSuitPowerBombLeniency",
-          "requires": [
-            {"ammo": {"type": "PowerBomb","count": 2}}
-          ]
-        },
-        {
           "name": "h_extendedMoondanceBeetomLeniency",
           "requires": [
             {"enemyDamage": {
@@ -1548,28 +1500,6 @@
           "devNote": "All heat frames before and after the refill are added on the strats that use the helper."
         },
         {
-          "name": "h_XModeSpikeHit",
-          "requires": [
-            {"spikeHits": 1},
-            "h_XModeSpikeHitLeniency"
-          ],
-          "devNote": [
-            "Some strats require multiple spike hits, in which case h_canSpikeXMode will be included multiple times.",
-            "In this case, the total leniency is the base leniency h_XModeSpikeHitLeniency multiplied by the number of hits."
-          ]
-        },
-        {
-          "name": "h_XModeThornHit",
-          "requires": [
-            {"thornHits": 1},
-            "h_XModeThornHitLeniency"
-          ],
-          "devNote": [
-            "Some strats require multiple thorn hits, in which case h_canThornXMode will be included multiple times.",
-            "In this case, the total leniency is the base leniency h_XModeThornHitLeniency multiplied by the number of hits."
-          ]
-        },
-        {
           "name": "h_XRayMorphIceClip",
           "requires": [
             "canXRayCeilingClip",
@@ -1859,78 +1789,200 @@
         {
           "name": "h_spikeXModeSpikeSuit",
           "requires": [
-            "h_XModeSpikeHit",
-            "h_XModeSpikeHit",
-            "h_spikeSuitSpikeHitLeniency",
-            "h_spikeSuitSpikeHitLeniency",
-            "h_spikeSuitSpikeHitLeniency",
+            {"spikeHits": {"mul": [
+              {"add": ["n_spikeXModeAttempts", 2]},
+              "n_spikeSuitAttempts"
+            ]}},
             "h_shinechargeMaxRunway",
-            "canXModeSpikeSuit",
-            {"spikeHits": 1}
+            "canXModeSpikeSuit"
           ],
-          "devNote": "This helper is used for an X-Mode shinecharge followed by a spikesuit so the leniency should be multiplactive."
+          "devNote": [
+            "This covers the most common case of spike X-mode spikesuit, where a minimum of 3 spike hits need to be taken;",
+            "this relies on being able to bounce before entering the spikes."
+          ]
         },
         {
           "name": "h_thornXModeSpikeSuit",
           "requires": [
-            "h_XModeThornHit",
-            "h_XModeThornHit",
-            "h_XModeThornHitLeniency",
-            "h_XModeThornHitLeniency",
-            "h_XModeThornHitLeniency",
+            {"or": [
+              {"thornHits": {"mul": [
+                {"add": ["n_thornXModeAttempts", 2]},
+                "n_spikeSuitAttempts"
+              ]}},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": {"mul": [
+                  {"add": ["n_thornXModeAttempts", 1]},
+                  "n_spikeSuitAttempts"
+                ]}}
+              ]}
+            ]},
             "h_shinechargeMaxRunway",
-            "canXModeSpikeSuit",
-            {"thornHits": 1}
+            "canXModeSpikeSuit"
           ],
-          "devNote": "This helper is used for an X-Mode shinecharge followed by a spikesuit so the leniency should be multiplactive."
+          "devNote": [
+            "This covers the most common case of thorn X-mode spikesuit, where a minimum of 2 thorn hits need to be taken;",
+            "this relies on being able to bounce before entering the thorns,",
+            "and with canXModeMovement, it relies on timing Samus' i-frames to avoid an additional thorn hit after X-mode is released."
+          ]
+        },
+        {
+          "name": "h_thornXModeSpikeSuitWithoutLenience",
+          "requires": [
+            {"or": [
+              {"thornHits": 3},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": 2}
+              ]}
+            ]},
+            "h_shinechargeMaxRunway",
+            "canXModeSpikeSuit"
+          ],
+          "devNote": [
+            "This is applicable in case a farm is available, making lenience unnecessary."
+          ]
+        },
+        {
+          "name": "h_XModeShinecharge",
+          "requires": [
+            "canXMode",
+            "h_shinechargeMaxRunway",
+            "canShinechargeMovement"
+          ],
+          "devNote": [
+            "This helper should be used as a base in combination with spike/thorn hit requirements."
+          ]
         },
         {
           "name": "h_spikeXModeShinecharge",
           "requires": [
-            "canXMode",
-            "h_XModeSpikeHit",
-            "h_XModeSpikeHit",
-            "h_shinechargeMaxRunway",
-            "canShinechargeMovement"
+            "h_XModeShinecharge",
+            {"spikeHits": {"add": ["n_spikeXModeAttempts", 1]}}
+          ],
+          "devNote": [
+            "This covers the most common case of spike X-mode, where a minimum of 2 spike hits need to be taken;",
+            "this relies on being able to bounce before entering the spikes."
           ]
         },
         {
           "name": "h_thornXModeShinecharge",
           "requires": [
-            "canXMode",
-            "h_XModeThornHit",
-            "h_shinechargeMaxRunway",
-            "canShinechargeMovement"
+            "h_XModeShinecharge",
+            {"or": [
+              {"thornHits": {"add": ["n_thornXModeAttempts", 1]}},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": "n_thornXModeAttempts"}
+              ]}
+            ]}
+          ],
+          "devNote": [
+            "This covers the most common case of thorn X-mode, where a minimum of 1 thorn hit needs to be taken;",
+            "this relies on being able to bounce before entering the thorns;",
+            "with canXModeMovement, it relies on timing Samus' i-frames to avoid an additional thorn hit after X-mode is released."
+          ]
+        },
+        {
+          "name": "h_thornXModeShinechargeWithoutLenience",
+          "requires": [
+            "h_XModeShinecharge",
+            {"or": [
+              {"thornHits": 2},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": 1}
+              ]}
+            ]}
+          ],
+          "devNote": [
+            "This is applicable in case a farm is available, making lenience unnecessary."
           ]
         },
         {
           "name": "h_spikeXModeBlueSuit",
           "requires": [
             "canXModeBlueSuit",
-            "h_XModeSpikeHit"
+            {"spikeHits": "n_spikeXModeAttempts"}
+          ],
+          "devNote": [
+            "This covers the most common case of spike X-mode bluesuit, where a minimum of 1 spike hit needs to be taken;",
+            "this relies on being able to bounce before entering the spikes."
           ]
         },
         {
           "name": "h_thornXModeBlueSuit",
           "requires": [
             "canXModeBlueSuit",
-            "h_XModeThornHit"
+            {"thornHits": "n_thornXModeAttempts"}
+          ],
+          "devNote": [
+            "This covers the most common case of thorn X-mode bluesuit, where a minimum of 1 thorn hit needs to be taken;",
+            "this relies on being able to bounce before entering the thorns."
+          ]
+        },
+        {
+          "name": "h_thornXModeBlueSuitWithoutLenience",
+          "requires": [
+            "canXModeBlueSuit",
+            {"thornHits": 1}
+          ],
+          "devNote": [
+            "This is applicable in case a farm is available, making lenience unnecessary."
           ]
         },
         {
           "name": "h_spikeDoubleXModeBlueSuit",
-          "requires":[
+          "requires": [
             "canDoubleXModeBlueSuit",
-            "h_spikeXModeShinecharge",
-            "h_spikeXModeBlueSuit"
+            {"spikeHits": {"mul": [
+              {"add": ["n_spikeXModeAttempts", 2]},
+              "n_spikeXModeAttempts"
+            ]}}
+          ],
+          "devNote": [
+            "This covers the most common case of spike double X-mode bluesuit, where a minimum of 3 spike hits need to be taken;",
+            "this relies on being able to bounce before entering the spikes for both X-modes,",
+            "or on using i-frames to bounce on the spikes for the second X-mode."
           ]
         },
         {
           "name": "h_thornDoubleXModeBlueSuit",
-          "requires":[
+          "requires": [
             "canDoubleXModeBlueSuit",
-            "h_thornXModeShinecharge",
-            "h_thornXModeBlueSuit"
+            {"or": [
+              {"thornHits": {"mul": [
+                {"add": ["n_thornXModeAttempts", 2]},
+                "n_thornXModeAttempts"
+              ]}},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": {"mul": [
+                  {"add": ["n_thornXModeAttempts", 1]},
+                  "n_thornXModeAttempts"
+                ]}}
+              ]}
+            ]}
+          ],
+          "devNote": [
+            "This covers the most common case of thorn double X-mode bluesuit, where a minimum of 2 thorn hits need to be taken;",
+            "this relies on being able to bounce before entering the thorns for both X-modes.",
+            "With canXModeMovement, it also relies on timing Samus' i-frames to avoid an additional thorn hit after the first X-mode is released."
+          ]
+        },
+        {
+          "name": "h_thornDoubleXModeBlueSuitWithoutLenience",
+          "requires": [
+            {"or": [
+              {"thornHits": 3},
+              {"and": [
+                "canXModeMovement",
+                {"thornHits": 2}
+              ]}
+            ]}
+          ],
+          "devNote": [
+            "This is applicable in case a farm is available, making lenience unnecessary."
           ]
         },
         {
@@ -1947,6 +1999,75 @@
               {"noBlueSuit": {}},
               "canBlueSuitSpikeJump"
             ]}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deprecated",
+      "description": "These helpers are to be removed soon.",
+      "helpers": [
+        {
+          "name": "h_XModeSpikeHitLeniency",
+          "requires": [
+            {"spikeHits": "n_spikeXModeLenience"}
+          ]
+        },
+        {
+          "name": "h_XModeThornHitLeniency",
+          "requires": [
+            {"thornHits": "n_spikeXModeLenience"}
+          ]
+        },
+        {
+          "name": "h_thornXModeFramePerfectExtraLeniency",
+          "requires": [
+            {"thornHits": "n_thornXModeLenience"}
+          ]
+        },
+        {
+          "name": "h_thornDoubleXModeFramePerfectExtraLeniency",
+          "requires":[
+            {"thornHits": {"mul": [
+              {"add": ["n_thornXModeAttempts", 2]},
+              "n_thornXModeLenience"
+            ]}}
+          ]
+        },
+        {
+          "name": "h_spikeSuitSpikeHitLeniency",
+          "requires": [
+            {"spikeHits": "n_spikeSuitLenience"}
+          ]
+        },
+        {
+          "name": "h_spikeSuitThornHitLeniency",
+          "requires": [
+            {"thornHits": "n_spikeSuitLenience"}
+          ]
+        },
+        {
+          "name": "h_spikeSuitSamusEaterLeniency",
+          "requires": [
+            {"samusEaterCycles": "n_spikeSuitLenience"}
+          ]
+        },
+        {
+          "name": "h_spikeSuitPowerBombLeniency",
+          "requires": [
+            {"ammo": {"type": "PowerBomb", "count": "n_spikeSuitLenience"}}
+          ]
+        },
+        {
+          "name": "h_XModeSpikeHit",
+          "requires": [
+            {"spikeHits": "n_spikeXModeAttempts"}
+          ]
+        },
+        {
+          "name": "h_XModeThornHit",
+          "requires": [
+            {"thornHits": "n_thornXModeAttempts"}
           ]
         }
       ]
