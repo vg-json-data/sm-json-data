@@ -90,10 +90,8 @@ print("VALIDATE")
 print(" CONNECTIONS")
 for region in os.listdir(os.path.join(".", "connection")):
     if os.path.isdir(os.path.join(".", "connection", region)):
-        print("  " + region.capitalize())
         for subregion in os.listdir(os.path.join(".", "connection", region)):
             if ".json" in subregion and "roomDiagrams" not in subregion:
-                print("   " + subregion[:subregion.find(".")].capitalize())
                 with open(
                     os.path.join(
                         ".",
@@ -148,7 +146,6 @@ for region in os.listdir(os.path.join(".", "connection")):
                     if result:
                         print("    " + "INVALID")
                         pass
-print()
 
 # enemies
 print(" ENEMIES")
@@ -161,7 +158,6 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
                 schema = schemas["m3"]["bossScenarios"]
             else:
                 schema = schemas["m3"]["enemies"]
-            print("  " + os.path.join(r, filename))
             with open(filePath, "r", encoding="utf-8") as jsonFile:
                 enemiesJSON = None
 
@@ -207,7 +203,6 @@ for r,d,f in os.walk(os.path.join(".", "enemies")):
                 if result:
                     print("    " + "INVALID")
                     pass
-print()
 
 # regions
 print(" REGIONS")
@@ -276,7 +271,6 @@ for region in os.listdir(os.path.join(".", "region")):
                                 if result:
                                     print("    " + "INVALID")
                                     pass
-print()
 
 # weapons
 print(" WEAPONS")
@@ -284,7 +278,6 @@ for r,d,f in os.walk(os.path.join(".", "weapons")):
     for filename in f:
         if ".json" in filename:
             filePath = os.path.join(r, filename)
-            print("  " + os.path.join(r, filename))
             with open(filePath, "r", encoding="utf-8") as jsonFile:
                 weaponsJSON = None
 
@@ -330,7 +323,6 @@ for r,d,f in os.walk(os.path.join(".", "weapons")):
                 if result:
                     print("    " + "INVALID")
                     pass
-print()
 
 # root
 for rootType in [
@@ -340,7 +332,6 @@ for rootType in [
 ]:
     print(" " + rootType.upper())
     filePath = os.path.join(".", rootType + ".json")
-    print("  " + filePath)
     with open(filePath, "r", encoding="utf-8") as jsonFile:
         fileJSON = None
 
@@ -386,7 +377,6 @@ for rootType in [
         if result:
             print("     " + "INVALID")
             pass
-    print()
 
 if bail:
     for errorSet in errors:
