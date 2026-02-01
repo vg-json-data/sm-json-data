@@ -95,7 +95,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 
 Each of these properties is described in more detail below.
 
-A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `true` or `"free"`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
+A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `"yes"` or `"free"`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
 
 ### Leave Normally
 
@@ -1774,9 +1774,9 @@ A `gModeRegainMobility` object has no properties.
 ## Bypasses Door Shell
 
 A `bypassesDoorShell` property on a strat indicates that Samus can leave through the door transition in the `to` node
-without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": true` may also have an exit condition, but it is not required to have one.
+without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": "yes"` may also have an exit condition, but it is not required to have one.
 
-A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `canSkipDoorLock`, whereas one with `"bypassesDoorShell": "free"` does not.
+A strat with `"bypassesDoorShell": "yes"` has an implicit tech requirement of `canSkipDoorLock`, whereas one with `"bypassesDoorShell": "free"` does not.
 
 ### Example
 ```json
@@ -1785,7 +1785,7 @@ A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `ca
   "requires": [
     "canWallIceClip"
   ],
-  "bypassesDoorShell": true
+  "bypassesDoorShell": "yes"
 }
 ```
 
@@ -1809,7 +1809,7 @@ An `unlocksDoors` array lists possibilities of doors that can be unlocked as par
     - For "gadoraMissiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 3}}`.
     - For "gadoraSuper", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
     
-In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `true` or `"free"`.
+In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `"yes"` or `"free"`.
 
 If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three main types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. Currently the inclusion of "gadoraMissiles" and "gadoraSuper" are optional, and cross-room strats going through them are not usable unless the door has previously been unlocked.
 
