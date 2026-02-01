@@ -1,4 +1,4 @@
-# Tool to auto-format all the region files in a standard way.
+# Tool to auto-format all the region files and schema files in a standard way.
 #
 # To use, run "python autoformat.py" from a working directory of "sm-json-data/scripts".
 
@@ -21,6 +21,7 @@ registry = Registry().with_resources(resource_list).crawl()
 room_schema = registry.contents("m3-room.schema.json")
 room_resolver = registry.resolver("m3-room.schema.json")
 
+# Format region files:
 for path in sorted(Path("../region/").glob("**/*.json")):
     room_json = json.load(path.open("r"))
     if room_json.get("$schema") != "../../../schema/m3-room.schema.json":
@@ -35,3 +36,16 @@ for path in sorted(Path("../region/").glob("**/*.json")):
 
     # Write the auto-formatted output:
     path.write_text(new_room_json)
+
+# Format schema files:
+for path in sorted(Path("../schema/").glob("**/*.json")):
+    schema_json = json.load(path.open("r"))
+
+    print("Processing", path)
+    new_schema_json = format_json.format(schema_json, indent=2)
+
+    # Validate that the new JSON is equivalent to the old (i.e. the differences affect formatting only):
+    assert json.loads(new_schema_json) == schema_json
+
+    # Write the auto-formatted output:
+    path.write_text(new_schema_json)
