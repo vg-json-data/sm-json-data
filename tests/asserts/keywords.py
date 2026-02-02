@@ -274,11 +274,11 @@ def find_door_unlocked_nodes(strat, node_subtype, nodes_without_implicit_unlocks
     nodes = find_door_unlocked_nodes_rec(strat["requires"])
     from_node = strat["link"][0]
     to_node = strat["link"][1]
-    if "exitCondition" in strat and strat.get("bypassesDoorShell") not in [True, "free"] and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
+    if "exitCondition" in strat and strat.get("bypassesDoorShell") not in ["yes", "free"] and node_subtype not in ["elevator", "doorway", "sandpit", "passage"]:
         nodes.add(to_node)
     if "entranceCondition" not in strat and from_node in nodes:
         nodes.remove(from_node)
-    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") not in [True, "free"] and "gModeRegainMobility" not in strat:
+    if to_node in nodes_without_implicit_unlocks and strat.get("bypassesDoorShell") not in ["yes", "free"] and "gModeRegainMobility" not in strat:
         nodes.add(to_node)
     return nodes
 
@@ -477,7 +477,8 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["h_flashSuitIceClip", "h_spikeXModeSpikeSuit", "h_thornXModeSpikeSuit", "h_storedSpark"]:
+        elif req in ["h_flashSuitIceClip", "canXModeSpikeSuit", "h_spikeXModeSpikeSuit", "h_thornXModeSpikeSuit", 
+                     "h_thornXModeSpikeSuitWithoutLenience", "h_storedSpark"]:
             states = {"preshinespark"}
         elif req in ["canSpikeSuit"]:
             if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
@@ -493,8 +494,17 @@ def process_req_speed_state(req, states, err_fn):
             if not states.issubset(["shinecharging", "blue"]):
                 err_fn(f"{req} while not in blue state")
             states = {"blue"}
-        elif req in ["h_spikeXModeShinecharge", "h_thornXModeShinecharge", "h_spikeDoubleXModeBlueSuit", "h_thornDoubleXModeBlueSuit"]:
+        elif req in ["h_XModeShinecharge", "h_spikeXModeShinecharge", "h_thornXModeShinecharge",
+                     "h_thornXModeShinechargeWithoutLenience"]:
             states = {"shinecharged"}
+        elif req in ["canXModeBlueSuit", "h_spikeXModeBlueSuit", "h_spikeXModeBlueSuitWithoutLenience",
+                     "h_thornXModeBlueSuit", "h_thornXModeBlueSuitWithoutLenience"]:
+            if not states.issubset(["shinecharging", "shinecharged", "preshinespark"]):
+                err_fn(f"{req} while not in shinecharging/shinecharged/preshinespark")
+            states = {"shinespark"}
+        elif req in ["canDoubleXModeBlueSuit", "h_spikeDoubleXModeBlueSuit", "h_thornDoubleXModeBlueSuit",
+                     "h_thornDoubleXModeBlueSuitWithoutLenience"]:
+            states = {"shinespark"}
 
     elif isinstance(req, dict):
         if "canShineCharge" in req:
@@ -666,7 +676,6 @@ for root, dirs, files in os.walk(os.path.join(".", "connection")):
                     for i, node in enumerate(connection["nodes"]):
                         vertical_door_nodes.add((node["roomid"], node["nodeid"]))
 
-print("")
 print("Check Regions")
 for r,d,f in os.walk(os.path.join(".","region")):
     for filename in f:
@@ -1124,7 +1133,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 # Regain mobility strats also take place entirely in G-mode.
                                 pass
                             elif "comeInWithGrappleTeleport" in strat.get("entranceCondition", []) and \
-                                  strat.get("bypassesDoorShell") in [True, "free"]:
+                                  strat.get("bypassesDoorShell") in ["yes", "free"]:
                                 # Strats that use a grapple teleport to bypass a door lock can be done without heat damage, 
                                 # since the door transition is touched immediately.
                                 pass
@@ -1251,7 +1260,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Door unlocked requirement for node {node}, type {t}, is not covered in `unlocksDoors`:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
-                        if strat.get("bypassesDoorShell") in [True, "free"]:
+                        if strat.get("bypassesDoorShell") in ["yes", "free"]:
                             if node_lookup[toNode]["nodeType"] != "door":
                                 msg = f"🔴ERROR: Strat has bypassesDoorShell but To Node is not door:{stratRef}"
                                 messages["reds"].append(msg)
