@@ -95,7 +95,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 
 Each of these properties is described in more detail below.
 
-A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `true` or `"free"`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
+A strat with an exit condition implicitly has a `doorUnlockedAtNode` requirement on its `to` node, unless it has the `bypassesDoorShell` property set to `"yes"` or `"free"`. This means that if the `to` door has a lock on it, it must either be unlocked before the strat can be executed, or the door's requirements under the strat property `unlocksDoors` must be satisfied. 
 
 ### Leave Normally
 
@@ -696,7 +696,7 @@ A `comeInNormally` condition can be satisfied by a matching strat on the other s
 ### Come In Running
 
 A `comeInRunning` entrance condition represents the need for Samus to be able to run into the room with speed in a certain range. It has the following properties:
-* _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _speedBooster_: If "yes", then Speed Booster must be used while running into the room. If "no", then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 
@@ -704,8 +704,8 @@ A `comeInRunning` condition can be satisfied only by a matching strat on the oth
 - The effective runway length of the `leaveWithRunway` is at least as long as the `minTiles` in the `comeInRunning` condition.
 
 Where applicable, a `comeInRunning` condition also includes implicit requirements for actions to be performed in the previous room, which are effectively prepended to the start of the strat's `requires` (or equivalently but more properly, onto the end of the `requires` of the `leaveWithRunway` strat in the other room):
-- If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
-- If `speedBooster` is false, then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
+- If `speedBooster` is "yes", then there is an implicit `SpeedBooster` item requirement.
+- If `speedBooster` is "no", then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
 - If the previous room is heated, then `heatFrames` are required based on the time needed to perform the run. 
 - If the previous door environment is water, then `Gravity` is required.
 - In every case, there is an implicit `canDash` requirement (including loss of any blue suit).
@@ -747,7 +747,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
 ### Come In Jumping
 
 A `comeInJumping` entrance condition represents the need for Samus to be able to run toward the door in the previous room, with speed in a certain range, and spin jump just before hitting the transition. It has the following properties:
-* _speedBooster_: If true, then Speed Booster must be used while running into the room. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _speedBooster_: If "yes", then Speed Booster must be used while running into the room. If "no", then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held.
 
@@ -771,14 +771,14 @@ A `comeInJumping` entrance condition represents the need for Samus to be able to
 
 A `comeInSpaceJumping` entrance condition indicates that Samus must come in with a Space Jump through the bottom of the doorway, applicable to horizontal transitions. It has the following properties:
 
-* _speedBooster_: If true, then Speed Booster must be used while gaining run speed or jumping. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+* _speedBooster_: If "yes", then Speed Booster must be used while gaining run speed or jumping. If "no", then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
 * _minTiles_: The minimum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 * _maxTiles_: The maximum horizontal speed that will satisfy the condition, measured in effective runway tiles with dash held on the remote runway.
 
 A `comeInSpaceJumping` entrance condition must match with a `leaveSpaceJumping` on the other side of the door. To match, the `blue` property of `leaveSpaceJumping` must be "no" or "any". This comes with implicit requirements:
 
-- If `speedBooster` is true, then there is an implicit `SpeedBooster` item requirement.
-- If `speedBooster` is false, then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
+- If `speedBooster` is "yes", then there is an implicit `SpeedBooster` item requirement.
+- If `speedBooster` is "no", then there is an implicit `{"disableEquipment": "SpeedBooster"}` requirement.
 - The `SpaceJump` item requirement.
 - A `canSidePlatformCrossRoomJump` tech requirement.
 - A `canDash` tech requirement (including loss of any blue suit).
@@ -1152,7 +1152,7 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 
 A `comeInSpinning` entrance condition indicates that Samus must come in with a spin jump through the doorway, with speed in a certain range, applicable to horizontal transitions. It has the following properties:
 
-- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
+- _speedBooster_: If "yes", then Speed Booster must be equipped while entering the room. If "no", then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _unusableTiles_: For a runway connected to the door, the number of tiles before the door that are unusable for gaining speed, because of needing to jump.
 - _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
 - _maxExtraRunSpeed_: The maximum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too high of a speed.
@@ -1219,7 +1219,7 @@ In every case `canDash` is required (including loss of any blue suit).
 
 A `comeInWithMockball` entrance condition indicates that Samus must roll into the room in a mockball with a certain amount of momentum, applicable to horizontal transitions. It has the following properties:
 
-- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
+- _speedBooster_: If "yes", then Speed Booster must be equipped while entering the room. If "no", then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and enter a mockball.
 - _remoteAndLandingMinTiles_: When entering a mockball, it takes some time to accelerate up to full speed, which means that even when using a remote runway (i.e. one not connected to the door) to gain speed for the jump, the amount of landing space in front of the door still matters. Depending on the strat, different combinations of remote runway and landing lengths may work (e.g. with shorter landing lengths possibly requiring longer remote runways to compensate). This property is a list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable to gain speed at the start of the mockball. 
 
@@ -1252,7 +1252,7 @@ In either case, the `canMockball` tech is required, including the `Morph` item a
 
 A `comeInWithSpringBallBounce` entrance condition indicates that Samus must enter the room by spring ball bouncing in from the previous room, applicable to horizontal transitions. It has the following properties:
 
-- _speedBooster_: If true, then Speed Booster must be equipped while entering the room. If false, then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
+- _speedBooster_: If "yes", then Speed Booster must be equipped while entering the room. If "no", then Speed Booster must not be equipped. If "any", then Speed Booster may or may not be equipped.
 - _adjacentMinTiles_: This is the minimum effective runway length in case an adjacent runway (connected to the door) is used to gain speed, jump, and bounce.
 - _remoteAndLandingMinTiles_: A list of pairs, where in each pair the first value gives a minimal remote runway used to gain speed, and the second value gives the corresponding minimal amount of landing tiles in front of the door usable for the bounce.
 - _movementType_: This takes one of three possible values, "controlled", "uncontrolled", and "any", indicating the type of bounce that is required.
@@ -1535,7 +1535,7 @@ A `comeInWithSidePlatform` entrance condition indicates that Samus must jump thr
 
 * _platforms_: An array of objects, each describing a type of platform geometry that can satisfy this condition.
   - _minTiles_: Minimum length of platform runway in the other room, measured in tiles (including unusable tiles).
-  - _speedBooster_: If true, then Speed Booster must be used while gaining run speed or jumping. If false, then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
+  - _speedBooster_: If "yes", then Speed Booster must be used while gaining run speed or jumping. If "no", then Speed Booster must not be used. If "any", then Speed Booster may or may not be used.
   - _minHeight:_ Minimum height of the platform that can satisfy this condition, measured in tiles. It expresses that the platform must be positioned at least a certain distance below the doorway.
   - _maxHeight:_ Minimum height of the platform that can satisfy this condition, measured in tiles. It expresses that the platform must be positioned at most a certain distance below the doorway.
   - _obstructions_: A list of possible `obstruction` positions that can satisfy this condition.
@@ -1559,7 +1559,7 @@ __Example:__
     "comeInWithSidePlatform": {
       "platforms": [{
         "minTiles": 4,
-        "speedBooster": false,
+        "speedBooster": "no",
         "minHeight": 1,
         "maxHeight": 2,
         "obstructions": [[1, 0]]
@@ -1774,9 +1774,9 @@ A `gModeRegainMobility` object has no properties.
 ## Bypasses Door Shell
 
 A `bypassesDoorShell` property on a strat indicates that Samus can leave through the door transition in the `to` node
-without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": true` may also have an exit condition, but it is not required to have one.
+without first unlocking or opening the door. For this to be valid, the `to` node must have `"nodeType": "door"`. This can be used even for doors that are easy to open (e.g. blue doors), to support randomizers that may alter door colors. A strat with `"bypassesDoorShell": "yes"` may also have an exit condition, but it is not required to have one.
 
-A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `canSkipDoorLock`, whereas one with `"bypassesDoorShell": "free"` does not.
+A strat with `"bypassesDoorShell": "yes"` has an implicit tech requirement of `canSkipDoorLock`, whereas one with `"bypassesDoorShell": "free"` does not.
 
 ### Example
 ```json
@@ -1785,7 +1785,7 @@ A strat with `"bypassesDoorShell": true` has an implicit tech requirement of `ca
   "requires": [
     "canWallIceClip"
   ],
-  "bypassesDoorShell": true
+  "bypassesDoorShell": "yes"
 }
 ```
 
@@ -1809,7 +1809,7 @@ An `unlocksDoors` array lists possibilities of doors that can be unlocked as par
     - For "gadoraMissiles", the implicit requirement is `{"ammo": {"type": "Missile", "count": 3}}`.
     - For "gadoraSuper", the implicit requirement is `{"ammo": {"type": "Super", "count": 1}}`.
     
-In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `true` or `"free"`.
+In general the `requires` in an `unlocksDoors` object do not need to be satisfied in order to perform the strat; if satisfied, they provide a way to unlock the door. However, if the strat has a [`doorUnlockedAtNode`](logicalRequirements.md#doorunlockedatnode-object) requirement and the door is locked, then these requirements become part of the strat requirements; this applies, in particular, if the strat has an exit condition, in which case there is an implicit `doorUnlockedAtNode` requirement on the destination door except if [`bypassesDoorShell`](strats.md#bypasses-door-shell) is set to `"yes"` or `"free"`.
 
 If an `unlocksDoors` property is not specified, then it is assumed to be an empty array. If a strat has any `doorUnlockedAtNode` requirements (including an implicit one based on having an exit condition without a `bypassesDoorShell`), then the `unlocksDoors` property should be specified explicitly and include items for each of the three possible types "missiles", "super", and "powerbomb" (or the catch-all "any") for each applicable node. The only exception is if the strat has no entrance condition then the starting node of the strat does not need to be included in the `unlocksDoors` property; in this case, the door could be unlocked immediately prior to the strat being executed (e.g. by an implicit unlock strat; see below), so generally it would not be necessary to describe how to unlock it as part of the strat. Where applicable, cases should be included for all three main types of door unlock methods, "missiles", "super", and "powerbomb" (or using "ammo" as a catch-all), in order to support randomizers which may modify the door colors. Currently the inclusion of "gadoraMissiles" and "gadoraSuper" are optional, and cross-room strats going through them are not usable unless the door has previously been unlocked.
 
