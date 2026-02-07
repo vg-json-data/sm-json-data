@@ -1011,7 +1011,7 @@ A `comeInStutterShinecharging` entrance condition indicates that Samus must run 
 - _minTiles_: The minimum amount of effective runway tiles in other room needed for this strat.
 
 A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` condition on the other side of the door, which must have an "air" environment and an effective length of at least `minTiles`. A match comes with the following implicit requirements for actions to be performed in the previous room:
-- The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item and loss of any blue suit.
+- The tech `canStutterWaterShineCharge`, which includes a requirement for the `SpeedBooster` item and loss of any flash suit or blue suit.
 - If the previous room is heated, then heat frame requirements are included based on `minTiles`, in the same way as for a `comeInRunning` requirement.
 
 #### Example
@@ -1144,7 +1144,7 @@ A `comeInWithTemporaryBlue` entrance condition must match with one of the follow
 - To match with a `leaveWithTemporaryBlue`, its `direction` properties must equal that of `comeInWithTemporaryBlue`, unless one of them is unspecified or "any". It has an implicit tech requirement of `canTemporaryBlue`, including the loss of a flash suit. 
 - A match with `leaveWithRunway` comes with implicit requirements:
   - The tech `canTemporaryBlue`.
-  - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement and `canDash` tech requirement, including loss of any blue suit).
+  - A `canShinecharge` requirement based on the runway length (including the `SpeedBooster` item requirement and `canDash` tech requirement, including loss of any flash suit or blue suit).
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here there is no second runway to combine with. An extra `{"heatFrames": 200}` is assumed for gaining temporary blue and leaving the room.
   - If the previous door environment is water, then `Gravity` is required.
 
@@ -1376,6 +1376,7 @@ A `comeInWithRMode` object does not have any properties.
 A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` entrance condition on the other side of the door. It comes with the following implicit requirements:
 - The tech requirement `canRMode`.
 - The `XRayScope` item requirement.
+- A requirement `{"or": ["canBlueSuitGModeSetup", {"noBlueSuit": {}}]}`.
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
 
