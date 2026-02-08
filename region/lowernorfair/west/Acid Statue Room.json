@@ -83,6 +83,17 @@
         [1, 1, 0],
         [2, 2, 1]
       ]
+    },
+    {
+      "id": 6,
+      "name": "Junction Below Acid Plug",
+      "nodeType": "junction",
+      "nodeSubType": "junction",
+      "mapTileMask": [
+        [1, 1, 0],
+        [1, 1, 0],
+        [2, 1, 1]
+      ]
     }
   ],
   "obstacles": [
@@ -124,7 +135,8 @@
           "openEnd": 1
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 2,
@@ -133,7 +145,8 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 52,
@@ -175,6 +188,7 @@
         }
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Enter the room with a super sink, in order to clip down to the bottom part of the room.",
         "Blindly traverse to the right door.",
@@ -194,11 +208,17 @@
       "link": [1, 3],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "SpaceJump",
-        {"heatFrames": 180}
+        {"or": [
+          {"and": [
+            "canDash",
+            {"heatFrames": 180}
+          ]},
+          {"heatFrames": 260}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 5,
@@ -208,11 +228,11 @@
         "comeInWithSpark": {}
       },
       "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 125},
-        {"shinespark": {"frames": 36}}
+        {"heatFrames": 140},
+        {"shinespark": {"frames": 36, "excessFrames": 6}}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 46,
@@ -228,7 +248,8 @@
         "canMomentumConservingMorph",
         {"heatFrames": 70}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 6,
@@ -243,6 +264,7 @@
         {"heatFrames": 210}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Beginning with Speed Booster unequipped, run and jump over the acid into an airball.",
         "Once Samus begins falling, equip Spring Ball and Speed Booster to safely land on the other side near the statue."
@@ -264,6 +286,7 @@
         {"heatFrames": 135}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Enter the room with a spin jump, with enough speed to bounce across the acid pit.",
         "If needed, a Spring fling near the end of Samus' descent can help."
@@ -274,17 +297,24 @@
       "link": [1, 3],
       "name": "Gravityless Acid Dive",
       "requires": [
-        "h_navigateHeatRooms",
         "canSuitlessLavaDive",
         {"or": [
           "HiJump",
           "canWalljump",
           "canSpringBallJumpMidAir"
         ]},
-        {"acidFrames": 116},
-        {"heatFrames": 285}
+        {"acidFrames": 110},
+        {"heatFrames": 285},
+        {"or": [
+          "canDash",
+          {"and": [
+            {"acidFrames": 100},
+            {"heatFrames": 90}
+          ]}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Try to jump to the far left side raised ledges to reduce the time spent in acid.",
         "This could mean turning off HiJump, or airballing to jump farther."
@@ -295,24 +325,37 @@
       "link": [1, 3],
       "name": "Gravity Acid Dive",
       "requires": [
-        "h_navigateHeatRooms",
         "canSuitlessLavaDive",
         "Gravity",
         {"or": [
-          "HiJump",
-          "canWalljump",
-          "canSpringBallJumpMidAir",
-          "canGravityJump",
           {"and": [
-            "canJumpIntoIBJ",
-            {"acidFrames": 1050},
-            {"heatFrames": 1050}
+            {"disableEquipment": "HiJump"},
+            "HiJump",
+            {"acidFrames": 75},
+            {"heatFrames": 230}
+          ]},
+          {"and": [
+            "canWalljump",
+            {"acidFrames": 90},
+            {"heatFrames": 245}
+          ]},
+          {"and": [
+            "canSpringBallJumpMidAir",
+            {"acidFrames": 75},
+            {"heatFrames": 230}
+          ]},
+          {"and": [
+            "canGravityJump",
+            {"heatFrames": 190},
+            {"acidFrames": 40},
+            {"gravitylessAcidFrames": 35},
+            {"gravitylessHeatFrames": 45}
           ]}
-        ]},
-        {"acidFrames": 100},
-        {"heatFrames": 255}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": ["FIXME: An IBJ option can be added back here."]
     },
     {
       "id": 9,
@@ -326,26 +369,27 @@
             "canLateralMidAirMorph",
             "canDownBack",
             "canTrickyJump",
-            {"acidFrames": 108}
+            {"acidFrames": 110},
+            {"heatFrames": 285}
           ]},
           {"and": [
+            "canDash",
             "canTrickyJump",
-            {"heatFrames": 30},
-            {"acidFrames": 136}
+            {"acidFrames": 140},
+            {"heatFrames": 300}
           ]},
           {"and": [
-            {"heatFrames": 90},
-            {"acidFrames": 216}
+            {"acidFrames": 230},
+            {"heatFrames": 390}
           ]}
-        ]},
-        {"heatFrames": 285}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "There is a hole in the left side wall that Samus can fit into by shrinking her hitbox.",
         "Once in the wall, stand up if crouched then turnaround into a buffered spinjump to jump out of the acid."
-      ],
-      "devNote": "Not notable because it only skips a walljump."
+      ]
     },
     {
       "id": 10,
@@ -355,7 +399,8 @@
         "h_heatProof",
         "canCeilingBombJump"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 11,
@@ -373,6 +418,7 @@
         "canOffScreenMovement"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Grapple teleporting here will spawn Samus inside the wall behind the Acid Chozo statue.",
         "To escape, perform a Crystal Flash to stand up, then morph and roll out to the right.",
@@ -394,6 +440,7 @@
         "canOffScreenMovement"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "After teleporting, press down to retract Grapple.",
         "Samus will be inside the Power Bomb blocks behind the Acid Chozo statue hand.",
@@ -408,11 +455,17 @@
       "link": [1, 4],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "f_UsedAcidChozoStatue",
-        {"heatFrames": 100}
+        {"or": [
+          {"and": [
+            "canDash",
+            {"heatFrames": 130}
+          ]},
+          {"heatFrames": 190}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 45,
@@ -431,6 +484,7 @@
         {"heatFrames": 200}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Enter the room in Direct G-mode, otherwise the acid will still be present.",
         "Jump in the vertical shaft to touch the camera scroll block and overload PLMs, then roll through the bomb blocks.",
@@ -459,6 +513,7 @@
         {"heatFrames": 1020}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Gain a shinecharge and spark into the wall at the left side of the room to clip into it.",
         "From there, X-Ray climb to the top portion of the room (about 0.75 screens).",
@@ -489,6 +544,7 @@
         {"heatFrames": 1020}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Gain a shinecharge and spark into the wall at the left side of the room to clip into it.",
         "From there, X-Ray climb to the top portion of the room (about 0.75 screens).",
@@ -512,7 +568,8 @@
           "openEnd": 1
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 15,
@@ -521,7 +578,8 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 43,
@@ -537,7 +595,8 @@
         "leaveWithGModeSetup": {}
       },
       "unlocksDoors": [{"types": ["ammo"], "requires": []}],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 16,
@@ -555,6 +614,7 @@
         "canOffScreenMovement"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Grapple teleporting here will spawn Samus inside the wall behind the Acid Chozo statue.",
         "To escape, perform a Crystal Flash to stand up, then morph and roll out to the right.",
@@ -576,6 +636,7 @@
         "canOffScreenMovement"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "After teleporting, press down to retract Grapple.",
         "Samus will be inside the Power Bomb blocks behind the Acid Chozo statue hand.",
@@ -607,6 +668,7 @@
         {"heatFrames": 970}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Gain a shinecharge and spark into the wall at the left side of the room to clip into it.",
         "From there, X-Ray climb to the top portion of the room (about 0.75 screens).",
@@ -643,6 +705,7 @@
         {"heatFrames": 970}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Gain a shinecharge and spark into the wall at the left side of the room to clip into it.",
         "From there, X-Ray climb to the top portion of the room (about 0.75 screens).",
@@ -666,10 +729,15 @@
         "canRModeStandupClip",
         "h_RModeCanRefillReserves",
         "h_heatProof",
-        "h_bombThings",
+        "Morph",
+        {"or": [
+          "h_bombThings",
+          {"haveBlueSuit": {}}
+        ]},
         {"or": [
           "HiJump",
           "canWalljump",
+          "canSpringBallJumpMidAir",
           "canDoubleBombJump"
         ]},
         {"partialRefill": {"type": "ReserveEnergy", "limit": 100}},
@@ -677,25 +745,38 @@
         {"autoReserveTrigger": {"implicitHeatFrames": "suitless"}},
         {"suitlessHeatFrames": 30}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 18,
       "link": [2, 5],
       "name": "Base",
       "requires": [
+        "canDash",
         "ScrewAttack",
         {"heatFrames": 210}
       ],
       "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [2, 5],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        {"heatFrames": 310}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 19,
       "link": [2, 5],
       "name": "Avoid Damage",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"or": [
           "canTrickyJump",
           {"and": [
@@ -707,18 +788,43 @@
         {"heatFrames": 290}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wait for the first Holtz to attack then either use the Magdollite for i-frames, or avoid the projectiles and continue dodging bats."
+    },
+    {
+      "link": [2, 5],
+      "name": "Farm While Crossing",
+      "requires": [
+        "canDash",
+        "canFarmWhileShooting",
+        {"heatFramesWithEnergyDrops": {
+          "frames": 170,
+          "drops": [{"enemy": "Magdollite", "count": 3}]
+        }},
+        {"heatFrames": 130}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 20,
       "link": [2, 5],
       "name": "Tank the Damage",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"enemyDamage": {"enemy": "Holtz", "type": "contact", "hits": 1}},
+        {"or": [
+          "canCarefulJump",
+          {"and": [
+            "Gravity",
+            {"enemyDamage": {"enemy": "Holtz", "type": "contact", "hits": 1}},
+            {"acidFrames": 60}
+          ]}
+        ]},
         {"heatFrames": 375}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wait for the first Holtz before trying to cross."
     },
     {
@@ -726,6 +832,7 @@
       "link": [2, 5],
       "name": "Kill Holtzes (Strong Weapon)",
       "requires": [
+        "canDash",
         {"or": [
           {"and": [
             "Plasma",
@@ -748,13 +855,15 @@
         ]}
       ],
       "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 56,
       "link": [2, 5],
       "name": "Kill Holtzes (Medium Weapon)",
       "requires": [
+        "canDash",
         "canDodgeWhileShooting",
         {"or": [
           {"and": [
@@ -784,13 +893,15 @@
         ]}
       ],
       "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 57,
       "link": [2, 5],
       "name": "Kill Holtzes (Slow Weapon)",
       "requires": [
+        "canDash",
         "canTrickyDodgeEnemies",
         {"or": [
           {"and": [
@@ -819,6 +930,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "FIXME: This could probably be done with just Power Beam, but dodging the Holtzes becomes very tricky."
       ]
@@ -831,33 +943,45 @@
         "comeInWithSpark": {}
       },
       "requires": [
-        "h_navigateHeatRooms",
         {"heatFrames": 125},
         {"shinespark": {"frames": 41, "excessFrames": 6}}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 23,
       "link": [3, 1],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "SpaceJump",
-        {"heatFrames": 300}
+        {"or": [
+          {"and": [
+            "canDash",
+            {"heatFrames": 200}
+          ]},
+          {"heatFrames": 275}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 24,
       "link": [3, 1],
       "name": "Without Acid",
       "requires": [
-        "h_navigateHeatRooms",
         "f_UsedAcidChozoStatue",
-        {"heatFrames": 300}
+        {"or": [
+          {"and": [
+            "canDash",
+            {"heatFrames": 270}
+          ]},
+          {"heatFrames": 295}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 40,
@@ -869,7 +993,8 @@
         {"heatFrames": 1020}
       ],
       "setsFlags": ["f_UsedAcidChozoStatue"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 25,
@@ -878,7 +1003,8 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 41,
@@ -891,6 +1017,7 @@
       ],
       "setsFlags": ["f_UsedAcidChozoStatue"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Using the Crystal Flash Power Bomb to clear the statue can save some heat frames."
     },
     {
@@ -906,28 +1033,35 @@
         {"heatFrames": 50}
       ],
       "setsFlags": ["f_UsedAcidChozoStatue"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 26,
       "link": [3, 4],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "f_UsedAcidChozoStatue",
         {"heatFrames": 100}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 27,
       "link": [4, 1],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 250}
+        {"or": [
+          {"and": [
+            "canDash",
+            {"heatFrames": 195}
+          ]},
+          {"heatFrames": 215}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": "4 requires that the acid is gone."
     },
     {
@@ -935,22 +1069,38 @@
       "link": [4, 3],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         {"or": [
           "HiJump",
           "canWalljump",
-          "canSpringBallJumpMidAir",
-          {"and": [
-            {"or": [
-              "canLongIBJ",
-              "canJumpIntoIBJ"
-            ]},
-            {"heatFrames": 780}
-          ]}
+          "canSpringBallJumpMidAir"
         ]},
-        {"heatFrames": 200}
+        {"heatFrames": 120}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [4, 3],
+      "name": "IBJ",
+      "requires": [
+        {"or": [
+          {"and": [
+            "canLongIBJ",
+            {"heatFrames": 780}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 560}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 360}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 29,
@@ -959,65 +1109,17 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
-      "id": 30,
-      "link": [4, 5],
-      "name": "Bombs",
+      "link": [4, 6],
+      "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
-        "f_UsedAcidChozoStatue",
-        "h_useMorphBombs",
-        {"heatFrames": 400}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 31,
-      "link": [4, 5],
-      "name": "PowerBombs",
-      "requires": [
-        "h_navigateHeatRooms",
-        "f_UsedAcidChozoStatue",
-        "h_usePowerBomb",
-        {"heatFrames": 250}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 54,
-      "link": [5, 1],
-      "name": "Power Bomb and Use Flash Suit",
-      "requires": [
-        "f_UsedAcidChozoStatue",
-        "h_usePowerBomb",
-        {"useFlashSuit": {}},
-        {"or": [
-          {"and": [
-            {"heatFrames": 460},
-            {"shinespark": {"frames": 28, "excessFrames": 0}}
-          ]},
-          {"and": [
-            "h_heatProof",
-            {"shinespark": {"frames": 16, "excessFrames": 13}}
-          ]},
-          {"and": [
-            "h_heatProof",
-            "canShinesparkSlopeClip",
-            {"shinespark": {"frames": 1, "excessFrames": 1}}
-          ]}
-        ]}
+        {"heatFrames": 60}
       ],
       "flashSuitChecked": true,
-      "note": [
-        "Jump a high as possible, and use a flash suit to diagonally spark either to the right or left to reach the top of the room.",
-        "If heat protection is available, sparking diagonally left uses less energy;",
-        "in this case, Samus will end lodged inside the wall but can use Morph to escape.",
-        "Alternatively, spark horizontally left to clip into the wall;",
-        "turn back and forth 3 times to wiggle most of the way out, then turn-around spin jump up to the ledge;",
-        "clipping into the right wall can also work but requires much greater precision in the spark position."
-      ]
+      "blueSuitChecked": true
     },
     {
       "id": 55,
@@ -1043,6 +1145,7 @@
       "link": [5, 2],
       "name": "Base",
       "requires": [
+        "canDash",
         "ScrewAttack",
         {"heatFrames": 210},
         {"or": [
@@ -1054,16 +1157,28 @@
       "flashSuitChecked": true
     },
     {
+      "link": [5, 2],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        {"heatFrames": 330}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
       "id": 33,
       "link": [5, 2],
       "name": "Magdollite Damage Boost",
       "requires": [
+        "canDash",
         {"enemyDamage": {"enemy": "Magdollite", "type": "flame", "hits": 1}},
         "canHorizontalDamageBoost",
         "canUseIFrames",
         {"heatFrames": 290}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wait for the Magdollite to attack then use it for i-frames."
     },
     {
@@ -1071,6 +1186,7 @@
       "link": [5, 2],
       "name": "Tricky Avoid Damage",
       "requires": [
+        "canDash",
         "canTrickyDodgeEnemies",
         {"heatFrames": 280},
         {"or": [
@@ -1078,46 +1194,74 @@
           {"heatFrames": 20}
         ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [5, 2],
+      "name": "Farm While Crossing",
+      "requires": [
+        "canDash",
+        "canFarmWhileShooting",
+        {"heatFramesWithEnergyDrops": {
+          "frames": 200,
+          "drops": [{"enemy": "Magdollite", "count": 3}]
+        }},
+        {"heatFrames": 125},
+        {"or": [
+          "canInsaneJump",
+          {"heatFrames": 65}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 34,
       "link": [5, 2],
       "name": "Tank the Damage",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"enemyDamage": {"enemy": "Holtz", "type": "contact", "hits": 1}},
         {"or": [
-          {"enemyDamage": {"enemy": "Holtz", "type": "contact", "hits": 1}},
-          "canCarefulJump"
+          "canCarefulJump",
+          {"and": [
+            "Gravity",
+            {"enemyDamage": {"enemy": "Holtz", "type": "contact", "hits": 1}},
+            {"acidFrames": 60}
+          ]}
         ]},
         {"heatFrames": 330}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 35,
       "link": [5, 2],
       "name": "Strong Beam Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "Ice",
         "Wave",
         "Plasma",
         {"heatFrames": 330}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 59,
       "link": [5, 2],
       "name": "Plasma Hitbox Insane Jump",
       "requires": [
+        "canDash",
         "h_PlasmaHitbox",
         "canInsaneJump",
         {"heatFrames": 190}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 60,
@@ -1148,6 +1292,7 @@
         }
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "It is assumed that the door was shot open when entering on the right,",
         "but extra heat frames are included here for it."
@@ -1186,7 +1331,8 @@
           "requires": [{"heatFrames": 50}]
         }
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 62,
@@ -1223,6 +1369,7 @@
         }
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "It is assumed that the door was shot open when entering on the right,",
         "but extra heat frames are included here for it."
@@ -1262,7 +1409,8 @@
           "requires": [{"heatFrames": 50}]
         }
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 64,
@@ -1294,6 +1442,7 @@
         }
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "It is assumed that the door was shot open when entering on the right,",
         "but extra heat frames are included here for it."
@@ -1306,18 +1455,25 @@
       "requires": [
         {"or": [
           {"and": [
+            "canDash",
             "canTrickyJump",
             {"heatFrames": 820}
           ]},
           {"and": [
+            "canDash",
             "ScrewAttack",
             {"heatFrames": 660}
           ]},
           {"and": [
+            "canDash",
             "canHorizontalDamageBoost",
             "canUseIFrames",
             {"enemyDamage": {"enemy": "Magdollite", "type": "flame", "hits": 1}},
             {"heatFrames": 660}
+          ]},
+          {"and": [
+            {"haveBlueSuit": {}},
+            {"heatFrames": 725}
           ]}
         ]}
       ],
@@ -1325,64 +1481,8 @@
         "leaveWithGModeSetup": {}
       },
       "unlocksDoors": [{"types": ["ammo"], "requires": []}],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 36,
-      "link": [5, 4],
-      "name": "Bombs",
-      "requires": [
-        "h_navigateHeatRooms",
-        "f_UsedAcidChozoStatue",
-        "h_useMorphBombs",
-        {"or": [
-          "HiJump",
-          "canWalljump",
-          "canSpringBallJumpMidAir",
-          {"and": [
-            "canIBJ",
-            {"heatFrames": 1020}
-          ]}
-        ]},
-        {"heatFrames": 600}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 37,
-      "link": [5, 4],
-      "name": "Power Bombs",
-      "requires": [
-        "h_navigateHeatRooms",
-        "f_UsedAcidChozoStatue",
-        "h_usePowerBomb",
-        {"or": [
-          "HiJump",
-          "canWalljump",
-          "canSpringBallJumpMidAir",
-          {"and": [
-            "canIBJ",
-            {"heatFrames": 1020}
-          ]}
-        ]},
-        {"heatFrames": 300}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 38,
-      "link": [5, 4],
-      "name": "CF Grapple Clip",
-      "requires": [
-        "h_heatProof",
-        "h_bombThings",
-        "h_jumpIntoCrystalFlashClip",
-        "HiJump",
-        "Grapple"
-      ],
       "flashSuitChecked": true,
-      "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down.",
-      "devNote": "The extra Power Bomb or bombs is to get through the bomb blocks."
+      "blueSuitChecked": true
     },
     {
       "id": 53,
@@ -1413,6 +1513,7 @@
       ],
       "farmCycleDrops": [{"enemy": "Magdollite", "count": 3}],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "The Magdollite can be farmed from the left without activating the Holtzes.",
         "Or from the right by trapping the Holtz by quickly jumping past them."
@@ -1425,7 +1526,168 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [5, 6],
+      "name": "Power Bomb",
+      "requires": [
+        "h_usePowerBomb",
+        {"heatFrames": 235}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [5, 6],
+      "name": "Bombs",
+      "requires": [
+        "h_useMorphBombs",
+        {"heatFrames": 350}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [5, 6],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        "Morph",
+        {"heatFrames": 135}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 36,
+      "link": [6, 4],
+      "name": "Base",
+      "requires": [
+        "f_UsedAcidChozoStatue",
+        {"or": [
+          {"and": [
+            "HiJump",
+            {"heatFrames": 55}
+          ]},
+          {"and": [
+            "canWalljump",
+            {"heatFrames": 55}
+          ]},
+          {"and": [
+            "canSpringBallJumpMidAir",
+            {"heatFrames": 70}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [6, 4],
+      "name": "IBJ",
+      "requires": [
+        "f_UsedAcidChozoStatue",
+        {"or": [
+          {"and": [
+            "canLongIBJ",
+            {"heatFrames": 790}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 330}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 260}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 54,
+      "link": [6, 4],
+      "name": "Use Stored Spark",
+      "requires": [
+        "f_UsedAcidChozoStatue",
+        "h_storedSpark",
+        {"or": [
+          {"and": [
+            {"heatFrames": 210},
+            {"shinespark": {"frames": 28, "excessFrames": 0}}
+          ]},
+          {"and": [
+            "h_heatProof",
+            {"shinespark": {"frames": 16, "excessFrames": 13}}
+          ]},
+          {"and": [
+            "h_heatProof",
+            "canShinesparkSlopeClip",
+            {"shinespark": {"frames": 1, "excessFrames": 1}}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "note": [
+        "Jump a high as possible, and use a flash suit or blue suit to diagonally spark either to the right or left to reach the top of the room.",
+        "If heat protection is available, sparking diagonally left uses less energy;",
+        "in this case, Samus will end lodged inside the wall but can use Morph to escape.",
+        "Alternatively, spark horizontally left to clip into the wall;",
+        "turn back and forth 3 times to wiggle most of the way out, then turn-around spin jump up to the ledge;",
+        "clipping into the right wall can also work but requires much greater precision in the spark position."
+      ]
+    },
+    {
+      "id": 38,
+      "link": [6, 4],
+      "name": "CF Grapple Clip",
+      "requires": [
+        "h_heatProof",
+        "h_bombThings",
+        "h_jumpIntoCrystalFlashClip",
+        "HiJump",
+        "Grapple"
+      ],
+      "flashSuitChecked": true,
+      "note": "Menu to Grappling Beam before the crystal flash ends and mash shoot while holding down.",
+      "devNote": "The extra Power Bomb or bombs is to get through the bomb blocks."
+    },
+    {
+      "id": 30,
+      "link": [6, 5],
+      "name": "Bombs",
+      "requires": [
+        "h_useMorphBombs",
+        {"heatFrames": 320}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 31,
+      "link": [6, 5],
+      "name": "Power Bomb",
+      "requires": [
+        "h_usePowerBomb",
+        {"heatFrames": 155}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [6, 5],
+      "name": "Blue Suit",
+      "requires": [
+        "Morph",
+        {"haveBlueSuit": {}},
+        {"heatFrames": 115}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     }
   ],
   "notables": [],
