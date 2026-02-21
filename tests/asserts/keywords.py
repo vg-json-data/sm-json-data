@@ -1118,7 +1118,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             reqs = []
                             for platform in strat["entranceCondition"]["comeInWithSidePlatform"]["platforms"]:
                                 reqs.append(make_and(platform.get("requires", [])))
-                            requires.append(make_or(reqs))
+                            requires.insert(0, make_or(reqs))
                             if len(requires) == 1 and isinstance(requires[0], dict) and "and" in requires[0]:
                                 requires = requires[0]["and"]
                             
