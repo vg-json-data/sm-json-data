@@ -1493,9 +1493,18 @@
         "canShinechargeMovementComplex",
         {"canShineCharge": {"usedTiles": 25, "openEnd": 2}},
         {"or": [
-          {"shinespark": {"frames": 118, "excessFrames": 6}},
+          {"shinespark": {"frames": 121, "excessFrames": 6}},
+          {"and": [
+            "canSpeedyJump",
+            {"shinespark": {"frames": 118, "excessFrames": 6}}
+          ]},
           {"and": [
             "HiJump",
+            {"shinespark": {"frames": 117, "excessFrames": 6}}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpeedyJump",
             {"shinespark": {"frames": 113, "excessFrames": 6}}
           ]}
         ]}
@@ -1538,9 +1547,18 @@
         {"canShineCharge": {"usedTiles": 23, "openEnd": 2}},
         "ScrewAttack",
         {"or": [
-          {"shinespark": {"frames": 118, "excessFrames": 6}},
+          {"shinespark": {"frames": 121, "excessFrames": 6}},
+          {"and": [
+            "canSpeedyJump",
+            {"shinespark": {"frames": 118, "excessFrames": 6}}
+          ]},
           {"and": [
             "HiJump",
+            {"shinespark": {"frames": 117, "excessFrames": 6}}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpeedyJump",
             {"shinespark": {"frames": 113, "excessFrames": 6}}
           ]}
         ]}
@@ -1561,12 +1579,15 @@
       "requires": [
         "canCarefulJump",
         "canShinechargeMovementComplex",
+        {"getBlueSpeed": {"usedTiles": 34, "openEnd": 0}},
+        "h_blueJump",
         {"canShineCharge": {"usedTiles": 34, "openEnd": 0}},
         {"shinespark": {"frames": 128, "excessFrames": 6}}
       ],
       "flashSuitChecked": true,
       "blueSuitChecked": true,
-      "note": "Charge a Shinespark running left, then get blue speed by running back to the right to jump through the Boyons."
+      "note": "Charge a Shinespark running left, then get blue speed by running back to the right to jump through the Boyons.",
+      "devNote": ["The out-of-order requirements are to work around the tests' assumption that a getBlueSpeed would lose the shinecharge."]
     },
     {
       "id": 41,
@@ -1598,7 +1619,10 @@
           "Ice",
           "canTrickyDodgeEnemies",
           "ScrewAttack",
-          "h_getBlueSpeedMaxRunway",
+          {"and": [
+            "h_getBlueSpeedMaxRunway",
+            "h_blueJump"
+          ]},
           {"enemyKill": {
             "enemies": [["Boyon", "Boyon", "Boyon", "Boyon"]],
             "excludedWeapons": ["Bombs"]
@@ -1873,26 +1897,48 @@
         {"or": [
           {"and": [
             "canTrivialUseFrozenEnemies",
-            "h_shinechargeMaxRunway",
-            "canMidairShinespark",
-            {"shinespark": {"frames": 118, "excessFrames": 6}}
+            "h_shinechargeMaxRunway"         
           ]},
           {"and": [
             "canShinechargeMovementComplex",
-            {"canShineCharge": {"usedTiles": 34, "openEnd": 0}},
-            {"shinespark": {"frames": 128, "excessFrames": 6}}
+            {"getBlueSpeed": {"usedTiles": 34, "openEnd": 0}},
+            "h_blueJump",
+            {"canShineCharge": {"usedTiles": 34, "openEnd": 0}}
           ]},
           {"and": [
-            {"blueSuitShinecharge": {}},
-            {"shinespark": {"frames": 121, "excessFrames": 5}}
+            {"canShineCharge": {"usedTiles": 25, "openEnd": 2}},
+            {"enemyKill": {
+              "enemies": [["Boyon", "Boyon", "Boyon", "Boyon"]],
+              "excludedWeapons": ["Bombs"]
+            }}
+          ]},
+          {"blueSuitShinecharge": {}},
+          {"and": [
+            "canInsaneJump",
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 0
+            }}
+          ]},
+          {"and": [
+            "canInsaneJump",
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 1
+            }},
+            {"enemyKill": {"enemies": [["Boyon"]]}}
           ]}
-        ]}
+        ]},
+        {"shinespark": {"frames": 121, "excessFrames": 5}}
       ],
       "collectsItems": [3],
       "flashSuitChecked": true,
       "blueSuitChecked": true,
       "note": "Shinespark up to the item, touch it, and return through the speed block that is now air. Exit G-mode below to collect the item.",
-      "devNote": "These shinespark frames could be reduced with more items or tech, but in direct G-mode, Samus will be at low Energy and need an energy free shinespark."
+      "devNote": [
+        "The shinespark frames could be reduced with more items or tech, but in direct G-mode, Samus will be at low Energy and need an energy free shinespark.",
+        "The out-of-order requirements in the blue jump case are to work around the tests' assumption that a getBlueSpeed would lose the shinecharge."
+      ]
     },
     {
       "id": 48,
@@ -2025,7 +2071,18 @@
         "h_storedSpark",
         "canDash",
         "canHorizontalShinespark",
-        {"shinespark": {"frames": 43, "excessFrames": 7}}
+        {"or": [
+          {"shinespark": {"frames": 44, "excessFrames": 7}},
+          {"and": [
+            "canShinechargeMovementTricky",
+            {"shinespark": {"frames": 38, "excessFrames": 0}}
+          ]},
+          {"and": [
+            "canShinechargeMovementTricky",
+            "canSpeedyJump",
+            {"shinespark": {"frames": 35, "excessFrames": 0}}
+          ]}
+        ]}
       ],
       "flashSuitChecked": true,
       "blueSuitChecked": true
@@ -2246,6 +2303,54 @@
       "flashSuitChecked": true,
       "blueSuitChecked": true,
       "devNote": "There is no point in using a blue suit to spark or sparking at the bottom if Samus can wall jump."
+    },
+    {
+      "link": [5, 3],
+      "name": "Shinespark",
+      "requires": [
+        {"or": [
+          {"canShineCharge": {
+            "usedTiles": 14,
+            "openEnd": 0
+          }},
+          {"and": [
+            {"or": [
+              {"enemyKill": {"enemies": [["Boyon"]]}},
+              {"obstaclesCleared": ["A"]}
+            ]},
+            {"canShineCharge": {
+              "usedTiles": 14,
+              "openEnd": 1
+            }}
+          ]}
+        ]},
+        "canMidairShinespark",
+        {"or": [
+          {"shinespark": {"frames": 121, "excessFrames": 6}},
+          {"and": [
+            {"shinespark": {"frames": 117, "excessFrames": 6}},
+            "HiJump"
+          ]},
+          {"and": [
+            {"shinespark": {"frames": 112, "excessFrames": 6}},
+            "HiJump",
+            "canSpeedyJump"
+          ]},
+          {"and": [
+            "canFastWalljumpClimb",
+            {"shinespark": {"frames": 93, "excessFrames": 6}}
+          ]},
+          {"and": [
+            "HiJump",
+            "canFastWalljumpClimb",
+            {"shinespark": {"frames": 83, "excessFrames": 6}}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": ["Use the runway to the right of the Boyons to gain a shinecharge."],
+      "detailNote": ["If the rightmost Boyon is cleared, an extra half tile of runway is available."]
     },
     {
       "id": 65,
