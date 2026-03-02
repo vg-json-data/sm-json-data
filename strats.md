@@ -60,11 +60,18 @@ Many cross-room strats involve the use of runways. The geometry of a runway is s
   * _gentleDownTiles:_ Indicates how many tiles gently slope downwards (like in Speed Booster Hall).
   * _steepUpTiles:_ Indicates how many tiles steeply slope upwards (like in Landing Site).
   * _steepDownTiles:_ Indicates how many tiles steeply slope downwards (like in Landing Site).
-  * _startingDownTiles:_  Indicates how many tiles slope downwards at the expected start of the running space. A stutter can't be executed on those tiles.
+  * _startingSteepDownTiles:_  Indicates how many tiles steeply slope downwards at the expected start of the running space. A stutter can't be executed on those tiles, as Samus will trip.
+  * _startingGentleDownTiles:_  Indicates how many tiles gently slope downwards at the expected start of the running space. A stutter is more difficult to reliably execute on those tiles, as Samus may trip.
 
 In most cases, what matters is the effective runway length (ERL), which takes into account how slopes temporarily slow down Samus' horizontal movement:
 
-`ERL = length - startingDownTiles - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
+`ERL = length - 9/16 * (1 - openEnd) + 1/3 * steepUpTiles + 1/7 * steepDownTiles + 5/27 * gentleUpTiles + 5/59 * gentleDownTiles`
+
+For shortcharging with a stutter, this can be adjusted to account for the inability to use the starting steep down tiles:
+
+`ERL' = ERL - (1 + 1/7) * startingSteepDownTiles`
+
+Depending on the assumed skill, a similar adjustment could also be made for the starting gentle down tiles.
 
 There is some variance in how much downward slopes slow Samus' movement, depending on specific alignment of Samus' X position. The amount of variance is small enough to be neglected as long as some small amount of lenience is included in how runways are required to be used.
 
