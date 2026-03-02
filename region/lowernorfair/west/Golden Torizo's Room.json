@@ -43,7 +43,8 @@
               "requires": [
                 "f_DefeatedGoldenTorizo"
               ],
-              "flashSuitChecked": true
+              "flashSuitChecked": true,
+              "blueSuitChecked": true
             }
           ]
         }
@@ -78,65 +79,6 @@
       ]
     },
     {
-      "id": 5,
-      "name": "Golden Torizo",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "mapTileMask": [
-        [1, 1],
-        [2, 2]
-      ],
-      "devNote": "FIXME: This node can be eliminated."
-    },
-    {
-      "id": 6,
-      "name": "Golden Torizo Arena Junction (Fight Not Started)",
-      "nodeType": "junction",
-      "nodeSubType": "junction",
-      "viewableNodes": [
-        {
-          "id": 4,
-          "strats": [
-            {
-              "name": "Base",
-              "requires": [
-                "h_navigateHeatRooms",
-                {"or": [
-                  "Wave",
-                  {"and": [
-                    "h_usePowerBomb",
-                    {"or": [
-                      "canTrivialMidAirMorph",
-                      "h_useSpringBall"
-                    ]}
-                  ]}
-                ]},
-                {"or": [
-                  {"and": [
-                    "f_DefeatedGoldenTorizo",
-                    "canWalljump"
-                  ]},
-                  "HiJump",
-                  "SpaceJump",
-                  {"and": [
-                    "canJumpIntoIBJ",
-                    "canTrickyJump",
-                    {"heatFrames": 300}
-                  ]}
-                ]},
-                {"heatFrames": 180}
-              ],
-              "flashSuitChecked": true
-            }
-          ]
-        }
-      ],
-      "mapTileMask": [
-        [1, 1],
-        [2, 2]
-      ]
-    },
-    {
       "id": 7,
       "name": "G-Mode Junction (Bottom of Room)",
       "nodeType": "junction",
@@ -148,20 +90,13 @@
       "note": "Represents being at the bottom of the room with G-Mode"
     }
   ],
-  "obstacles": [
-    {
-      "id": "A",
-      "name": "Gold Torizo Trigger",
-      "obstacleType": "abstract"
-    }
-  ],
   "enemies": [
     {
       "id": "e1",
       "groupName": "Golden Torizo",
       "enemyName": "Golden Torizo",
       "quantity": 1,
-      "homeNodes": [5],
+      "homeNodes": [2],
       "stopSpawn": ["f_DefeatedGoldenTorizo"]
     }
   ],
@@ -177,7 +112,8 @@
           "openEnd": 1
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 2,
@@ -186,7 +122,8 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 64,
@@ -203,7 +140,109 @@
         "h_heatedDirectGModeLeaveSameDoor"
       ],
       "collectsItems": [3],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 11,
+      "link": [1, 2],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 170},
+        {"or": [
+          "canDash",
+          {"heatFrames": 45}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [1, 2],
+      "name": "Leave With Runway",
+      "requires": [
+        "canDash",
+        {"heatFrames": 120}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["gray", "super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 82,
+      "link": [1, 2],
+      "name": "Farm Golden Torizo, R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"not": "f_DefeatedGoldenTorizo"},
+        "canRiskPermanentLossOfAccess",
+        {"heatFrames": 700},
+        {"notable": "Safe Spot Kill"},
+        {"or": [
+          "h_heatProof",
+          {"and": [
+            "Plasma",
+            {"resourceMaxCapacity": [{"type": "Missile", "count": 30}]},
+            {"resourceMaxCapacity": [{"type": "RegularEnergy", "count": 99}]}
+          ]}
+        ]},
+        {"refill": ["ReserveEnergy"]},
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
+        "canUseIFrames",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Manipulate into the GT Safe Spot and farm for energy. Keep your Missiles below 30 to force the",
+        "attack pattern that has drops. Taking damage to get ready for the interrupt may require",
+        "leaving the safe spot. Leave enough to survive one hit from GT. Push GT back into the corner, run into",
+        "and through to get your shinecharge. Come back and interrupt using whatever attack pattern is happening.",
+        "After you gain blue suit, you'll need to use any standard kill strategy. Blue suit will not help with",
+        "defeating GT except for invulnerability."
+      ]
+    },
+    {
+      "id": 83,
+      "link": [1, 2],
+      "name": "Crystal Flash During Fight, R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "h_heatProof",
+        {"not": "f_DefeatedGoldenTorizo"},
+        "canRiskPermanentLossOfAccess",
+        {"notable": "Crystal Flash During Fight"},
+        "h_heatedCrystalFlashForReserveEnergy",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
+        "canUseIFrames",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "At any point during the fight, use a Crystal Flash. Then damage down enough to survive one hit.",
+        "Run into and through GT, turn around, and start down the runway. Get shinecharged, come back and",
+        "interrupt using whatever attack pattern is ongoing. Then finish the fight. Blue suit will give",
+        "invulnerability but otherwise does not help to defeat Golden Torizo."
+      ]
     },
     {
       "id": 81,
@@ -257,6 +296,7 @@
         }
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Avoid stepping on all three crumble blocks. Use many bomb spreads to place bombs on them and overload PLMs before going through.",
         "After dropping below, move to the door quickly in order to prevent GT falling on Samus."
@@ -307,6 +347,7 @@
       ],
       "collectsItems": [3],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Avoid stepping on all three crumble blocks before moving through the item to overload PLMs, then go through the crumble blocks.",
         "After dropping below, move to the door quickly in order to prevent GT falling on Samus.",
@@ -324,11 +365,15 @@
       "name": "Crumble Jump to Left Item",
       "requires": [
         {"notable": "Crumble Jump"},
-        "h_navigateHeatRooms",
         "canCrumbleJump",
-        {"heatFrames": 80}
+        {"heatFrames": 80},
+        {"or": [
+          "canDash",
+          {"heatFrames": 30}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Jump on the crumble blocks before they break to reach the item, at the risk on falling through."
     },
     {
@@ -337,11 +382,11 @@
       "name": "Bomb Boost to Left Item",
       "requires": [
         {"notable": "Horizontal Bomb Jump"},
-        "h_navigateHeatRooms",
         "canBombHorizontally",
         {"heatFrames": 160}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Uses a single bomb blast to just barely get propelled over the crumble pit."
     },
     {
@@ -349,22 +394,26 @@
       "link": [1, 3],
       "name": "Spring Ball",
       "requires": [
-        "h_navigateHeatRooms",
         "h_useSpringBall",
         {"heatFrames": 140}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 6,
       "link": [1, 3],
       "name": "Space Jump",
       "requires": [
-        "h_navigateHeatRooms",
         "SpaceJump",
-        {"heatFrames": 70}
+        {"heatFrames": 70},
+        {"or": [
+          "canDash",
+          {"heatFrames": 40}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 7,
@@ -376,11 +425,11 @@
         }
       },
       "requires": [
-        "h_navigateHeatRooms",
         {"shinespark": {"frames": 18, "excessFrames": 5}},
         {"heatFrames": 100}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "Sparking in from the bottom position requires fewer heat frames, as you bonk the side of the item pedestal.",
         "FIXME: The heat frames for the crash animation occur after the item collection, which could matter if the item is an ETank.",
@@ -402,6 +451,7 @@
         {"heatFrames": 120}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "Sparking in from the top position requires more heat frames, because you end up on top of the item pedestal and need to move off of it.",
         "FIXME: The heat frames for the crash animation (and for moving off the pedestal) occur after the item collection, which could matter if the item is an ETank.",
@@ -423,6 +473,7 @@
         {"heatFrames": 60}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Using momentum from the previous room, run and jump over the crumble blocks to reach the item."
     },
     {
@@ -440,6 +491,7 @@
         {"heatFrames": 50}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Using momentum from the previous room, run and jump over the crumble blocks to reach the item."
     },
     {
@@ -456,80 +508,8 @@
         "h_heatedGMode",
         {"heatFrames": 0}
       ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 82,
-      "link": [1, 5],
-      "name": "Farm Golden Torizo, R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        {"not": "f_DefeatedGoldenTorizo"},
-        "canRiskPermanentLossOfAccess",
-        {"heatFrames": 200},
-        {"notable": "Safe Spot Kill"},
-        {"or": [
-          "h_heatProof",
-          {"resourceMaxCapacity": [{"type": "Missile", "count": 30}]}
-        ]},
-        {"refill": ["Energy"]},
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        "canUseIFrames",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
-        "canRModeSparkInterrupt"
-      ],
       "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "Manipulate into the GT Safe Spot and farm for energy. Keep your Missiles below 30 to force the",
-        "attack pattern that has drops. Taking damage to get ready for the interrupt may require",
-        "leaving the safe spot. Leave enough to survive one hit from GT. Push GT back into the corner, run into",
-        "and through to get your shinecharge. Come back and interrupt using whatever attack pattern is happening.",
-        "After you gain blue suit, you'll need to use any standard kill strategy. Blue suit will not help with",
-        "defeating GT except for invulnerability."
-      ]
-    },
-    {
-      "id": 83,
-      "link": [1, 5],
-      "name": "Crystal Flash During Fight, R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        "h_heatProof",
-        {"not": "f_DefeatedGoldenTorizo"},
-        "canRiskPermanentLossOfAccess",
-        {"notable": "Crystal Flash During Fight"},
-        "h_heatedCrystalFlashForReserveEnergy",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        "canUseIFrames",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
-        "canRModeSparkInterrupt"
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "At any point during the fight, use a Crystal Flash. Then damage down enough to survive one hit.",
-        "Run into and through GT, turn around, and start down the runway. Get shinecharged, come back and",
-        "interrupt using whatever attack pattern is ongoing. Then finish the fight. Blue suit will give",
-        "invulnerability but otherwise does not help to defeat Golden Torizo."
-      ]
-    },
-    {
-      "id": 11,
-      "link": [1, 6],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 200}
-      ],
-      "flashSuitChecked": true
+      "blueSuitChecked": true
     },
     {
       "id": 12,
@@ -543,7 +523,8 @@
       "requires": [
         {"heatFrames": 50}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 80,
@@ -565,7 +546,8 @@
         "canOffScreenMovement"
       ],
       "unlocksDoors": [{"types": ["ammo"], "requires": []}],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 13,
@@ -578,7 +560,8 @@
       },
       "requires": [],
       "bypassesDoorShell": "yes",
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 14,
@@ -596,7 +579,8 @@
         }
       },
       "bypassesDoorShell": "yes",
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 15,
@@ -613,6 +597,7 @@
       ],
       "bypassesDoorShell": "yes",
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Exit the previous room with Samus in a standing pose (while grappled).",
         "After teleporting, press right to release Grapple while staying standing (not being forced into a crouch).",
@@ -661,6 +646,7 @@
         {"heatFrames": 100}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Use a Crystal Flash to refill reserve energy.",
         "If Golden Torizo is alive, perform the Crystal Flash in the left corner of the room; otherwise it can be done near the door.",
@@ -705,6 +691,7 @@
         "h_heatedGModeOpenDifferentDoor"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Quickly roll to the left side of the room and IBJ through the crumble blocks before GT gets there, if it is alive.",
         "Starting from a jump or with a double bomb jump can help speed this up and make it much easier,",
@@ -748,7 +735,8 @@
           "openEnd": 0
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 17,
@@ -768,6 +756,7 @@
       },
       "unlocksDoors": [{"types": ["ammo"], "requires": []}],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wait to run under Golden Torizo as it jumps."
     },
     {
@@ -782,6 +771,7 @@
         "h_heatedCrystalFlash"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "If entering from the right door with Golden Torizo not yet defeated, come in already morphed, Crystal Flash immediately, then morph and roll under Golden Torizo."
       ]
@@ -796,7 +786,469 @@
         {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
       ],
       "gModeRegainMobility": {},
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 46,
+      "link": [2, 2],
+      "name": "Safe Spot Heatproof Supers",
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        "h_heatProof",
+        "Super"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Farm supers to use throughout the fight.",
+      "devNote": "Supers are farmable here, so no ammo requirement."
+    },
+    {
+      "id": 47,
+      "link": [2, 2],
+      "name": "Safe Spot Heatproof Charge",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "h_heatProof",
+        "Charge",
+        "canBeVeryPatient"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 48,
+      "link": [2, 2],
+      "name": "Safe Spot Supers",
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        "h_navigateHeatRooms",
+        {"heatFrames": 1200},
+        {"ammo": {"type": "Super", "count": 30}}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "This strat is assuming no farming. It requires 30 supers, but can be done with 29.",
+        "This requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
+      ],
+      "devNote": [
+        "No farming expected because that would change the heat frames.",
+        "Supers count hard-coded because of GT's inherent 'dodging' ability.",
+        "We could use an enemyKill if this were integrated into the enemy definition.",
+        "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss."
+      ]
+    },
+    {
+      "id": 49,
+      "link": [2, 2],
+      "name": "Safe Spot Supers (Farming)",
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        "h_navigateHeatRooms",
+        "canTrickyJump",
+        {"ammo": {"type": "Super", "count": 15}},
+        {"or": [
+          {"and": [
+            "Plasma",
+            {"heatFrames": 2700}
+          ]},
+          {"and": [
+            "canPreciseGrapple",
+            {"heatFrames": 2700}
+          ]},
+          {"heatFrames": 3200}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "This strat requires some farming. It assumes starting with 15 supers for one session of farming.",
+        "A safe farming method is to face left while standing in the safe spot.  Then fire straight up to shoot the orbs as they appear.",
+        "Jump up while GT's beak is not open to collect the drops.",
+        "Plasma allows all of the orbs to be broken at once.",
+        "Grapple allows for more drops to be collected by shooting diagonally, and collecting the items using Grapple.",
+        "Keep the number of current Missiles below 31 so that GT will be guaranteed to use the attack which creates drops.",
+        "Firing Supers requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
+      ],
+      "devNote": "Listed Heat frames have been reduced by accounting for health drops."
+    },
+    {
+      "id": 50,
+      "link": [2, 2],
+      "name": "Safe Spot Supers (Farming, Few Supers)",
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        "h_navigateHeatRooms",
+        "canTrickyJump",
+        "canBePatient",
+        {"ammo": {"type": "Super", "count": 5}},
+        {"or": [
+          {"and": [
+            "Plasma",
+            {"heatFrames": 3100}
+          ]},
+          {"and": [
+            "canPreciseGrapple",
+            {"heatFrames": 3200}
+          ]},
+          {"heatFrames": 4500}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "This strat requires much farming. It assumes a capacity of and starting with only 5 supers for five sessions of farming.",
+        "A safe farming method is to face left while standing in the safe spot.  Then fire straight up to shoot the orbs as they appear.",
+        "Jump up while GT's beak is not open to collect the drops.",
+        "Plasma allows all of the orbs to be broken at once.",
+        "Grapple allows for more drops to be collected by shooting diagonally, and collecting the items using Grapple.",
+        "Keep the number of current Missiles below 31 so that GT will be guaranteed to use the attack which creates drops.",
+        "Firing Supers requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
+      ],
+      "devNote": "Listed Heat frames have been reduced by accounting for health drops."
+    },
+    {
+      "id": 51,
+      "link": [2, 2],
+      "name": "Crystal Flash During Fight",
+      "requires": [
+        {"notable": "Crystal Flash During Fight"},
+        "h_navigateHeatRooms",
+        {"or": [
+          {"ammo": {"type": "Super", "count": 30}},
+          {"and": [
+            "Charge",
+            "Ice",
+            "Wave",
+            "Plasma"
+          ]}
+        ]},
+        {"heatFrames": 800},
+        "h_heatedCrystalFlash",
+        {"heatFrames": 800}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Midway through the fight, use a Crystal Flash to refill Samus' energy.",
+        "Crystal Flashing while standing in the safe spot at GT's feet is safe."
+      ],
+      "devNote": [
+        "FIXME: Other resource combinations can work; fewer supers + farm, weaker beam + more health, 2nd crystal flash.",
+        "FIXME: Add heavy pause abuse strats for GT."
+      ]
+    },
+    {
+      "id": 52,
+      "link": [2, 2],
+      "name": "Safe Spot Full Combo",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "Charge",
+        "Ice",
+        "Wave",
+        "Plasma",
+        {"heatFrames": 1250}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 53,
+      "link": [2, 2],
+      "name": "Safe Spot Almost Full Combo",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "Charge",
+        "Wave",
+        "Plasma",
+        {"heatFrames": 1400}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 54,
+      "link": [2, 2],
+      "name": "Safe Spot Charge Plasma",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "Charge",
+        "Plasma",
+        {"heatFrames": 2000}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 55,
+      "link": [2, 2],
+      "name": "Safe Spot Full Spazer",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "Charge",
+        "Ice",
+        "Wave",
+        "Spazer",
+        {"heatFrames": 4000}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 56,
+      "link": [2, 2],
+      "name": "Safe Spot Two Beam Charge",
+      "requires": [
+        {"or": [
+          {"notable": "Safe Spot Kill"},
+          {"and": [
+            {"notable": "Safe Spot Kill (Lenient)"},
+            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
+          ]}
+        ]},
+        "Charge",
+        {"heatFrames": 6500},
+        {"or": [
+          {"and": [
+            "Ice",
+            "Wave"
+          ]},
+          {"and": [
+            "Ice",
+            "Spazer"
+          ]},
+          {"and": [
+            "Wave",
+            "Spazer"
+          ]}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Stand in the safe spot and fire Charge shots into GT."
+    },
+    {
+      "id": 57,
+      "link": [2, 2],
+      "name": "Golden Torizo Fight (Supers)",
+      "requires": [
+        "h_navigateHeatRooms",
+        {"heatFrames": 1200},
+        {"ammo": {"type": "Super", "count": 30}},
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "super", "hits": 4}},
+        {"or": [
+          "canDodgeWhileShooting",
+          {"ammo": {"type": "Super", "count": 5}},
+          {"and": [
+            {"enemyDamage": {"enemy": "Golden Torizo", "type": "super", "hits": 2}},
+            {"heatFrames": 200}
+          ]}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "No farming expected because that would change the heat frames.",
+        "Supers count hard-coded because of GT's inherent 'dodging' ability.",
+        "We could use an enemyKill if this were integrated into the enemy definition.",
+        "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss"
+      ]
+    },
+    {
+      "id": 58,
+      "link": [2, 2],
+      "name": "Missiles Only Kill",
+      "requires": [
+        {"notable": "Safe Spot Kill"},
+        {"notable": "Missiles Only Kill"},
+        "h_heatProof",
+        "Morph",
+        {"resourceCapacity": [{"type": "Missile", "count": 15}]},
+        {"or": [
+          {"resourceCapacity": [{"type": "RegularEnergy", "count": 199}]},
+          {"resourceCapacity": [{"type": "ReserveEnergy", "count": 100}]}
+        ]},
+        "canBeVeryPatient"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Killing Golden Torizo only with missiles using enemy state manipulation to get missiles to connect.",
+        "This can be done by rolling under GT, triggering the sit attack, and then shooting missiles during the stand up animation.",
+        "By pushing GT to the door and rolling into the door during a jump back, the sit can reliably be manipulated.",
+        "But this setup is subpixel dependant and harder to setup again if GT moves unexpectidly.",
+        "Use of the safe spot is expected. Keep missiles below 31 to control the fight. This fight takes multiple minutes.",
+        "(A cheeky Missile can hit GT the moment it becomes active)"
+      ],
+      "devNote": [
+        "It is easy to make mistakes with this strat, so some capacity is given for leniency.  You can farm up resources readily enough.",
+        "FIXME: add morphless version."
+      ]
+    },
+    {
+      "id": 59,
+      "link": [2, 2],
+      "name": "Golden Torizo Fight (Full Combo)",
+      "requires": [
+        "h_navigateHeatRooms",
+        {"heatFrames": 1800},
+        "Charge",
+        "Ice",
+        "Wave",
+        "Plasma",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
+        {"or": [
+          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 3}},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "ScrewAttack",
+              "Morph"
+            ]}
+          ]}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "This is an estimate of the net damage taken, including farmed energy."
+    },
+    {
+      "id": 60,
+      "link": [2, 2],
+      "name": "Golden Torizo Fight (Almost Full Combo)",
+      "requires": [
+        "h_navigateHeatRooms",
+        {"heatFrames": 2150},
+        "Charge",
+        "Wave",
+        "Plasma",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 2}},
+        {"or": [
+          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 3}},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "ScrewAttack",
+              "Morph"
+            ]}
+          ]}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "This is an estimate of the net damage taken, including farmed energy."
+    },
+    {
+      "id": 61,
+      "link": [2, 2],
+      "name": "Golden Torizo Fight (Charge Plasma)",
+      "requires": [
+        "h_navigateHeatRooms",
+        {"heatFrames": 3600},
+        "Charge",
+        "Plasma",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 2}},
+        {"or": [
+          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 6}},
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "ScrewAttack",
+              "Morph"
+            ]}
+          ]}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "This is an estimate of the net damage taken, including farmed energy."
+    },
+    {
+      "id": 62,
+      "link": [2, 2],
+      "name": "Golden Torizo Fight (Full Spazer)",
+      "requires": [
+        "h_heatProof",
+        "Charge",
+        "Ice",
+        "Wave",
+        "Spazer",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 4}},
+        {"or": [
+          {"and": [
+            "canDodgeWhileShooting",
+            {"or": [
+              "Morph",
+              "ScrewAttack",
+              {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 6}}
+            ]}
+          ]},
+          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 13}}
+        ]}
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "This is an estimate of the net damage taken, including farmed energy."
     },
     {
       "id": 69,
@@ -847,6 +1299,7 @@
       "bypassesDoorShell": "free",
       "setsFlags": ["f_DefeatedGoldenTorizo"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
         "With more than 31 Missiles, Samus will have a 2 pixel window in which she must quickly get into to prevent touching GT or his lasers.",
@@ -895,6 +1348,7 @@
       ],
       "setsFlags": ["f_DefeatedGoldenTorizo"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
         "Having GT start with his Chozo Ball attack also will make it so there are drops which can be collected at the end of the fight,",
@@ -940,10 +1394,75 @@
       ],
       "setsFlags": ["f_DefeatedGoldenTorizo"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "With more than 31 Missiles, Samus will have a 2 pixel window in which she must quickly get into to prevent touching GT or his lasers.",
         "Having GT start with his laser attack will also make it so there are no drops which can be collected at the end of the fight."
       ]
+    },
+    {
+      "id": 85,
+      "link": [2, 2],
+      "name": "Farm Golden Torizo, R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        {"not": "f_DefeatedGoldenTorizo"},
+        "canRiskPermanentLossOfAccess",
+        {"heatFrames": 540},
+        {"notable": "Safe Spot Kill"},
+        {"or": [
+          "h_heatProof",
+          {"resourceMaxCapacity": [{"type": "Missile", "count": 30}]}
+        ]},
+        {"refill": ["Energy"]},
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
+        "canUseIFrames",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Manipulate into the GT Safe Spot and farm for energy. Keep your Missiles below 30 to force the",
+        "attack pattern that has drops. Taking damage to get ready for the interrupt may require",
+        "leaving the safe spot. Leave enough to survive one hit from GT. Push GT back into the corner, run into",
+        "and through to get your shinecharge. Come back and interrupt using whatever attack pattern is happening.",
+        "After you gain blue suit, you'll need to use any standard kill strategy. Blue suit will not help with",
+        "defeating GT except for invulnerability."
+      ]
+    },
+    {
+      "id": 86,
+      "link": [2, 2],
+      "name": "Crystal Flash During Fight, R-Mode Spark Interrupt",
+      "entranceCondition": {
+        "comeInWithRMode": {}
+      },
+      "requires": [
+        "h_heatProof",
+        {"not": "f_DefeatedGoldenTorizo"},
+        "canRiskPermanentLossOfAccess",
+        {"notable": "Crystal Flash During Fight"},
+        "h_heatedCrystalFlashForReserveEnergy",
+        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
+        "canUseIFrames",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
+        "canRModeSparkInterrupt"
+      ],
+      "setsFlags": ["f_DefeatedGoldenTorizo"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "At any point during the fight, use a Crystal Flash. Then damage down enough to survive one hit.",
+        "Run into and through GT, turn around, and start down the runway. Get shinecharged, come back and",
+        "interrupt using whatever attack pattern is ongoing. Then finish the fight. Blue suit will give",
+        "invulnerability but otherwise does not help to defeat Golden Torizo."
+      ],
+      "devNote": "FIXME: Evaluate heated fight options."
     },
     {
       "id": 72,
@@ -972,6 +1491,7 @@
         {"heatFrames": 0}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Quickly roll to the left side of the room and IBJ through the crumble blocks before GT gets there, if it is alive.",
         "Starting from a jump or with a double bomb jump can help speed this up and make it much easier,",
@@ -979,6 +1499,292 @@
         "Otherwise, it can help to IBJ through the left-most crumble block, as GT will often jump away when first reaching Samus.",
         "The left-most crumble block is the 4th tile away from the wall.",
         "With a failed IBJ start, GT often times won't touch Samus if she is Morphed on the ground, and can jump away, giving another chance to IBJ."
+      ]
+    },
+    {
+      "id": 31,
+      "link": [2, 4],
+      "name": "Power Bombs",
+      "requires": [
+        "h_usePowerBomb",
+        {"or": [
+          "canTrivialMidAirMorph",
+          "h_useSpringBall"
+        ]},
+        {"or": [
+          {"and": [
+            "canPreciseWalljump",
+            {"heatFrames": 230}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 310}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpeedyJump",
+            {"heatFrames": 320}
+          ]},
+          {"and": [
+            "HiJump",
+            "SpaceJump",
+            {"heatFrames": 200}
+          ]},
+          {"and": [
+            "HiJump",
+            "canWalljump",
+            {"heatFrames": 200}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpringBallJumpMidAir",
+            {"heatFrames": 340}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 32,
+      "link": [2, 4],
+      "name": "Space Screw",
+      "requires": [
+        "SpaceJump",
+        "ScrewAttack",
+        {"or": [
+          {"heatFrames": 200},
+          {"and": [
+            "HiJump",
+            {"heatFrames": 150}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 33,
+      "link": [2, 4],
+      "name": "Speed HiJump Screw",
+      "requires": [
+        "HiJump",
+        "canSpeedyJump",
+        "ScrewAttack",
+        {"heatFrames": 200}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Build run speed for a jump straight into the destructible blocks."
+    },
+    {
+      "id": 34,
+      "link": [2, 4],
+      "name": "Screw Walljump Wiggle",
+      "requires": [
+        "ScrewAttack",
+        "canPreciseWalljump",
+        "canMidairWiggle",
+        {"heatFrames": 160},
+        {"or": [
+          "canInsaneJump",
+          "h_heatProof"
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "This is kind of tricky because Screw off a walljump can only break bomb blocks if you change directions before bonking."
+    },
+    {
+      "link": [2, 4],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        {"or": [
+          {"and": [
+            "canPreciseWalljump",
+            {"heatFrames": 150}
+          ]},
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 200}
+          ]},
+          {"and": [
+            "HiJump",
+            "SpaceJump",
+            {"heatFrames": 150}
+          ]},
+          {"and": [
+            "HiJump",
+            "canWalljump",
+            {"heatFrames": 125}
+          ]},
+          {"and": [
+            "HiJump",
+            "canSpringBallJumpMidAir",
+            {"heatFrames": 150}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 35,
+      "link": [2, 4],
+      "name": "Right Item Wall Jump Into Double Shinespark",
+      "requires": [
+        {"notable": "Right Item Double Shinespark"},
+        "f_DefeatedGoldenTorizo",
+        "canShinechargeMovementComplex",
+        "canPreciseWalljump",
+        "canConsecutiveWalljump",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"heatFrames": 900},
+        {"shinespark": {"frames": 8}}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "One vertical spark is needed to open up the area directly above.",
+        "Then, a second horizontal spark is performed where those blocks were cleared.",
+        "Try to aim for the seam between tiles to break more blocks.  And the left side of the opening may be slightly easier."
+      ]
+    },
+    {
+      "id": 36,
+      "link": [2, 4],
+      "name": "Right Item Double Shinespark With HiJump",
+      "requires": [
+        {"notable": "Right Item Double Shinespark"},
+        "f_DefeatedGoldenTorizo",
+        "canShinechargeMovementComplex",
+        "HiJump",
+        "canSpeedyJump",
+        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
+        {"heatFrames": 900},
+        {"shinespark": {"frames": 11}}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "One vertical spark is needed to open up the area directly above.",
+        "A running jump is used to jump high enough into the revealed hole for a horizontal spark."
+      ]
+    },
+    {
+      "id": 37,
+      "link": [2, 4],
+      "name": "IBJ",
+      "requires": [
+        "f_DefeatedGoldenTorizo",
+        {"or": [
+          {"and": [
+            "canLongIBJ",
+            {"heatFrames": 3000}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 1860}
+          ]},
+          {"and": [
+            "HiJump",
+            "canJumpIntoIBJ",
+            {"heatFrames": 1300}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 1180}
+          ]},
+          {"and": [
+            "HiJump",
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 900}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            "canBombAboveIBJ",
+            {"heatFrames": 890}
+          ]},
+          {"and": [
+            "HiJump",
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            "canBombAboveIBJ",
+            {"heatFrames": 700}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [2, 4],
+      "name": "IBJ with Blue Suit",
+      "requires": [
+        "f_DefeatedGoldenTorizo",
+        {"haveBlueSuit": {}},
+        {"or": [
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 690}
+          ]},
+          {"and": [
+            "HiJump",
+            "canJumpIntoIBJ",
+            {"heatFrames": 500}
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 450}
+          ]},
+          {"and": [
+            "HiJump",
+            "canJumpIntoIBJ",
+            "canDoubleBombJump",
+            {"heatFrames": 315}
+          ]}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 38,
+      "link": [2, 4],
+      "name": "Wall Jump Instant Morph Bomb Placement",
+      "requires": [
+        "h_useMorphBombs",
+        "can3HighWallMidAirMorph",
+        "canConsecutiveWalljump",
+        {"heatFrames": 650}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Walljump up to reach the left ledge below the bomb blocks then perform an instant morph to place a bomb.",
+        "Walljump up a second time and again instant morph off that left ledge to enter the 1 tile hole created by the bomb."
+      ]
+    },
+    {
+      "id": 39,
+      "link": [2, 4],
+      "name": "Springwall with Bombs",
+      "requires": [
+        "h_useMorphBombs",
+        "h_heatedSpringwall",
+        {"heatFrames": 630}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Uses a Springwall to put a bomb on the left corner bomb block, then a second one to get in there.",
+        "Then clears the rest of the bomb blocks normally.",
+        "It winds up costing less heat frames than IBJ, if you fall."
       ]
     },
     {
@@ -1065,18 +1871,22 @@
       "requires": [
         "f_DefeatedGoldenTorizo",
         "HiJump",
+        {"getBlueSpeed": {"usedTiles": 24, "openEnd": 1}},
+        "h_blueJump",
         "canMomentumConservingMorph",
         "canInsaneJump",
         {"heatFrames": 120}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Perform a momentum conserving morph through the transition.",
         "After the transition, quickly unmorph and continue holding up to retain temporary blue and break the bomb blocks."
       ],
       "detailNote": ["It may help (but is not required) to pause buffer the morph input."],
       "devNote": [
-        "FIXME: This could maybe be possible without HiJump? If so, it would be significantly more difficult."
+        "FIXME: This could maybe be possible without HiJump? If so, it would be significantly more difficult.",
+        "The getBlueSpeed requirement could be refined to vary by platform geometry."
       ]
     },
     {
@@ -1119,6 +1929,7 @@
         ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Quickly roll to the left side of the room and IBJ through the crumble blocks before GT gets there, if it is alive.",
         "Starting from a jump or with a double bomb jump can help speed this up and make it much easier,",
@@ -1127,81 +1938,6 @@
         "Note that Samus can roll under GT, but when it attacks, it places stationary invisible projectiles, which may block Samus' path.",
         "Place a Power Bomb then quickly exit G-mode to quickly clear all of the bomb blocks, otherwise it is possible to get out with a few Bombs or Screw Attack."
       ]
-    },
-    {
-      "id": 20,
-      "link": [2, 5],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 50}
-      ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 85,
-      "link": [2, 5],
-      "name": "Farm Golden Torizo, R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        {"not": "f_DefeatedGoldenTorizo"},
-        "canRiskPermanentLossOfAccess",
-        {"heatFrames": 50},
-        {"notable": "Safe Spot Kill"},
-        {"or": [
-          "h_heatProof",
-          {"resourceMaxCapacity": [{"type": "Missile", "count": 30}]}
-        ]},
-        {"refill": ["Energy"]},
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        "canUseIFrames",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
-        "canRModeSparkInterrupt"
-      ],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "Manipulate into the GT Safe Spot and farm for energy. Keep your Missiles below 30 to force the",
-        "attack pattern that has drops. Taking damage to get ready for the interrupt may require",
-        "leaving the safe spot. Leave enough to survive one hit from GT. Push GT back into the corner, run into",
-        "and through to get your shinecharge. Come back and interrupt using whatever attack pattern is happening.",
-        "After you gain blue suit, you'll need to use any standard kill strategy. Blue suit will not help with",
-        "defeating GT except for invulnerability."
-      ]
-    },
-    {
-      "id": 86,
-      "link": [2, 5],
-      "name": "Crystal Flash During Fight, R-Mode Spark Interrupt",
-      "entranceCondition": {
-        "comeInWithRMode": {}
-      },
-      "requires": [
-        "h_heatProof",
-        {"not": "f_DefeatedGoldenTorizo"},
-        "canRiskPermanentLossOfAccess",
-        {"notable": "Crystal Flash During Fight"},
-        "h_heatedCrystalFlashForReserveEnergy",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        "canUseIFrames",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"autoReserveTrigger": {"maxReserveEnergy": 95}},
-        "canRModeSparkInterrupt"
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "blueSuitChecked": true,
-      "note": [
-        "At any point during the fight, use a Crystal Flash. Then damage down enough to survive one hit.",
-        "Run into and through GT, turn around, and start down the runway. Get shinecharged, come back and",
-        "interrupt using whatever attack pattern is ongoing. Then finish the fight. Blue suit will give",
-        "invulnerability but otherwise does not help to defeat Golden Torizo."
-      ],
-      "devNote": "FIXME: Evaluate heated fight options."
     },
     {
       "id": 74,
@@ -1216,7 +1952,8 @@
       "requires": [
         {"heatFrames": 0}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 75,
@@ -1260,6 +1997,7 @@
       ],
       "setsFlags": ["f_DefeatedGoldenTorizo"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Start the fight with 31 Missiles or fewer in order to prevent GT from using its laser attack, which will enable Samus to stand next to it.",
         "Having GT start with his Chozo Ball attack also will make it so there are drops which can be collected at the end of the fight, otherwise they will have been overloaded.",
@@ -1274,11 +2012,15 @@
       "name": "Crumble Jump from Left Item",
       "requires": [
         {"notable": "Crumble Jump"},
-        "h_navigateHeatRooms",
         "canCrumbleJump",
-        {"heatFrames": 100}
+        {"heatFrames": 100},
+        {"or": [
+          "canDash",
+          {"heatFrames": 30}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "It takes a short hop to avoid hitting the ceiling to do this with only one crumble jump."
     },
     {
@@ -1287,11 +2029,11 @@
       "name": "Bomb Boost from Left Item",
       "requires": [
         {"notable": "Horizontal Bomb Jump"},
-        "h_navigateHeatRooms",
         "canBombHorizontally",
         {"heatFrames": 190}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Use a single bomb blast to just barely get propelled over the crumble pit."
     },
     {
@@ -1299,22 +2041,60 @@
       "link": [3, 1],
       "name": "Spring Ball",
       "requires": [
-        "h_navigateHeatRooms",
         "h_useSpringBall",
         {"heatFrames": 140}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 24,
       "link": [3, 1],
       "name": "Space Jump",
       "requires": [
-        "h_navigateHeatRooms",
         "SpaceJump",
-        {"heatFrames": 90}
+        {"heatFrames": 90},
+        {"or": [
+          "canDash",
+          {"heatFrames": 30}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 26,
+      "link": [3, 2],
+      "name": "Base",
+      "requires": [
+        {"heatFrames": 170},
+        {"or": [
+          "canDash",
+          {"heatFrames": 30}
+        ]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "link": [3, 2],
+      "name": "Leave With Runway",
+      "requires": [
+        "canDash",
+        {"heatFrames": 140}
+      ],
+      "exitCondition": {
+        "leaveWithRunway": {
+          "length": 29,
+          "openEnd": 0
+        }
+      },
+      "unlocksDoors": [
+        {"types": ["gray", "super"], "requires": []},
+        {"types": ["missiles", "powerbomb"], "requires": ["never"]}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 25,
@@ -1323,17 +2103,18 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
-      "id": 26,
-      "link": [3, 6],
+      "id": 28,
+      "link": [4, 2],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 200}
+        {"heatFrames": 120}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 27,
@@ -1342,749 +2123,8 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 28,
-      "link": [4, 5],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 100}
-      ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 29,
-      "link": [4, 6],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"obstaclesNotCleared": ["A"]},
-        {"heatFrames": 100}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 30,
-      "link": [5, 2],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 50}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 31,
-      "link": [5, 4],
-      "name": "Power Bombs",
-      "requires": [
-        "h_navigateHeatRooms",
-        "h_usePowerBomb",
-        {"or": [
-          "canTrivialMidAirMorph",
-          "h_useSpringBall"
-        ]},
-        {"heatFrames": 350},
-        {"or": [
-          "canPreciseWalljump",
-          "SpaceJump",
-          {"and": [
-            "HiJump",
-            {"or": [
-              "canSpeedyJump",
-              "canWalljump",
-              "canSpringBallJumpMidAir"
-            ]}
-          ]}
-        ]}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 32,
-      "link": [5, 4],
-      "name": "Space Screw",
-      "requires": [
-        "h_navigateHeatRooms",
-        "SpaceJump",
-        "ScrewAttack",
-        {"heatFrames": 200}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 33,
-      "link": [5, 4],
-      "name": "Speed HiJump Screw",
-      "requires": [
-        "h_navigateHeatRooms",
-        "HiJump",
-        "canSpeedyJump",
-        "ScrewAttack",
-        {"heatFrames": 150}
-      ],
       "flashSuitChecked": true,
-      "note": "Build run speed for a jump straight into the destructible blocks."
-    },
-    {
-      "id": 34,
-      "link": [5, 4],
-      "name": "GT Supers Screw Walljump",
-      "requires": [
-        "h_navigateHeatRooms",
-        "ScrewAttack",
-        "canPreciseWalljump",
-        "canMidairWiggle",
-        {"heatFrames": 200}
-      ],
-      "flashSuitChecked": true,
-      "note": "This is kind of tricky because Screw off a walljump can only break bomb blocks if you change directions before bonking."
-    },
-    {
-      "id": 35,
-      "link": [5, 4],
-      "name": "Right Item Wall Jump Into Double Shinespark",
-      "requires": [
-        {"notable": "Right Item Double Shinespark"},
-        "h_navigateHeatRooms",
-        "f_DefeatedGoldenTorizo",
-        "canShinechargeMovementComplex",
-        "canPreciseWalljump",
-        "canConsecutiveWalljump",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"heatFrames": 900},
-        {"shinespark": {"frames": 11}}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "One vertical spark is needed to open up the area directly above.",
-        "Then, a second horizontal spark is performed where those blocks were cleared.",
-        "Try to aim for the seam between tiles to break more blocks.  And the left side of the opening may be slightly easier."
-      ]
-    },
-    {
-      "id": 36,
-      "link": [5, 4],
-      "name": "Right Item Double Shinespark With HiJump",
-      "requires": [
-        {"notable": "Right Item Double Shinespark"},
-        "h_navigateHeatRooms",
-        "f_DefeatedGoldenTorizo",
-        "canShinechargeMovementComplex",
-        "HiJump",
-        {"canShineCharge": {"usedTiles": 28, "openEnd": 0}},
-        {"heatFrames": 900},
-        {"shinespark": {"frames": 11}}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "One vertical spark is needed to open up the area directly above.",
-        "A running jump is used to jump high enough into the revealed hole for a horizontal spark."
-      ]
-    },
-    {
-      "id": 37,
-      "link": [5, 4],
-      "name": "GT Supers IBJ",
-      "requires": [
-        "h_navigateHeatRooms",
-        "f_DefeatedGoldenTorizo",
-        {"or": [
-          "canLongIBJ",
-          "canJumpIntoIBJ"
-        ]},
-        {"heatFrames": 3000}
-      ],
-      "flashSuitChecked": true,
-      "note": "Expects two IBJs; one to break a block, then another one to get back up.",
-      "devNote": "Needs strats for variations of IBJs, mainly for heatframe count."
-    },
-    {
-      "id": 38,
-      "link": [5, 4],
-      "name": "Instant Morph Bomb Placement.",
-      "requires": [
-        "h_navigateHeatRooms",
-        "h_useMorphBombs",
-        "can3HighWallMidAirMorph",
-        "canConsecutiveWalljump",
-        {"heatFrames": 1100}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "Walljump up to reach the left ledge below the bomb blocks then perform an instant morph to place a bomb.",
-        "Walljump up a second time and again instant morph off that left ledge to enter the 1 tile hole created by the bomb."
-      ]
-    },
-    {
-      "id": 39,
-      "link": [5, 4],
-      "name": "Springwall with Bombs",
-      "requires": [
-        "h_navigateHeatRooms",
-        "h_useMorphBombs",
-        "h_heatedSpringwall",
-        {"heatFrames": 900}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "Uses a Springwall to put a bomb on the left corner bomb block, then a second one to get in there.",
-        "Then clears the rest of the bomb blocks normally.",
-        "It winds up costing less heat frames than IBJ, if you fall."
-      ]
-    },
-    {
-      "id": 46,
-      "link": [5, 5],
-      "name": "Safe Spot Heatproof Supers",
-      "requires": [
-        {"notable": "Safe Spot Kill"},
-        "h_heatProof",
-        "Super"
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Farm supers to use throughout the fight.",
-      "devNote": "Supers are farmable here, so no ammo requirement."
-    },
-    {
-      "id": 47,
-      "link": [5, 5],
-      "name": "Safe Spot Heatproof Charge",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "h_heatProof",
-        "Charge",
-        "canBeVeryPatient"
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 48,
-      "link": [5, 5],
-      "name": "Safe Spot Supers",
-      "requires": [
-        {"notable": "Safe Spot Kill"},
-        "h_navigateHeatRooms",
-        {"heatFrames": 1200},
-        {"ammo": {"type": "Super", "count": 30}}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": [
-        "This strat is assuming no farming. It requires 30 supers, but can be done with 29.",
-        "This requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
-      ],
-      "devNote": [
-        "No farming expected because that would change the heat frames.",
-        "Supers count hard-coded because of GT's inherent 'dodging' ability.",
-        "We could use an enemyKill if this were integrated into the enemy definition.",
-        "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss."
-      ]
-    },
-    {
-      "id": 49,
-      "link": [5, 5],
-      "name": "Safe Spot Supers (Farming)",
-      "requires": [
-        {"notable": "Safe Spot Kill"},
-        "h_navigateHeatRooms",
-        "canTrickyJump",
-        {"ammo": {"type": "Super", "count": 15}},
-        {"or": [
-          {"and": [
-            "Plasma",
-            {"heatFrames": 2700}
-          ]},
-          {"and": [
-            "canPreciseGrapple",
-            {"heatFrames": 2700}
-          ]},
-          {"heatFrames": 3200}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": [
-        "This strat requires some farming. It assumes starting with 15 supers for one session of farming.",
-        "A safe farming method is to face left while standing in the safe spot.  Then fire straight up to shoot the orbs as they appear.",
-        "Jump up while GT's beak is not open to collect the drops.",
-        "Plasma allows all of the orbs to be broken at once.",
-        "Grapple allows for more drops to be collected by shooting diagonally, and collecting the items using Grapple.",
-        "Keep the number of current Missiles below 31 so that GT will be guaranteed to use the attack which creates drops.",
-        "Firing Supers requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
-      ],
-      "devNote": "Listed Heat frames have been reduced by accounting for health drops."
-    },
-    {
-      "id": 50,
-      "link": [5, 5],
-      "name": "Safe Spot Supers (Farming, Few Supers)",
-      "requires": [
-        {"notable": "Safe Spot Kill"},
-        "h_navigateHeatRooms",
-        "canTrickyJump",
-        "canBePatient",
-        {"ammo": {"type": "Super", "count": 5}},
-        {"or": [
-          {"and": [
-            "Plasma",
-            {"heatFrames": 3100}
-          ]},
-          {"and": [
-            "canPreciseGrapple",
-            {"heatFrames": 3200}
-          ]},
-          {"heatFrames": 4500}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": [
-        "This strat requires much farming. It assumes a capacity of and starting with only 5 supers for five sessions of farming.",
-        "A safe farming method is to face left while standing in the safe spot.  Then fire straight up to shoot the orbs as they appear.",
-        "Jump up while GT's beak is not open to collect the drops.",
-        "Plasma allows all of the orbs to be broken at once.",
-        "Grapple allows for more drops to be collected by shooting diagonally, and collecting the items using Grapple.",
-        "Keep the number of current Missiles below 31 so that GT will be guaranteed to use the attack which creates drops.",
-        "Firing Supers requires a very steady fire rate so that for every Super Missile caught by GT, the next 4 Supers do damage."
-      ],
-      "devNote": "Listed Heat frames have been reduced by accounting for health drops."
-    },
-    {
-      "id": 51,
-      "link": [5, 5],
-      "name": "Crystal Flash During Fight",
-      "requires": [
-        {"notable": "Crystal Flash During Fight"},
-        "h_navigateHeatRooms",
-        {"or": [
-          {"ammo": {"type": "Super", "count": 30}},
-          {"and": [
-            "Charge",
-            "Ice",
-            "Wave",
-            "Plasma"
-          ]}
-        ]},
-        {"heatFrames": 800},
-        "h_heatedCrystalFlash",
-        {"heatFrames": 800}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": [
-        "Midway through the fight, use a Crystal Flash to refill Samus' energy.",
-        "Crystal Flashing while standing in the safe spot at GT's feet is safe."
-      ],
-      "devNote": [
-        "FIXME: Other resource combinations can work; fewer supers + farm, weaker beam + more health, 2nd crystal flash.",
-        "FIXME: Add heavy pause abuse strats for GT."
-      ]
-    },
-    {
-      "id": 52,
-      "link": [5, 5],
-      "name": "Safe Spot Full Combo",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "Charge",
-        "Ice",
-        "Wave",
-        "Plasma",
-        {"heatFrames": 1250}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 53,
-      "link": [5, 5],
-      "name": "Safe Spot Almost Full Combo",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "Charge",
-        "Wave",
-        "Plasma",
-        {"heatFrames": 1400}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 54,
-      "link": [5, 5],
-      "name": "Safe Spot Charge Plasma",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "Charge",
-        "Plasma",
-        {"heatFrames": 2000}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 55,
-      "link": [5, 5],
-      "name": "Safe Spot Full Spazer",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "Charge",
-        "Ice",
-        "Wave",
-        "Spazer",
-        {"heatFrames": 4000}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 56,
-      "link": [5, 5],
-      "name": "Safe Spot Two Beam Charge",
-      "requires": [
-        {"or": [
-          {"notable": "Safe Spot Kill"},
-          {"and": [
-            {"notable": "Safe Spot Kill (Lenient)"},
-            {"resourceAtMost": [{"type": "Missile", "count": 31}]},
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}}
-          ]}
-        ]},
-        "Charge",
-        {"heatFrames": 6500},
-        {"or": [
-          {"and": [
-            "Ice",
-            "Wave"
-          ]},
-          {"and": [
-            "Ice",
-            "Spazer"
-          ]},
-          {"and": [
-            "Wave",
-            "Spazer"
-          ]}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "Stand in the safe spot and fire Charge shots into GT."
-    },
-    {
-      "id": 57,
-      "link": [5, 5],
-      "name": "Golden Torizo Fight (Supers)",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 1200},
-        {"ammo": {"type": "Super", "count": 30}},
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "super", "hits": 4}},
-        {"or": [
-          "canDodgeWhileShooting",
-          {"ammo": {"type": "Super", "count": 5}},
-          {"and": [
-            {"enemyDamage": {"enemy": "Golden Torizo", "type": "super", "hits": 2}},
-            {"heatFrames": 200}
-          ]}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "devNote": [
-        "No farming expected because that would change the heat frames.",
-        "Supers count hard-coded because of GT's inherent 'dodging' ability.",
-        "We could use an enemyKill if this were integrated into the enemy definition.",
-        "It actually takes 29 supers but giving 1 extra in leniency since it's easy to miss"
-      ]
-    },
-    {
-      "id": 58,
-      "link": [5, 5],
-      "name": "Missiles Only Kill",
-      "requires": [
-        {"notable": "Safe Spot Kill"},
-        {"notable": "Missiles Only Kill"},
-        "h_heatProof",
-        "Morph",
-        {"resourceCapacity": [{"type": "Missile", "count": 15}]},
-        {"or": [
-          {"resourceCapacity": [{"type": "RegularEnergy", "count": 199}]},
-          {"resourceCapacity": [{"type": "ReserveEnergy", "count": 100}]}
-        ]},
-        "canBeVeryPatient"
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": [
-        "Killing Golden Torizo only with missiles using enemy state manipulation to get missiles to connect.",
-        "This can be done by rolling under GT, triggering the sit attack, and then shooting missiles during the stand up animation.",
-        "By pushing GT to the door and rolling into the door during a jump back, the sit can reliably be manipulated.",
-        "But this setup is subpixel dependant and harder to setup again if GT moves unexpectidly.",
-        "Use of the safe spot is expected. Keep missiles below 31 to control the fight. This fight takes multiple minutes.",
-        "(A cheeky Missile can hit GT the moment it becomes active)"
-      ],
-      "devNote": "It is easy to make mistakes with this strat, so some capacity is given for leniency.  You can farm up resources readily enough."
-    },
-    {
-      "id": 59,
-      "link": [5, 5],
-      "name": "Golden Torizo Fight (Full Combo)",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 1800},
-        "Charge",
-        "Ice",
-        "Wave",
-        "Plasma",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        {"or": [
-          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 3}},
-          {"and": [
-            "canDodgeWhileShooting",
-            {"or": [
-              "ScrewAttack",
-              "Morph"
-            ]}
-          ]}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "This is an estimate of the net damage taken, including farmed energy."
-    },
-    {
-      "id": 60,
-      "link": [5, 5],
-      "name": "Golden Torizo Fight (Almost Full Combo)",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 2150},
-        "Charge",
-        "Wave",
-        "Plasma",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 2}},
-        {"or": [
-          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 3}},
-          {"and": [
-            "canDodgeWhileShooting",
-            {"or": [
-              "ScrewAttack",
-              "Morph"
-            ]}
-          ]}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "This is an estimate of the net damage taken, including farmed energy."
-    },
-    {
-      "id": 61,
-      "link": [5, 5],
-      "name": "Golden Torizo Fight (Charge Plasma)",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 3600},
-        "Charge",
-        "Plasma",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 2}},
-        {"or": [
-          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 6}},
-          {"and": [
-            "canDodgeWhileShooting",
-            {"or": [
-              "ScrewAttack",
-              "Morph"
-            ]}
-          ]}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "This is an estimate of the net damage taken, including farmed energy."
-    },
-    {
-      "id": 62,
-      "link": [5, 5],
-      "name": "Golden Torizo Fight (Full Spazer)",
-      "requires": [
-        "h_heatProof",
-        "Charge",
-        "Ice",
-        "Wave",
-        "Spazer",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 4}},
-        {"or": [
-          {"and": [
-            "canDodgeWhileShooting",
-            {"or": [
-              "Morph",
-              "ScrewAttack",
-              {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 6}}
-            ]}
-          ]},
-          {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 13}}
-        ]}
-      ],
-      "setsFlags": ["f_DefeatedGoldenTorizo"],
-      "flashSuitChecked": true,
-      "note": "This is an estimate of the net damage taken, including farmed energy."
-    },
-    {
-      "id": 40,
-      "link": [6, 2],
-      "name": "Base",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 50}
-      ],
-      "flashSuitChecked": true
-    },
-    {
-      "id": 41,
-      "link": [6, 4],
-      "name": "Space Jump",
-      "requires": [
-        "h_navigateHeatRooms",
-        "SpaceJump",
-        {"or": [
-          "ScrewAttack",
-          {"and": [
-            "h_usePowerBomb",
-            {"or": [
-              "canTrivialMidAirMorph",
-              "h_useSpringBall"
-            ]},
-            {"heatFrames": 100}
-          ]}
-        ]},
-        {"heatFrames": 200}
-      ],
-      "flashSuitChecked": true,
-      "note": "Avoid touching the ground below GT.  Try not to touch GT without ScrewAttack active."
-    },
-    {
-      "id": 42,
-      "link": [6, 4],
-      "name": "HiJump and Speed",
-      "requires": [
-        "h_navigateHeatRooms",
-        "HiJump",
-        "canSpeedyJump",
-        "canCarefulJump",
-        "ScrewAttack",
-        {"heatFrames": 200}
-      ],
-      "flashSuitChecked": true,
-      "note": "Jump a before reaching the rightmost floor pillar."
-    },
-    {
-      "id": 43,
-      "link": [6, 4],
-      "name": "Wall Jump",
-      "requires": [
-        "h_navigateHeatRooms",
-        "ScrewAttack",
-        "canCarefulJump",
-        "canPreciseWalljump",
-        "h_usePowerBomb",
-        {"or": [
-          "canTrivialMidAirMorph",
-          "h_useSpringBall"
-        ]},
-        {"or": [
-          "HiJump",
-          "canTrickyJump"
-        ]},
-        {"heatFrames": 350}
-      ],
-      "flashSuitChecked": true,
-      "note": [
-        "Jump over the space below GT that is between the door and first foreground pillar and walljump up.",
-        "Break the bomb blocks with a power bomb to make space.  Then use Screw Attack to pass through the inactive GT."
-      ]
-    },
-    {
-      "id": 44,
-      "link": [6, 4],
-      "name": "Springball Jump",
-      "requires": [
-        "h_navigateHeatRooms",
-        {"not": "f_DefeatedGoldenTorizo"},
-        {"or": [
-          "canRiskPermanentLossOfAccess",
-          "HiJump",
-          {"and": [
-            "canTrickyJump",
-            "canSpringwall"
-          ]}
-        ]},
-        "canSpringBallJumpMidAir",
-        "canNeutralDamageBoost",
-        {"enemyDamage": {"enemy": "Golden Torizo", "type": "contact", "hits": 1}},
-        {"ammo": {"type": "PowerBomb", "count": 1}},
-        {"heatFrames": 300}
-      ],
-      "flashSuitChecked": true,
-      "note": "Springball jump into GT to bounce to the upper level.",
-      "devNote": "Strats can follow 6->5->4 if GT is defeated."
-    },
-    {
-      "id": 45,
-      "link": [6, 5],
-      "name": "Base",
-      "requires": [
-        {"heatFrames": 0}
-      ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "blueSuitChecked": true
     },
     {
       "id": 76,
@@ -2123,6 +2163,7 @@
         "h_heatedGModeOpenDifferentDoor"
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Use the camera scroll blocks below the crumble blocks to overload PLMs and go through the crumble blocks.",
         "A good jumping through them a single time is enough to overload them for the next jump. This can be done while dodging GT.",
@@ -2168,6 +2209,7 @@
         {"heatFrames": 0}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Use the camera scroll blocks below the crumble blocks to overload PLMs and go through the crumble blocks.",
         "A good jumping through them a single time is enough to overload them for the next jump. This can be done while dodging GT.",
@@ -2226,6 +2268,7 @@
         ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Use the camera scroll blocks below the crumble blocks to overload PLMs and go through the bomb blocks near the right item.",
         "A good jumping through them a single time is enough to overload PLMs. This can be done while dodging GT.",
