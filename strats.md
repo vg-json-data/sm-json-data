@@ -210,8 +210,9 @@ A `leaveWithSpark` exit condition represents that Samus can leave through this d
 
 The `leaveWithSpark` object has the following property:
 - _position_: For a horizontal transition, if specified, this takes two possible values, "top" or "bottom". The value "top" represents that the strat sparks through the doorway high enough to clear a single-tile block level with the bottom of the doorway. The value "bottom" represents that the strat sparks through the doorway low enough to clear a single-tile block level with the top of the doorway. If unspecified, it is understood that the strat can exit through either the top or bottom of the doorway, whichever is needed in the next room.
+- _grounded_: A boolean, that is only used for a horizontal transition, indicating whether Samus initiates the spark from the ground. If unspecified, it is understood that the spark is initiated from the ground if it exits through the bottom or middle of the doorway and is initiated midair if it exits through the top of the doorway.
 
-The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions. There is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door.
+The direction of the spark is assumed to be horizontal when sparking through horizontal door transitions, or vertical when sparking through vertical door transitions. There is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canHorizontalMidairShinespark` when a shinespark is initiated midair; the requirements for this to be implicitly added are documented with the entrance condition `comeInWithSpark`.
 
 *Note*: Using a runway connected to a door to leave the room with a shinespark is already covered by `leaveWithRunway`. Likewise `leaveShinecharged` implicitly includes the possibility of leaving the room with a shinespark. It is only necessary to use `leaveWithSpark` in cases where it would not be possible to reach the door before the shinecharge timer expires, or, to account for the possibility of shinecharge frame leniency, where the door can only be reached with less than about 30 shinecharge frames remaining.
 
@@ -987,7 +988,7 @@ A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveS
   - If the previous door environment is water, then `Gravity` is required.
 - A match with `leaveNormally` comes with a `"or": [{"useFlashSuit": {}}, {"blueSuitShinecharge": {}}]` requirement.
 
-In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canMidairShinespark` if the `position` property is "top" in either the `comeInWithSpark` or a matching `leaveWithSpark`.
+In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canHorizontalMidairShinespark` when a shinespark is initiated midair (when it is not "grounded") as specified with the `grounded` property of the `leaveWithSpark`. If the `grounded` property is unspecified, then a spark is assumed to be not grounded if the `position` property is "top" or if it is unspecified and matched with a `comeInWithSpark` in the next room with a `position` property that is "top".
 
 #### Example
 ```json
