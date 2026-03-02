@@ -121,7 +121,9 @@ A `leaveWithRunway` exit condition can satisfy the following entrance conditions
 
 * _length_, _openEnd_, _gentleUpTiles_, _gentleDownTiles_, _steepUpTiles_, _steepDownTiles_, _startingDownTiles_
 
-The runway length should not include the transition tile, but it should include the door shell tile if applicable.
+The runway length should not include the transition tile, but it should include the door shell tile if applicable. `leaveWithRunway` also has the following propery:
+
+- _minExtraRunSpeed_: The minimum extra run speed (as a hexadecimal string) needed. This only needs to be specified if something would prevent the strat from working at too low of a speed.
 
 In a heated room, a `leaveWithRunway` exit condition implicitly includes `heatFrames` needed to use the runway. The amount of `heatFrames` required depends on the entrance condition in the next room, and the details of how these `heatFrames` may be calculated are described under each entrance condition [below](#entrance-conditions). If the `from` and `to` nodes of the strat are different nodes, then it is assumed that the strat property `requires` already includes any heat frames needed to reach the starting point of the runway (the side furthest from the door), in which case the implicit `heatFrames` in `leaveWithRunway` will only account for the heat frames needed to use the runway in one direction, moving towards the door. If the `from` and `to` nodes of the strat are the same node, then the implicit `heatFrames` includes all heat frames needed to position appropriately on the runway (starting from the door), execute the required movement, and exit the room through the door.
 
