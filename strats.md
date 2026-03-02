@@ -225,9 +225,7 @@ The direction of the spark is assumed to be horizontal when sparking through hor
       "usedTiles": 20,
       "openEnd": 0
     }},
-    {"shinespark": {
-      "frames": 200
-    }}
+    {"shinespark": {"frames": 190, "excessFrames": 12}}
   ],
   "exitCondition": {
     "leaveWithSpark": {}
@@ -881,10 +879,7 @@ The way to calculate minimally required heat frames depends on the type of `leav
     }
   },
   "requires": [
-    {"shinespark": {
-      "frames": 40,
-      "excessFrames": 3
-    }}
+    {"shinespark": {"frames": 40, "excessFrames": 3}}
   ]
 }
 ```
@@ -951,10 +946,7 @@ A `comeInShinecharged` object does not provide any way to specify Samus' positio
     }
   },
   "requires": [
-    {"shinespark": {
-      "frames": 40,
-      "excessFrames": 3
-    }}
+    {"shinespark": {"frames": 40, "excessFrames": 3}}
   ]
 }
 ```
@@ -998,10 +990,7 @@ In all three cases, there is an implicit requirement of `canHorizontalShinespark
     "comeInWithSpark": {}
   },
   "requires": [
-    {"shinespark": {
-      "frames": 50,
-      "excessFrames": 3
-    }}
+    {"shinespark": {"frames": 50, "excessFrames": 3}}
   ]
 }
 ```
@@ -1025,7 +1014,7 @@ A `comeInStutterShinecharging` condition must match with a `leaveWithRunway` con
     }
   },
   "requires": [
-    {"shinespark": {"frames": 60}}
+    {"shinespark": {"frames": 60, "excessFrames": 8}}
   ]
 }
 ```
