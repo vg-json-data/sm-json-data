@@ -70,6 +70,7 @@ strat_name_exit_conditions = [
     ("Leave Spinning", "leaveSpinning"),
     ("Leave With Mockball", "leaveWithMockball"),
     ("Leave With Spring Ball Bounce", "leaveWithSpringBallBounce"),
+    ("Leave With Controlled Spring Ball Bounce", "leaveWithSpringBallBounce"),
     ("Leave Space Jumping", "leaveSpaceJumping"),
     ("Leave With Stored Fall Speed", "leaveWithStoredFallSpeed"),
     ("Leave With Moondance", "leaveWithStoredFallSpeed"),
