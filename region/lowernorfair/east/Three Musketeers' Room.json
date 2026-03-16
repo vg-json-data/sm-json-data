@@ -87,6 +87,15 @@
         "The shot blocks are treated as broken when this obstacle is cleared.",
         "For that reason the Musketeers are treated as cleared when travelling to the top door even if they may not be dead."
       ]
+    },
+    {
+      "id": "B",
+      "name": "Bad Acid Cycle",
+      "obstacleType": "abstract",
+      "note": [
+        "This represents that acid cycle may be an unfavorable state,",
+        "possibly requiring Samus to wait up to an entire cycle if needing to go to the right."
+      ]
     }
   ],
   "enemies": [
@@ -110,7 +119,8 @@
           "openEnd": 1
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 2,
@@ -125,7 +135,8 @@
           "openEnd": 0
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 3,
@@ -141,7 +152,8 @@
             "Wave",
             "Ice",
             {"cycleFrames": 200}
-          ]}
+          ]},
+          {"haveBlueSuit": {}}
         ]},
         {"or": [
           {"and": [
@@ -158,8 +170,10 @@
         {"cycleFrames": 520}
       ],
       "clearsObstacles": ["A"],
+      "resetsObstacles": ["B"],
       "farmCycleDrops": [{"enemy": "Kihunter (red)", "count": 3}],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": "FIXME: Other beam options for this are possible."
     },
     {
@@ -169,41 +183,84 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "Crystal Flash can be done here without messing up the acid cycle (assuming dodging the Kihunters going down)."
+      ]
     },
     {
       "id": 5,
       "link": [1, 4],
       "name": "Kihunters Already Killed",
       "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 400},
+        "canDash",
+        {"heatFrames": 480},
         {"obstaclesCleared": ["A"]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right).",
+        "Otherwise it could be done with 310 heat frames."
+      ]
+    },
+    {
+      "link": [1, 4],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        {"heatFrames": 480}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right).",
+        "Otherwise it could be done with 340 heat frames."
+      ]
     },
     {
       "id": 6,
       "link": [1, 4],
       "name": "Tank the Damage",
       "requires": [
-        "h_navigateHeatRooms",
-        {"heatFrames": 400},
-        {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 2}}
+        {"heatFrames": 480},
+        "canDash",
+        {"or": [
+          {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 2}},
+          {"and": [
+            {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 1}},
+            "canUseIFrames"
+          ]}
+        ]}
       ],
       "flashSuitChecked": true,
-      "note": "Wait for the first Kihunter to pass and then run through the remaining two."
+      "blueSuitChecked": true,
+      "note": [
+        "Wait for the first Kihunter to pass and then run through the remaining two.",
+        "A second hit can be avoided by moving quickly and using i-frames from the first hit."
+      ],
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right).",
+        "Otherwise it could be done with 380 heat frames."
+      ]
     },
     {
       "id": 7,
       "link": [1, 4],
       "name": "Hitbox the Kihunters",
       "requires": [
-        "h_navigateHeatRooms",
         "h_PlasmaHitbox",
-        {"heatFrames": 420}
+        "canDash",
+        {"heatFrames": 480}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right).",
+        "Otherwise it could be done with 320 heat frames."
+      ]
     },
     {
       "id": 8,
@@ -211,11 +268,12 @@
       "name": "Dodge Going Down",
       "requires": [
         {"notable": "Dodge Going Down"},
-        "h_navigateHeatRooms",
+        "canDash",
         "canTrickyJump",
         {"heatFrames": 500}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Wait for the top one to pass by.",
         "Jump down when the lower two are by the left wall and jump over them when they swoop."
@@ -226,7 +284,7 @@
       "link": [1, 4],
       "name": "Screw Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "ScrewAttack",
         {"or": [
           {"heatFrames": 100},
@@ -236,18 +294,22 @@
           ]},
           "canTrickyJump"
         ]},
-        {"heatFrames": 330}
+        {"heatFrames": 480}
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
-      "note": "By moving quickly, the Kihunters will be in favourable positions.  Otherwise wait until it is safe to continue."
+      "blueSuitChecked": true,
+      "note": "By moving quickly, the Kihunters will be in favourable positions.  Otherwise wait until it is safe to continue.",
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right).",
+        "Otherwise it could be done with 330 heat frames."
+      ]
     },
     {
       "id": 10,
       "link": [1, 4],
       "name": "Full Combo Kill",
       "requires": [
-        "h_navigateHeatRooms",
         "Charge",
         "Plasma",
         "Ice",
@@ -260,6 +322,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Shooting straight down can hit the Kihunter below.",
         "Jumping before shooting down can even double hit, instantly killing them."
@@ -270,20 +333,19 @@
       "link": [1, 4],
       "name": "Chargeless Wave Plasma Kill",
       "requires": [
-        "h_navigateHeatRooms",
         "Plasma",
         "Wave",
         {"heatFrames": 720}
       ],
       "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 12,
       "link": [1, 4],
       "name": "Plasma Kill",
       "requires": [
-        "h_navigateHeatRooms",
         "Plasma",
         {"or": [
           "canDodgeWhileShooting",
@@ -296,6 +358,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Jump to the previous level when the enemy gets close, or fight entirely from safety."
     },
     {
@@ -303,7 +366,6 @@
       "link": [1, 4],
       "name": "Supers Kill",
       "requires": [
-        "h_navigateHeatRooms",
         {"enemyKill": {
           "enemies": [["Kihunter (red)", "Kihunter (red)", "Kihunter (red)"]],
           "explicitWeapons": ["Super"]
@@ -319,6 +381,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Jump to the previous level when the enemy gets close, or fight entirely from safety.",
         "Two supers can hit per cycle when shooting from above."
@@ -337,6 +400,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Shooting rapidly at an angle is faster than jumping and firing down."
     },
     {
@@ -351,7 +415,8 @@
         }}
       ],
       "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 16,
@@ -364,7 +429,8 @@
           "openEnd": 1
         }
       },
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 45,
@@ -387,6 +453,7 @@
         }
       },
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "devNote": [
         "Max extra run speed $1.D.",
         "This strat is included for completeness, though it apparently doesn't have any applications."
@@ -399,25 +466,53 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 18,
       "link": [2, 4],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "Morph",
+        "canDash",
         {"heatFrames": 660}
       ],
-      "flashSuitChecked": true
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Use the ledge to the right of the morph tunnel to safely wait for the acid to go down."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Dashless",
+      "requires": [
+        {"or": [
+          "canTrickyWalljump",
+          {"hibashiHits": 1},
+          "canTrickyDodgeEnemies",
+          {"haveBlueSuit": {}}
+        ]},
+        {"or": [
+          "canTrickyWalljump",
+          {"acidFrames": 50},
+          {"and": [
+            "HiJump",
+            {"acidFrames": 15}
+          ]}
+        ]}                  
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 19,
       "link": [2, 4],
       "name": "HiJump Speed Mockball (Gravity)",
       "requires": [
-        "h_navigateHeatRooms",
         "canMockball",
         "HiJump",
         "canSpeedyJump",
@@ -426,7 +521,9 @@
         {"heatFrames": 310},
         {"acidFrames": 25}
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Run into the acid to quickly jump over the first pillar.",
         "Build speed and jump over the second pillar to mockball through the tunnel without taking much acid damage."
@@ -443,7 +540,6 @@
         }
       },
       "requires": [
-        "h_navigateHeatRooms",
         "canMockball",
         "HiJump",
         "canSpeedyJump",
@@ -456,9 +552,28 @@
         {"heatFrames": 310},
         {"acidFrames": 5}
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
-        "Run into the acid to quickly jump over the first pillar.",
+        "Run into the acid to quickly wall jump over the first pillar.",
+        "Build speed and jump over the second pillar to mockball through the tunnel without taking much acid damage."
+      ]
+    },
+    {
+      "link": [2, 4],
+      "name": "Wall Jump and Mockball",
+      "requires": [
+        "canInsaneJump",
+        "canMockball",
+        {"heatFrames": 350},
+        {"acidFrames": 55}
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Run into the acid to quickly wall jump over the first pillar.",
         "Build speed and jump over the second pillar to mockball through the tunnel without taking much acid damage."
       ]
     },
@@ -466,22 +581,20 @@
       "id": 21,
       "link": [2, 4],
       "name": "Space Jump Weave",
-      "entranceCondition": {
-        "comeInRunning": {
-          "speedBooster": "any",
-          "minTiles": 4
-        }
-      },
       "requires": [
-        "h_navigateHeatRooms",
         "SpaceJump",
         "Morph",
         "canTrickyJump",
-        "canPrepareForNextRoom",
-        {"heatFrames": 270}
+        "canMockball",
+        {"heatFrames": 290}
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
-      "note": "Enter the room while space jumping and weave between the pillars."
+      "blueSuitChecked": true,
+      "devNote": [
+        "The mockball is not technically required, but without it there is more risk of getting caught by the acid.",
+        "With 1 tile of cross-room runway, this could be done with 260 heat frames."
+      ]
     },
     {
       "id": 46,
@@ -498,15 +611,20 @@
         {"or": [
           "SpaceJump",
           "canWalljump",
-          "HiJump",
           {"and": [
+            "canDash",
+            "HiJump"
+          ]},
+          {"and": [
+            "canDash",
             "canInsaneJump",
             {"disableEquipment": "SpeedBooster"}
           ]}
         ]},
         {"heatFrames": 0}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 47,
@@ -535,6 +653,7 @@
         {"heatFrames": 0}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Avoiding the acid completely requires precise movement.",
         "With Spring Ball and Bombs, jump into IBJ to delay while waiting for the acid.",
@@ -551,75 +670,131 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 23,
       "link": [3, 4],
       "name": "Base",
       "requires": [
-        "h_navigateHeatRooms",
         "Morph",
-        {"heatFrames": 180}
+        {"heatFrames": 150}
       ],
       "flashSuitChecked": true,
-      "devNote": "There's technically a bomb block to break, but it's impossible to reach this node without destroying it beforehand."
+      "blueSuitChecked": true,
+      "devNote": [
+        "There's technically a bomb block to break, but it's impossible to reach this node without destroying it beforehand."
+      ]
     },
     {
       "id": 24,
       "link": [4, 1],
-      "name": "Kihunters Already Dead",
+      "name": "Kihunters Taken Care Of",
       "requires": [
-        "h_navigateHeatRooms",
-        {"obstaclesCleared": ["A"]},
         {"or": [
-          "h_crouchJumpDownGrab",
-          "canWalljump",
-          "HiJump",
+          "canDash",
+          {"heatFrames": 40}
+        ]},
+        {"or": [
+          {"obstaclesCleared": ["A"]},
+          {"and": [
+            {"haveBlueSuit": {}},
+            {"heatFrames": 10},
+            {"or": [
+              "Wave",
+              {"heatFrames": 30}
+            ]}
+          ]}
+        ]},
+        {"or": [
+          {"and": [
+            "h_heatedCrouchJumpDownGrab",
+            {"heatFrames": 340}
+          ]},
+          {"and": [
+            "canWalljump",
+            {"heatFrames": 290}
+          ]},
+          {"and": [
+            "HiJump",
+            {"heatFrames": 240}
+          ]},
           {"and": [
             "canSpringBallJumpMidAir",
-            {"heatFrames": 120}
+            {"heatFrames": 450}
           ]},
-          "SpaceJump",
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 380}
+          ]},
           {"and": [
             "canIBJ",
-            {"heatFrames": 1820}
+            "h_heatProof"
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 660},
+            {"or": [
+              {"obstaclesCleared": ["A"]},
+              {"heatFrames": 380}
+            ]}
           ]},
           {"and": [
             "canSpringBallBombJump",
             "h_additionalBomb",
             "h_additionalBomb",
-            {"heatFrames": 250}
+            {"heatFrames": 560}
           ]}
-        ]},
-        {"heatFrames": 390}
+        ]}
       ],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
-      "devNote": "Spring Ball bomb jump uses 3 Power Bombs total."
+      "blueSuitChecked": true
     },
     {
       "id": 25,
       "link": [4, 1],
       "name": "Hitbox the Kihunters",
       "requires": [
-        "h_navigateHeatRooms",
-        "Plasma",
-        "canHitbox",
+        "canDash",
+        "h_PlasmaHitbox",
+        "canTrickyDodgeEnemies",
         {"or": [
-          "canTrickyDodgeEnemies",
+          "canInsaneJump",
           {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 1}}
         ]},
         {"or": [
-          "h_crouchJumpDownGrab",
-          "canWalljump",
-          "HiJump",
-          "SpaceJump"
+          {"and": [
+            "canWalljump",
+            {"heatFrames": 410}
+          ]},
+          {"and": [
+            "h_crouchJumpDownGrab",
+            {"heatFrames": 460}
+          ]},
+          {"and": [
+            "HiJump",
+            {"heatFrames": 360}
+          ]},
+          {"and": [
+            "SpaceJump",
+            "canInsaneJump",
+            {"heatFrames": 490}
+          ]}
         ]},
-        "canTrickyJump",
-        {"heatFrames": 600}
+        {"or": [
+          "canBeLucky",
+          {"heatFrames": 130}
+        ]},
+        {"or": [
+          "Wave",
+          {"heatFrames": 40}
+        ]}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Wait for the Kihunters to move away from where Samus will jump up.",
         "This may mean Hitboxing through the middle Kihunter multiple times."
@@ -631,7 +806,7 @@
       "name": "Dodge Going Up",
       "requires": [
         {"notable": "Dodge Going Up"},
-        "h_navigateHeatRooms",
+        "canDash",
         "canInsaneJump",
         {"or": [
           {"and": [
@@ -646,8 +821,9 @@
         ]},
         {"heatFrames": 540}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Read the movements of the Kihunters and jump over or roll under them as appropriate.",
         "Changing platforms is the hardest part: ",
@@ -659,6 +835,7 @@
       "link": [4, 1],
       "name": "Pause Abuse Going Up",
       "requires": [
+        "canDash",
         "canTrickyDodgeEnemies",
         {"heatFrames": 90},
         "h_pauseAbuseMinimalReserveRefill",
@@ -676,16 +853,17 @@
           "canWalljump"
         ]}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
-      "note": "Watch the Kihunter above to prevent getting kocked off when jumping to the next platform."
+      "blueSuitChecked": true,
+      "note": "Watch the Kihunter above to prevent getting knocked off when jumping to the next platform."
     },
     {
       "id": 27,
       "link": [4, 1],
       "name": "Tank the Damage",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"or": [
           {"and": [
             "canUseIFrames",
@@ -721,15 +899,16 @@
         {"heatFrames": 570},
         {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 3}}
       ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 28,
       "link": [4, 1],
       "name": "Partial Kihunter Dodge",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"or": [
           "canWalljump",
           "HiJump"
@@ -748,8 +927,9 @@
         ]},
         {"heatFrames": 470}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Jump over the first Kihunter and attempt to either use i-frames to pass through the top Kihunter, or dodge it if possible."
     },
     {
@@ -757,42 +937,64 @@
       "link": [4, 1],
       "name": "Screw Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "ScrewAttack",
         {"or": [
-          "canWalljump",
+          "HiJump",
+          "SpaceJump",
+          "canCarefulJump"
+        ]},
+        {"or": [
+          {"and": [
+            "canWalljump",
+            {"heatFrames": 360}
+          ]},
           {"and": [
             "h_crouchJumpDownGrab",
-            {"heatFrames": 120},
-            {"or": [
-              "canCarefulJump",
-              {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 1}}
-            ]}
+            {"heatFrames": 520}
           ]},
-          "HiJump",
+          {"and": [
+            "HiJump",
+            {"heatFrames": 310}
+          ]},
           {"and": [
             "canSpringBallJumpMidAir",
-            {"heatFrames": 120},
-            {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 2}}
+            {"heatFrames": 720}
           ]},
-          "SpaceJump",
+          {"and": [
+            "SpaceJump",
+            {"heatFrames": 440}
+          ]},
           {"and": [
             "canIBJ",
-            "h_heatProof",
-            {"enemyDamage": {"enemy": "Kihunter (red)", "type": "contact", "hits": 2}}
+            "h_heatProof"
+          ]},
+          {"and": [
+            "canJumpIntoIBJ",
+            {"heatFrames": 1060}
           ]}
         ]},
-        {"heatFrames": 500}
+        {"or": [
+          "Wave",
+          {"heatFrames": 40}
+        ]}
       ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Depending on which movement items are available, it is often safest to carefully kill each Kihunter from below before attempting to get onto its platform:",
+        "lure the Kihunter over to the opening and spin jump directly up into it.",
+        "If wall jumping up, do so from low enough that Samus bonks the opposite wall before touching the Kihunter:",
+        "otherwise the wall jumping movement may prevent Screw Attack from taking effect."
+      ]
     },
     {
       "id": 30,
       "link": [4, 1],
       "name": "Ice Wave Plasma Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "Ice",
         "Wave",
         "Plasma",
@@ -822,8 +1024,9 @@
         ]},
         {"heatFrames": 550}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Firing upwards has a good chance of hitting multiple Kihunters.",
         "And charge shot double hits will instantly kill a Kihunter."
@@ -834,7 +1037,7 @@
       "link": [4, 1],
       "name": "Wave Plasma Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "Wave",
         "Plasma",
         {"or": [
@@ -859,15 +1062,16 @@
         ]},
         {"heatFrames": 940}
       ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 32,
       "link": [4, 1],
       "name": "Plasma Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "Plasma",
         {"or": [
           "canCarefulJump",
@@ -895,17 +1099,20 @@
         ]},
         {"heatFrames": 1360}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Fire up from below and try not to jump too high as that will put the camera in a bad position.",
-      "devNote": "FIXME IBJ strats could be added with heat frames."
+      "devNote": [
+        "FIXME IBJ strats could be added with heat frames."
+      ]      
     },
     {
       "id": 33,
       "link": [4, 1],
       "name": "Supers Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         {"enemyKill": {
           "enemies": [["Kihunter (red)", "Kihunter (red)", "Kihunter (red)"]],
           "explicitWeapons": ["Super"]
@@ -936,8 +1143,9 @@
         ]},
         {"heatFrames": 1300}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Fire up from below and try not to jump too high as that will put the camera in a bad position."
     },
     {
@@ -945,7 +1153,7 @@
       "link": [4, 1],
       "name": "Ice Wave Spazer Kill",
       "requires": [
-        "h_navigateHeatRooms",
+        "canDash",
         "Ice",
         "Wave",
         "Spazer",
@@ -976,10 +1184,13 @@
         ]},
         {"heatFrames": 1520}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Fire up from below and try not to jump too high as that will out the camera in a bad position.",
-      "devNote": "FIXME IBJ strats could be added with heat frames."
+      "devNote": [
+        "FIXME IBJ strats could be added with heat frames."
+      ]
     },
     {
       "id": 35,
@@ -1007,6 +1218,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
         "Shoot them from below.",
         "It is possible for the Kihunters to fall through the gaps in the side, but is unlikely.",
@@ -1018,14 +1230,21 @@
     {
       "id": 36,
       "link": [4, 2],
-      "name": "Base",
+      "name": "Acid Dip",
       "requires": [
-        "h_navigateHeatRooms",
+        {"obstaclesNotCleared": ["B"]},
         "Morph",
-        {"heatFrames": 750},
-        {"acidFrames": 16}
+        "canSuitlessLavaDive",
+        "canCarefulJump",
+        {"heatFrames": 700},
+        {"acidFrames": 15},
+        {"or": [
+          "canDash",
+          {"heatFrames": 50}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wait for the acid to go down before entering the Morph tunnel, and again once reaching the other side."
     },
     {
@@ -1033,79 +1252,143 @@
       "link": [4, 2],
       "name": "Staggered Wall Jump",
       "requires": [
-        "h_navigateHeatRooms",
+        {"obstaclesNotCleared": ["B"]},
         "Morph",
         "canTrickyWalljump",
-        {"heatFrames": 660}
+        {"heatFrames": 600},
+        {"or": [
+          "canDash",
+          {"heatFrames": 40}
+        ]}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Wall jump in place while the acid goes away."
+    },
+    {
+      "link": [4, 2],
+      "name": "Tricky Jump",
+      "requires": [
+        {"obstaclesNotCleared": ["B"]},
+        "Morph",
+        "canDash",
+        "canTrickyJump",
+        {"heatFrames": 600}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "From the safe ledge to the right of the morph tunnel, run and jump directly onto the Hibashi when it is not firing."
     },
     {
       "id": 38,
       "link": [4, 2],
       "name": "Space Jump",
       "requires": [
-        "h_navigateHeatRooms",
+        {"obstaclesNotCleared": ["B"]},
         "Morph",
         "SpaceJump",
+        {"heatFrames": 720}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": "Space Jump in place to wait for the acid to lower and the Hibashi flames to clear."
+    },
+    {
+      "link": [4, 2],
+      "name": "Precise Space Jump",
+      "requires": [
+        {"obstaclesNotCleared": ["B"]},
+        "Morph",
+        "canPreciseSpaceJump",
+        {"heatFrames": 355},
         {"or": [
-          {"heatFrames": 660},
+          "canDash",
           {"and": [
-            "canCarefulJump",
-            {"acidFrames": 2},
-            {"heatFrames": 600}
+            {"haveBlueSuit": {}},
+            {"heatFrames": 65}
           ]}
         ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "note": [
+        "Precisely weave between the pillars to avoid needing to wait for the acid."
+      ]
     },
     {
       "id": 39,
       "link": [4, 2],
       "name": "Gravity",
       "requires": [
-        "h_navigateHeatRooms",
+        {"obstaclesNotCleared": ["B"]},
         "Morph",
         "Gravity",
-        {"acidFrames": 32},
-        {"heatFrames": 510}
+        {"acidFrames": 30},
+        {"heatFrames": 370},
+        {"or": [
+          "canDash",
+          {"and": [
+            {"haveBlueSuit": {}},
+            {"heatFrames": 140},
+            {"acidFrames": 5}
+          ]}
+        ]}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 40,
       "link": [4, 3],
       "name": "Screw",
       "requires": [
-        "h_navigateHeatRooms",
         "Morph",
         "ScrewAttack",
+        {"heatFrames": 220}
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right after collecting the item).",
+        "Otherwise it could be done with 200 heat frames or less."
+      ]
+    },
+    {
+      "link": [4, 3],
+      "name": "Blue Suit",
+      "requires": [
+        {"haveBlueSuit": {}},
+        "Morph",
         {"heatFrames": 200}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: this includes waiting for the acid cycle (in case of needing to go right after collecting the item).",
+        "Otherwise it could be done with 150 heat frames."
+      ]
     },
     {
       "id": 41,
       "link": [4, 3],
       "name": "Bombs",
       "requires": [
-        "h_navigateHeatRooms",
         "h_useMorphBombs",
         {"heatFrames": 250}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 42,
       "link": [4, 3],
       "name": "Power Bombs",
       "requires": [
-        "h_navigateHeatRooms",
         "h_usePowerBomb",
         {"heatFrames": 230}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 43,
@@ -1114,7 +1397,22 @@
       "requires": [
         "h_heatedCrystalFlash"
       ],
-      "flashSuitChecked": true
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": [
+        "FIXME: it is still possible to make the acid cycle after this, but would need a movement tech."
+      ]
+    },
+    {
+      "link": [4, 4],
+      "name": "Wait for Acid Cycle",
+      "requires": [
+        {"heatFrames": 380}
+      ],
+      "resetsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     },
     {
       "id": 48,
@@ -1134,6 +1432,7 @@
         {"heatFrames": 200}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Kill the Kihunters then shoot the shot blocks and escape."
     },
     {
@@ -1159,6 +1458,7 @@
         {"heatFrames": 220}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Dodge the Kihunters then shoot the shot blocks and escape."
     },
     {
@@ -1167,13 +1467,17 @@
       "name": "G-Mode, To the Item, Simple Blind Movement",
       "requires": [
         "h_heatedGMode",
-        "ScrewAttack",
+        {"or": [
+          "ScrewAttack",
+          {"haveBlueSuit": {}}
+        ]},
         "Morph",
         {"heatFrames": 120}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": [
-        "Use Screw Attack to break the bomb block and enter the morph tunnel.",
+        "Use Screw Attack or blue suit to break the bomb block and enter the morph tunnel.",
         "Roll to the left without falling off into the acid, unmorph and walk back to the right to press against the morph tunnel.",
         "Use X-Ray, Morph, then roll a little to the right to barely touch the camera scroll block, then move left towards the item while the camera fixes itself."
       ],
@@ -1188,6 +1492,7 @@
         {"heatFrames": 0}
       ],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "If going for the item, it is possible to place a Bomb or Power Bomb then exit G-mode to save a small number of heat frames."
     },
     {
@@ -1201,6 +1506,7 @@
             "enemies": [["Kihunter (red)", "Kihunter (red)", "Kihunter (red)"]],
             "explicitWeapons": ["Super", "Missile", "Plasma", "ScrewAttack"]
           }},
+          {"haveBlueSuit": {}},
           {"and": [
             "Ice",
             {"or": [
@@ -1241,6 +1547,7 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
+      "blueSuitChecked": true,
       "note": "Kill the Kihunters then either exit the room at the top or go to the item."
     }
   ],
