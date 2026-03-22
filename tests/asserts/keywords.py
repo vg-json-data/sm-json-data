@@ -478,7 +478,7 @@ def process_req_speed_state(req, states, err_fn):
             # Note: "canSpeedKeep" can be used for other purposes than obtaining blue, but its presence should be
             # enough to satisfy the test as a way that blue may be obtained.
             states = {"blue"}
-        elif req in ["h_flashSuitIceClip", "canXModeSpikeSuit", "h_spikeXModeSpikeSuit", "h_thornXModeSpikeSuit", 
+        elif req in ["h_storedSparkIceClip", "canXModeSpikeSuit", "h_spikeXModeSpikeSuit", "h_thornXModeSpikeSuit", 
                      "h_thornXModeSpikeSuitWithoutLenience", "h_storedSpark"]:
             states = {"preshinespark"}
         elif req in ["canSpikeSuit"]:
