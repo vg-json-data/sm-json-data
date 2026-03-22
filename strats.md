@@ -1922,7 +1922,22 @@ By default every door node and exit node has an implicit strat from the node to 
 }
 ```
 
-This implicit strat can be disabled by setting the node property `"useImplicitLeaveNormally": false`.
+As an exception, a node with `"nodeSubType": "sandpit"` instead has an implicit strat of the following form:
+
+```json
+{
+  "link": [1, 1],
+  "name": "Leave Normally",
+  "requires": [
+    {"noBlueSuit": {}}
+  ],
+  "exitCondition": {
+    "leaveNormally": {}
+  }
+}
+```
+
+In any case, the implicit `leaveNormally` strat can be disabled by setting the node property `"useImplicitLeaveNormally": false`.
 
 ### Implicit Come In Normally
 
