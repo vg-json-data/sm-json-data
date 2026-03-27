@@ -127,6 +127,8 @@ A `shinespark` object represents the need for Samus to spend energy performing a
 * _frames_: The duration of the shinespark in frames, assuming the spark is completed without being interrupted by reaching 29 energy. The shinespark frames equals the amount of energy spent, as a shinespark uses 1 energy per frame. 
 * _excessFrames_: The shinespark duration (in frames) that is not required to complete the objective of the shinespark. Subtracting this from the `frames` defines the lower limit of the shinespark energy cost.
 
+Note that a `shinespark` requirement is not considered to result in a loss of flash suit or blue suit. It may be used in strats such as spike suits or X-mode blue suits, where a flash suit or blue suit has just been obtained and is not lost by the shinespark.
+
 #### acidFrames object
 An `acidFrames` object represents the need for Samus to spend time (measured in frames) in a pool of acid. This is meant to be converted to a flat health value based on item loadout. The vanilla damage for acid is 6 damage every 4 frames, halved by Varia (3 damage every 4 frames), and halved again by Gravity Suit (3 damage every 8 frames).
 
@@ -656,7 +658,7 @@ __Example:__
 
 #### useFlashSuit object
 
-A `useFlashSuit` indicates a need to have a flash suit state, which will then be lost as part of executing this strat. A strat with `useFlashSuit` should also have a `shinespark` logical requirement to specify the energy loss from shinesparking. 
+A `useFlashSuit` indicates a need to have a flash suit state, which will then be lost as part of executing this strat. A `useFlashSuit` also comes with a loss of any blue suit (in case Samus was simultaneously carrying a flash suit and blue suit). A strat with `useFlashSuit` should also have a `shinespark` logical requirement to specify the energy loss from shinesparking.
 
 A `useFlashSuit` object has no properties.
 
@@ -667,7 +669,7 @@ __Example:__
 
 #### noFlashSuit
 
-A `noFlashSuit` indicates a need to perform actions that are incompatible with preserving a flash suit; it therefore requires that Samus not be in a flash suit state.
+A `noFlashSuit` indicates a need to perform actions that are incompatible with preserving a flash suit. It therefore requires that Samus lose any flash suit that she may be carrying. It is assumed that this can freely be done, by simply having skipped obtaining the flash suit in the first place (another option would be to shinespark into a wall or ceiling, but this would usually require losing 1 energy, which we don't assume is required).
 
 A `noFlashSuit` object has no properties.
 
@@ -702,7 +704,7 @@ __Example:__
 
 #### blueSuitShinecharge object
 
-A `blueSuitShinecharge` indicates a need to have a blue suit, in order to perform a shinecharge. A strat with `blueSuitShinecharge` should have a subsequent `shinespark` logical requirement to specify the energy loss from shinesparking, and the `shinespark` requirement will result in the loss of the blue suit.
+A `blueSuitShinecharge` indicates a need to have a blue suit, in order to perform a shinecharge. A strat with `blueSuitShinecharge` should have a subsequent `shinespark` logical requirement to specify the energy loss from shinesparking. A `blueSuitShinecharge` comes with a loss of the blue suit, along with a loss of any flash suit (in case Samus was simultaneously carrying a flash suit and blue suit).
 
 A `blueSuitShinecharge` object has no properties.
 
@@ -713,7 +715,7 @@ __Example:__
 
 #### noBlueSuit
 
-A `noBlueSuit` indicates a need to perform actions that are incompatible with preserving a blue suit; it therefore requires that Samus not be in a blue suit state.
+A `noBlueSuit` indicates a need to perform actions that are incompatible with preserving a blue suit. It therefore requires that Samus lose any blue suit that she may be carrying. This can always be done, either by dashing (if in air physics), or by pausing and unpausing with Speed Booster unequipped.
 
 A `noBlueSuit` object has no properties.
 
