@@ -76,6 +76,12 @@
       "name": "Pink Pirates",
       "obstacleType": "enemies",
       "note": "Enemies that must be cleared to unlock the room. Take note that the wall pirates do not have special immunities."
+    },
+    {
+      "id": "B",
+      "name": "Bottom Pink Pirate",
+      "obstacleType": "enemies",
+      "note": "The lowest Pink Pirate, on the runway near the item."
     }
   ],
   "enemies": [
@@ -260,7 +266,7 @@
           "Plasma"
         ]}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["A", "B"],
       "farmCycleDrops": [
         {"enemy": "Pink Space Pirate (standing)", "count": 4},
         {"enemy": "Pink Space Pirate (wall)", "count": 2}
@@ -287,7 +293,7 @@
           ]}
         ]}
       ],
-      "resetsObstacles": ["A"],
+      "resetsObstacles": ["A", "B"],
       "farmCycleDrops": [{"enemy": "Pink Space Pirate (standing)", "count": 1}],
       "flashSuitChecked": true
     },
@@ -504,24 +510,13 @@
           ]}
         ]},
         {"or": [
+          {"obstaclesCleared": ["A"]},
           {"and": [
+            {"obstaclesCleared": ["B"]},
+            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
             "canMidairShinespark",
             "canUseSpeedEchoes",
-            {"getBlueSpeed": {"usedTiles": 19, "openEnd": 0}},
-            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
             {"shinespark": {"frames": 1, "excessFrames": 1}}
-          ]},
-          {"and": [
-            "canMidairShinespark",
-            "canUseSpeedEchoes",
-            {"enemyDamage": {
-              "enemy": "Pink Space Pirate (standing)",
-              "type": "contact",
-              "hits": 2
-            }},
-            "canUseIFrames",
-            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
-            {"shinespark": {"frames": 2, "excessFrames": 2}}
           ]},
           {"and": [
             "canPseudoScrew",
@@ -531,24 +526,20 @@
                 "type": "contact",
                 "hits": 1
               }},
-              "h_pauseAbuseMinimalReserveRefill",
-              {"and": [
-                {"notable": "Damage-Avoiding Pseudo-Screw"},
-                "canInsaneJump"
-              ]}
+              "h_pauseAbuseMinimalReserveRefill"
             ]}
           ]}
         ]}
       ],
       "flashSuitChecked": true,
-      "note": "Pseudo screw the left pirate, or clear the left side with shinesparks, then IBJ out",
-      "devNote": "If you can kill them without being hurt, you can take path 2->3->1."
+      "note": "Kill the standing pirate on the left then IBJ to escape. Killing it can be done with pseudo screw or with shinesparks."
     },
     {
       "id": 16,
       "link": [2, 1],
-      "name": "Jump into IBJ",
+      "name": "Jump into IBJ over the Pirate",
       "requires": [
+        "canDodgeWhileShooting",
         "canJumpIntoIBJ",
         {"or": [
           "canLongIBJ",
@@ -568,37 +559,18 @@
           ]
         }
       ],
-      "note": "Let the wall pirate jump to the otherside of the room.  Shooting the standing pirate (with anything) will prevent it from attacking."
+      "note": "Let the wall pirate jump to the otherside of the room. Shooting the standing pirate (with anything) will prevent it from attacking."
     },
     {
       "id": 17,
       "link": [2, 1],
       "name": "Kill Pirates With Shinesparks And Escape",
       "requires": [
-        {"or": [
-          "Morph",
-          "canCarefulJump",
-          "canCameraManip"
-        ]},
+        {"obstaclesCleared": ["B"]},
         "canShinechargeMovementComplex",
         "canUseSpeedEchoes",
-        {"or": [
-          {"and": [
-            {"getBlueSpeed": {"usedTiles": 19, "openEnd": 0}},
-            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
-            {"shinespark": {"frames": 2, "excessFrames": 2}}
-          ]},
-          {"and": [
-            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
-            {"shinespark": {"frames": 3, "excessFrames": 3}},
-            "canUseIFrames",
-            {"enemyDamage": {
-              "enemy": "Pink Space Pirate (standing)",
-              "type": "laser",
-              "hits": 2
-            }}
-          ]}
-        ]},
+        {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
+        {"shinespark": {"frames": 2, "excessFrames": 2}},
         {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
         {"or": [
           {"and": [
@@ -639,30 +611,11 @@
       ],
       "clearsObstacles": ["A"],
       "flashSuitChecked": true,
-      "failures": [
-        {
-          "name": "Miss Shortcharge",
-          "cost": [
-            {"enemyDamage": {
-              "enemy": "Pink Space Pirate (standing)",
-              "type": "laser",
-              "hits": 1
-            }}
-          ]
-        }
-      ],
       "note": [
         "Using the bottom of the room, shortcharge to use the echoes created by shinesparking to kill all of the Standing Pirates.",
-        "Either lead the pirate to the left wall or take a hit to gain i-frames to use the full runway to charge a spark",
-        "To lead a pirate, have it shoot in the direction you want it to go. Then jump overhead and crouch on the other side.",
-        "Or, jump and aim down while on the sloped tiles just above to lower the camera and wait for the pirate to move to the correct spot.",
-        "Turn around and diagonal spark the ceiling to kill the lowest pirate, and later the middle pirates.",
+        "Turn around and diagonal spark the ceiling to kill the pirates.",
         "Building a spark towards the left allows for enough run speed to jump to the middle level.",
         "Then vertical shinespark out which kills the top pirate."
-      ],
-      "devNote": [
-        "A leniency laser hit is included for the i-frames method.",
-        "Killing the top pirate naturally ends at 1."
       ]
     },
     {
@@ -716,45 +669,97 @@
       "devNote": "This can be done with less Energy, but it is likely the upper pirate will shoot Samus."
     },
     {
-      "id": 21,
-      "link": [2, 3],
-      "name": "Simple Weapons",
+      "link": [2, 2],
+      "name": "Kill Pirates (Simple Weapons)",
       "requires": [
         {"or": [
           "Plasma",
           "ScrewAttack"
         ]}
       ],
-      "clearsObstacles": ["A"],
-      "flashSuitChecked": true
+      "clearsObstacles": ["A", "B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "devNote": "The top pirate can't be killed from here, but Samus can kill it on the way out."
     },
     {
-      "id": 22,
-      "link": [2, 3],
-      "name": "Pseudo Screw Pirate Kill",
+      "link": [2, 2],
+      "name": "Kill Lowest Runway Pirate (Blue Speed)",
+      "requires": [
+        {"or": [
+          "Morph",
+          "canCarefulJump",
+          "canCameraManip"
+        ]},
+        {"or": [
+          {"getBlueSpeed": {"usedTiles": 19, "openEnd": 0}},
+          {"and": [
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "contact",
+              "hits": 2
+            }},
+            "canUseIFrames",
+            {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
+            {"or": [
+              {"and": [
+                "canMidairShinespark",
+                "canUseSpeedEchoes",
+                {"shinespark": {"frames": 1, "excessFrames": 1}}
+              ]},
+              {"and": [
+                "canHorizontalShinespark",
+                {"shinespark": {"frames": 25, "excessFrames": 20}}
+              ]}
+            ]}
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["B"],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true,
+      "failures": [
+        {
+          "name": "Miss Shortcharge",
+          "cost": [
+            {"enemyDamage": {
+              "enemy": "Pink Space Pirate (standing)",
+              "type": "laser",
+              "hits": 1
+            }}
+          ]
+        }
+      ],
+      "note": [
+        "Either lead the pirate to the left wall or take a hit to gain i-frames to use the full runway to charge a spark",
+        "To lead a pirate, have it shoot in the direction you want it to go. Then jump overhead and crouch on the other side.",
+        "Or, jump and aim down while on the sloped tiles just above to lower the camera and wait for the pirate to move to the correct spot."
+      ],
+      "devNote": [
+        "A leniency laser hit is included for the i-frames method."
+      ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Kill Lowest Runway Pirate (Pseudo Screw)",
       "requires": [
         "canPseudoScrew",
         {"or": [
           {"enemyDamage": {
             "enemy": "Pink Space Pirate (standing)",
             "type": "contact",
-            "hits": 4
+            "hits": 1
           }},
-          {"and": [
-            "h_pauseAbuseMinimalReserveRefill",
-            "h_pauseAbuseMinimalReserveRefill",
-            "h_pauseAbuseMinimalReserveRefill",
-            "h_pauseAbuseMinimalReserveRefill"
-          ]}
+          "h_pauseAbuseMinimalReserveRefill"
         ]}
       ],
-      "clearsObstacles": ["A"],
+      "clearsObstacles": ["B"],
       "flashSuitChecked": true,
-      "note": "The 4 standing pirates take 2 Pseudo Screws to kill each, so Samus must take 4 hits. No damage is taken when the enemy dies."
+      "blueSuitChecked": true
     },
     {
       "id": 32,
-      "link": [2, 3],
+      "link": [2, 2],
       "name": "Damage-Avoiding Pseudo-Screw",
       "requires": [
         {"notable": "Damage-Avoiding Pseudo-Screw"},
@@ -769,6 +774,7 @@
           "canBeVeryPatient"
         ]}
       ],
+      "clearsObstacles": ["A", "B"],
       "flashSuitChecked": true,
       "note": [
         "Use a precisely positioned pseudo-screw to contact a Pirate for exactly one frame,",
@@ -783,6 +789,59 @@
       "devNote": [
         "FIXME: The `canBeVeryPatient` is for difficulty placement but should be replaced with a more appropriate tech."
       ]
+    },
+    {
+      "link": [2, 2],
+      "name": "Crystal Flash",
+      "requires": [
+        "h_CrystalFlash"
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "link": [2, 2],
+      "name": "In-Room Crystal Spark",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        {"canShineCharge": {"usedTiles": 21, "openEnd": 0}},
+        "h_CrystalSpark"
+      ],
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
+    },
+    {
+      "id": 21,
+      "link": [2, 3],
+      "name": "Base",
+      "requires": [
+        {"obstaclesCleared": ["A"]}
+      ],
+      "flashSuitChecked": true
+    },
+    {
+      "id": 22,
+      "link": [2, 3],
+      "name": "Pseudo Screw Pirate Kill",
+      "requires": [
+        {"obstaclesCleared": ["B"]},
+        "canPseudoScrew",
+        {"or": [
+          {"enemyDamage": {
+            "enemy": "Pink Space Pirate (standing)",
+            "type": "contact",
+            "hits": 3
+          }},
+          {"and": [
+            "h_pauseAbuseMinimalReserveRefill",
+            "h_pauseAbuseMinimalReserveRefill",
+            "h_pauseAbuseMinimalReserveRefill"
+          ]}
+        ]}
+      ],
+      "clearsObstacles": ["A"],
+      "flashSuitChecked": true,
+      "note": "The 4 standing pirates take 2 Pseudo Screws to kill each, so Samus must take 4 hits. No damage is taken when the enemy dies.",
+      "devNote": "Samus is expected to kill the lowest pirate first by any means. This also makes it possible to Crystal Flash in between kills."
     },
     {
       "id": 23,
