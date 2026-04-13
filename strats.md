@@ -979,17 +979,19 @@ The direction of the spark is assumed to be horizontal when sparking through hor
 
 A strat with a `comeInWithSpark` condition should include a `shinespark` requirement in its `requires`.
 
-A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, `leaveWithRunway`, or `leaveNormally` condition on the other side of the door:
+A `comeInWithSpark` condition must match with either a `leaveWithSpark`, `leaveShinecharged`, `leaveWithRunway`, or `leaveNormally` condition on the other side of the door. In all three cases, if the door is horizontally oriented, then there is an implicit requirement of `canHorizontalShinespark`.
 
-- A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them are unspecified.
-- A match with `leaveShinecharged` is always valid. It comes with an implicit requirement of `canShinechargeMovement`.
+- A match with `leaveWithSpark` is valid as long as the `position` properties are compatible. The `position` properties of a `leaveWithSpark` and `comeInWithSpark` are compatible if they are equal or if at least one of them is unspecified.
+  - An implicit requirement of `canHorizontalMidairShinespark` is included if the `grounded` property of the `leaveWithSpark` is `false`, or if `     "grounded"` is unspecified while `position` is `"top"` in the `leaveWithSpark` or `comeInWithSpark` or both.
+- A match with `leaveShinecharged` is always valid, with the following implicit requirements:
+   - A requirement of `canShinechargeMovement` is always included.
+   - A requirement of `canHorizontalMidairShinespark` is included if the `position` property of the `comeInWithSpark` is "top".
 - A match with `leaveWithRunway` comes with the following implicit requirements (the same as for `comeInShinecharged`) for actions to be performed in the previous room:
   - A `canShinecharge` requirement is included based on the runway length. This includes a `SpeedBooster` item requirement, a check that the effective runway length is enough that charging a shinespark is possible, and the loss of any blue suit or flash suit.
   - If the previous room is heated, then `heatFrames` are included based on the time spent running in that room. The minimally required heat frames are calculated the same way as in `comeInShinecharging`, except here with `comeInShinecharged` there is no second runway to combine with.
   - If the previous door environment is water, then `Gravity` is required.
+  - A requirement of `canHorizontalMidairShinespark` is included if the `position` property of the `comeInWithSpark` is "top".
 - A match with `leaveNormally` comes with a `"or": [{"useFlashSuit": {}}, {"blueSuitShinecharge": {}}]` requirement.
-
-In all three cases, there is an implicit requirement of `canHorizontalShinespark` when sparking through a horizontal door. There is also an implicit requirement of `canHorizontalMidairShinespark` when a shinespark is initiated midair (when it is not "grounded") as specified with the `grounded` property of the `leaveWithSpark`. If the `grounded` property is unspecified, then a spark is assumed to be not grounded if the `position` property is "top" or if it is unspecified and matched with a `comeInWithSpark` in the next room with a `position` property that is "top".
 
 #### Example
 ```json
