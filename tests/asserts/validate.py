@@ -20,7 +20,7 @@ def format_validation_error(error, value):
     msg = f"{list(error.path)}\n{error.message}"
     if len(error.path) >= 2 and error.path[0] == "strats":
         strat = value["strats"][error.path[1]]
-        msg = f"In strat (id={strat['id']}): {strat['name']}\n{msg}"
+        msg = f"In strat (id={strat.get('id')}): {strat.get('name')}\n{msg}"
     if len(error.path) >= 4 and error.path[0] == "helperCategories" and error.path[2] == "helpers":
         helper = value["helperCategories"][error.path[1]]["helpers"][error.path[3]]
         msg = f"In helper {helper.get('name')}\n{msg}"
