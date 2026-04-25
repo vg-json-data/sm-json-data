@@ -446,7 +446,7 @@ A `leaveWithDoorFrameBelow` object has the following property:
 
 - _height_: The number of tiles beneath the door transition (not including the transition tiles) usable for wall-jumping.
 
-In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWalljump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, and then wall-jump back out.
+In a heated room, heat frames must be explicitly included in the strat `requires`, based on an assumption of wall-jumping up through the door. If the strat in the neighboring room has a `comeInWithSpaceJumpBelow` entrance condition, then additional heat frames will be implicitly included to use Space Jump, so that does not need to be included in the `leaveWithDoorFrameBelow` strat. Likewise, requirements for `canWallJump` or `SpaceJump` do not need to included, as these will be implicitly included in the corresponding entrance conditions. If a strat starts at the same (door) node that it ends at, then heat frames should include the time required to fall down from the door, shoot it open, and then wall-jump back out.
 
 #### Example
 ```json
@@ -1388,7 +1388,7 @@ A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` e
     "comeInWithRMode": {}
   },
   "requires": [
-    "canWalljump",
+    "canWallJump",
     {"enemyDamage": {
       "enemy": "Beetom",
       "type": "contact",
@@ -1459,7 +1459,7 @@ A `comeInWithWallJumpBelow` object has the following property:
 A `comeInWithWallJumpBelow` entrance condition must match with a `leaveWithDoorFrameBelow` exit condition on the other side of the door:
 - A match is valid provided the `height` property on the `leaveWithDoorFrameBelow` is at least as large as the `minHeight` property on the `comeInWithWallJumpBelow`.
 
-A `comeInWithWallJumpBelow` implicitly includes a `canWalljump` tech requirement.
+A `comeInWithWallJumpBelow` implicitly includes a `canWallJump` tech requirement.
 
 __Example:__
 ```json
