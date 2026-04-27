@@ -1720,7 +1720,7 @@ Inside an `entranceCondition` object, a `comesThroughToilet` property indicates 
   "requires": [
     "canCrossRoomJumpIntoWater",
     "HiJump",
-    "canPreciseWalljump",
+    "canPreciseWallJump",
     "canDownGrab"
   ]
 }
