@@ -513,7 +513,7 @@ def process_req_speed_state(req, states, err_fn):
             states = {"preshinespark"}
         elif req in ["canDoubleXModeBlueSuit", "h_spikeDoubleXModeBlueSuit", "h_thornDoubleXModeBlueSuit",
                      "h_thornDoubleXModeBlueSuitWithoutLenience"]:
-            states = {"shinespark"}
+            states = {"preshinespark"}
 
     elif isinstance(req, dict):
         if "canShineCharge" in req:
