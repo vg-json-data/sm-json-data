@@ -1,0 +1,1 @@
+- When creating a new strat or tech, do not add an "id" field. It will be populated by an automated workflow later. Only node IDs and notable IDs are managed manually.
