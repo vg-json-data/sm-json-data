@@ -90,6 +90,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveSpaceJumping_: This indicates that it is possible to Space Jump through the bottom of the doorway (through a horizontal transition) with a certain amount of momentum, and possibly with blue speed.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
 - _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
+- _leaveWithXModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up door transition X-Mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
@@ -427,6 +428,29 @@ A `leaveWithGModeSetup` comes with implicit requirements, which are described in
 }
 ```
 
+### Leave with X-Mode Setup
+
+A `leaveWithXModeSetup_` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the second frame after the transition. This sets up the player to enter X-Mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should be included in the `requires`.
+
+
+A `leaveWithXModeSetup_` comes with implicit requirements, which are described in detail under the entrance condition `comeInWithXMode`.
+
+- The `XRayScope` item requirement.
+- The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
+
+
+#### Example
+```json
+{
+  "name": "Leave With X-Mode Setup - Get Hit By Sciser",
+  "requires": [
+    {"enemyDamage": {"enemy": "Sciser", "type": "contact", "hits": 1}}],
+  "exitCondition": {
+    "leaveWithXModeSetup": {}
+  }
+}
+```
+
 ### Leave with G-Mode
 
 A `leaveWithGMode` exit condition represents that Samus can leave through this door while in G-mode, resulting in indirect G-mode in the next room. A strat with a `leaveWithGMode` exit condition should always also have a `comeInWithGMode` entrance condition since the only (known) way to enter G-mode is while (or before) coming into the room.
@@ -667,6 +691,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
 - _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
+- _comeInWithXMode_: This indicates that Samus must have or obtain X-mode while coming through this door.
 - _comeInWithWallJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by wall-jumping in the door frame below.
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
@@ -1442,6 +1467,29 @@ __Example:__
     "comeInWithGMode": {
       "mode": "any",
       "morphed": true
+    }
+  },
+  "requires": []
+}
+```
+
+### Come In With X-Mode
+
+A `comeInWithXMode` entrance condition indicates that Samus must have or obtain X-mode while coming through this door. 
+
+A `comeInWithXMode` entrance condition must match with  a `leaveWithXModeSetup` entrance condition on the other side of the door:
+
+When matching with a `leaveWithXModeSetup`, a `comeInWithXMode` has implicit requirements:
+- The tech requirement `canDoorTransitionXMode`.
+- The `XRayScope` item requirement.
+- The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
+
+__Example:__
+```json
+{
+  "name": "Door X-Mode Traversal",
+  "entranceCondition": {
+    "comeInWithXMode": {
     }
   },
   "requires": []
