@@ -430,14 +430,14 @@ A `leaveWithGModeSetup` comes with implicit requirements, which are described in
 
 ### Leave with X-Mode Setup
 
-A `leaveWithXModeSetup_` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the second frame after the transition. This sets up the player to enter X-Mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should be included in the `requires`.
+A `leaveWithXModeSetup_` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose and at a height after the transition to be able to use X-Ray to enter X-Mode. This sets up the player to enter X-Mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should be included in the `requires`.
 
 
 A `leaveWithXModeSetup_` comes with implicit requirements, which are described in detail under the entrance condition `comeInWithXMode`.
 
 - The `XRayScope` item requirement.
 - The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
-
+- A requirement `{"disableEquipment": "Gravity"}`.
 
 #### Example
 ```json
@@ -689,9 +689,9 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInSpinning_: This indicates that Samus come in with a spin jump through the doorway with speed in a certain range.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
-- _comeInWithRMode_: This indicates that Samus must have or obtain R-mode while coming through this door.
+- _comeInWithRMode_: This indicates that Samus must obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
-- _comeInWithXMode_: This indicates that Samus must have or obtain X-mode while coming through this door.
+- _comeInWithXMode_: This indicates that Samus must obtain X-mode while coming through this door.
 - _comeInWithWallJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by wall-jumping in the door frame below.
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
@@ -1475,7 +1475,9 @@ __Example:__
 
 ### Come In With X-Mode
 
-A `comeInWithXMode` entrance condition indicates that Samus must have or obtain X-mode while coming through this door. 
+A `comeInWithXMode` entrance condition indicates that Samus must obtain X-mode while coming through this door.
+
+A `comeInWithXMode` object does not have any properties.
 
 A `comeInWithXMode` entrance condition must match with  a `leaveWithXModeSetup` entrance condition on the other side of the door:
 
@@ -1483,6 +1485,7 @@ When matching with a `leaveWithXModeSetup`, a `comeInWithXMode` has implicit req
 - The tech requirement `canDoorTransitionXMode`.
 - The `XRayScope` item requirement.
 - The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
+- A requirement `{"disableEquipment": "Gravity"}`.
 
 __Example:__
 ```json
