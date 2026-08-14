@@ -317,14 +317,14 @@ def check_heat_req(req):
     if isinstance(req, str):
         if req in ["h_heatProof", "h_heatedCrystalFlash", "h_heatedLavaCrystalFlash", "h_heatedAcidCrystalFlash",
                    "h_heatedCrystalFlashForReserveEnergy",
-                   "h_heatedCrystalSpark", "h_LowerNorfairElevatorDownwardFrames",
+                   "h_heatedCrystalSpark", "h_heatedCrystalSparkWithoutLenience", "h_LowerNorfairElevatorDownwardFrames",
                    "h_LowerNorfairElevatorUpwardFrames", "h_MainHallElevatorFrames", "h_heatedGreenGateGlitch",
                    "h_heatedDirectGModeLeaveSameDoor", "h_heatedIndirectGModeOpenSameDoor",
                    "h_heatedGModeOpenDifferentDoor", "h_heatedGModeOffCameraDoor", "h_heatedGModePauseAbuse",
                    "h_heatedGrappleTeleportWallEscape"]:
             return True
     if isinstance(req, dict):
-        if "heatFrames" in req or "heatFramesWithEnergyDrops" or "suitlessHeatFrames" in req in req:
+        if any(x in req for x in ["heatFrames", "heatFramesWithEnergyDrops", "simpleHeatFrames", "suitlessHeatFrames"]):
             return True
         if "and" in req:
             return any(check_heat_req(v) for v in req["and"])
@@ -1145,6 +1145,9 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                   strat.get("bypassesDoorShell") in ["yes", "free"]:
                                 # Strats that use a grapple teleport to bypass a door lock can be done without heat damage, 
                                 # since the door transition is touched immediately.
+                                pass
+                            elif "comeInWithRMode" in strat.get("entranceCondition", []) and fromNode == toNode:
+                                # "R-Mode Entry" strats legitimately don't require any heat frames
                                 pass
                             else:
                                 msg = f"🔴ERROR: Strat in heated room lacking a heat requirement:{stratRef}"
