@@ -430,8 +430,11 @@ A `leaveWithGModeSetup` comes with implicit requirements, which are described in
 
 ### Leave with X-Mode Setup
 
-A `leaveWithXModeSetup_` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose and at a height after the transition to be able to use X-Ray to enter X-Mode. This sets up the player to enter X-Mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should be included in the `requires`.
+A `leaveWithXModeSetup_` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose and at a height after the transition to be able to perform a single frame damage boost to land in the doorframe with X-Ray buffered to activate upon landing. This sets up the player to enter X-Mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. A reserve tank is not required if Samus has sufficient health to tank the enemy damage. However, an auto reserve trigger can also be used if the amount of reserve energy is set to 1 before taking damage.
 
+A `leaveWithXModeSetup_` object has two properites:
+- _enemy: The name of the enemy used to damage Samus during the door transition
+- _attack: The type of damage received from the enemy. This is normally "contact".
 
 A `leaveWithXModeSetup_` comes with implicit requirements, which are described in detail under the entrance condition `comeInWithXMode`.
 
@@ -443,10 +446,9 @@ A `leaveWithXModeSetup_` comes with implicit requirements, which are described i
 ```json
 {
   "name": "Leave With X-Mode Setup - Get Hit By Sciser",
-  "requires": [
-    {"enemyDamage": {"enemy": "Sciser", "type": "contact", "hits": 1}}],
+  "requires": []
   "exitCondition": {
-    "leaveWithXModeSetup": {}
+    "leaveWithXModeSetup": {"enemy": "Sciser", "attack": "contact"}
   }
 }
 ```
