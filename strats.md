@@ -1483,6 +1483,8 @@ A `comeInWithXMode` object does not have any properties.
 
 A `comeInWithXMode` entrance condition must match with  a `leaveWithXModeSetup` entrance condition on the other side of the door:
 
+Only water to water transitions are known to be possible.
+
 When matching with a `leaveWithXModeSetup`, a `comeInWithXMode` has implicit requirements:
 - The tech requirement `canDoorTransitionXMode`.
 - The `XRayScope` item requirement.
