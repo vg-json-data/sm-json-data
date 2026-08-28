@@ -94,7 +94,7 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
 - _leaveWithPlatformBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
-- _leaveWithSidePlatform_: This indicates that Samus can go through this horizontal door with upward momentum by jumping from a platform near the doorway but not attached to it.
+- _leaveWithSidePlatform_: This indicates that Samus can go through this horizontal door by jumping from a platform near the doorway but not attached to it.
 - _leaveWithGrappleSwing_: This indicates that Samus can leave through this door by swinging using Grapple, carrying momentum and the ability to grapple jump in the next room.
 - _leaveWithGrappleJump_: This indicates that Samus can go up through this door by grapple jumping, with no horizontal momentum.
 - _leaveWithGrappleTeleport_: This indicates that Samus can leave through this door while grappling, which can enable a teleport in the next room.
@@ -491,7 +491,7 @@ In a heated room, heat frames must be explicitly included in the strat `requires
 
 ### Leave With Side Platform
 
-A `leaveWithSidePlatform` exit condition represents that that Samus can leave through this door by jumping from a platform to the side, carrying upward momentum into the next room. This applies to horizontal door transitions with a platform below the doorway, close enough to it that Samus can jump through the door without bonking on the ceiling. A `leaveWithSidePlatform` exit condition can satisfy a `comeInWithSidePlatform` entrance condition in the next room.
+A `leaveWithSidePlatform` exit condition represents that that Samus can leave through this door by jumping from a platform to the side. This is typically used for carrying upward momentum into the next room, applying to horizontal door transitions with a platform below the doorway, close enough to it that Samus can jump through the door without bonking on the ceiling. It can also apply to runways with other kinds of unique uses that depend on their specific geometry (e.g. not covered by more general exit conditions such as `leaveSpinning`). A `leaveWithSidePlatform` exit condition can satisfy a `comeInWithSidePlatform` entrance condition in the next room.
 
 A `leaveWithSidePlatform` object has the following properties:
 
@@ -671,7 +671,7 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInWithWallJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by wall-jumping in the door frame below.
 - _comeInWithSpaceJumpBelow_: This indicates that Samus must come up through this vertical door with momentum by using Space Jump in the door frame below.
 - _comeInWithPlatformBelow_: This indicates that Samus must come up through this vertical door with momentum by jumping from a platform below, possibly with run speed.
-- _comeInWithSidePlatform_: This indicates that Samus must jump through this horizontal door with upward momentum, by jumping from a platform to the side of the doorway (but not attached to it) in the other room.
+- _comeInWithSidePlatform_: This indicates that Samus must jump through this horizontal door, by jumping from a platform to the side of the doorway (but not attached to it) in the other room.
 - _comeInWithGrappleSwing_: This indicates that Samus swing into the room using Grapple, giving momentum and possibly the ability to grapple jump.
 - _comeInWithGrappleJump_: This indicates that Samus must come into the room by grapple jumping vertically through this door, with no horizontal momentum.
 - _comeInWithGrappleTeleport_: This indicates that Samus must come into the room while grappling, teleporting Samus to a position in this room corresponding to the location of the (grapple) block in the other room.
@@ -1534,7 +1534,7 @@ __Example:__
 
 ### Come In With Side Platform
 
-A `comeInWithSidePlatform` entrance condition indicates that Samus must jump through this horizontal door with upward momentum, by jumping from a platform to the side of the doorway (but not attached to it) in the other room. It has one property:
+A `comeInWithSidePlatform` entrance condition indicates that Samus must jump through this horizontal door, by jumping from a platform to the side of the doorway (but not attached to it) in the other room. It has one property:
 
 * _platforms_: An array of objects, each describing a type of platform geometry that can satisfy this condition.
   - _minTiles_: Minimum length of platform runway in the other room, measured in tiles (including unusable tiles).
