@@ -440,9 +440,11 @@ A `leaveWithXModeSetup_` object has two properites:
 
 A `leaveWithXModeSetup_` comes with implicit requirements, which are described in detail under the entrance condition `comeInWithXMode`.
 
+- The `canDoorTransitionXMode` tech requirement.
 - The `XRayScope` item requirement.
 - The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
 - A requirement `{"disableEquipment": "Gravity"}`.
+- A requirement to take damage from the enemy. If Samus can only survive by using a reserve trigger, this includes a requirement to drain reserve energy to 1 first.
 
 #### Example
 ```json
@@ -1492,6 +1494,7 @@ When matching with a `leaveWithXModeSetup`, a `comeInWithXMode` has implicit req
 - The `XRayScope` item requirement.
 - The requirements `{"and": [{"noFlashSuit": {}}, {"noBlueSuit": {}}]}`.
 - A requirement `{"disableEquipment": "Gravity"}`.
+- A requirement to take damage from the enemy. If Samus can only survive by using a reserve trigger, this includes a requirement to drain reserve energy to 1 first.
 
 __Example:__
 ```json

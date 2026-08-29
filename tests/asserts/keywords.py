@@ -157,7 +157,7 @@ def process_keyvalue(k, v, metadata):
         "position",  # validated by schema
         "environment",  # validated by schema
         "bypassesDoorShell",  # validated by schema
-        "attack", # 
+        "attack", # FIXME: to be validated
     ]
 
     # Keys that need validation but share a name with a filtered key
