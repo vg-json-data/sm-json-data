@@ -157,7 +157,7 @@ def process_keyvalue(k, v, metadata):
         "position",  # validated by schema
         "environment",  # validated by schema
         "bypassesDoorShell",  # validated by schema
-        "attack", # FIXME: to be validated
+        "attack", # validated explicitly
     ]
 
     # Keys that need validation but share a name with a filtered key
@@ -1034,6 +1034,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     strat_id_set = set()
                     used_notable_name_set = set()
                     link_strat_names = set()
+                    room_enemy_names = {enemy["enemyName"] for enemy in room.get("enemies", [])}
                     for strat in room["strats"]:
                         if "link" not in strat:
                             # Errors are already generated above in this case.
@@ -1196,6 +1197,15 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            leave_with_damage = strat["exitCondition"].get("leaveWithDamage", {})
+                            enemy_name = leave_with_damage.get("enemy")
+                            if enemy_name is not None:
+                                if enemy_name not in room_enemy_names:
+                                    strat_err_fn(f"leaveWithDamage references enemy '{enemy_name}' not present in room")
+                                enemy_id = keywords["enemies"]["enemyByName"].get(enemy_name)
+                                attack_name = leave_with_damage.get("attack", "contact")
+                                if enemy_id in enemies and attack_name not in {attack["name"] for attack in enemies[enemy_id]["attacks"]}:
+                                    strat_err_fn(f"leaveWithDamage enemy '{enemy_name}' doesn't have attack '{attack_name}'")
                             if "leaveShinecharged" in strat["exitCondition"]:
                                 if not covers_shinecharge_frames({"and": strat["requires"]}):
                                     msg = f"🔴ERROR: Strat has leavesShinecharged exitCondition without `shineChargeFrames` covering all cases:{stratRef}"

@@ -1196,38 +1196,66 @@
                 }
               }
             },
-            "leaveWithGModeSetup": {
+            "leaveWithDamage": {
               "type": "object",
-              "title": "Leave With G-Mode Setup",
-              "description": "Represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This is for setting up to enter R-mode or direct G-mode in the next room.",
-              "required": [],
-              "additionalProperties": false,
-              "properties": {
-                "knockback": {
-                  "type": "boolean",
-                  "default": true,
-                  "title": "Leaves With Knockback",
-                  "description": "If true, then Samus gets knockback frames through the transition."
-                }
-              }
-            },
-            "leaveWithXModeSetup": {
-              "type": "object",
-              "title": "Leave With X-Mode Setup",
-              "description": "Represents that Samus can leave through this door while taking damage during the transition, in a pose and at a height after the transition to be able to perform a single frame damage boost to land in the doorframe with X-Ray buffered to activate upon landing.",
-              "required": [],
+              "title": "Leave With Damage",
+              "description": "Represents that Samus can leave through this door while taking damage, either through the transition or shortly before. Depending on the properties, this can be used to provide i-frames, a damage boost, or G-mode, R-mode, or X-mode in the next room.",
+              "required": ["enemy"],
               "additionalProperties": false,
               "properties": {
                 "enemy": {
-                  "pattern": "^(.*)$",
-                  "title": "Name of enemy"
+                  "type": ["string", "null"],
+                  "description": "If null, then the damage must already be accounted for in strat requirements."
                 },
                 "attack": {
-                  "default": "contact",
-                  "pattern": "^(.*)$",
-                  "title": "Type of enemy damage."
+                  "type": "string",
+                  "default": "contact"
+                },
+                "location": {
+                  "type": "string",
+                  "enum": ["transition", "remote"],
+                  "default": "transition",
+                  "description": "Where the damage is taken: 'transition' if during the transition or on the frame that triggers the transition, 'remote' otherwise."
+                },
+                "knockback": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "If true, then Samus gets knockback frames through the transition."
+                },
+                "iFramesRemaining": {
+                  "type": "integer",
+                  "description": "Amount of i-frames remaining through the transition. If unspecified, it defaults to 95, unless 'knockback' is 'false', in which case it defaults to 0."
+                },
+                "xMode": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether this setup is suitable for setting up X-mode through the transition."
                 }
-              }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "required": ["location"],
+                    "properties": {"location": {"const": "remote"}}
+                  },
+                  "then": {"required": ["iFramesRemaining"]}
+                },
+                {
+                  "if": {
+                    "required": ["knockback"],
+                    "properties": {"knockback": {"const": false}}
+                  },
+                  "then": {"not": {"required": ["iFramesRemaining"]}}
+                },
+                {
+                  "if": {
+                    "not": {"required": ["location"]}
+                  },
+                  "then": {
+                    "required": ["enemy"]
+                  }
+                }
+              ]
             },
             "leaveWithGMode": {
               "type": "object",
