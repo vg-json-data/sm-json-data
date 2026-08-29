@@ -75,7 +75,8 @@ strat_name_exit_conditions = [
     ("Leave With Stored Fall Speed", "leaveWithStoredFallSpeed"),
     ("Leave With Moondance", "leaveWithStoredFallSpeed"),
     ("Leave With Extended Moondance", "leaveWithStoredFallSpeed"),
-    ("G-Mode Setup", "leaveWithGModeSetup"),
+    ("Leave With Damage", "leaveWithDamage"),
+    ("Get Hit by", "leaveWithDamage"),
     ("Carry G-Mode", "leaveWithGMode"),
     ("Leave With Door Frame Below", "leaveWithDoorFrameBelow"),
     ("Leave With Platform Below", "leaveWithPlatformBelow"),
@@ -139,7 +140,7 @@ def process_keyvalue(k, v, metadata):
         "comeInRunning",  # validated by schema
         "comeInJumping",    # validated by schema,
         "comeInWithGMode",    # validated by schema,
-        "leaveWithGModeSetup", # validated by schema
+        "leaveWithDamage", # validated by schema and explicitly below
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
