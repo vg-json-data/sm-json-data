@@ -412,7 +412,7 @@ A `leaveWithDamage` object has the following properties:
 - _enemy_: The name of the enemy dealing the damage. If null, the damage must already be accounted for in the strat's `requires`; otherwise the damage is required implicitly as part of the exit condition.
 - _attack_: The name of the enemy attack dealing the damage. This defaults to `"contact"`.
 - _location_: Where the damage is taken: `"transition"` if it can occur during the door transition, `"near"` if it can be close enough to damage boost through the top of the doorway, or `"remote"` if it must be done further away. This defaults to `"transition"`.
-- _knockback_: Whether Samus receives knockback frames that continue through the transition. This defaults to true. Certain enemies such as Beetoms, Metroids, and Mochtroids do not provide knockback, so this should be false when using their contact damage.
+- _knockback_: Whether Samus receives knockback from the damage, regardless of whether those knockback frames continue through the transition. This defaults to true. Certain enemies such as Beetoms, Metroids, and Mochtroids do not provide knockback, so this should be false when they are used.
 - _iFramesRemaining_: The number of i-frames remaining through the transition. This defaults to 95, except when `knockback` is false, in which case it defaults to 0. It must be specified when `location` is `"remote"`, and it must not be specified when `knockback` is false.
 - _xMode_: Whether the damage setup is suitable for entering X-mode. This defaults to false.
 
