@@ -580,6 +580,45 @@
                 }
               }
             },
+            "comeInWithIFrames": {
+              "type": "object",
+              "title": "Come in With I-Frames",
+              "description": "Represents that Samus must enter the room with a minimum number of i-frames remaining.",
+              "required": ["iFramesNeeded"],
+              "additionalProperties": false,
+              "properties": {
+                "iFramesNeeded": {
+                  "type": "integer",
+                  "description": "Minimum number of i-frames Samus must have when entering the room."
+                }
+              }
+            },
+            "comeInWithDamageBoost": {
+              "type": "object",
+              "title": "Come in With Damage Boost",
+              "description": "Represents that Samus must pass through the transition in a horizontal damage boost.",
+              "required": ["iFramesNeeded"],
+              "additionalProperties": false,
+              "properties": {
+                "iFramesNeeded": {
+                  "type": "integer",
+                  "description": "Minimum number of i-frames Samus must have when entering the room."
+                },
+                "position": {
+                  "type": "string",
+                  "enum": ["general", "high", "any"],
+                  "default": "any",
+                  "description": "Position required that Samus must be in while entering."
+                }
+              }
+            },
+            "comeInWithKnockback": {
+              "type": "object",
+              "title": "Come in With Knockback",
+              "description": "Represents that Samus must enter the room in knockback.",
+              "additionalProperties": false,
+              "properties": {}
+            },
             "comeInWithRMode": {
               "type": "object",
               "title": "Come in With R-Mode",
@@ -905,6 +944,9 @@
             {"required": ["comeInSpinning"]},
             {"required": ["comeInBlueSpinning"]},
             {"required": ["comeInWithStoredFallSpeed"]},
+            {"required": ["comeInWithIFrames"]},
+            {"required": ["comeInWithDamageBoost"]},
+            {"required": ["comeInWithKnockback"]},
             {"required": ["comeInWithRMode"]},
             {"required": ["comeInWithGMode"]},
             {"required": ["comeInWithXMode"]},
@@ -1196,18 +1238,60 @@
                 }
               }
             },
-            "leaveWithGModeSetup": {
+            "leaveWithDamage": {
               "type": "object",
-              "title": "Leave With G-Mode Setup",
-              "description": "Represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This is for setting up to enter R-mode or direct G-mode in the next room.",
-              "required": [],
+              "description": "Represents that Samus can leave through this door while taking damage during the transition fade-out. This can provide i-frames, knockback, a damage boost, R-mode, or direct G-mode in the next room.",
+              "required": ["enemy"],
               "additionalProperties": false,
               "properties": {
+                "enemy": {
+                  "type": "string"
+                },
+                "attack": {
+                  "type": "string",
+                  "default": "contact"
+                },
                 "knockback": {
                   "type": "boolean",
                   "default": true,
-                  "title": "Leaves With Knockback",
-                  "description": "If true, then Samus gets knockback frames through the transition."
+                  "description": "If true, then Samus gets knockback from the damage."
+                }
+              }
+            },
+            "leaveWithKnockback": {
+              "type": "object",
+              "description": "Represents that Samus can take damage next to the transition, such that knockback triggers the transition. This can be used to provide i-frames or a damage boost in the next room.",
+              "required": [],
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "leaveWithDamageBoost": {
+              "type": "object",
+              "description": "Represents that Samus can leave through this door while in a damage boost. This can be used to provide i-frames or a continuation of the damage boost in the next room.",
+              "required": ["iFramesRemaining"],
+              "additionalProperties": false,
+              "properties": {
+                "iFramesRemaining": {
+                  "type": "integer",
+                  "description": "Amount of i-frames remaining through the transition."
+                },
+                "position": {
+                  "type": "string",
+                  "enum": ["general", "high"],
+                  "default": "general"
+                }
+              }
+            },
+            "leaveWithIFrames": {
+              "type": "object",
+              "title": "Leave With I-Frames",
+              "description": "Represents that Samus can leave through this door with i-frames remaining.",
+              "required": ["iFramesRemaining"],
+              "additionalProperties": false,
+              "properties": {
+                "iFramesRemaining": {
+                  "type": "integer",
+                  "description": "Amount of i-frames remaining through the transition."
                 }
               }
             },
