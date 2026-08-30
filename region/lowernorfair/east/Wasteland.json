@@ -828,11 +828,15 @@
       "requires": [
         "h_usePowerBomb",
         {"or": [
+          {"obstaclesCleared": ["C"]},
           {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}},
-          {"and": [
-            "canHitbox",
-            "canTrickyJump"
-          ]},
+          "canHitbox",
+          {"haveBlueSuit": {}}
+        ]},
+        {"or": [
+          {"obstaclesCleared": ["D"]},
+          {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}},
+          "canTrickyJump",
           {"haveBlueSuit": {}}
         ]},
         {"heatFrames": 240}
@@ -859,6 +863,11 @@
       "requires": [
         {"or": [
           {"obstaclesCleared": ["C"]},
+          {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}}
+        ]},
+        {"or": [
+          {"obstaclesCleared": ["D"]},
+          "canTrickyDodgeEnemies",
           {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}}
         ]},
         {"heatFrames": 180},
@@ -904,6 +913,11 @@
       "name": "Kill Dessgeega (Fast)",
       "requires": [
         "canDash",
+        {"or": [
+          {"obstaclesCleared": ["D"]},
+          "canTrickyDodgeEnemies",
+          {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}}
+        ]},
         {"enemyKill": {
           "enemies": [["Dessgeega"]],
           "explicitWeapons": ["Wave+Plasma", "Ice+Plasma", "Super", "Missile"]
@@ -939,7 +953,7 @@
       "requires": [
         {"obstaclesCleared": ["D"]},
         "canDash",
-        "canDodgeWhileShooting",
+        "canTrickyDodgeEnemies",
         {"or": [
           "Charge",
           "Spazer"
@@ -1326,19 +1340,25 @@
             {"heatFrames": 540}
           ]},
           {"and": [
-            "canDodgeWhileShooting",
             "Plasma",
+            {"or":[
+              "canDodgeWhileShooting",
+              {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}}
+            ]},
             {"heatFrames": 1020}
           ]},
           {"and": [
-            "canDodgeWhileShooting",
             "Ice",
             "Spazer",
             "Wave",
+            {"or":[
+              "canDodgeWhileShooting",
+              {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 3}}
+            ]},
             {"heatFrames": 1800}
           ]},
           {"and": [
-            "canDodgeWhileShooting",
+            "canTrickyDodgeEnemies",
             "Spazer",
             {"heatFrames": 3000}
           ]}
@@ -1451,6 +1471,10 @@
           {"obstaclesCleared": ["A"]},
           "h_usePowerBomb"
         ]},
+        {"or":[
+          "canDodgeWhileShooting",
+          {"enemyDamage": {"enemy": "Dessgeega", "type": "contact", "hits": 1}}
+        ]},
         {"enemyKill": {
           "enemies": [["Dessgeega"]],
           "explicitWeapons": ["Ice+Wave+Spazer", "Plasma", "PowerBomb"]
@@ -1472,6 +1496,7 @@
           {"obstaclesCleared": ["A"]},
           "h_usePowerBomb"
         ]},
+        "canTrickyDodgeEnemies",
         {"or": [
           "Charge",
           "Spazer"
@@ -1935,6 +1960,7 @@
       "name": "Avoid Dessgeegas by Rolling",
       "requires": [
         {"notable": "Avoid Dessgeegas by Rolling"},
+        "canTrickyDodgeEnemies",
         "Morph",
         "canCameraManip",
         {"heatFrames": 210}
@@ -1954,24 +1980,17 @@
       "link": [7, 4],
       "name": "Avoid Dessgeegas (Mockball)",
       "requires": [
-        "Morph",
-        {"or": [
-          "canTrickyJump",
-          {"and": [
-            "h_usePowerBomb",
-            "canCarefulJump",
-            "canHitbox"
-          ]}
-        ]},
+        "h_usePowerBomb",
+        "canTrickyJump",
+        "canHitbox",
         "canMockball",
         {"heatFrames": 210}
       ],
       "flashSuitChecked": true,
       "blueSuitChecked": true,
       "note": [
-        "Let the right hopper jump twice towards Samus.",
-        "At the start of the second jump, jump above where the ground Dessgeega can jump but below where the ceiling enemy can reach.",
-        "Mockball below the third hopper."
+        "Use a Power Bomb in the tunnel to hit the rightmost Dessgeega.",
+        "This will allow Samus to run through it and mockball with enough speed to pass under the other enemies."
       ],
       "devNote": "FIXME: The Power Bomb from breaking the tunnel bomb block could be used for this strat."
     },
@@ -2081,7 +2100,7 @@
       "requires": [
         {"obstaclesCleared": ["D"]},
         {"getBlueSpeed": {"usedTiles": 20, "steepDownTiles": 4, "openEnd": 1}},
-        "canCarefulJump",
+        "canTrickyJump",
         "h_blueJump",
         {"heatFrames": 200}
       ],
@@ -2286,8 +2305,15 @@
       "link": [8, 7],
       "name": "Morph Bombs",
       "requires": [
+        {"or":[
+          "canTrivialMidAirMorph",
+          "canBombHorizontally",
+          "h_useSpringBall",
+          {"obstaclesCleared": ["E"]}
+        ]},
         {"or": [
-          "canCarefulJump",
+          "canTrickyJump",
+          {"obstaclesCleared": ["E"]},
           {"hibashiHits": 1}
         ]},
         "h_useMorphBombs",
@@ -2301,10 +2327,6 @@
       "link": [8, 7],
       "name": "Power Bombs",
       "requires": [
-        {"or": [
-          "canCarefulJump",
-          {"hibashiHits": 1}
-        ]},
         "Morph",
         {"ammo": {"type": "PowerBomb", "count": 2}},
         {"or": [
@@ -2324,6 +2346,12 @@
       "link": [8, 7],
       "name": "Blue Suit",
       "requires": [
+        {"or":[
+          "canTrivialMidAirMorph",
+          "canBombHorizontally",
+          "h_useSpringBall",
+          {"obstaclesCleared": ["E"]}
+        ]},
         {"haveBlueSuit": {}},
         "Morph",
         {"heatFrames": 230}
