@@ -457,7 +457,7 @@ A `leaveWithDamageBoost` exit condition represents that Samus can leave through 
 
 It has the following properties:
 - _iFramesRemaining_: The number of i-frames remaining through the transition.
-- _position_: The position of the damage boost through the transition: `"general"` for no special position or `"high"` for a high position. This defaults to `"general"`.
+- _position_: The position of the damage boost through the transition: `"high"` for a high position (good enough to clear the ledge in Climb Supers), or `"not-high"` for anything else. This defaults to `"not-high"`.
 
 The damage should be represented in the strat `requires`.
 
@@ -767,9 +767,9 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInSpinning_: This indicates that Samus come in with a spin jump through the doorway with speed in a certain range.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
-- _comeInWithIFrames_: This indicates that Samus must enter the room with a minimum number of i-frames, without assuming a specific movement state.
-- _comeInWithDamageBoost_: This indicates that Samus must damage boost through the transition, starting from the doorway.
 - _comeInWithKnockback_: This indicates that Samus must enter the room in knockback.
+- _comeInWithDamageBoost_: This indicates that Samus must damage boost through the transition, starting from the doorway.
+- _comeInWithIFrames_: This indicates that Samus must enter the room with a minimum number of i-frames, without assuming a specific movement state.
 - _comeInWithRMode_: This indicates that Samus must obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 - _comeInWithXMode_: This indicates that Samus must obtain X-mode while coming through this door.
@@ -1485,7 +1485,10 @@ It has the following implicit requirements:
 - The tech requirement `canUseIFrames`.
 - When matching with `leaveWithDamageBoost`, the tech `canHorizontalDamageBoost` is required.
 - When matching with `leaveWithDamageBoost` or `leaveWithIFrames`, `iFramesRemaining` must be at least `iFramesNeeded`.
-- When matching with `leaveWithDamage`: it has a requirement to take damage from the enemy; it is assumed that Samus must survive the enemy damage using regular energy only, not a pause abuse or auto reserve trigger.
+
+When matching `leaveWithDamage`, it has the following additional requirements:
+- The `knockback` property must be true (or omitted).
+- A requirement to take damage from the enemy. It is assumed that Samus must survive the enemy damage using regular energy only, not a pause abuse or auto reserve trigger.
 
 #### Example
 ```json
@@ -1504,7 +1507,7 @@ It has the following implicit requirements:
 
 A `comeInWithDamageBoost` entrance condition indicates that Samus must be in a horizontal damage boost through the transition. It has the following properties:
 - _iFramesNeeded_: The minimum number of i-frames needed when entering the room.
-- _position_: The required position of the damage boost: `"general"`, `"high"`, or `"any"`. This defaults to `"any"`. A `"high"` position is defined as the type of entry required to clear the corner in the top of Climb Supers.
+- _position_: The required position of the damage boost: `"high"`, or `"any"`. This defaults to `"any"`. A `"high"` position is defined as the type of entry required to clear the corner in the top of Climb Supers.
 
 A `comeInWithDamageBoost` entrance condition matches with `leaveWithDamage`, `leaveWithKnockback`, or `leaveWithDamageBoost`.
 
