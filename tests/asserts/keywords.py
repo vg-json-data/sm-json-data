@@ -75,7 +75,10 @@ strat_name_exit_conditions = [
     ("Leave With Stored Fall Speed", "leaveWithStoredFallSpeed"),
     ("Leave With Moondance", "leaveWithStoredFallSpeed"),
     ("Leave With Extended Moondance", "leaveWithStoredFallSpeed"),
-    ("G-Mode Setup", "leaveWithGModeSetup"),
+    ("Leave With Damage Boost", "leaveWithDamageBoost"),
+    ("Leave With Damage", "leaveWithDamage"),
+    ("Leave With Knockback", "leaveWithKnockback"),
+    ("Leave With I-Frames", "leaveWithIFrames"),
     ("Carry G-Mode", "leaveWithGMode"),
     ("Leave With Door Frame Below", "leaveWithDoorFrameBelow"),
     ("Leave With Platform Below", "leaveWithPlatformBelow"),
@@ -139,7 +142,7 @@ def process_keyvalue(k, v, metadata):
         "comeInRunning",  # validated by schema
         "comeInJumping",    # validated by schema,
         "comeInWithGMode",    # validated by schema,
-        "leaveWithGModeSetup", # validated by schema
+        "leaveWithDamage", # validated by schema and explicitly below
         "gModeRegainMobility",    # validated by schema
         "leaveWithSpark", # validated by schema
         "speedBooster", # validated by schema
@@ -157,7 +160,7 @@ def process_keyvalue(k, v, metadata):
         "position",  # validated by schema
         "environment",  # validated by schema
         "bypassesDoorShell",  # validated by schema
-        "attack", # FIXME: to be validated
+        "attack", # validated explicitly
     ]
 
     # Keys that need validation but share a name with a filtered key
@@ -456,6 +459,17 @@ def covers_shinecharge_frames(req):
             return any(covers_shinecharge_frames(x) for x in req["and"])
         else:
             return False
+
+
+def covers_damage_requirement(req):
+    if isinstance(req, dict):
+        if req.keys() & {"enemyDamage", "hibashiHits", "spikeHits", "thornHits", "electricityHits"}:
+            return True
+        elif "or" in req:
+            return all(covers_damage_requirement(x) for x in req["or"])
+        elif "and" in req:
+            return any(covers_damage_requirement(x) for x in req["and"])
+    return False
 
 
 def check_disallowed_reqs(req, err_fn):
@@ -1034,6 +1048,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                     strat_id_set = set()
                     used_notable_name_set = set()
                     link_strat_names = set()
+                    room_enemy_names = {enemy["enemyName"] for enemy in room.get("enemies", [])}
                     for strat in room["strats"]:
                         if "link" not in strat:
                             # Errors are already generated above in this case.
@@ -1090,7 +1105,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                         link_strat_names.add((link[0], link[1], strat['name']))
 
                         def strat_err_fn(msg):
-                            messages["reds"].append(f"🔴ERROR: {stratRef}:{msg}")
+                            messages["reds"].append(f"🔴ERROR: {stratRef}: {msg}")
                             messages["counts"]["reds"] += 1
                             
                         def make_and(reqs):
@@ -1196,6 +1211,24 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                 msg = f"🔴ERROR: Strat has exitCondition but To Node is not door or exit:{stratRef}"
                                 messages["reds"].append(msg)
                                 messages["counts"]["reds"] += 1
+                            damage_exit_conditions = {
+                                "leaveWithKnockback",
+                                "leaveWithDamageBoost",
+                                "leaveWithIFrames",
+                            }
+                            if damage_exit_conditions & strat["exitCondition"].keys() and \
+                                    not covers_damage_requirement({"and": strat["requires"]}):
+                                strat_err_fn("Damage-based exitCondition without a damage requirement covering all cases")
+                            for condition_name in ["leaveWithDamage", "leaveWithXModeSetup"]:
+                                condition = strat["exitCondition"].get(condition_name, {})
+                                enemy_name = condition.get("enemy")
+                                if enemy_name is not None:
+                                    if enemy_name not in room_enemy_names:
+                                        strat_err_fn(f"{condition_name} references enemy '{enemy_name}' not present in room")
+                                    enemy_id = keywords["enemies"]["enemyByName"].get(enemy_name)
+                                    attack_name = condition.get("attack", "contact")
+                                    if enemy_id in enemies and attack_name not in {attack["name"] for attack in enemies[enemy_id]["attacks"]}:
+                                        strat_err_fn(f"{condition_name} enemy '{enemy_name}' doesn't have attack '{attack_name}'")
                             if "leaveShinecharged" in strat["exitCondition"]:
                                 if not covers_shinecharge_frames({"and": strat["requires"]}):
                                     msg = f"🔴ERROR: Strat has leavesShinecharged exitCondition without `shineChargeFrames` covering all cases:{stratRef}"
@@ -1244,6 +1277,7 @@ for r,d,f in os.walk(os.path.join(".","region")):
                                     msg = f"🔴ERROR: Strat name contains '{phrase}' but there is no {exit_condition_name} exit condition:{stratRef}"
                                     messages["reds"].append(msg)
                                     messages["counts"]["reds"] += 1
+                                break
                         if "g-mode-regain mobility" in strat_name_lower and "gModeRegainMobility" not in strat:
                                 msg = f"🔴ERROR: Strat name contains 'G-Mode Regain Mobility' but strat has no gModeRegainMobility property:{stratRef}"
                                 messages["reds"].append(msg)

@@ -90,7 +90,10 @@ In all strats with an `exitCondition`, the `to` node of the strat must be a door
 - _leaveWithSpringBallBounce_: This indicates that it is possible to leave through this door with a spring ball bounce with a certain amount of momentum.
 - _leaveSpaceJumping_: This indicates that it is possible to Space Jump through the bottom of the doorway (through a horizontal transition) with a certain amount of momentum, and possibly with blue speed.
 - _leaveWithStoredFallSpeed_: This indicates that is is possible to walk through the door with the stored velocity to clip through floor tiles using a Moonfall.
-- _leaveWithGModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up R-mode or direct G-mode in the next room.
+- _leaveWithDamage_: This indicates that Samus can take enemy damage during the transition fade-out.
+- _leaveWithKnockback_: This indicates that Samus can be knocked into the transition by damage taken nearby.
+- _leaveWithDamageBoost_: This indicates that Samus can pass through the transition while in a horizontal damage boost.
+- _leaveWithIFrames_: This indicates that Samus can leave with i-frames remaining.
 - _leaveWithXModeSetup_: This indicates that Samus can take enemy damage through the door transition, to set up door transition X-Mode in the next room.
 - _leaveWithGMode_: This indicates that Samus can carry G-mode into the next room (where it will become indirect G-mode).
 - _leaveWithDoorFrameBelow_: This indicates that Samus can go up through this vertical door with momentum by jumping in the door frame, e.g. using a wall-jump or Space Jump.
@@ -405,26 +408,94 @@ A `leaveWithStoredFallSpeed` entrance condition must match with a `comeInWithSto
 }
 ```
 
-### Leave with G-Mode Setup
+### Leave with Damage
 
-A `leaveWithGModeSetup` exit condition represents that Samus can leave through this door while taking damage through the transition, in a pose that would allow using X-Ray on the first frame after the transition. This sets up the player to enter R-mode or direct G-mode in the next room. The only known way to achieve this is to use an enemy that can follow Samus into the doorway during the transition. It will not work with enemy projectiles since these do not move during transitions, and environmental damage such as heat, lava, acid do not work as these are not active during the transition. Also note that the damage must happen *during* (not *before*) the transition, so being able to take a hit that knocks Samus into the door transition does not work. The enemy damage through the transition should _not_ be included in the `requires`, as the type/amount of enemy damage is irrelevant since Samus' energy will always reach zero here in order to trigger reserves.
+A `leaveWithDamage` exit condition represents that Samus can take enemy damage during the transition fade-out. 
 
-A `leaveWithGModeSetup` object contains the following property:
-- _knockback_: If true, then Samus gets knockback frames through the transition. This makes it possible for Samus to retain mobility in the next room if reserve energy is at most 4. Most enemies provide knockback, so this property is true by default if unspecified. Certain enemies such as Beetoms, Metroids, and Mochtroids do not provide knockback, so this property should be set to false for strats that use these enemies for the transition damage.
+A `leaveWithDamage` object has the following properties:
+- _enemy_: The name of the enemy dealing the damage.
+- _attack_: The name of the enemy attack dealing the damage. This defaults to `"contact"`.
+- _knockback_: Whether the damage gives Samus knockback. This defaults to true.
 
-A `leaveWithGModeSetup` comes with implicit requirements, which are described in detail under the entrance conditions `comeInWithRMode` and `comeInWithGMode`. The implicit requirements depend on the specifics of the entrance condition in the next room, but they always include at least the following:
-- The `XRayScope` item requirement.
-- A requirement `{"or": ["canBlueSuitGModeSetup", {"noBlueSuit": {}}]}`.
-- A requirement to have at least 1 reserve energy.
-- A requirement to damage down to 0 energy, triggering reserves.
+A `leaveWithDamage` exit condition can match with `comeInWithIFrames`, `comeInWithDamageBoost`, `comeInWithKnockback`, `comeInWithRMode`, or `comeInWithGMode` entrance conditions. Details are given under the entrance conditions below.
 
 #### Example
 ```json
 {
-  "name": "Leave With G-Mode Setup",
+  "name": "Leave With Damage - Get Hit By Geemer",
   "requires": [],
   "exitCondition": {
-    "leaveWithGModeSetup": {}
+    "leaveWithDamage": {
+      "enemy": "Geemer (blue)"
+    }
+  }
+}
+```
+
+### Leave with Knockback
+
+A `leaveWithKnockback` exit condition represents that Samus can take damage next to the transition so that the resulting knockback triggers it. It has no properties and can match with `comeInWithKnockback`, `comeInWithDamageBoost`, and `comeInWithIFrames`. 
+
+The damage should be represented in the strat `requires`.
+
+#### Example
+```json
+{
+  "name": "Leave with Knockback - Mini-Kraid Spike",
+  "requires": [
+    {"enemyDamage": {"enemy": "Mini-Kraid", "type": "spike", "hits": 1}}
+  ],
+  "exitCondition": {
+    "leaveWithKnockback": {}
+  }
+}
+```
+
+### Leave with Damage Boost
+
+A `leaveWithDamageBoost` exit condition represents that Samus can leave through the door while in a horizontal damage boost. It can match with `comeInWithDamageBoost` or `comeInWithIFrames`.
+
+It has the following properties:
+- _iFramesRemaining_: The number of i-frames remaining through the transition.
+- _position_: The position of the damage boost through the transition: `"high"` for a high position (good enough to clear the ledge in Climb Supers), or `"not-high"` for anything else. This defaults to `"not-high"`.
+
+The damage should be represented in the strat `requires`.
+
+#### Example
+```json
+{
+  "name": "Leave with Damage Boost - Spike",
+  "requires": [
+    {"spikeHits": 1} 
+  ],
+  "exitCondition": {
+    "leaveWithDamageBoost": {
+      "iFramesRemaining": 40
+    }
+  }
+}
+```
+
+### Leave with I-Frames
+
+A `leaveWithIFrames` exit condition represents that Samus can leave through the door with i-frames remaining.
+
+It has one required property:
+- _iFramesRemaining_: The number of i-frames remaining through the transition.
+
+A `leaveWithIFrames` exit condition can only match with `comeInWithIFrames`.
+
+#### Example
+```json
+{
+  "name": "Leave with I-Frames - Boulder",
+  "requires": [
+    {"enemyDamage": {"enemy": "Boulder", "type": "contact", "hits": 1}}
+  ],
+  "exitCondition": {
+    "leaveWithIFrames": {
+      "iFramesRemaining": 54
+    }
   }
 }
 ```
@@ -696,6 +767,9 @@ In all strats with an `entranceCondition`, the `from` node of the strat must be 
 - _comeInSpinning_: This indicates that Samus come in with a spin jump through the doorway with speed in a certain range.
 - _comeInBlueSpinning_: This indicates that Samus come in with a spin jump through the doorway while having blue speed.
 - _comeInWithStoredFallSpeed_: This indicates that Samus must enter the room with fall speed stored, and is able to clip through a floor with a Moonfall.
+- _comeInWithKnockback_: This indicates that Samus must enter the room in knockback.
+- _comeInWithDamageBoost_: This indicates that Samus must damage boost through the transition, starting from the doorway.
+- _comeInWithIFrames_: This indicates that Samus must enter the room with a minimum number of i-frames, without assuming a specific movement state.
 - _comeInWithRMode_: This indicates that Samus must obtain R-mode while coming through this door.
 - _comeInWithGMode_: This indicates that Samus must have or obtain G-mode (direct or indirect) while coming through this door. 
 - _comeInWithXMode_: This indicates that Samus must obtain X-mode while coming through this door.
@@ -1400,13 +1474,89 @@ A `comeInWithStoredFallSpeed` entrance condition must match with a `leaveWithSto
   "requires": []
 }
 ```
+### Come In With I-Frames
+
+A `comeInWithIFrames` entrance condition indicates that Samus must enter the room with i-frames but does not assume a specific movement state. It has one required property:
+- _iFramesNeeded_: The minimum number of i-frames needed when entering the room.
+
+A `comeInWithIFrames` entrance condition must match with `leaveWithDamage`, `leaveWithKnockback`, `leaveWithDamageBoost`, or `leaveWithIFrames`. 
+
+It has the following implicit requirements:
+- The tech requirement `canUseIFrames`.
+- When matching with `leaveWithDamageBoost`, the tech `canHorizontalDamageBoost` is required.
+- When matching with `leaveWithDamageBoost` or `leaveWithIFrames`, `iFramesRemaining` must be at least `iFramesNeeded`.
+
+When matching `leaveWithDamage`, it has the following additional requirements:
+- The `knockback` property must be true (or omitted).
+- A requirement to take damage from the enemy. It is assumed that Samus must survive the enemy damage using regular energy only, not a pause abuse or auto reserve trigger.
+
+#### Example
+```json
+{
+  "name": "Come In With I-Frames",
+  "requires": [],
+  "entranceCondition": {
+    "comeInWithIFrames": {
+      "iFramesNeeded": 30
+    }
+  }
+}
+```
+
+### Come In With Damage Boost
+
+A `comeInWithDamageBoost` entrance condition indicates that Samus must be in a horizontal damage boost through the transition. It has the following properties:
+- _iFramesNeeded_: The minimum number of i-frames needed when entering the room.
+- _position_: The required position of the damage boost: `"high"`, or `"any"`. This defaults to `"any"`. A `"high"` position is defined as the type of entry required to clear the corner in the top of Climb Supers.
+
+A `comeInWithDamageBoost` entrance condition matches with `leaveWithDamage`, `leaveWithKnockback`, or `leaveWithDamageBoost`.
+
+It has the following implicit requirements:
+- The tech requirement "canHorizontalDamageBoost".
+- When matching with `leaveWithDamageBoost` or `leaveWithIFrames`, `iFramesRemaining` must be at least `iFramesNeeded`.
+- When matching with `leaveWithDamageBoost`, the `position` values must be equal unless one of them is `"any"`.
+
+When matching `leaveWithDamage`, it has the following additional requirements:
+- The `knockback` property must be true (or omitted).
+- A requirement to take damage from the enemy. It is assumed that Samus must survive the enemy damage using regular energy only, not a pause abuse or auto reserve trigger.
+
+#### Example
+```json
+{
+  "name": "Come In With Damage Boost",
+  "requires": [],
+  "entranceCondition": {
+    "comeInWithDamageBoost": {
+      "iFramesNeeded": 40
+    }
+  }
+}
+```
+
+### Come In With Knockback
+
+A `comeInWithKnockback` entrance condition indicates that Samus must enter the room while in knockback. It has no properties.
+
+It must match with `leaveWithDamage` or `leaveWithKnockback`. When matching `leaveWithDamage`, its `knockback` must be true (or omitted).
+
+#### Example
+```json
+{
+  "name": "Come In With Knockback",
+  "requires": [],
+  "entranceCondition": {
+    "comeInWithKnockback": {}
+  }
+}
+```
+
 ### Come In With R-Mode
 
 A `comeInWithRMode` entrance condition indicates that Samus must obtain R-mode while coming through this door.
 
 A `comeInWithRMode` object does not have any properties.
 
-A `comeInWithRMode` entrance condition must match with a `leaveWithGModeSetup` entrance condition on the other side of the door. It comes with the following implicit requirements:
+A `comeInWithRMode` entrance condition must match with a `leaveWithDamage` exit condition on the other side of the door. It comes with the following implicit requirements:
 - The tech requirement `canRMode`.
 - The `XRayScope` item requirement.
 - A requirement `{"or": ["canBlueSuitGModeSetup", {"noBlueSuit": {}}]}`.
@@ -1447,10 +1597,10 @@ A `comeInWithGMode` object has the following properties:
 * _mobility_: Takes one of three possible values, "mobile", "immobile", or "any", indicating whether or not Samus is
 required to be mobile (or immobile) after entering the room. The default value is "any". When entering with indirect G-mode, Samus is always mobile. With direct G-mode, Samus can be mobile if she takes knockback through the door transition and the reserve energy is low enough (<= 4 energy) so that knockback frames do not expire until after reserves finish filling.
 
-A `comeInWithGMode` entrance condition must match with either a `leaveWithGModeSetup` or `leaveWithGMode` entrance condition on the other side of the door:
-- If `mode` is "direct", then it can only match with a `leaveWithGModeSetup`. If `mode` is "indirect", then it can only match with a `leaveWithGMode`.
+A `comeInWithGMode` entrance condition must match with either a `leaveWithDamage` or `leaveWithGMode` exit condition on the other side of the door:
+- If `mode` is "direct", then it can only match with `leaveWithDamage`. If `mode` is "indirect", then it can only match with `leaveWithGMode`.
 
-When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit requirements:
+When matching with a `leaveWithDamage`, a `comeInWithGMode` has implicit requirements:
 - The tech requirement `canGMode`.
 - The requirement `h_heatedGMode` if either the previous room or current room is heated.
 - The `XRayScope` item requirement.
@@ -1458,9 +1608,9 @@ When matching with a `leaveWithGModeSetup`, a `comeInWithGMode` has implicit req
 - A requirement to have at least 1 reserve energy.
 - A requirement to damage down to 0 energy, triggering reserves (causing the reserve energy to become zero and the regular energy to become what the reserve energy was).
 - The requirement `{"or": ["Morph", "canArtificialMorph"]}`, if the `morphed` property of `comeInWithGMode` is true.
-- The Toilet must not come between the room with the `leaveWithGModeSetup` and the `comeInWithGMode`, because obtaining direct G-mode in the Toilet is not possible, due to Samus not having an ability to use X-Ray while entering the room.
+- The Toilet must not come between the room with the `leaveWithDamage` and the `comeInWithGMode`, because obtaining direct G-mode in the Toilet is not possible, due to Samus not having an ability to use X-Ray while entering the room.
 - Requirements for regaining mobility (there may be multiple options here, and they should be treated either as separate strats or the requirements should be joined as though with an `or`):
-  - G-mode mobile: Samus uses the knockback from the previous room to retain mobility. Here the `knockback` property of the `leaveWithGModeSetup` must be true, and reserve energy is assumed to have been drained to at most 4 before doing the strat.
+  - G-mode mobile: Samus uses the knockback from the previous room to retain mobility. Here the `knockback` property of the `leaveWithDamage` must be true or omitted, and reserve energy is assumed to have been drained to at most 4 before doing the strat.
   - G-mode immobile: Samus uses knockback from a hit in the current room to regain mobility. The possibility of doing this is indicated by the presence of a strat with a `gModeRegainMobility` property with `from` and `to` node matching entrance/door node of the current strat (the `from` node of the strat with `comeInWithGMode`). Any requirements of the `gModeRegainMobility` strat should be included as requirements to execute the current strat; it is important that these requirements be applied *after* the requirement to damage down to 0 energy and trigger reserves. If there are multiple such `gModeRegainMobility` strats, then these should be treated as multiple options.
 
 When matching with a `leaveWithGMode`, a `comeInWithGMode` has an implicit requirement in one scenario:
