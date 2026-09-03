@@ -1219,15 +1219,16 @@ for r,d,f in os.walk(os.path.join(".","region")):
                             if damage_exit_conditions & strat["exitCondition"].keys() and \
                                     not covers_damage_requirement({"and": strat["requires"]}):
                                 strat_err_fn("Damage-based exitCondition without a damage requirement covering all cases")
-                            leave_with_damage = strat["exitCondition"].get("leaveWithDamage", {})
-                            enemy_name = leave_with_damage.get("enemy")
-                            if enemy_name is not None:
-                                if enemy_name not in room_enemy_names:
-                                    strat_err_fn(f"leaveWithDamage references enemy '{enemy_name}' not present in room")
-                                enemy_id = keywords["enemies"]["enemyByName"].get(enemy_name)
-                                attack_name = leave_with_damage.get("attack", "contact")
-                                if enemy_id in enemies and attack_name not in {attack["name"] for attack in enemies[enemy_id]["attacks"]}:
-                                    strat_err_fn(f"leaveWithDamage enemy '{enemy_name}' doesn't have attack '{attack_name}'")
+                            for condition_name in ["leaveWithDamage", "leaveWithXModeSetup"]:
+                                condition = strat["exitCondition"].get(condition_name, {})
+                                enemy_name = condition.get("enemy")
+                                if enemy_name is not None:
+                                    if enemy_name not in room_enemy_names:
+                                        strat_err_fn(f"{condition_name} references enemy '{enemy_name}' not present in room")
+                                    enemy_id = keywords["enemies"]["enemyByName"].get(enemy_name)
+                                    attack_name = condition.get("attack", "contact")
+                                    if enemy_id in enemies and attack_name not in {attack["name"] for attack in enemies[enemy_id]["attacks"]}:
+                                        strat_err_fn(f"{condition_name} enemy '{enemy_name}' doesn't have attack '{attack_name}'")
                             if "leaveShinecharged" in strat["exitCondition"]:
                                 if not covers_shinecharge_frames({"and": strat["requires"]}):
                                     msg = f"🔴ERROR: Strat has leavesShinecharged exitCondition without `shineChargeFrames` covering all cases:{stratRef}"
