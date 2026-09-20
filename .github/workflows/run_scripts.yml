@@ -7,23 +7,19 @@ on:
   schedule:
     - cron: '0 18 * * 0'
 
-#########
-# actions
-#########
-# actions/checkout@v4.1.7
-# actions/setup-python@v5.2.0
-# peter-evans/create-pull-request@v6.1.0
-
-# Add permissions to included token for this workflow run
+# The built-in token is only used to check out the repository.
+# We obtain an app token as a step in workflow, and use it to
+# create the PR, because this allows the PR to automatically run its
+# Sanity Checks; otherwise manual approval would be needed.
 permissions:
-  contents:       write  # can manip files
-  pull-requests:  write  # can manip PRs
+  contents: read
 
 jobs:
   # Run scripts
   run_standard_scripts:
     name: "Run standard scripts and open PR"
     runs-on: ${{ matrix.os-name }}
+    environment: run-scripts-automation
 
     strategy:
       matrix:
@@ -38,6 +34,8 @@ jobs:
       # checkout commit
       - name: ✔️Checkout commit
         uses: actions/checkout@v4.1.7
+        with:
+          persist-credentials: false
       # install python
       - name: 💿Install Python
         uses: actions/setup-python@v5.2.0
@@ -69,9 +67,19 @@ jobs:
       - name: Run Autoformatter
         working-directory: scripts
         run: python autoformat.py
+      # Use the app identity so PR creation and updates trigger Sanity Checks.
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6.1.0
         with:
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: Run Strat ID, Tech ID, and Notable ID Generator & Autoformatter
           title: Run Scripts
           body: This PR is auto-generated.
