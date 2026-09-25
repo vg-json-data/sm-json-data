@@ -1513,7 +1513,7 @@ A `comeInWithDamageBoost` entrance condition matches with `leaveWithDamage`, `le
 
 It has the following implicit requirements:
 - The tech requirement "canHorizontalDamageBoost".
-- When matching with `leaveWithDamageBoost` or `leaveWithIFrames`, `iFramesRemaining` must be at least `iFramesNeeded`.
+- When matching with `leaveWithDamageBoost`, `iFramesRemaining` must be at least `iFramesNeeded`.
 - When matching with `leaveWithDamageBoost`, the `position` values must be equal unless one of them is `"any"`.
 
 When matching `leaveWithDamage`, it has the following additional requirements:
